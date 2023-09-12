@@ -1,0 +1,125 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Text Include="..\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="script">
+      <UniqueIdentifier>{e259c090-26e1-40e3-8f98-bef02270d6de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lua">
+      <UniqueIdentifier>{f2fa75eb-aa9a-44fb-a958-477aba12761e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lua\object">
+      <UniqueIdentifier>{b93932c3-3e45-49a3-9c0c-4933f43a6b2e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="script\unit">
+      <UniqueIdentifier>{df72efb1-7aec-49f8-a4d5-8b7323566a13}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\script\TestMain.cpp">
+      <Filter>script</Filter>
+    </ClCompile>
+    <ClCompile Include="..\script\main.cpp">
+      <Filter>script</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\script\TestUI.h">
+      <Filter>script\unit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\script\TestLight.h">
+      <Filter>script\unit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\script\TestPhysx.h">
+      <Filter>script\unit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\script\TestPhysx2d.h">
+      <Filter>script\unit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\script\TestPrim.h">
+      <Filter>script\unit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\script\TestShadowMap.h">
+      <Filter>script\unit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\script\TestSpine.h">
+      <Filter>script\unit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\script\TestFile.h">
+      <Filter>script\unit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\script\TestCore.h">
+      <Filter>script\unit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\script\TestDepthTexture.h">
+      <Filter>script\unit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\script\TestPanel.h">
+      <Filter>script</Filter>
+    </ClInclude>
+    <ClInclude Include="..\script\TestBase.h">
+      <Filter>script</Filter>
+    </ClInclude>
+    <ClInclude Include="..\script\TestMain.h">
+      <Filter>script</Filter>
+    </ClInclude>
+    <ClInclude Include="..\script\TestPostProcess.h">
+      <Filter>script\unit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\script\TestParticle.h">
+      <Filter>script\unit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\script\TestTween.h">
+      <Filter>script\unit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\script\TestAnimation.h">
+      <Filter>script\unit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\script\TestSkyBox.h">
+      <Filter>script\unit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\script\TestReflect.h">
+      <Filter>script\unit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\script\TestTerrain.h">
+      <Filter>script\unit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\script\TestVideo.h">
+      <Filter>script\unit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\script\TestAudio.h">
+      <Filter>script\unit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\script\TestLua.h">
+      <Filter>script\unit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\script\TestSocket.h">
+      <Filter>script\unit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\script\TestViewport.h">
+      <Filter>script\unit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\script\TestShader.h">
+      <Filter>script\unit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\script\TestTemplate.h">
+      <Filter>script\unit</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\bin\assets\script\Main.lua">
+      <Filter>lua</Filter>
+    </None>
+    <None Include="..\..\..\bin\assets\script\object\GameObject.lua">
+      <Filter>lua\object</Filter>
+    </None>
+    <None Include="..\..\..\bin\assets\script\object\Player.lua">
+      <Filter>lua\object</Filter>
+    </None>
+    <None Include="..\..\..\bin\assets\script\object\Role.lua">
+      <Filter>lua\object</Filter>
+    </None>
+  </ItemGroup>
+</Project>

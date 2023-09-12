@@ -1,0 +1,7 @@
+<Material>
+    <Tag>
+        <CastShadow>false</CastShadow>
+        <ReceiveShadow>false</ReceiveShadow>
+    </Tag>
+    <Shader><ShaderFile>internal/material/PointBillboard.shader</ShaderFile></Shader>
+</Material>

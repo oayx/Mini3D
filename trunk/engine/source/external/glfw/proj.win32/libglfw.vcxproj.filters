@@ -1,0 +1,93 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="include">
+      <UniqueIdentifier>{fc56b4d1-9cae-4572-b8f9-ab32e6fdec8b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{f3bcd732-d88d-409f-8559-9ec65b3c6a85}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\egl_context.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\glfw3.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\glfw3native.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\glfw_config.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\internal.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mappings.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\osmesa_context.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wgl_context.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\win32_joystick.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\win32_platform.h">
+      <Filter>include</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\context.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\egl_context.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\init.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\input.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\monitor.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\osmesa_context.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\vulkan.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wgl_context.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\win32_init.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\win32_joystick.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\win32_monitor.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\win32_thread.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\win32_time.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\win32_window.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\window.c">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\CMakeLists.txt" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,303 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="common">
+      <UniqueIdentifier>{cbce44a9-70c8-4641-b7a7-28e53f38d523}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="fbx">
+      <UniqueIdentifier>{a9be7486-c784-4ff5-8384-38c1e92df8aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="obj">
+      <UniqueIdentifier>{d1469b09-2e30-462b-95a7-6a2daf88adc0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="processing">
+      <UniqueIdentifier>{4b939c8d-5bec-4b16-bd75-1ab4e2cee7b7}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\common\AssertHandler.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\BaseImporter.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\BaseProcess.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\CreateAnimMesh.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\DefaultIOStream.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\DefaultIOSystem.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\DefaultLogger.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\Exceptional.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\Importer.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\ImporterRegistry.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\materials.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\MaterialSystem.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\PostStepRegistry.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\RemoveComments.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\scene.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\SceneCombiner.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\ScenePreprocessor.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\SGSpatialSort.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\simd.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\SkeletonMeshBuilder.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\SpatialSort.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\StandardShapes.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\Subdivision.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\TargetAnimation.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\Version.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\VertexTriangleAdjacency.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\fbx\FBXAnimation.cpp">
+      <Filter>fbx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\fbx\FBXBinaryTokenizer.cpp">
+      <Filter>fbx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\fbx\FBXConverter.cpp">
+      <Filter>fbx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\fbx\FBXDeformer.cpp">
+      <Filter>fbx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\fbx\FBXDocument.cpp">
+      <Filter>fbx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\fbx\FBXDocumentUtil.cpp">
+      <Filter>fbx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\fbx\FBXImporter.cpp">
+      <Filter>fbx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\fbx\FBXMaterial.cpp">
+      <Filter>fbx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\fbx\FBXMeshGeometry.cpp">
+      <Filter>fbx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\fbx\FBXModel.cpp">
+      <Filter>fbx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\fbx\FBXNodeAttribute.cpp">
+      <Filter>fbx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\fbx\FBXParser.cpp">
+      <Filter>fbx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\fbx\FBXProperties.cpp">
+      <Filter>fbx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\fbx\FBXTokenizer.cpp">
+      <Filter>fbx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\fbx\FBXUtil.cpp">
+      <Filter>fbx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\obj\ObjExporter.cpp">
+      <Filter>obj</Filter>
+    </ClCompile>
+    <ClCompile Include="..\obj\ObjFileImporter.cpp">
+      <Filter>obj</Filter>
+    </ClCompile>
+    <ClCompile Include="..\obj\ObjFileMtlImporter.cpp">
+      <Filter>obj</Filter>
+    </ClCompile>
+    <ClCompile Include="..\obj\ObjFileParser.cpp">
+      <Filter>obj</Filter>
+    </ClCompile>
+    <ClCompile Include="..\processing\ArmaturePopulate.cpp">
+      <Filter>processing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\processing\CalcTangentsProcess.cpp">
+      <Filter>processing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\processing\ComputeUVMappingProcess.cpp">
+      <Filter>processing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\processing\ConvertToLHProcess.cpp">
+      <Filter>processing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\processing\DeboneProcess.cpp">
+      <Filter>processing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\processing\DropFaceNormalsProcess.cpp">
+      <Filter>processing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\processing\EmbedTexturesProcess.cpp">
+      <Filter>processing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\processing\FindDegenerates.cpp">
+      <Filter>processing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\processing\FindInstancesProcess.cpp">
+      <Filter>processing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\processing\FindInvalidDataProcess.cpp">
+      <Filter>processing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\processing\FixNormalsStep.cpp">
+      <Filter>processing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\processing\GenBoundingBoxesProcess.cpp">
+      <Filter>processing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\processing\GenFaceNormalsProcess.cpp">
+      <Filter>processing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\processing\GenVertexNormalsProcess.cpp">
+      <Filter>processing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\processing\ImproveCacheLocality.cpp">
+      <Filter>processing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\processing\JoinVerticesProcess.cpp">
+      <Filter>processing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\processing\LimitBoneWeightsProcess.cpp">
+      <Filter>processing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\processing\MakeVerboseFormat.cpp">
+      <Filter>processing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\processing\OptimizeGraph.cpp">
+      <Filter>processing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\processing\OptimizeMeshes.cpp">
+      <Filter>processing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\processing\PretransformVertices.cpp">
+      <Filter>processing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\processing\ProcessHelper.cpp">
+      <Filter>processing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\processing\RemoveVCProcess.cpp">
+      <Filter>processing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\processing\ScaleProcess.cpp">
+      <Filter>processing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\processing\SortByPTypeProcess.cpp">
+      <Filter>processing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\processing\SplitByBoneCountProcess.cpp">
+      <Filter>processing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\processing\SplitLargeMeshes.cpp">
+      <Filter>processing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\processing\TextureTransform.cpp">
+      <Filter>processing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\processing\TriangulateProcess.cpp">
+      <Filter>processing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\processing\ValidateDataStructure.cpp">
+      <Filter>processing</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\fbx\FBXCommon.h">
+      <Filter>fbx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\fbx\FBXCompileConfig.h">
+      <Filter>fbx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\fbx\FBXConverter.h">
+      <Filter>fbx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\fbx\FBXDocument.h">
+      <Filter>fbx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\fbx\FBXDocumentUtil.h">
+      <Filter>fbx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\fbx\FBXImporter.h">
+      <Filter>fbx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\fbx\FBXImportSettings.h">
+      <Filter>fbx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\fbx\FBXMeshGeometry.h">
+      <Filter>fbx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\fbx\FBXParser.h">
+      <Filter>fbx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\fbx\FBXProperties.h">
+      <Filter>fbx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\fbx\FBXTokenizer.h">
+      <Filter>fbx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\fbx\FBXUtil.h">
+      <Filter>fbx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\obj\ObjExporter.h">
+      <Filter>obj</Filter>
+    </ClInclude>
+    <ClInclude Include="..\obj\ObjFileData.h">
+      <Filter>obj</Filter>
+    </ClInclude>
+    <ClInclude Include="..\obj\ObjFileImporter.h">
+      <Filter>obj</Filter>
+    </ClInclude>
+    <ClInclude Include="..\obj\ObjFileMtlImporter.h">
+      <Filter>obj</Filter>
+    </ClInclude>
+    <ClInclude Include="..\obj\ObjFileParser.h">
+      <Filter>obj</Filter>
+    </ClInclude>
+    <ClInclude Include="..\obj\ObjTools.h">
+      <Filter>obj</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\CMakeLists.txt" />
+  </ItemGroup>
+</Project>

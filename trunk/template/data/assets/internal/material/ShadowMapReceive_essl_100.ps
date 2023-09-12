@@ -1,0 +1,112 @@
+#version 100
+precision mediump float;
+precision highp int;
+
+struct type_CommbonRarelyBuffer
+{
+    highp vec3 _LIGHTMODEL_AMBIENT;
+    int _FogMode;
+    highp vec4 _FogColor;
+    highp float _FogStart;
+    highp float _FogEnd;
+    highp float _FogDensity;
+};
+
+uniform type_CommbonRarelyBuffer CommbonRarelyBuffer;
+
+struct type_CustomBuffer
+{
+    highp mat4 MATRIX_MVP_LIGHT;
+    highp vec4 _MainTex_ST;
+    highp vec4 _ShadowMap_TexelSize;
+    highp float _Bias;
+    int _ShadowType;
+};
+
+uniform type_CustomBuffer CustomBuffer;
+
+uniform highp sampler2D _MainTex;
+uniform highp sampler2D _ShadowMap;
+
+varying highp vec2 varying_TEXCOORD0;
+varying highp vec4 varying_TEXCOORD1;
+varying highp float varying_TEXCOORD2;
+
+void main()
+{
+    highp vec4 _59 = texture2D(_MainTex, varying_TEXCOORD0);
+    highp float _131;
+    if (CustomBuffer._ShadowType != 0)
+    {
+        highp vec2 _70 = ((varying_TEXCOORD1.xy / vec2(varying_TEXCOORD1.w)) * 0.5) + vec2(0.5);
+        highp vec2 _72 = _70;
+        _72.y = _70.y;
+        highp float _76 = (0.5 * (varying_TEXCOORD1.z / varying_TEXCOORD1.w)) + 0.5;
+        highp float _130;
+        if (CustomBuffer._ShadowType == 2)
+        {
+            highp float _84;
+            int _87;
+            _84 = 0.0;
+            _87 = -1;
+            highp float _85;
+            for (; _87 <= 1; _84 = _85, _87++)
+            {
+                _85 = _84;
+                for (int _95 = -1; _95 <= 1; _85 += float((_76 - CustomBuffer._Bias) > texture2D(_ShadowMap, _72 + (vec2(float(_87), float(_95)) * CustomBuffer._ShadowMap_TexelSize.xy)).x), _95++)
+                {
+                }
+            }
+            _130 = _84 * 0.111111111938953399658203125;
+        }
+        else
+        {
+            highp float _129;
+            if (CustomBuffer._ShadowType == 1)
+            {
+                _129 = float((_76 - CustomBuffer._Bias) > texture2D(_ShadowMap, _72).x);
+            }
+            else
+            {
+                _129 = 0.0;
+            }
+            _130 = _129;
+        }
+        _131 = _130;
+    }
+    else
+    {
+        _131 = 0.0;
+    }
+    highp vec4 _134 = _59 * (1.0 - (_131 * 0.89999997615814208984375));
+    highp float _170;
+    if (CommbonRarelyBuffer._FogMode == 1)
+    {
+        _170 = clamp((CommbonRarelyBuffer._FogEnd - varying_TEXCOORD2) / (CommbonRarelyBuffer._FogEnd - CommbonRarelyBuffer._FogStart), 0.0, 1.0);
+    }
+    else
+    {
+        highp float _169;
+        if (CommbonRarelyBuffer._FogMode == 2)
+        {
+            _169 = exp(-(CommbonRarelyBuffer._FogDensity * varying_TEXCOORD2));
+        }
+        else
+        {
+            highp float _168;
+            if (CommbonRarelyBuffer._FogMode == 3)
+            {
+                _168 = exp((((-CommbonRarelyBuffer._FogDensity) * CommbonRarelyBuffer._FogDensity) * varying_TEXCOORD2) * varying_TEXCOORD2);
+            }
+            else
+            {
+                _168 = 1.0;
+            }
+            _169 = _168;
+        }
+        _170 = _169;
+    }
+    highp vec3 _176 = mix(CommbonRarelyBuffer._FogColor.xyz, _134.xyz, vec3(_170));
+    gl_FragData[0] = vec4(_176.x, _176.y, _176.z, _134.w);
+}
+

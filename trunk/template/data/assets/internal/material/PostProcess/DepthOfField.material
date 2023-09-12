@@ -1,0 +1,12 @@
+<Root>
+    <Tag>
+        <CastShadow>false</CastShadow>
+        <ReceiveShadow>false</ReceiveShadow>
+    </Tag>
+    <Shader>
+        <ShaderFile>internal/material/PostProcess/DepthOfField.shader</ShaderFile>
+    </Shader>
+    <Properties/>
+    <TextureUnits>
+    </TextureUnits>
+</Root>

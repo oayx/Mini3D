@@ -1,0 +1,9 @@
+<Root>
+    <IsLocal>true</IsLocal>
+    <ShowGrid>true</ShowGrid>
+    <Is3D>true</Is3D>
+    <OperatorSpeed>0.60000002</OperatorSpeed>
+    <LayoutIndex>0</LayoutIndex>
+    <ProjectIconZoom>1</ProjectIconZoom>
+    <GameResolution>0</GameResolution>
+</Root>

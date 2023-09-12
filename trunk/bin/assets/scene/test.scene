@@ -1,0 +1,29 @@
+<Root>
+    <Lighting>
+        <AmbientColor>0.200000, 0.200000, 0.200000, 1.000000</AmbientColor>
+        <SkyboxMaterial>3766671e950823dc963e31d522d70755</SkyboxMaterial>
+        <ReflectionsIntensity>0.5</ReflectionsIntensity>
+        <enable>false</enable>
+        <mode>0</mode>
+        <color>1.000000, 1.000000, 1.000000, 1.000000</color>
+        <start>0</start>
+        <end>0</end>
+        <density>0.0099999998</density>
+        <GameObject>
+            <InstanceName>New Scane</InstanceName>
+            <Flags>0</Flags>
+            <Layer>0</Layer>
+            <IsActiveSelf>true</IsActiveSelf>
+            <Components>
+                <Component>Transform</Component>
+            </Components>
+            <Transform>
+                <Enable>true</Enable>
+                <LocalPosition>0.000000, 0.000000, 0.000000</LocalPosition>
+                <LocalRotation>0.000000, 0.000000, 0.000000, 1.000000</LocalRotation>
+                <LocalScale>1.000000, 1.000000, 1.000000</LocalScale>
+            </Transform>
+            <Childrens/>
+        </GameObject>
+    </Lighting>
+</Root>

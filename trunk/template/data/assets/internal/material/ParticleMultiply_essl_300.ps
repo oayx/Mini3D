@@ -1,0 +1,69 @@
+#version 300 es
+precision mediump float;
+precision highp int;
+
+struct type_CommbonRarelyBuffer
+{
+    highp vec3 _LIGHTMODEL_AMBIENT;
+    int _FogMode;
+    highp vec4 _FogColor;
+    highp float _FogStart;
+    highp float _FogEnd;
+    highp float _FogDensity;
+};
+
+uniform type_CommbonRarelyBuffer CommbonRarelyBuffer;
+
+struct type_TransformBuffer
+{
+    highp vec4 _MainTex_ST;
+    highp vec4 _Time;
+    highp vec4 _TintColor;
+    highp float _USpeed;
+    highp float _VSpeed;
+};
+
+uniform type_TransformBuffer TransformBuffer;
+
+uniform highp sampler2D _MainTex;
+
+in highp vec4 varying_COLOR;
+in highp vec2 varying_TEXCOORD0;
+in highp float varying_TEXCOORD1;
+layout(location = 0) out highp vec4 out_var_SV_Target;
+
+void main()
+{
+    highp vec4 _53 = texture(_MainTex, varying_TEXCOORD0);
+    highp vec4 _54 = (varying_COLOR * TransformBuffer._TintColor) * _53;
+    highp float _90;
+    if (CommbonRarelyBuffer._FogMode == 1)
+    {
+        _90 = clamp((CommbonRarelyBuffer._FogEnd - varying_TEXCOORD1) / (CommbonRarelyBuffer._FogEnd - CommbonRarelyBuffer._FogStart), 0.0, 1.0);
+    }
+    else
+    {
+        highp float _89;
+        if (CommbonRarelyBuffer._FogMode == 2)
+        {
+            _89 = exp(-(CommbonRarelyBuffer._FogDensity * varying_TEXCOORD1));
+        }
+        else
+        {
+            highp float _88;
+            if (CommbonRarelyBuffer._FogMode == 3)
+            {
+                _88 = exp((((-CommbonRarelyBuffer._FogDensity) * CommbonRarelyBuffer._FogDensity) * varying_TEXCOORD1) * varying_TEXCOORD1);
+            }
+            else
+            {
+                _88 = 1.0;
+            }
+            _89 = _88;
+        }
+        _90 = _89;
+    }
+    highp vec3 _96 = mix(CommbonRarelyBuffer._FogColor.xyz, _54.xyz, vec3(_90));
+    out_var_SV_Target = vec4(_96.x, _96.y, _96.z, _54.w);
+}
+

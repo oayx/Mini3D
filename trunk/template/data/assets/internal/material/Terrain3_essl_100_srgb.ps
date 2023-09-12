@@ -1,0 +1,107 @@
+#version 100
+precision mediump float;
+precision highp int;
+
+struct Light
+{
+    highp vec3 Dir;
+    int Type;
+    highp vec3 Color;
+    highp vec3 Attenuation;
+    highp float Range;
+    highp vec3 Position;
+    highp float SpotAngle;
+};
+
+struct type_LightBuffer
+{
+    int _LightCount;
+    highp vec3 _LightDir0;
+    highp vec3 _LightColor0;
+    Light _Light[8];
+};
+
+uniform type_LightBuffer LightBuffer;
+
+struct type_CommbonRarelyBuffer
+{
+    highp vec3 _LIGHTMODEL_AMBIENT;
+    int _FogMode;
+    highp vec4 _FogColor;
+    highp float _FogStart;
+    highp float _FogEnd;
+    highp float _FogDensity;
+};
+
+uniform type_CommbonRarelyBuffer CommbonRarelyBuffer;
+
+struct type_CustomBuffer
+{
+    highp vec4 _MainTex0_ST;
+    highp vec4 _MainTex1_ST;
+    highp vec4 _MainTex2_ST;
+    highp float _SpecularPower;
+};
+
+uniform type_CustomBuffer CustomBuffer;
+
+uniform highp sampler2D _MainTex0;
+uniform highp sampler2D _MainTex1;
+uniform highp sampler2D _MainTex2;
+uniform highp sampler2D _ControlTex;
+uniform highp sampler2D _NormalTexture0;
+uniform highp sampler2D _NormalTexture1;
+uniform highp sampler2D _NormalTexture2;
+
+varying highp vec2 varying_TEXCOORD0;
+varying highp vec2 varying_TEXCOORD1;
+varying highp vec2 varying_TEXCOORD2;
+varying highp vec2 varying_TEXCOORD3;
+varying highp mat3 varying_TEXCOORD4;
+varying highp vec3 varying_TEXCOORD7;
+varying highp vec3 varying_TEXCOORD8;
+varying highp float varying_TEXCOORD9;
+
+void main()
+{
+    highp vec4 _94 = texture2D(_MainTex0, varying_TEXCOORD0);
+    highp vec4 _98 = texture2D(_MainTex1, varying_TEXCOORD1);
+    highp vec4 _102 = texture2D(_MainTex2, varying_TEXCOORD2);
+    highp vec4 _106 = texture2D(_ControlTex, varying_TEXCOORD3);
+    highp float _108 = _106.x;
+    highp float _111 = _106.y;
+    highp float _115 = _106.z;
+    highp vec4 _125 = texture2D(_NormalTexture0, varying_TEXCOORD0);
+    highp vec4 _132 = texture2D(_NormalTexture1, varying_TEXCOORD1);
+    highp vec4 _139 = texture2D(_NormalTexture2, varying_TEXCOORD2);
+    highp vec3 _153 = ((normalize(varying_TEXCOORD4 * ((_125.xyz * 2.0) - vec3(1.0))) * _108) + (normalize(varying_TEXCOORD4 * ((_132.xyz * 2.0) - vec3(1.0))) * _111)) + (normalize(varying_TEXCOORD4 * ((_139.xyz * 2.0) - vec3(1.0))) * _115);
+    highp float _215;
+    if (CommbonRarelyBuffer._FogMode == 1)
+    {
+        _215 = clamp((CommbonRarelyBuffer._FogEnd - varying_TEXCOORD9) / (CommbonRarelyBuffer._FogEnd - CommbonRarelyBuffer._FogStart), 0.0, 1.0);
+    }
+    else
+    {
+        highp float _214;
+        if (CommbonRarelyBuffer._FogMode == 2)
+        {
+            _214 = exp(-(CommbonRarelyBuffer._FogDensity * varying_TEXCOORD9));
+        }
+        else
+        {
+            highp float _213;
+            if (CommbonRarelyBuffer._FogMode == 3)
+            {
+                _213 = exp((((-CommbonRarelyBuffer._FogDensity) * CommbonRarelyBuffer._FogDensity) * varying_TEXCOORD9) * varying_TEXCOORD9);
+            }
+            else
+            {
+                _213 = 1.0;
+            }
+            _214 = _213;
+        }
+        _215 = _214;
+    }
+    gl_FragData[0] = vec4(max((pow(max(mix(CommbonRarelyBuffer._FogColor.xyz, vec4(((CommbonRarelyBuffer._LIGHTMODEL_AMBIENT + (LightBuffer._LightColor0 * vec3(dot(_153, varying_TEXCOORD7)))) + vec3(pow(max(0.0, dot(normalize(varying_TEXCOORD8 + varying_TEXCOORD7), _153)), exp2((CustomBuffer._SpecularPower * 10.0) + 1.0)))) * vec4(((_94.xyz * _108) + (_98.xyz * _111)) + (_102.xyz * _115), 1.0).xyz, 1.0).xyz, vec3(_215)).xyz, vec3(0.0)), vec3(0.4166666567325592041015625)) * 1.05499994754791259765625) - vec3(0.054999999701976776123046875), vec3(0.0)), 1.0);
+}
+

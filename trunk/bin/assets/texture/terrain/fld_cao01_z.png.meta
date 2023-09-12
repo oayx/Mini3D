@@ -1,0 +1,14 @@
+<Root>
+    <TextureMeta>
+        <GUID>7517cf83ed9015c3cf52c04af1745d3a</GUID>
+        <HideInspector>false</HideInspector>
+        <TextureGroup>0</TextureGroup>
+        <TextureType>1</TextureType>
+        <sRGB>true</sRGB>
+        <EnableReadWrite>false</EnableReadWrite>
+        <GenerateMipMaps>false</GenerateMipMaps>
+        <AddressMode>0</AddressMode>
+        <FilterType>1</FilterType>
+        <Anisotropy>1</Anisotropy>
+    </TextureMeta>
+</Root>

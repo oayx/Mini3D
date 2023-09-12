@@ -1,0 +1,305 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\common\AssertHandler.cpp" />
+    <ClCompile Include="..\common\BaseImporter.cpp" />
+    <ClCompile Include="..\common\BaseProcess.cpp" />
+    <ClCompile Include="..\common\CreateAnimMesh.cpp" />
+    <ClCompile Include="..\common\DefaultIOStream.cpp" />
+    <ClCompile Include="..\common\DefaultIOSystem.cpp" />
+    <ClCompile Include="..\common\DefaultLogger.cpp" />
+    <ClCompile Include="..\common\Exceptional.cpp" />
+    <ClCompile Include="..\common\Importer.cpp" />
+    <ClCompile Include="..\common\ImporterRegistry.cpp" />
+    <ClCompile Include="..\common\materials.cpp" />
+    <ClCompile Include="..\common\MaterialSystem.cpp" />
+    <ClCompile Include="..\common\PostStepRegistry.cpp" />
+    <ClCompile Include="..\common\RemoveComments.cpp" />
+    <ClCompile Include="..\common\scene.cpp" />
+    <ClCompile Include="..\common\SceneCombiner.cpp" />
+    <ClCompile Include="..\common\ScenePreprocessor.cpp" />
+    <ClCompile Include="..\common\SGSpatialSort.cpp" />
+    <ClCompile Include="..\common\simd.cpp" />
+    <ClCompile Include="..\common\SkeletonMeshBuilder.cpp" />
+    <ClCompile Include="..\common\SpatialSort.cpp" />
+    <ClCompile Include="..\common\StandardShapes.cpp" />
+    <ClCompile Include="..\common\Subdivision.cpp" />
+    <ClCompile Include="..\common\TargetAnimation.cpp" />
+    <ClCompile Include="..\common\Version.cpp" />
+    <ClCompile Include="..\common\VertexTriangleAdjacency.cpp" />
+    <ClCompile Include="..\fbx\FBXAnimation.cpp" />
+    <ClCompile Include="..\fbx\FBXBinaryTokenizer.cpp" />
+    <ClCompile Include="..\fbx\FBXConverter.cpp" />
+    <ClCompile Include="..\fbx\FBXDeformer.cpp" />
+    <ClCompile Include="..\fbx\FBXDocument.cpp" />
+    <ClCompile Include="..\fbx\FBXDocumentUtil.cpp" />
+    <ClCompile Include="..\fbx\FBXImporter.cpp" />
+    <ClCompile Include="..\fbx\FBXMaterial.cpp" />
+    <ClCompile Include="..\fbx\FBXMeshGeometry.cpp" />
+    <ClCompile Include="..\fbx\FBXModel.cpp" />
+    <ClCompile Include="..\fbx\FBXNodeAttribute.cpp" />
+    <ClCompile Include="..\fbx\FBXParser.cpp" />
+    <ClCompile Include="..\fbx\FBXProperties.cpp" />
+    <ClCompile Include="..\fbx\FBXTokenizer.cpp" />
+    <ClCompile Include="..\fbx\FBXUtil.cpp" />
+    <ClCompile Include="..\obj\ObjExporter.cpp" />
+    <ClCompile Include="..\obj\ObjFileImporter.cpp" />
+    <ClCompile Include="..\obj\ObjFileMtlImporter.cpp" />
+    <ClCompile Include="..\obj\ObjFileParser.cpp" />
+    <ClCompile Include="..\processing\ArmaturePopulate.cpp" />
+    <ClCompile Include="..\processing\CalcTangentsProcess.cpp" />
+    <ClCompile Include="..\processing\ComputeUVMappingProcess.cpp" />
+    <ClCompile Include="..\processing\ConvertToLHProcess.cpp" />
+    <ClCompile Include="..\processing\DeboneProcess.cpp" />
+    <ClCompile Include="..\processing\DropFaceNormalsProcess.cpp" />
+    <ClCompile Include="..\processing\EmbedTexturesProcess.cpp" />
+    <ClCompile Include="..\processing\FindDegenerates.cpp" />
+    <ClCompile Include="..\processing\FindInstancesProcess.cpp" />
+    <ClCompile Include="..\processing\FindInvalidDataProcess.cpp" />
+    <ClCompile Include="..\processing\FixNormalsStep.cpp" />
+    <ClCompile Include="..\processing\GenBoundingBoxesProcess.cpp" />
+    <ClCompile Include="..\processing\GenFaceNormalsProcess.cpp" />
+    <ClCompile Include="..\processing\GenVertexNormalsProcess.cpp" />
+    <ClCompile Include="..\processing\ImproveCacheLocality.cpp" />
+    <ClCompile Include="..\processing\JoinVerticesProcess.cpp" />
+    <ClCompile Include="..\processing\LimitBoneWeightsProcess.cpp" />
+    <ClCompile Include="..\processing\MakeVerboseFormat.cpp" />
+    <ClCompile Include="..\processing\OptimizeGraph.cpp" />
+    <ClCompile Include="..\processing\OptimizeMeshes.cpp" />
+    <ClCompile Include="..\processing\PretransformVertices.cpp" />
+    <ClCompile Include="..\processing\ProcessHelper.cpp" />
+    <ClCompile Include="..\processing\RemoveVCProcess.cpp" />
+    <ClCompile Include="..\processing\ScaleProcess.cpp" />
+    <ClCompile Include="..\processing\SortByPTypeProcess.cpp" />
+    <ClCompile Include="..\processing\SplitByBoneCountProcess.cpp" />
+    <ClCompile Include="..\processing\SplitLargeMeshes.cpp" />
+    <ClCompile Include="..\processing\TextureTransform.cpp" />
+    <ClCompile Include="..\processing\TriangulateProcess.cpp" />
+    <ClCompile Include="..\processing\ValidateDataStructure.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\fbx\FBXCommon.h" />
+    <ClInclude Include="..\fbx\FBXCompileConfig.h" />
+    <ClInclude Include="..\fbx\FBXConverter.h" />
+    <ClInclude Include="..\fbx\FBXDocument.h" />
+    <ClInclude Include="..\fbx\FBXDocumentUtil.h" />
+    <ClInclude Include="..\fbx\FBXImporter.h" />
+    <ClInclude Include="..\fbx\FBXImportSettings.h" />
+    <ClInclude Include="..\fbx\FBXMeshGeometry.h" />
+    <ClInclude Include="..\fbx\FBXParser.h" />
+    <ClInclude Include="..\fbx\FBXProperties.h" />
+    <ClInclude Include="..\fbx\FBXTokenizer.h" />
+    <ClInclude Include="..\fbx\FBXUtil.h" />
+    <ClInclude Include="..\obj\ObjExporter.h" />
+    <ClInclude Include="..\obj\ObjFileData.h" />
+    <ClInclude Include="..\obj\ObjFileImporter.h" />
+    <ClInclude Include="..\obj\ObjFileMtlImporter.h" />
+    <ClInclude Include="..\obj\ObjFileParser.h" />
+    <ClInclude Include="..\obj\ObjTools.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\CMakeLists.txt" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectName>libassimp</ProjectName>
+    <ProjectGuid>{5E9BB0E3-6402-4733-9BE2-8C0DCC193600}</ProjectGuid>
+    <RootNamespace>libbox2d.win32</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset Condition="'$(VisualStudioVersion)' == '12.0'">v120</PlatformToolset>
+    <PlatformToolset Condition="'$(VisualStudioVersion)' == '12.0' and exists('$(MSBuildProgramFiles32)\Microsoft SDKs\Windows\v7.1A')">v120_xp</PlatformToolset>
+    <PlatformToolset Condition="'$(VisualStudioVersion)' == '14.0'">v140</PlatformToolset>
+    <PlatformToolset Condition="'$(VisualStudioVersion)' == '14.0' and exists('$(MSBuildProgramFiles32)\Microsoft SDKs\Windows\v7.1A')">v140_xp</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset Condition="'$(VisualStudioVersion)' == '12.0'">v120</PlatformToolset>
+    <PlatformToolset Condition="'$(VisualStudioVersion)' == '12.0' and exists('$(MSBuildProgramFiles32)\Microsoft SDKs\Windows\v7.1A')">v120_xp</PlatformToolset>
+    <PlatformToolset Condition="'$(VisualStudioVersion)' == '14.0'">v140</PlatformToolset>
+    <PlatformToolset Condition="'$(VisualStudioVersion)' == '14.0' and exists('$(MSBuildProgramFiles32)\Microsoft SDKs\Windows\v7.1A')">v140_xp</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset Condition="'$(VisualStudioVersion)' == '12.0'">v120</PlatformToolset>
+    <PlatformToolset Condition="'$(VisualStudioVersion)' == '12.0' and exists('$(MSBuildProgramFiles32)\Microsoft SDKs\Windows\v7.1A')">v120_xp</PlatformToolset>
+    <PlatformToolset Condition="'$(VisualStudioVersion)' == '14.0'">v140</PlatformToolset>
+    <PlatformToolset Condition="'$(VisualStudioVersion)' == '14.0' and exists('$(MSBuildProgramFiles32)\Microsoft SDKs\Windows\v7.1A')">v140_xp</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset Condition="'$(VisualStudioVersion)' == '12.0'">v120</PlatformToolset>
+    <PlatformToolset Condition="'$(VisualStudioVersion)' == '12.0' and exists('$(MSBuildProgramFiles32)\Microsoft SDKs\Windows\v7.1A')">v120_xp</PlatformToolset>
+    <PlatformToolset Condition="'$(VisualStudioVersion)' == '14.0'">v140</PlatformToolset>
+    <PlatformToolset Condition="'$(VisualStudioVersion)' == '14.0' and exists('$(MSBuildProgramFiles32)\Microsoft SDKs\Windows\v7.1A')">v140_xp</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>12.0.21005.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)..\..\bin\win\x86\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)..\..\build\win\x86\$(ProjectName)\$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)..\..\bin\win\x86\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)..\..\build\win\x86\$(ProjectName)\$(Configuration)\</IntDir>
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|x64'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LibraryPath>$(MSBuildProgramFiles32)\Microsoft SDKs\Windows\v7.1A\lib;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LibraryPath>$(MSBuildProgramFiles32)\Microsoft SDKs\Windows\v7.1A\lib;$(LibraryPath)</LibraryPath>
+    <OutDir>$(SolutionDir)..\..\bin\win\x64\</OutDir>
+    <IntDir>$(SolutionDir)..\..\build\win\x64\$(ProjectName)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LibraryPath>$(MSBuildProgramFiles32)\Microsoft SDKs\Windows\v7.1A\lib;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LibraryPath>$(MSBuildProgramFiles32)\Microsoft SDKs\Windows\v7.1A\lib;$(LibraryPath)</LibraryPath>
+    <OutDir>$(SolutionDir)..\..\bin\win\x64\</OutDir>
+    <IntDir>$(SolutionDir)..\..\build\win\x64\$(ProjectName)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>../;../../;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <DisableSpecificWarnings>4996;4267;4244</DisableSpecificWarnings>
+    </ClCompile>
+    <Lib>
+      <OutputFile>$(OutDir)$(ProjectName).lib</OutputFile>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>../;../../;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <DisableSpecificWarnings>4996;4267;4244</DisableSpecificWarnings>
+    </ClCompile>
+    <Lib>
+      <OutputFile>$(OutDir)$(ProjectName).lib</OutputFile>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>../;../../;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <Optimization>MaxSpeed</Optimization>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <DisableSpecificWarnings>4996;4267;4244</DisableSpecificWarnings>
+    </ClCompile>
+    <Lib>
+      <OutputFile>$(OutDir)$(ProjectName).lib</OutputFile>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>../;../../;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <Optimization>MaxSpeed</Optimization>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <DisableSpecificWarnings>4996;4267;4244</DisableSpecificWarnings>
+    </ClCompile>
+    <Lib>
+      <OutputFile>$(OutDir)$(ProjectName).lib</OutputFile>
+    </Lib>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

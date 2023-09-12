@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="script">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\script\main_android.cpp">
+      <Filter>script</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\script\main_win_linux.cpp">
+      <Filter>script</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\..\script\CMakeLists.txt">
+      <Filter>script</Filter>
+    </Text>
+    <Text Include="..\..\CMakeLists.txt" />
+  </ItemGroup>
+</Project>

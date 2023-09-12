@@ -1,0 +1,39 @@
+<Root>
+    <Shader>
+        <ShaderFile>internal/material/Standard.shader</ShaderFile>
+    </Shader>
+    <Tag>
+        <CastShadow>false</CastShadow>
+        <ReceiveShadow>false</ReceiveShadow>
+    </Tag>
+    <Properties>
+        <Propertie>
+            <Name>_SpecularPower</Name>
+            <Type>1</Type>
+            <Value>0.1</Value>
+            <Range>0.000000, 1.000000</Range>
+        </Propertie>
+        <Propertie>
+            <Name>_Reflections</Name>
+            <Type>1</Type>
+            <Value>0.300000</Value>
+            <Range>0.000000, 1.000000</Range>
+        </Propertie>
+    </Properties>
+    <TextureUnits>
+        <TextureUnit>
+            <Name>_MainTex</Name>
+            <File>a9edcc54a243b2029d4ab7095b86374a</File>
+            <Type>1</Type>
+            <Scale>1.000000, 1.000000</Scale>
+            <Offset>0.000000, 0.000000</Offset>
+        </TextureUnit>
+        <TextureUnit>
+            <Name>_NormalTexture</Name>
+            <File>9aa0052e36df7fab1177d13f9ea56feb</File>
+            <Type>1</Type>
+            <Scale>1.000000, 1.000000</Scale>
+            <Offset>0.000000, 0.000000</Offset>
+        </TextureUnit>
+    </TextureUnits>
+</Root>

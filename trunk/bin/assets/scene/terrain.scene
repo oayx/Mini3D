@@ -1,0 +1,819 @@
+<Root>
+    <Lighting>
+        <AmbientColor>0.287356, 0.287353, 0.287353, 1.000000</AmbientColor>
+        <SkyboxMaterial>3766671e950823dc963e31d522d70755</SkyboxMaterial>
+        <ReflectionsIntensity>0.5</ReflectionsIntensity>
+        <enable>false</enable>
+        <mode>0</mode>
+        <color>1.000000, 0.999990, 0.999990, 1.000000</color>
+        <start>100</start>
+        <end>300</end>
+        <density>0.0099999998</density>
+        <GameObject>
+            <InstanceName>New Scane</InstanceName>
+            <Flags>0</Flags>
+            <Layer>0</Layer>
+            <IsActiveSelf>true</IsActiveSelf>
+            <Components>
+                <Component>Transform</Component>
+            </Components>
+            <Transform>
+                <Enable>true</Enable>
+                <LocalPosition>0.000000, 0.000000, 0.000000</LocalPosition>
+                <LocalRotation>0.000000, 0.000000, 0.000000, 1.000000</LocalRotation>
+                <LocalScale>1.000000, 1.000000, 1.000000</LocalScale>
+            </Transform>
+            <Childrens>
+                <Children>Main Camera</Children>
+                <Children>Directional Light</Children>
+                <Children>Terrain</Children>
+                <Children>Character</Children>
+                <Children>Billboard</Children>
+                <Children>Effect</Children>
+                <Children>Trees</Children>
+                <Children>Reflect-skybox</Children>
+                <Children>Water</Children>
+                <Children>House</Children>
+                <Children>Physx</Children>
+            </Childrens>
+            <GameObject>
+                <InstanceName>Main Camera</InstanceName>
+                <Flags>8192</Flags>
+                <Layer>0</Layer>
+                <IsActiveSelf>true</IsActiveSelf>
+                <Components>
+                    <Component>Transform</Component>
+                    <Component>Camera</Component>
+                    <Component>PostProcess</Component>
+                    <Component>SceneFreeCamera</Component>
+                </Components>
+                <Transform>
+                    <Enable>true</Enable>
+                    <LocalPosition>0.000000, 28.852631, 26.835579</LocalPosition>
+                    <LocalRotation>-0.000000, -0.923879, 0.382683, -0.000000</LocalRotation>
+                    <LocalScale>1.000000, 1.000000, 1.000000</LocalScale>
+                </Transform>
+                <Camera>
+                    <Enable>true</Enable>
+                    <TargetDisplay>0</TargetDisplay>
+                    <fFov>0.78539813</fFov>
+                    <fAspect>1.7777778</fAspect>
+                    <fZNear>0.1</fZNear>
+                    <fZFar>1000</fZFar>
+                    <IsOrthographic>false</IsOrthographic>
+                    <OrthographicSize>5.000000, 5.000000</OrthographicSize>
+                    <ClearFlag>15</ClearFlag>
+                    <ClearColor>0.500000, 0.500000, 0.500000, 0.000000</ClearColor>
+                    <ViewPort>
+                        <x>0</x>
+                        <y>0</y>
+                        <w>1</w>
+                        <h>1</h>
+                        <z_near>0</z_near>
+                        <z_far>1</z_far>
+                    </ViewPort>
+                    <nDepth>0</nDepth>
+                    <CullMask>4294967293</CullMask>
+                    <EnableHDR>false</EnableHDR>
+                    <EnableMSAA>true</EnableMSAA>
+                </Camera>
+                <PostProcess>
+                    <Enable>true</Enable>
+                    <Effects>
+                        <Effect>BloomEffect</Effect>
+                        <Effect>ColorAdjustEffect</Effect>
+                        <Effect>SimpleBlurEffect</Effect>
+                        <Effect>EdgeDetectionEffect</Effect>
+                        <Effect>DepthOfFieldEffect</Effect>
+                        <Effect>MotionBlurEffect</Effect>
+                        <Effect>FXAAEffect</Effect>
+                    </Effects>
+                    <BloomEffect>
+                        <Active>false</Active>
+                        <Priority>0</Priority>
+                        <ColorThreshold>0.295019, 0.295016, 0.295016, 1.000000</ColorThreshold>
+                        <BloomColor>1.000000, 1.000000, 1.000000, 1.000000</BloomColor>
+                        <BloomFactor>4.6900001</BloomFactor>
+                        <DownSample>0</DownSample>
+                    </BloomEffect>
+                    <ColorAdjustEffect>
+                        <Active>false</Active>
+                        <Priority>0</Priority>
+                        <Brightness>1.5</Brightness>
+                        <Saturation>1</Saturation>
+                        <Contrast>1</Contrast>
+                    </ColorAdjustEffect>
+                    <SimpleBlurEffect>
+                        <Active>false</Active>
+                        <Priority>0</Priority>
+                        <BlurRadius>1</BlurRadius>
+                    </SimpleBlurEffect>
+                    <EdgeDetectionEffect>
+                        <Active>false</Active>
+                        <Priority>0</Priority>
+                        <EdgeColor>0.486590, 0.272192, 0.272192, 1.000000</EdgeColor>
+                    </EdgeDetectionEffect>
+                    <DepthOfFieldEffect>
+                        <Active>false</Active>
+                        <Priority>0</Priority>
+                        <DownSample>0</DownSample>
+                        <FocalDistance>0.1</FocalDistance>
+                        <FocalLength>10</FocalLength>
+                        <NearBlurScale>10</NearBlurScale>
+                        <FarBlurScale>50</FarBlurScale>
+                    </DepthOfFieldEffect>
+                    <MotionBlurEffect>
+                        <Active>false</Active>
+                        <Priority>0</Priority>
+                        <Intensity>1.000000, 0.000000, 0.000000, 0.000000</Intensity>
+                    </MotionBlurEffect>
+                    <FXAAEffect>
+                        <Active>false</Active>
+                        <Priority>0</Priority>
+                    </FXAAEffect>
+                </PostProcess>
+                <SceneFreeCamera>
+                    <Enable>true</Enable>
+                    <MoveSpeed>1</MoveSpeed>
+                </SceneFreeCamera>
+                <Childrens/>
+            </GameObject>
+            <GameObject>
+                <InstanceName>Directional Light</InstanceName>
+                <Flags>0</Flags>
+                <Layer>0</Layer>
+                <IsActiveSelf>true</IsActiveSelf>
+                <Components>
+                    <Component>Transform</Component>
+                    <Component>Light</Component>
+                </Components>
+                <Transform>
+                    <Enable>true</Enable>
+                    <LocalPosition>0.000000, 0.000000, 0.000000</LocalPosition>
+                    <LocalRotation>0.382684, 0.000000, 0.000000, 0.923879</LocalRotation>
+                    <LocalScale>1.000000, 1.000000, 1.000000</LocalScale>
+                </Transform>
+                <Light>
+                    <Enable>true</Enable>
+                    <mType>0</mType>
+                    <Diffuse>0.478927, 0.478922, 0.478922, 1.000000</Diffuse>
+                    <Range>10</Range>
+                    <Attenuation>1.000000, 1.000000, 0.100000</Attenuation>
+                    <Intensity>1</Intensity>
+                    <SpotAngle>30</SpotAngle>
+                    <CullMask>4294967295</CullMask>
+                    <ShadowType>2</ShadowType>
+                    <ShadowStrength>0.80000001</ShadowStrength>
+                    <ShadowBias>0</ShadowBias>
+                </Light>
+                <Childrens/>
+            </GameObject>
+            <GameObject>
+                <InstanceName>Terrain</InstanceName>
+                <Flags>0</Flags>
+                <Layer>0</Layer>
+                <IsActiveSelf>true</IsActiveSelf>
+                <Components>
+                    <Component>Transform</Component>
+                    <Component>Terrain</Component>
+                    <Component>TerrainCollider</Component>
+                </Components>
+                <Transform>
+                    <Enable>true</Enable>
+                    <LocalPosition>0.000000, 0.000000, 0.000000</LocalPosition>
+                    <LocalRotation>0.000000, 0.000000, 0.000000, 1.000000</LocalRotation>
+                    <LocalScale>2.000000, 1.000000, 2.000000</LocalScale>
+                </Transform>
+                <Terrain>
+                    <Enable>true</Enable>
+                    <SortLayer>0</SortLayer>
+                    <OrderInLayer>0</OrderInLayer>
+                    <Materials>
+                        <Material>e10ff9b0bec292de7c301ad51f7970b1</Material>
+                    </Materials>
+                    <HeightMapFile>internal/texture/height.jpg</HeightMapFile>
+                    <HeightLimit>20</HeightLimit>
+                    <SmoothIterator>2</SmoothIterator>
+                    <SmoothRange>2</SmoothRange>
+                </Terrain>
+                <TerrainCollider>
+                    <Enable>true</Enable>
+                    <IsTrigger>false</IsTrigger>
+                    <Offset>0.000000, 0.000000, 0.000000</Offset>
+                    <Friction>0.60000002</Friction>
+                    <Restitution>0</Restitution>
+                    <MaskBits>32767</MaskBits>
+                    <GroupIndex>1</GroupIndex>
+                </TerrainCollider>
+                <Childrens>
+                    <Children>Tree</Children>
+                </Childrens>
+                <GameObject>
+                    <InstanceName>Tree</InstanceName>
+                    <Flags>0</Flags>
+                    <Layer>0</Layer>
+                    <IsActiveSelf>true</IsActiveSelf>
+                    <Components>
+                        <Component>Transform</Component>
+                        <Component>TerrainObjectInstance</Component>
+                    </Components>
+                    <Transform>
+                        <Enable>true</Enable>
+                        <LocalPosition>0.000000, 0.000000, 0.000000</LocalPosition>
+                        <LocalRotation>0.000000, 0.000000, 0.000000, 1.000000</LocalRotation>
+                        <LocalScale>1.000000, 1.000000, 1.000000</LocalScale>
+                    </Transform>
+                    <TerrainObjectInstance>
+                        <Enable>true</Enable>
+                        <SortLayer>0</SortLayer>
+                        <OrderInLayer>1</OrderInLayer>
+                        <Materials>
+                            <Material>03f43ba2bc2fb2f0965c2820d52bcf30</Material>
+                        </Materials>
+                        <MeshFile>952b799e5fd15ea2d9320477136413d7</MeshFile>
+                        <Density>0.1</Density>
+                        <Probability>2</Probability>
+                        <PositionMin>-1.000000, 0.000000, -1.000000</PositionMin>
+                        <PositionMax>1.000000, 0.000000, 1.000000</PositionMax>
+                        <ScaleMin>0.050000, 0.050000, 0.050000</ScaleMin>
+                        <ScaleMax>0.080000, 0.080000, 0.080000</ScaleMax>
+                        <RotateMin>0.000000, 1.000000, 0.000000</RotateMin>
+                        <RotateMax>0.000000, 360.000000, 0.000000</RotateMax>
+                    </TerrainObjectInstance>
+                    <Childrens/>
+                </GameObject>
+            </GameObject>
+            <GameObject>
+                <InstanceName>Character</InstanceName>
+                <Flags>0</Flags>
+                <Layer>0</Layer>
+                <IsActiveSelf>true</IsActiveSelf>
+                <Components>
+                    <Component>Transform</Component>
+                    <Component>SkinMeshRender</Component>
+                    <Component>Animation</Component>
+                    <Component>CharacterController</Component>
+                </Components>
+                <Transform>
+                    <Enable>true</Enable>
+                    <LocalPosition>0.000000, 8.852632, 6.835580</LocalPosition>
+                    <LocalRotation>0.000000, 0.000000, 0.000000, 1.000000</LocalRotation>
+                    <LocalScale>1.000003, 0.999997, 0.999981</LocalScale>
+                </Transform>
+                <SkinMeshRender>
+                    <Enable>true</Enable>
+                    <SortLayer>0</SortLayer>
+                    <OrderInLayer>0</OrderInLayer>
+                    <Materials>
+                        <Material>a090b29e36247bb4580742781636a2c8</Material>
+                    </Materials>
+                    <MeshFile>44c8b1e610d261302c8eef8cfe68693e</MeshFile>
+                </SkinMeshRender>
+                <Animation>
+                    <Enable>true</Enable>
+                    <PlayOnAwake>true</PlayOnAwake>
+                    <AutoSimulate>true</AutoSimulate>
+                    <UseUnscaledTime>true</UseUnscaledTime>
+                    <Speed>1</Speed>
+                    <DefaultName>attack</DefaultName>
+                </Animation>
+                <CharacterController>
+                    <Enable>true</Enable>
+                    <StepHeight>0.25</StepHeight>
+                </CharacterController>
+                <Childrens/>
+            </GameObject>
+            <GameObject>
+                <InstanceName>Billboard</InstanceName>
+                <Flags>0</Flags>
+                <Layer>0</Layer>
+                <IsActiveSelf>true</IsActiveSelf>
+                <Components>
+                    <Component>Transform</Component>
+                </Components>
+                <Transform>
+                    <Enable>true</Enable>
+                    <LocalPosition>0.000000, 0.000000, 0.000000</LocalPosition>
+                    <LocalRotation>0.000000, 0.000000, 0.000000, 1.000000</LocalRotation>
+                    <LocalScale>1.000000, 1.000000, 1.000000</LocalScale>
+                </Transform>
+                <Childrens>
+                    <Children>grass</Children>
+                    <Children>grass</Children>
+                    <Children>grass</Children>
+                    <Children>grass</Children>
+                    <Children>grass</Children>
+                    <Children>grass</Children>
+                </Childrens>
+                <GameObject>
+                    <InstanceName>grass</InstanceName>
+                    <Flags>0</Flags>
+                    <Layer>0</Layer>
+                    <IsActiveSelf>true</IsActiveSelf>
+                    <Components>
+                        <Component>Transform</Component>
+                        <Component>Billboard</Component>
+                    </Components>
+                    <Transform>
+                        <Enable>true</Enable>
+                        <LocalPosition>-0.000008, 8.876931, -15.450710</LocalPosition>
+                        <LocalRotation>0.000000, 1.000000, 0.000000, -0.000000</LocalRotation>
+                        <LocalScale>3.999972, 4.000000, 3.999972</LocalScale>
+                    </Transform>
+                    <Billboard>
+                        <Enable>true</Enable>
+                        <SortLayer>0</SortLayer>
+                        <OrderInLayer>0</OrderInLayer>
+                        <Materials>
+                            <Material>fce86167a96936413221c72f37051fe1</Material>
+                        </Materials>
+                    </Billboard>
+                    <Childrens/>
+                </GameObject>
+                <GameObject>
+                    <InstanceName>grass</InstanceName>
+                    <Flags>0</Flags>
+                    <Layer>0</Layer>
+                    <IsActiveSelf>true</IsActiveSelf>
+                    <Components>
+                        <Component>Transform</Component>
+                        <Component>Billboard</Component>
+                    </Components>
+                    <Transform>
+                        <Enable>true</Enable>
+                        <LocalPosition>-16.693565, 8.200000, -22.067574</LocalPosition>
+                        <LocalRotation>0.000000, 0.986504, 0.000000, -0.163738</LocalRotation>
+                        <LocalScale>4.999995, 5.000000, 4.999995</LocalScale>
+                    </Transform>
+                    <Billboard>
+                        <Enable>true</Enable>
+                        <SortLayer>0</SortLayer>
+                        <OrderInLayer>0</OrderInLayer>
+                        <Materials>
+                            <Material>fce86167a96936413221c72f37051fe1</Material>
+                        </Materials>
+                    </Billboard>
+                    <Childrens/>
+                </GameObject>
+                <GameObject>
+                    <InstanceName>grass</InstanceName>
+                    <Flags>0</Flags>
+                    <Layer>0</Layer>
+                    <IsActiveSelf>true</IsActiveSelf>
+                    <Components>
+                        <Component>Transform</Component>
+                        <Component>Billboard</Component>
+                    </Components>
+                    <Transform>
+                        <Enable>true</Enable>
+                        <LocalPosition>-4.946557, 9.700000, -7.662401</LocalPosition>
+                        <LocalRotation>0.000000, 0.997466, 0.000000, -0.071148</LocalRotation>
+                        <LocalScale>5.000071, 5.000000, 5.000071</LocalScale>
+                    </Transform>
+                    <Billboard>
+                        <Enable>true</Enable>
+                        <SortLayer>0</SortLayer>
+                        <OrderInLayer>0</OrderInLayer>
+                        <Materials>
+                            <Material>fce86167a96936413221c72f37051fe1</Material>
+                        </Materials>
+                    </Billboard>
+                    <Childrens/>
+                </GameObject>
+                <GameObject>
+                    <InstanceName>grass</InstanceName>
+                    <Flags>0</Flags>
+                    <Layer>0</Layer>
+                    <IsActiveSelf>true</IsActiveSelf>
+                    <Components>
+                        <Component>Transform</Component>
+                        <Component>Billboard</Component>
+                    </Components>
+                    <Transform>
+                        <Enable>true</Enable>
+                        <LocalPosition>-7.288547, 8.900000, -13.975723</LocalPosition>
+                        <LocalRotation>0.000000, 0.996098, 0.000000, -0.088249</LocalRotation>
+                        <LocalScale>5.000030, 5.000000, 5.000030</LocalScale>
+                    </Transform>
+                    <Billboard>
+                        <Enable>true</Enable>
+                        <SortLayer>0</SortLayer>
+                        <OrderInLayer>0</OrderInLayer>
+                        <Materials>
+                            <Material>fce86167a96936413221c72f37051fe1</Material>
+                        </Materials>
+                    </Billboard>
+                    <Childrens/>
+                </GameObject>
+                <GameObject>
+                    <InstanceName>grass</InstanceName>
+                    <Flags>0</Flags>
+                    <Layer>0</Layer>
+                    <IsActiveSelf>true</IsActiveSelf>
+                    <Components>
+                        <Component>Transform</Component>
+                        <Component>Billboard</Component>
+                    </Components>
+                    <Transform>
+                        <Enable>true</Enable>
+                        <LocalPosition>-7.418013, 8.100000, -23.021265</LocalPosition>
+                        <LocalRotation>0.000000, 0.997274, 0.000000, -0.073784</LocalRotation>
+                        <LocalScale>5.000011, 5.000000, 5.000011</LocalScale>
+                    </Transform>
+                    <Billboard>
+                        <Enable>true</Enable>
+                        <SortLayer>0</SortLayer>
+                        <OrderInLayer>0</OrderInLayer>
+                        <Materials>
+                            <Material>fce86167a96936413221c72f37051fe1</Material>
+                        </Materials>
+                    </Billboard>
+                    <Childrens/>
+                </GameObject>
+                <GameObject>
+                    <InstanceName>grass</InstanceName>
+                    <Flags>0</Flags>
+                    <Layer>0</Layer>
+                    <IsActiveSelf>true</IsActiveSelf>
+                    <Components>
+                        <Component>Transform</Component>
+                        <Component>Billboard</Component>
+                    </Components>
+                    <Transform>
+                        <Enable>true</Enable>
+                        <LocalPosition>-13.373865, 8.200000, -12.342662</LocalPosition>
+                        <LocalRotation>0.000000, 0.986504, 0.000000, -0.163738</LocalRotation>
+                        <LocalScale>4.999995, 5.000000, 4.999995</LocalScale>
+                    </Transform>
+                    <Billboard>
+                        <Enable>true</Enable>
+                        <SortLayer>0</SortLayer>
+                        <OrderInLayer>0</OrderInLayer>
+                        <Materials>
+                            <Material>fce86167a96936413221c72f37051fe1</Material>
+                        </Materials>
+                    </Billboard>
+                    <Childrens/>
+                </GameObject>
+            </GameObject>
+            <GameObject>
+                <InstanceName>Effect</InstanceName>
+                <Flags>0</Flags>
+                <Layer>0</Layer>
+                <IsActiveSelf>true</IsActiveSelf>
+                <Components>
+                    <Component>Transform</Component>
+                </Components>
+                <Transform>
+                    <Enable>true</Enable>
+                    <LocalPosition>0.000000, 8.511886, 0.000000</LocalPosition>
+                    <LocalRotation>0.000000, 0.000000, 0.000000, 1.000000</LocalRotation>
+                    <LocalScale>1.000000, 1.000000, 1.000000</LocalScale>
+                </Transform>
+                <Childrens>
+                    <Children>Fire</Children>
+                    <Children>Fire</Children>
+                </Childrens>
+                <GameObject>
+                    <InstanceName>Fire</InstanceName>
+                    <Flags>0</Flags>
+                    <Layer>0</Layer>
+                    <IsActiveSelf>true</IsActiveSelf>
+                    <Components>
+                        <Component>Transform</Component>
+                        <Component>ParticleSystem</Component>
+                    </Components>
+                    <Transform>
+                        <Enable>true</Enable>
+                        <LocalPosition>28.461800, 0.000000, -0.000005</LocalPosition>
+                        <LocalRotation>-0.707107, 0.000000, 0.000000, 0.707107</LocalRotation>
+                        <LocalScale>5.000000, 4.999947, 0.999993</LocalScale>
+                    </Transform>
+                    <ParticleSystem>
+                        <Enable>true</Enable>
+                        <Base>
+                            <Duration>0.1</Duration>
+                            <Loop>true</Loop>
+                            <StartDelay>0</StartDelay>
+                            <StartLifeTime>1</StartLifeTime>
+                            <StartSpeed>0</StartSpeed>
+                            <StartSize>1.000000, 1.000000, 1.000000</StartSize>
+                            <StartRotation>0.000000, 0.000000, 0.000000</StartRotation>
+                            <StartColor>1.000000, 1.000000, 1.000000, 1.000000</StartColor>
+                            <GravityModifier>0</GravityModifier>
+                            <SimulationSpeed>1</SimulationSpeed>
+                            <UseUnscaledTime>false</UseUnscaledTime>
+                            <PlayOnAwake>true</PlayOnAwake>
+                            <MaxParticles>1</MaxParticles>
+                            <RandomSeed>0</RandomSeed>
+                            <Space>0</Space>
+                            <ScalingMode>1</ScalingMode>
+                            <StopAction>0</StopAction>
+                        </Base>
+                        <Emission>
+                            <Enabled>true</Enabled>
+                            <RateOverTime>100</RateOverTime>
+                        </Emission>
+                        <Shape>
+                            <Enabled>true</Enabled>
+                            <Type>0</Type>
+                            <Radius>0.0099999998</Radius>
+                            <Degree>30</Degree>
+                            <Position>0.000000, 0.000000, 0.000000</Position>
+                            <Rotation>0.000000, 0.000000, 0.000000</Rotation>
+                            <Scale>1.000000, 1.000000, 1.000000</Scale>
+                        </Shape>
+                        <VelocityOverLifetime>
+                            <Enabled>false</Enabled>
+                            <Velocity>0.000000, 0.000000, 0.000000</Velocity>
+                            <SpeedModifier>1</SpeedModifier>
+                        </VelocityOverLifetime>
+                        <LimitVelocityOverLifetime>
+                            <Enabled>false</Enabled>
+                            <Speed>1</Speed>
+                            <Dampen>0.5</Dampen>
+                        </LimitVelocityOverLifetime>
+                        <ForceOverLifetime>
+                            <Enabled>false</Enabled>
+                            <Force>0.000000, 0.000000, 0.000000</Force>
+                        </ForceOverLifetime>
+                        <ColorOverLifetime>
+                            <Enabled>false</Enabled>
+                            <TargetColor>1.000000, 1.000000, 1.000000, 1.000000</TargetColor>
+                        </ColorOverLifetime>
+                        <SizeOverLifetime>
+                            <Enabled>false</Enabled>
+                            <TargetSize>1.000000, 1.000000, 1.000000</TargetSize>
+                        </SizeOverLifetime>
+                        <TextureSheetAnimation>
+                            <Enabled>true</Enabled>
+                            <Rows>4</Rows>
+                            <Cols>5</Cols>
+                            <StartFrame>0</StartFrame>
+                            <Cycles>1</Cycles>
+                        </TextureSheetAnimation>
+                        <SortLayer>0</SortLayer>
+                        <OrderInLayer>0</OrderInLayer>
+                        <MaterialFile>c65b62de6aa1e8a2928d3a249dba05f1</MaterialFile>
+                    </ParticleSystem>
+                    <Childrens/>
+                </GameObject>
+                <GameObject>
+                    <InstanceName>Fire</InstanceName>
+                    <Flags>0</Flags>
+                    <Layer>0</Layer>
+                    <IsActiveSelf>true</IsActiveSelf>
+                    <Components>
+                        <Component>Transform</Component>
+                        <Component>ParticleSystem</Component>
+                    </Components>
+                    <Transform>
+                        <Enable>true</Enable>
+                        <LocalPosition>28.461800, 0.000000, 12.332352</LocalPosition>
+                        <LocalRotation>-0.707107, 0.000000, 0.000000, 0.707107</LocalRotation>
+                        <LocalScale>5.000000, 4.999937, 0.999992</LocalScale>
+                    </Transform>
+                    <ParticleSystem>
+                        <Enable>true</Enable>
+                        <Base>
+                            <Duration>0.1</Duration>
+                            <Loop>true</Loop>
+                            <StartDelay>0</StartDelay>
+                            <StartLifeTime>1</StartLifeTime>
+                            <StartSpeed>0</StartSpeed>
+                            <StartSize>1.000000, 1.000000, 1.000000</StartSize>
+                            <StartRotation>0.000000, 0.000000, 0.000000</StartRotation>
+                            <StartColor>1.000000, 1.000000, 1.000000, 1.000000</StartColor>
+                            <GravityModifier>0</GravityModifier>
+                            <SimulationSpeed>1</SimulationSpeed>
+                            <UseUnscaledTime>false</UseUnscaledTime>
+                            <PlayOnAwake>true</PlayOnAwake>
+                            <MaxParticles>1</MaxParticles>
+                            <RandomSeed>0</RandomSeed>
+                            <Space>0</Space>
+                            <ScalingMode>1</ScalingMode>
+                            <StopAction>0</StopAction>
+                        </Base>
+                        <Emission>
+                            <Enabled>true</Enabled>
+                            <RateOverTime>100</RateOverTime>
+                        </Emission>
+                        <Shape>
+                            <Enabled>true</Enabled>
+                            <Type>0</Type>
+                            <Radius>0.0099999998</Radius>
+                            <Degree>30</Degree>
+                            <Position>0.000000, 0.000000, 0.000000</Position>
+                            <Rotation>0.000000, 0.000000, 0.000000</Rotation>
+                            <Scale>1.000000, 1.000000, 1.000000</Scale>
+                        </Shape>
+                        <VelocityOverLifetime>
+                            <Enabled>false</Enabled>
+                            <Velocity>0.000000, 0.000000, 0.000000</Velocity>
+                            <SpeedModifier>1</SpeedModifier>
+                        </VelocityOverLifetime>
+                        <LimitVelocityOverLifetime>
+                            <Enabled>false</Enabled>
+                            <Speed>1</Speed>
+                            <Dampen>0.5</Dampen>
+                        </LimitVelocityOverLifetime>
+                        <ForceOverLifetime>
+                            <Enabled>false</Enabled>
+                            <Force>0.000000, 0.000000, 0.000000</Force>
+                        </ForceOverLifetime>
+                        <ColorOverLifetime>
+                            <Enabled>false</Enabled>
+                            <TargetColor>1.000000, 1.000000, 1.000000, 1.000000</TargetColor>
+                        </ColorOverLifetime>
+                        <SizeOverLifetime>
+                            <Enabled>false</Enabled>
+                            <TargetSize>1.000000, 1.000000, 1.000000</TargetSize>
+                        </SizeOverLifetime>
+                        <TextureSheetAnimation>
+                            <Enabled>true</Enabled>
+                            <Rows>4</Rows>
+                            <Cols>5</Cols>
+                            <StartFrame>0</StartFrame>
+                            <Cycles>1</Cycles>
+                        </TextureSheetAnimation>
+                        <SortLayer>0</SortLayer>
+                        <OrderInLayer>0</OrderInLayer>
+                        <MaterialFile>c65b62de6aa1e8a2928d3a249dba05f1</MaterialFile>
+                    </ParticleSystem>
+                    <Childrens/>
+                </GameObject>
+            </GameObject>
+            <GameObject>
+                <InstanceName>Trees</InstanceName>
+                <Flags>0</Flags>
+                <Layer>0</Layer>
+                <IsActiveSelf>true</IsActiveSelf>
+                <Components>
+                    <Component>Transform</Component>
+                </Components>
+                <Transform>
+                    <Enable>true</Enable>
+                    <LocalPosition>0.000000, 9.461898, 0.000000</LocalPosition>
+                    <LocalRotation>0.000000, 0.000000, 0.000000, 1.000000</LocalRotation>
+                    <LocalScale>1.000000, 1.000000, 1.000000</LocalScale>
+                </Transform>
+                <Childrens>
+                    <Children>Tree</Children>
+                </Childrens>
+                <GameObject>
+                    <InstanceName>Tree</InstanceName>
+                    <Flags>0</Flags>
+                    <Layer>0</Layer>
+                    <IsActiveSelf>true</IsActiveSelf>
+                    <Components>
+                        <Component>Transform</Component>
+                        <Component>MeshRender</Component>
+                    </Components>
+                    <Transform>
+                        <Enable>true</Enable>
+                        <LocalPosition>-7.320842, -1.387222, 0.000000</LocalPosition>
+                        <LocalRotation>0.000000, 0.000000, 0.000000, 1.000000</LocalRotation>
+                        <LocalScale>0.050000, 0.050000, 0.050000</LocalScale>
+                    </Transform>
+                    <MeshRender>
+                        <Enable>true</Enable>
+                        <SortLayer>0</SortLayer>
+                        <OrderInLayer>0</OrderInLayer>
+                        <Materials>
+                            <Material>5973439fda01e27d114989ab717566e8</Material>
+                        </Materials>
+                        <MeshFile>952b799e5fd15ea2d9320477136413d7</MeshFile>
+                    </MeshRender>
+                    <Childrens/>
+                </GameObject>
+            </GameObject>
+            <GameObject>
+                <InstanceName>Reflect-skybox</InstanceName>
+                <Flags>0</Flags>
+                <Layer>0</Layer>
+                <IsActiveSelf>true</IsActiveSelf>
+                <Components>
+                    <Component>Transform</Component>
+                    <Component>MeshRender</Component>
+                </Components>
+                <Transform>
+                    <Enable>true</Enable>
+                    <LocalPosition>-26.048523, 12.095886, 0.000000</LocalPosition>
+                    <LocalRotation>0.000000, 0.000000, 0.000000, 1.000000</LocalRotation>
+                    <LocalScale>1.000000, 1.000000, 1.000000</LocalScale>
+                </Transform>
+                <MeshRender>
+                    <Enable>true</Enable>
+                    <SortLayer>0</SortLayer>
+                    <OrderInLayer>0</OrderInLayer>
+                    <Materials>
+                        <Material>7a7ce6b86f4366cfbc5547543f16af54</Material>
+                    </Materials>
+                    <MeshFile>b39b95d0d6d26fcac217e3ab22110b20</MeshFile>
+                </MeshRender>
+                <Childrens/>
+            </GameObject>
+            <GameObject>
+                <InstanceName>Water</InstanceName>
+                <Flags>0</Flags>
+                <Layer>0</Layer>
+                <IsActiveSelf>true</IsActiveSelf>
+                <Components>
+                    <Component>Transform</Component>
+                    <Component>MeshRender</Component>
+                </Components>
+                <Transform>
+                    <Enable>true</Enable>
+                    <LocalPosition>0.000000, -6.700000, 0.000000</LocalPosition>
+                    <LocalRotation>0.000000, 0.000000, 0.000000, 1.000000</LocalRotation>
+                    <LocalScale>100.000000, 1.000000, 100.000000</LocalScale>
+                </Transform>
+                <MeshRender>
+                    <Enable>true</Enable>
+                    <SortLayer>0</SortLayer>
+                    <OrderInLayer>0</OrderInLayer>
+                    <Materials>
+                        <Material>d6d658e69fa4e965ea9aa4a1c8472416</Material>
+                    </Materials>
+                    <MeshFile>37e5365aaeb7a5eda722c72f58009283</MeshFile>
+                </MeshRender>
+                <Childrens/>
+            </GameObject>
+            <GameObject>
+                <InstanceName>House</InstanceName>
+                <Flags>0</Flags>
+                <Layer>0</Layer>
+                <IsActiveSelf>true</IsActiveSelf>
+                <Components>
+                    <Component>Transform</Component>
+                    <Component>MeshRender</Component>
+                </Components>
+                <Transform>
+                    <Enable>true</Enable>
+                    <LocalPosition>-125.979408, 24.657864, 11.974063</LocalPosition>
+                    <LocalRotation>0.000000, 0.000000, 0.000000, 1.000000</LocalRotation>
+                    <LocalScale>0.005000, 0.005000, 0.005000</LocalScale>
+                </Transform>
+                <MeshRender>
+                    <Enable>true</Enable>
+                    <SortLayer>0</SortLayer>
+                    <OrderInLayer>0</OrderInLayer>
+                    <Materials>
+                        <Material>98f0e9cf57d42044874cc743ea6032d1</Material>
+                    </Materials>
+                    <MeshFile>a8fe355a4a2a43d443a916d8c58c3833</MeshFile>
+                </MeshRender>
+                <Childrens/>
+            </GameObject>
+            <GameObject>
+                <InstanceName>Physx</InstanceName>
+                <Flags>0</Flags>
+                <Layer>0</Layer>
+                <IsActiveSelf>true</IsActiveSelf>
+                <Components>
+                    <Component>Transform</Component>
+                    <Component>MeshRender</Component>
+                    <Component>SphereCollider</Component>
+                    <Component>RigidBody</Component>
+                </Components>
+                <Transform>
+                    <Enable>true</Enable>
+                    <LocalPosition>16.206598, 20.000000, 0.000000</LocalPosition>
+                    <LocalRotation>0.000000, 0.000000, 0.000000, 1.000000</LocalRotation>
+                    <LocalScale>1.000000, 1.000000, 1.000000</LocalScale>
+                </Transform>
+                <MeshRender>
+                    <Enable>true</Enable>
+                    <SortLayer>0</SortLayer>
+                    <OrderInLayer>0</OrderInLayer>
+                    <Materials>
+                        <Material>0c2ae94e325ada491d6858d52989ecf1</Material>
+                    </Materials>
+                    <MeshFile>36715df3250ae492d75dc46eacff5df9</MeshFile>
+                </MeshRender>
+                <SphereCollider>
+                    <Enable>true</Enable>
+                    <IsTrigger>false</IsTrigger>
+                    <Offset>0.000000, 0.000000, 0.000000</Offset>
+                    <Friction>0.60000002</Friction>
+                    <Restitution>0</Restitution>
+                    <MaskBits>32767</MaskBits>
+                    <GroupIndex>1</GroupIndex>
+                    <LocalScale>1.000000, 1.000000, 1.000000</LocalScale>
+                </SphereCollider>
+                <RigidBody>
+                    <Enable>true</Enable>
+                    <Mass>1</Mass>
+                    <LinearDrag>0</LinearDrag>
+                    <AngularDrag>0.050000001</AngularDrag>
+                    <UseGravity>true</UseGravity>
+                    <IsKinematic>false</IsKinematic>
+                    <FixedPosition>0.000000, 0.000000, 0.000000</FixedPosition>
+                    <FixedRotation>0.000000, 0.000000, 0.000000</FixedRotation>
+                    <CollisionDetection>0</CollisionDetection>
+                </RigidBody>
+                <Childrens/>
+            </GameObject>
+        </GameObject>
+    </Lighting>
+</Root>

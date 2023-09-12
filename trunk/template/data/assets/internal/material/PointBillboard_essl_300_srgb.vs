@@ -1,0 +1,27 @@
+#version 300 es
+
+struct type_TransformBuffer
+{
+    mat4 MATRIX_MVP;
+    mat4 MATRIX_M;
+    mat4 MATRIX_MV;
+    mat4 MATRIX_I_M;
+    mat4 MATRIX_T_M;
+    mat4 MATRIX_T_MV;
+    mat4 MATRIX_IT_M;
+    mat4 MATRIX_IT_MV;
+};
+
+uniform type_TransformBuffer TransformBuffer;
+
+layout(location = 0) in vec4 in_var_POSITION;
+layout(location = 1) in vec2 in_var_SIZE;
+out vec4 varying_POSITION;
+out vec2 varying_SIZE;
+
+void main()
+{
+    varying_POSITION = in_var_POSITION * TransformBuffer.MATRIX_M;
+    varying_SIZE = in_var_SIZE;
+}
+

@@ -1,0 +1,7 @@
+<Material>
+    <Tag>
+        <CastShadow>true</CastShadow>
+        <ReceiveShadow>false</ReceiveShadow>
+    </Tag>
+    <Shader><ShaderFile>internal/material/Geometry.shader</ShaderFile></Shader>
+</Material>

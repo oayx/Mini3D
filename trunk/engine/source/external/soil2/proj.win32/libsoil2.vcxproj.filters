@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\etc1_utils.c" />
+    <ClCompile Include="..\image_DXT.c" />
+    <ClCompile Include="..\image_helper.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\etc1_utils.h" />
+    <ClInclude Include="..\image_DXT.h" />
+    <ClInclude Include="..\image_helper.h" />
+    <ClInclude Include="..\pkm_helper.h" />
+    <ClInclude Include="..\pvr_helper.h" />
+    <ClInclude Include="..\stbi_DDS.h" />
+    <ClInclude Include="..\stbi_DDS_c.h" />
+    <ClInclude Include="..\stbi_ext.h" />
+    <ClInclude Include="..\stbi_ext_c.h" />
+    <ClInclude Include="..\stbi_pkm.h" />
+    <ClInclude Include="..\stbi_pkm_c.h" />
+    <ClInclude Include="..\stbi_pvr.h" />
+    <ClInclude Include="..\stbi_pvr_c.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\CMakeLists.txt" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,19 @@
+4-6 Loop idle
+401-480 Once randomidle1
+498-569 Once randomidle2
+572-645 Once randomidle3
+760-860 Once enteridle
+314-385 Once hitidle
+11-35 Loop run
+55-79 Loop retreat
+89-109 Once rightturn
+109-128 Once leftturn
+268-294 Clamp Forever attack1
+264-271 Clamp Forever attack2
+1000-1090 Once fillbullet1
+1180-1225 Once fillbullet2
+299-311 Once changeweapon
+152-163 Once prejump
+164-172 Loop fly
+138-150 Once dropbuffer
+228-261 Once die

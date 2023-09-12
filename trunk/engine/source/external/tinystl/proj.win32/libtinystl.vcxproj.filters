@@ -1,0 +1,158 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="test">
+      <UniqueIdentifier>{f84a7ccc-f25c-4fb2-ab03-8ad8265384b1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="stl">
+      <UniqueIdentifier>{08f97794-ef3f-445a-9881-10244dd207af}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\algo.h">
+      <Filter>stl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\algobase.h">
+      <Filter>stl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\algorithm.h">
+      <Filter>stl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\alloc.h">
+      <Filter>stl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\allocator.h">
+      <Filter>stl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\basic_string.h">
+      <Filter>stl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\construct.h">
+      <Filter>stl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\deque.h">
+      <Filter>stl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\functional.h">
+      <Filter>stl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\hash_functional.h">
+      <Filter>stl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\hash_map.h">
+      <Filter>stl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\hash_set.h">
+      <Filter>stl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\hashtable.h">
+      <Filter>stl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\heap_algo.h">
+      <Filter>stl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\iterator.h">
+      <Filter>stl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\list.h">
+      <Filter>stl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\map.h">
+      <Filter>stl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\memory.h">
+      <Filter>stl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\numeric.h">
+      <Filter>stl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\pair.h">
+      <Filter>stl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\queue.h">
+      <Filter>stl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rb_tree.h">
+      <Filter>stl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\reverse_iterator.h">
+      <Filter>stl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\set.h">
+      <Filter>stl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\set_algo.h">
+      <Filter>stl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\stack.h">
+      <Filter>stl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\string.h">
+      <Filter>stl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\tempbuf.h">
+      <Filter>stl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\type_traits.h">
+      <Filter>stl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uninitialized.h">
+      <Filter>stl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\vector.h">
+      <Filter>stl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\test\algorithm_performance_test.h">
+      <Filter>test</Filter>
+    </ClInclude>
+    <ClInclude Include="..\test\algorithm_test.h">
+      <Filter>test</Filter>
+    </ClInclude>
+    <ClInclude Include="..\test\deque_test.h">
+      <Filter>test</Filter>
+    </ClInclude>
+    <ClInclude Include="..\test\hash_map_test.h">
+      <Filter>test</Filter>
+    </ClInclude>
+    <ClInclude Include="..\test\hash_set_test.h">
+      <Filter>test</Filter>
+    </ClInclude>
+    <ClInclude Include="..\test\list_test.h">
+      <Filter>test</Filter>
+    </ClInclude>
+    <ClInclude Include="..\test\map_test.h">
+      <Filter>test</Filter>
+    </ClInclude>
+    <ClInclude Include="..\test\queue_test.h">
+      <Filter>test</Filter>
+    </ClInclude>
+    <ClInclude Include="..\test\set_test.h">
+      <Filter>test</Filter>
+    </ClInclude>
+    <ClInclude Include="..\test\stack_test.h">
+      <Filter>test</Filter>
+    </ClInclude>
+    <ClInclude Include="..\test\string_test.h">
+      <Filter>test</Filter>
+    </ClInclude>
+    <ClInclude Include="..\test\test.h">
+      <Filter>test</Filter>
+    </ClInclude>
+    <ClInclude Include="..\test\vector_test.h">
+      <Filter>test</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\test\README.md">
+      <Filter>test</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\test\test.cpp">
+      <Filter>test</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\CMakeLists.txt" />
+  </ItemGroup>
+</Project>

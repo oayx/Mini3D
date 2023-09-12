@@ -1,0 +1,11 @@
+<Root>
+    <Gravity>0.000000, -9.800000, 0.000000</Gravity>
+    <SubSteps>10</SubSteps>
+    <AutoSimulate>true</AutoSimulate>
+    <UseUnscaledTime>false</UseUnscaledTime>
+    <AutoSyncTransform>true</AutoSyncTransform>
+    <DefaultFriction>0.60000002</DefaultFriction>
+    <DefaultRestitution>0</DefaultRestitution>
+    <WorldCenter>0.000000, 0.000000, 0.000000</WorldCenter>
+    <WorldExtent>1.000000, 500.000000, 500.000000</WorldExtent>
+</Root>

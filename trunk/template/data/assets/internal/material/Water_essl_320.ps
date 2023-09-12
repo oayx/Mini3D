@@ -1,0 +1,96 @@
+#version 320 es
+precision mediump float;
+precision highp int;
+
+struct type_CameraBuffer
+{
+    highp mat4 MATRIX_V;
+    highp mat4 MATRIX_P;
+    highp mat4 MATRIX_VP;
+    highp mat4 MATRIX_I_VP;
+    highp vec3 _WorldSpaceCameraPos;
+    highp vec3 _WorldSpaceCameraDir;
+    highp vec4 _ProjectionParams;
+    highp vec4 _ScreenParams;
+    highp vec4 _ZBufferParams;
+};
+
+uniform type_CameraBuffer CameraBuffer;
+
+struct type_CommbonRarelyBuffer
+{
+    highp vec3 _LIGHTMODEL_AMBIENT;
+    int _FogMode;
+    highp vec4 _FogColor;
+    highp float _FogStart;
+    highp float _FogEnd;
+    highp float _FogDensity;
+};
+
+uniform type_CommbonRarelyBuffer CommbonRarelyBuffer;
+
+struct type_CustomBuffer
+{
+    highp vec4 _MainTex_ST;
+    highp vec4 _TintColor;
+    highp float _Speed;
+    highp float _Distort;
+    highp float _Intensity;
+    highp float _Alpha;
+    highp vec4 _Time;
+    highp float _FresnelIndensity;
+};
+
+uniform type_CustomBuffer CustomBuffer;
+
+uniform highp sampler2D _MainTex;
+uniform highp samplerCube _SkyBox;
+
+layout(location = 0) in highp vec2 in_var_TEXCOORD0;
+layout(location = 1) in highp vec3 in_var_TEXCOORD1;
+layout(location = 2) in highp vec3 in_var_TEXCOORD2;
+layout(location = 3) in highp vec3 in_var_TEXCOORD3;
+layout(location = 4) in highp float in_var_TEXCOORD4;
+layout(location = 0) out highp vec4 out_var_SV_Target;
+
+float _65;
+
+void main()
+{
+    highp float _76 = CustomBuffer._Time.x * CustomBuffer._Speed;
+    highp vec4 _88 = texture(_MainTex, ((in_var_TEXCOORD0 + (vec2(0.0, 0.0500000007450580596923828125) * _76)) * CustomBuffer._MainTex_ST.xy) + CustomBuffer._MainTex_ST.zw);
+    highp vec4 _94 = texture(_MainTex, ((in_var_TEXCOORD0 + (vec2(-0.00999999977648258209228515625, 0.0500000007450580596923828125) * _76)) * CustomBuffer._MainTex_ST.xy) + CustomBuffer._MainTex_ST.zw);
+    highp vec4 _107 = texture(_MainTex, (((in_var_TEXCOORD0 + (vec2(0.02999999932944774627685546875) * _76)) + ((_88.xy * _94.xy) * CustomBuffer._Distort)) * CustomBuffer._MainTex_ST.xy) + CustomBuffer._MainTex_ST.zw);
+    highp vec4 _129 = texture(_SkyBox, reflect(normalize(in_var_TEXCOORD1 - CameraBuffer._WorldSpaceCameraPos), normalize(in_var_TEXCOORD2)));
+    highp vec4 _144 = vec4(mix(vec4((CustomBuffer._TintColor.xyz * _107.xyz) * CustomBuffer._Intensity, _65).xyz, _129.xyz, vec3(1.0 - clamp(pow(max(0.0, dot(in_var_TEXCOORD2, in_var_TEXCOORD3)), CustomBuffer._FresnelIndensity), 0.0, 1.0))), 1.0);
+    highp float _180;
+    if (CommbonRarelyBuffer._FogMode == 1)
+    {
+        _180 = clamp((CommbonRarelyBuffer._FogEnd - in_var_TEXCOORD4) / (CommbonRarelyBuffer._FogEnd - CommbonRarelyBuffer._FogStart), 0.0, 1.0);
+    }
+    else
+    {
+        highp float _179;
+        if (CommbonRarelyBuffer._FogMode == 2)
+        {
+            _179 = exp(-(CommbonRarelyBuffer._FogDensity * in_var_TEXCOORD4));
+        }
+        else
+        {
+            highp float _178;
+            if (CommbonRarelyBuffer._FogMode == 3)
+            {
+                _178 = exp((((-CommbonRarelyBuffer._FogDensity) * CommbonRarelyBuffer._FogDensity) * in_var_TEXCOORD4) * in_var_TEXCOORD4);
+            }
+            else
+            {
+                _178 = 1.0;
+            }
+            _179 = _178;
+        }
+        _180 = _179;
+    }
+    highp vec3 _186 = mix(CommbonRarelyBuffer._FogColor.xyz, _144.xyz, vec3(_180));
+    out_var_SV_Target = vec4(_186.x, _186.y, _186.z, _144.w);
+}
+

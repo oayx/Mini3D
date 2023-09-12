@@ -1,0 +1,17 @@
+<Root>
+    <Tag>
+        <CastShadow>false</CastShadow>
+        <ReceiveShadow>false</ReceiveShadow>
+    </Tag>
+    <Properties>
+        <Propertie>
+            <Name>_Color</Name>
+            <Type>4</Type>
+            <Value>0.000000, 1.000000, 1.000000, 1.000000</Value>
+            <Range>0.000000, 0.000000</Range>
+        </Propertie>
+    </Properties>
+    <Shader>
+        <ShaderFile>internal/material/UnlitColor.shader</ShaderFile>
+    </Shader>
+</Root>

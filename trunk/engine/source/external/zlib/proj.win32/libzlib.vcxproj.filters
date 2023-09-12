@@ -1,0 +1,75 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="include">
+      <UniqueIdentifier>{e5a5029f-a186-458b-ab19-a674c54dabf4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{50fff877-e4f8-401f-a17b-7883278c9a02}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\zlib.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\zconf.h">
+      <Filter>include</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\adler32.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\compress.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\crc32.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\deflate.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\gzclose.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\gzlib.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\gzread.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\gzwrite.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\infback.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\inffast.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\inflate.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\inftrees.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ioapi.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\trees.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uncompr.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\unzip.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\zutil.c">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\CMakeLists.txt" />
+  </ItemGroup>
+</Project>

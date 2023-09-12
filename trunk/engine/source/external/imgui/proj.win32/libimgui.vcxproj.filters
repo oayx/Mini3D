@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\imgui.cpp" />
+    <ClCompile Include="..\imgui_demo.cpp" />
+    <ClCompile Include="..\imgui_draw.cpp" />
+    <ClCompile Include="..\imgui_tables.cpp" />
+    <ClCompile Include="..\imgui_widgets.cpp" />
+    <ClCompile Include="..\guizmo\GraphEditor.cpp">
+      <Filter>guizmo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\guizmo\ImCurveEdit.cpp">
+      <Filter>guizmo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\guizmo\ImGradient.cpp">
+      <Filter>guizmo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\guizmo\ImGuizmo.cpp">
+      <Filter>guizmo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\guizmo\ImSequencer.cpp">
+      <Filter>guizmo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\filedialog\ImFileDialog.cpp">
+      <Filter>filedialog</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\imconfig.h" />
+    <ClInclude Include="..\imgui.h" />
+    <ClInclude Include="..\imgui_internal.h" />
+    <ClInclude Include="..\imstb_rectpack.h" />
+    <ClInclude Include="..\imstb_textedit.h" />
+    <ClInclude Include="..\imstb_truetype.h" />
+    <ClInclude Include="..\icon\IconsFontAwesome5.h">
+      <Filter>icon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ex\imgui_user.h">
+      <Filter>ex</Filter>
+    </ClInclude>
+    <ClInclude Include="..\guizmo\ImZoomSlider.h">
+      <Filter>guizmo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\guizmo\GraphEditor.h">
+      <Filter>guizmo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\guizmo\ImCurveEdit.h">
+      <Filter>guizmo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\guizmo\ImGradient.h">
+      <Filter>guizmo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\guizmo\ImGuizmo.h">
+      <Filter>guizmo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\guizmo\ImSequencer.h">
+      <Filter>guizmo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\filedialog\ImFileDialog.h">
+      <Filter>filedialog</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="icon">
+      <UniqueIdentifier>{ab480075-6863-471d-a649-dc6f6c9731d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="node">
+      <UniqueIdentifier>{1d4fe3a2-9085-4671-b871-6a0799e9d560}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ex">
+      <UniqueIdentifier>{48f532e3-c999-462a-a4b9-86b17618864b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="guizmo">
+      <UniqueIdentifier>{793ece1f-170f-4a36-adc1-5a4762527eac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="filedialog">
+      <UniqueIdentifier>{a0314258-83a9-45e9-9d9e-1d6750dacebd}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\ex\imgui_user.inl">
+      <Filter>ex</Filter>
+    </None>
+  </ItemGroup>
+</Project>

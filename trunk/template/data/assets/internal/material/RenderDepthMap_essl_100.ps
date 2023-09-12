@@ -1,0 +1,11 @@
+#version 100
+precision mediump float;
+precision highp int;
+
+varying highp float varying_TEXCOORD0;
+
+void main()
+{
+    gl_FragData[0] = vec4(varying_TEXCOORD0);
+}
+

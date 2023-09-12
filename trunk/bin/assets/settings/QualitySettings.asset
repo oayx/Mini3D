@@ -1,0 +1,6 @@
+<Root>
+    <MSAAType>8</MSAAType>
+    <ShadowType>2</ShadowType>
+    <ShadowResolution>3</ShadowResolution>
+    <ShadowDistance>400</ShadowDistance>
+</Root>

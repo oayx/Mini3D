@@ -1,0 +1,228 @@
+<Root>
+    <Lighting>
+        <SkyboxMaterial>3766671e950823dc963e31d522d70755</SkyboxMaterial>
+        <GameObject>
+            <InstanceName>New Scane</InstanceName>
+            <Flags>0</Flags>
+            <Layer>0</Layer>
+            <IsActiveSelf>true</IsActiveSelf>
+            <Components>
+                <Component>Transform</Component>
+            </Components>
+            <Transform>
+                <Enable>true</Enable>
+                <LocalPosition>0.000000, 0.000000, 0.000000</LocalPosition>
+                <LocalRotation>0.000000, 0.000000, 0.000000, 1.000000</LocalRotation>
+                <LocalScale>1.000000, 1.000000, 1.000000</LocalScale>
+            </Transform>
+            <Childrens>
+                <Children>Main Camera</Children>
+                <Children>Directional Light</Children>
+                <Children>Plane</Children>
+                <Children>GameObject</Children>
+                <Children>GameObject</Children>
+            </Childrens>
+            <GameObject>
+                <InstanceName>Main Camera</InstanceName>
+                <Flags>0</Flags>
+                <Layer>0</Layer>
+                <IsActiveSelf>true</IsActiveSelf>
+                <Components>
+                    <Component>Transform</Component>
+                    <Component>Camera</Component>
+                </Components>
+                <Transform>
+                    <Enable>true</Enable>
+                    <LocalPosition>0.000000, 10.000000, -10.000000</LocalPosition>
+                    <LocalRotation>0.382683, 0.000000, -0.000000, 0.923879</LocalRotation>
+                    <LocalScale>1.000000, 1.000000, 1.000000</LocalScale>
+                </Transform>
+                <Camera>
+                    <Enable>true</Enable>
+                    <TargetDisplay>0</TargetDisplay>
+                    <fFov>0.78539813</fFov>
+                    <fAspect>1.8879056</fAspect>
+                    <fZNear>0.1</fZNear>
+                    <fZFar>1000</fZFar>
+                    <IsOrthographic>false</IsOrthographic>
+                    <OrthographicSize>5.000000, 5.000000</OrthographicSize>
+                    <ClearFlag>7</ClearFlag>
+                    <ClearColor>0.500000, 0.500000, 0.500000, 0.000000</ClearColor>
+                    <ViewPort>
+                        <x>0</x>
+                        <y>0</y>
+                        <w>1</w>
+                        <h>1</h>
+                        <z_near>0</z_near>
+                        <z_far>1</z_far>
+                    </ViewPort>
+                    <nDepth>0</nDepth>
+                    <CullMask>4294967295</CullMask>
+                </Camera>
+                <Childrens/>
+            </GameObject>
+            <GameObject>
+                <InstanceName>Directional Light</InstanceName>
+                <Flags>0</Flags>
+                <Layer>0</Layer>
+                <IsActiveSelf>true</IsActiveSelf>
+                <Components>
+                    <Component>Transform</Component>
+                    <Component>Light</Component>
+                </Components>
+                <Transform>
+                    <Enable>true</Enable>
+                    <LocalPosition>0.000000, 0.000000, 0.000000</LocalPosition>
+                    <LocalRotation>0.000000, 0.000000, 0.000000, 1.000000</LocalRotation>
+                    <LocalScale>1.000000, 1.000000, 1.000000</LocalScale>
+                </Transform>
+                <Light>
+                    <Enable>true</Enable>
+                    <mType>0</mType>
+                    <Diffuse>1.000000, 1.000000, 1.000000, 1.000000</Diffuse>
+                    <Range>10</Range>
+                    <Attenuation>1.000000, 1.000000, 0.100000</Attenuation>
+                    <Intensity>1</Intensity>
+                    <SpotAngle>30</SpotAngle>
+                    <CullMask>4294967295</CullMask>
+                    <ShadowType>0</ShadowType>
+                    <ShadowResolution>1</ShadowResolution>
+                    <ShadowStrength>0.5</ShadowStrength>
+                    <ShadowBias>0.1</ShadowBias>
+                </Light>
+                <Childrens/>
+            </GameObject>
+            <GameObject>
+                <InstanceName>Plane</InstanceName>
+                <Flags>0</Flags>
+                <Layer>0</Layer>
+                <IsActiveSelf>true</IsActiveSelf>
+                <Components>
+                    <Component>Transform</Component>
+                    <Component>MeshRender</Component>
+                    <Component>BoxCollider</Component>
+                </Components>
+                <Transform>
+                    <Enable>true</Enable>
+                    <LocalPosition>0.000000, 0.000000, 0.000000</LocalPosition>
+                    <LocalRotation>0.000000, 0.000000, 0.000000, 1.000000</LocalRotation>
+                    <LocalScale>10.000000, 0.100000, 10.000000</LocalScale>
+                </Transform>
+                <MeshRender>
+                    <Enable>true</Enable>
+                    <SortLayer>0</SortLayer>
+                    <OrderInLayer>0</OrderInLayer>
+                    <Materials>
+                        <Material>a3ab57b4021c63d6076efaf04dd306b6</Material>
+                    </Materials>
+                    <MeshFile>b39b95d0d6d26fcac217e3ab22110b20</MeshFile>
+                </MeshRender>
+                <BoxCollider>
+                    <Enable>true</Enable>
+                    <IsTrigger>false</IsTrigger>
+                    <Offset>0.000000, 0.000000, 0.000000</Offset>
+                    <Friction>0.60000002</Friction>
+                    <Restitution>0</Restitution>
+                    <MaskBits>32767</MaskBits>
+                    <GroupIndex>1</GroupIndex>
+                    <LocalScale>1.000000, 1.000000, 1.000000</LocalScale>
+                </BoxCollider>
+                <Childrens/>
+            </GameObject>
+            <GameObject>
+                <InstanceName>GameObject</InstanceName>
+                <Flags>0</Flags>
+                <Layer>0</Layer>
+                <IsActiveSelf>true</IsActiveSelf>
+                <Components>
+                    <Component>Transform</Component>
+                    <Component>MeshRender</Component>
+                    <Component>MeshCollider</Component>
+                    <Component>RigidBody</Component>
+                </Components>
+                <Transform>
+                    <Enable>true</Enable>
+                    <LocalPosition>-2.522933, 3.336040, 0.000000</LocalPosition>
+                    <LocalRotation>0.000000, 0.000000, 0.000000, 1.000000</LocalRotation>
+                    <LocalScale>1.000000, 1.000000, 1.000000</LocalScale>
+                </Transform>
+                <MeshRender>
+                    <Enable>true</Enable>
+                    <SortLayer>0</SortLayer>
+                    <OrderInLayer>0</OrderInLayer>
+                    <Materials>
+                        <Material>75a73966db2d896f0418d342f8d8aacd</Material>
+                    </Materials>
+                    <MeshFile>b39b95d0d6d26fcac217e3ab22110b20</MeshFile>
+                </MeshRender>
+                <MeshCollider>
+                    <Enable>true</Enable>
+                    <IsTrigger>false</IsTrigger>
+                    <Offset>0.000000, 0.000000, 0.000000</Offset>
+                    <Friction>0.60000002</Friction>
+                    <Restitution>0</Restitution>
+                    <MaskBits>32767</MaskBits>
+                    <GroupIndex>1</GroupIndex>
+                </MeshCollider>
+                <RigidBody>
+                    <Enable>true</Enable>
+                    <Mass>1</Mass>
+                    <LinearDrag>0</LinearDrag>
+                    <AngularDrag>0.050000001</AngularDrag>
+                    <UseGravity>true</UseGravity>
+                    <IsKinematic>false</IsKinematic>
+                    <FixedRotation>false</FixedRotation>
+                    <CollisionDetection>0</CollisionDetection>
+                </RigidBody>
+                <Childrens/>
+            </GameObject>
+            <GameObject>
+                <InstanceName>GameObject</InstanceName>
+                <Flags>0</Flags>
+                <Layer>0</Layer>
+                <IsActiveSelf>true</IsActiveSelf>
+                <Components>
+                    <Component>Transform</Component>
+                    <Component>MeshRender</Component>
+                    <Component>MeshCollider</Component>
+                    <Component>RigidBody</Component>
+                </Components>
+                <Transform>
+                    <Enable>true</Enable>
+                    <LocalPosition>0.000000, 3.464958, 0.000000</LocalPosition>
+                    <LocalRotation>0.000000, 0.000000, 0.000000, 1.000000</LocalRotation>
+                    <LocalScale>1.000000, 1.000000, 1.000000</LocalScale>
+                </Transform>
+                <MeshRender>
+                    <Enable>true</Enable>
+                    <SortLayer>0</SortLayer>
+                    <OrderInLayer>0</OrderInLayer>
+                    <Materials>
+                        <Material>75a73966db2d896f0418d342f8d8aacd</Material>
+                    </Materials>
+                    <MeshFile>36715df3250ae492d75dc46eacff5df9</MeshFile>
+                </MeshRender>
+                <MeshCollider>
+                    <Enable>true</Enable>
+                    <IsTrigger>false</IsTrigger>
+                    <Offset>0.000000, 0.000000, 0.000000</Offset>
+                    <Friction>0.60000002</Friction>
+                    <Restitution>0</Restitution>
+                    <MaskBits>32767</MaskBits>
+                    <GroupIndex>1</GroupIndex>
+                </MeshCollider>
+                <RigidBody>
+                    <Enable>true</Enable>
+                    <Mass>1</Mass>
+                    <LinearDrag>0</LinearDrag>
+                    <AngularDrag>0.050000001</AngularDrag>
+                    <UseGravity>true</UseGravity>
+                    <IsKinematic>false</IsKinematic>
+                    <FixedRotation>false</FixedRotation>
+                    <CollisionDetection>0</CollisionDetection>
+                </RigidBody>
+                <Childrens/>
+            </GameObject>
+        </GameObject>
+    </Lighting>
+</Root>

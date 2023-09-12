@@ -1,0 +1,101 @@
+#version 100
+precision mediump float;
+precision highp int;
+
+struct Light
+{
+    highp vec3 Dir;
+    int Type;
+    highp vec3 Color;
+    highp vec3 Attenuation;
+    highp float Range;
+    highp vec3 Position;
+    highp float SpotAngle;
+};
+
+struct type_CameraBuffer
+{
+    highp mat4 MATRIX_V;
+    highp mat4 MATRIX_P;
+    highp mat4 MATRIX_VP;
+    highp mat4 MATRIX_I_VP;
+    highp vec3 _WorldSpaceCameraPos;
+    highp vec3 _WorldSpaceCameraDir;
+    highp vec4 _ProjectionParams;
+    highp vec4 _ScreenParams;
+    highp vec4 _ZBufferParams;
+};
+
+uniform type_CameraBuffer CameraBuffer;
+
+struct type_LightBuffer
+{
+    int _LightCount;
+    highp vec3 _LightDir0;
+    highp vec3 _LightColor0;
+    Light _Light[8];
+};
+
+uniform type_LightBuffer LightBuffer;
+
+struct type_CommbonRarelyBuffer
+{
+    highp vec3 _LIGHTMODEL_AMBIENT;
+    int _FogMode;
+    highp vec4 _FogColor;
+    highp float _FogStart;
+    highp float _FogEnd;
+    highp float _FogDensity;
+};
+
+uniform type_CommbonRarelyBuffer CommbonRarelyBuffer;
+
+struct type_CustomBuffer
+{
+    highp vec4 _MainTex_ST;
+    highp float _SpecularPower;
+};
+
+uniform type_CustomBuffer CustomBuffer;
+
+uniform highp sampler2D _MainTex;
+
+varying highp vec2 varying_TEXCOORD0;
+varying highp vec3 varying_TEXCOORD1;
+varying highp vec3 varying_TEXCOORD2;
+varying highp vec3 varying_TEXCOORD3;
+varying highp float varying_TEXCOORD4;
+
+void main()
+{
+    highp vec4 _77 = texture2D(_MainTex, varying_TEXCOORD0);
+    highp float _145;
+    if (CommbonRarelyBuffer._FogMode == 1)
+    {
+        _145 = clamp((CommbonRarelyBuffer._FogEnd - varying_TEXCOORD4) / (CommbonRarelyBuffer._FogEnd - CommbonRarelyBuffer._FogStart), 0.0, 1.0);
+    }
+    else
+    {
+        highp float _144;
+        if (CommbonRarelyBuffer._FogMode == 2)
+        {
+            _144 = exp(-(CommbonRarelyBuffer._FogDensity * varying_TEXCOORD4));
+        }
+        else
+        {
+            highp float _143;
+            if (CommbonRarelyBuffer._FogMode == 3)
+            {
+                _143 = exp((((-CommbonRarelyBuffer._FogDensity) * CommbonRarelyBuffer._FogDensity) * varying_TEXCOORD4) * varying_TEXCOORD4);
+            }
+            else
+            {
+                _143 = 1.0;
+            }
+            _144 = _143;
+        }
+        _145 = _144;
+    }
+    gl_FragData[0] = vec4(max((pow(max(mix(CommbonRarelyBuffer._FogColor.xyz, vec4(((CommbonRarelyBuffer._LIGHTMODEL_AMBIENT + (LightBuffer._Light[0].Color * vec3((dot(varying_TEXCOORD2, varying_TEXCOORD3) * 0.5) + 0.5))) + vec3(pow(max(0.0, dot(normalize(normalize(CameraBuffer._WorldSpaceCameraPos - varying_TEXCOORD1) + varying_TEXCOORD3), varying_TEXCOORD2)), exp2((CustomBuffer._SpecularPower * 10.0) + 1.0)))) * _77.xyz, 1.0).xyz, vec3(_145)).xyz, vec3(0.0)), vec3(0.4166666567325592041015625)) * 1.05499994754791259765625) - vec3(0.054999999701976776123046875), vec3(0.0)), 1.0);
+}
+

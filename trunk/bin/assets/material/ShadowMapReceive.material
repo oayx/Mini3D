@@ -1,0 +1,26 @@
+<Root>
+    <Shader>
+        <ShaderFile>internal/material/ShadowMapReceive.shader</ShaderFile>
+    </Shader>
+    <Tag>
+        <CastShadow>false</CastShadow>
+        <ReceiveShadow>true</ReceiveShadow>
+    </Tag>
+    <Properties>
+        <Propertie>
+            <Name>_Bias</Name>
+            <Type>3</Type>
+            <Value>0</Value>
+            <Range>0.000000, 2.000000</Range>
+        </Propertie>
+    </Properties>
+    <TextureUnits>
+        <TextureUnit>
+            <Name>_MainTex</Name>
+            <File>f8d1184f3b16bf26f3b981592f01d112</File>
+            <Type>1</Type>
+            <Scale>1.000000, 1.000000</Scale>
+            <Offset>0.000000, 0.000000</Offset>
+        </TextureUnit>
+    </TextureUnits>
+</Root>

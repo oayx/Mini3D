@@ -1,0 +1,11 @@
+#version 100
+precision mediump float;
+precision highp int;
+
+varying highp vec4 varying_TEXCOORD0;
+
+void main()
+{
+    gl_FragData[0] = vec4(max((pow(max(varying_TEXCOORD0.xyz, vec3(0.0)), vec3(0.4166666567325592041015625)) * 1.05499994754791259765625) - vec3(0.054999999701976776123046875), vec3(0.0)), varying_TEXCOORD0.w);
+}
+

@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="xxtea">
+      <UniqueIdentifier>{8f8e9a80-e877-4313-94f5-276282b926eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="md5">
+      <UniqueIdentifier>{deacbba7-f738-4e84-9827-ea70a8993a13}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="xxhash">
+      <UniqueIdentifier>{d2db82f5-50ae-4352-8ba5-52061a9c7f0c}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\xxtea\xxtea.cpp">
+      <Filter>xxtea</Filter>
+    </ClCompile>
+    <ClCompile Include="..\md5\md5.c">
+      <Filter>md5</Filter>
+    </ClCompile>
+    <ClCompile Include="..\xxhash\xxhash.c">
+      <Filter>xxhash</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\xxtea\xxtea.h">
+      <Filter>xxtea</Filter>
+    </ClInclude>
+    <ClInclude Include="..\md5\md5.h">
+      <Filter>md5</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xxhash\xxhash.h">
+      <Filter>xxhash</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\CMakeLists.txt" />
+  </ItemGroup>
+</Project>

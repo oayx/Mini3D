@@ -1,0 +1,12 @@
+#version 300 es
+precision mediump float;
+precision highp int;
+
+in highp float varying_TEXCOORD0;
+layout(location = 0) out highp vec4 out_var_SV_Target;
+
+void main()
+{
+    out_var_SV_Target = vec4(varying_TEXCOORD0);
+}
+

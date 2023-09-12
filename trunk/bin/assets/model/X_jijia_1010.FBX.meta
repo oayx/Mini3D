@@ -1,0 +1,36 @@
+<Root>
+    <MeshMeta>
+        <GUID>44c8b1e610d261302c8eef8cfe68693e</GUID>
+        <HideInspector>false</HideInspector>
+        <GenNormal>true</GenNormal>
+        <GenTangent>true</GenTangent>
+        <OptimizeMesh>true</OptimizeMesh>
+        <ImportAnimation>true</ImportAnimation>
+        <Clips>
+            <Clip>
+                <Name>idle</Name>
+                <StartFrame>4</StartFrame>
+                <EndFrame>6</EndFrame>
+                <Loop>true</Loop>
+            </Clip>
+            <Clip>
+                <Name>run</Name>
+                <StartFrame>11</StartFrame>
+                <EndFrame>35</EndFrame>
+                <Loop>true</Loop>
+            </Clip>
+            <Clip>
+                <Name>die</Name>
+                <StartFrame>228</StartFrame>
+                <EndFrame>261</EndFrame>
+                <Loop>false</Loop>
+            </Clip>
+            <Clip>
+                <Name>attack</Name>
+                <StartFrame>264</StartFrame>
+                <EndFrame>271</EndFrame>
+                <Loop>false</Loop>
+            </Clip>
+        </Clips>
+    </MeshMeta>
+</Root>

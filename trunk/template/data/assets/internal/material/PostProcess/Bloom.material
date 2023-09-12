@@ -1,0 +1,24 @@
+<Root>
+    <Tag>
+        <CastShadow>false</CastShadow>
+        <ReceiveShadow>false</ReceiveShadow>
+    </Tag>
+    <Shader>
+        <ShaderFile>internal/material/PostProcess/Bloom.shader</ShaderFile>
+    </Shader>
+    <Properties/>
+    <TextureUnits>
+        <TextureUnit>
+            <Name>_MainTex</Name>
+            <File>Texture/ac_rock.png</File>
+            <Scale>1.000000, 1.000000</Scale>
+            <Offset>0.000000, 0.000000</Offset>
+        </TextureUnit>
+        <TextureUnit>
+            <Name>_BlurTex</Name>
+            <File>Texture/ac_rock_n.png</File>
+            <Scale>1.000000, 1.000000</Scale>
+            <Offset>0.000000, 0.000000</Offset>
+        </TextureUnit>
+    </TextureUnits>
+</Root>

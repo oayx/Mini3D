@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="dds">
+      <UniqueIdentifier>{7a0a253e-11eb-4cce-b81a-6b99f386dcd4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="grab">
+      <UniqueIdentifier>{b86e0256-a4c5-4226-b2ef-672d2129f17c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="wic">
+      <UniqueIdentifier>{83edd46a-ec81-4348-ad68-da9c23c35c7d}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\dds\DDSTextureLoader11.cpp">
+      <Filter>dds</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dds\DDSTextureLoader9.cpp">
+      <Filter>dds</Filter>
+    </ClCompile>
+    <ClCompile Include="..\grab\ScreenGrab11.cpp">
+      <Filter>grab</Filter>
+    </ClCompile>
+    <ClCompile Include="..\grab\ScreenGrab9.cpp">
+      <Filter>grab</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wic\WICTextureLoader11.cpp">
+      <Filter>wic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wic\WICTextureLoader9.cpp">
+      <Filter>wic</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\dds\DDSTextureLoader11.h">
+      <Filter>dds</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dds\DDSTextureLoader9.h">
+      <Filter>dds</Filter>
+    </ClInclude>
+    <ClInclude Include="..\grab\ScreenGrab11.h">
+      <Filter>grab</Filter>
+    </ClInclude>
+    <ClInclude Include="..\grab\ScreenGrab9.h">
+      <Filter>grab</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wic\WICTextureLoader11.h">
+      <Filter>wic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wic\WICTextureLoader9.h">
+      <Filter>wic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\d3dx12.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\CMakeLists.txt" />
+  </ItemGroup>
+</Project>

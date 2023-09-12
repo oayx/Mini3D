@@ -1,0 +1,91 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Alc">
+      <UniqueIdentifier>{d09b5e65-135e-4ada-8f22-66dcd32f3acc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Alc\backends">
+      <UniqueIdentifier>{75373a5d-05bb-4116-8bf1-cd2ecbff9ac8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="OpenAL32">
+      <UniqueIdentifier>{649ff295-ec83-41e6-ab94-4af8b38b0cd2}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\Alc\ALc.c">
+      <Filter>Alc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Alc\alcConfig.c">
+      <Filter>Alc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Alc\alcDedicated.c">
+      <Filter>Alc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Alc\alcEcho.c">
+      <Filter>Alc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Alc\alcModulator.c">
+      <Filter>Alc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Alc\alcReverb.c">
+      <Filter>Alc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Alc\alcRing.c">
+      <Filter>Alc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Alc\alcThread.c">
+      <Filter>Alc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Alc\ALc_cpp11.cpp">
+      <Filter>Alc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Alc\ALu.c">
+      <Filter>Alc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Alc\bs2b.c">
+      <Filter>Alc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Alc\helpers.c">
+      <Filter>Alc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Alc\hrtf.c">
+      <Filter>Alc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Alc\mixer.c">
+      <Filter>Alc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Alc\panning.c">
+      <Filter>Alc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Alc\backends\loopback.c">
+      <Filter>Alc\backends</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Alc\backends\null.c">
+      <Filter>Alc\backends</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Alc\backends\thread_msg_queue_cpp11.cpp">
+      <Filter>Alc\backends</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Alc\backends\xaudio2.cpp">
+      <Filter>Alc\backends</Filter>
+    </ClCompile>
+    <ClCompile Include="..\OpenAL32\alError.c">
+      <Filter>OpenAL32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\OpenAL32\alExtension.c">
+      <Filter>OpenAL32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\OpenAL32\alListener.c">
+      <Filter>OpenAL32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\OpenAL32\alSource.c">
+      <Filter>OpenAL32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\OpenAL32\alThunk.c">
+      <Filter>OpenAL32</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\CMakeLists.txt" />
+  </ItemGroup>
+</Project>

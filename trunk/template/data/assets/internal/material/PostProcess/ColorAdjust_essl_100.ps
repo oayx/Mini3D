@@ -1,0 +1,23 @@
+#version 100
+precision mediump float;
+precision highp int;
+
+struct type_CustomBuffer
+{
+    highp float _Brightness;
+    highp float _Saturation;
+    highp float _Contrast;
+};
+
+uniform type_CustomBuffer CustomBuffer;
+
+uniform highp sampler2D _MainTex;
+
+varying highp vec2 varying_TEXCOORD0;
+
+void main()
+{
+    highp vec4 _40 = texture2D(_MainTex, varying_TEXCOORD0);
+    gl_FragData[0] = vec4(mix(vec3(0.5), mix(vec3(((0.2125000059604644775390625 * _40.x) + (0.7153999805450439453125 * _40.y)) + (0.07209999859333038330078125 * _40.z)), _40.xyz * CustomBuffer._Brightness, vec3(CustomBuffer._Saturation)), vec3(CustomBuffer._Contrast)), _40.w);
+}
+

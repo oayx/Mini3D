@@ -1,0 +1,13 @@
+#version 100
+precision mediump float;
+precision highp int;
+
+uniform highp samplerCube _MainTex;
+
+varying highp vec3 varying_TEXCOORD0;
+
+void main()
+{
+    gl_FragData[0] = textureCube(_MainTex, varying_TEXCOORD0);
+}
+

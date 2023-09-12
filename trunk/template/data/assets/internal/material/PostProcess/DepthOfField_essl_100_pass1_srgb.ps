@@ -1,0 +1,39 @@
+#version 100
+precision mediump float;
+precision highp int;
+
+struct type_CustomBuffer
+{
+    highp vec4 _MainTex_TexelSize;
+    highp vec4 _BlurOffsets;
+    highp float _FocalDistance;
+    highp float _FocalLength;
+    highp float _NearBlurScale;
+    highp float _FarBlurScale;
+};
+
+uniform type_CustomBuffer CustomBuffer;
+
+uniform highp sampler2D _MainTex;
+uniform highp sampler2D _BlurTex;
+uniform highp sampler2D _CameraDepthTexture;
+
+varying highp vec2 varying_TEXCOORD0;
+varying highp vec2 varying_TEXCOORD1;
+
+void main()
+{
+    highp vec4 _45 = texture2D(_MainTex, varying_TEXCOORD1);
+    highp vec4 _49 = texture2D(_BlurTex, varying_TEXCOORD0);
+    highp vec4 _53 = texture2D(_CameraDepthTexture, varying_TEXCOORD0);
+    highp float _54 = _53.x;
+    highp float _59 = CustomBuffer._FocalDistance + CustomBuffer._FocalLength;
+    highp vec4 _67 = mix(_45, _49, vec4(clamp((_54 - _59) * CustomBuffer._FarBlurScale, 0.0, 1.0)));
+    bvec4 _68 = bvec4(_54 <= _59);
+    highp vec4 _69 = vec4(_68.x ? _45.x : _67.x, _68.y ? _45.y : _67.y, _68.z ? _45.z : _67.z, _68.w ? _45.w : _67.w);
+    highp float _70 = CustomBuffer._FocalDistance - CustomBuffer._FocalLength;
+    highp vec4 _78 = mix(_45, _49, vec4(clamp((_70 - _54) * CustomBuffer._NearBlurScale, 0.0, 1.0)));
+    bvec4 _79 = bvec4(_54 > _70);
+    gl_FragData[0] = vec4(_79.x ? _69.x : _78.x, _79.y ? _69.y : _78.y, _79.z ? _69.z : _78.z, _79.w ? _69.w : _78.w);
+}
+

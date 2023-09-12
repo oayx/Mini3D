@@ -1,0 +1,114 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="script">
+      <UniqueIdentifier>{47c86dfa-9d76-41c7-bcba-f8b2187b1b39}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="script\gui">
+      <UniqueIdentifier>{755cb56b-8e00-4ddb-9ec7-604b2dfab2d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="script\def">
+      <UniqueIdentifier>{9bc9644f-df7e-4984-8d86-63e3e525bd94}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="script\object">
+      <UniqueIdentifier>{fc016aa4-be4b-437e-9971-bb535292e57a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="script\panel">
+      <UniqueIdentifier>{28fd590d-390d-4488-80b0-9a4570472cff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="script\scene">
+      <UniqueIdentifier>{2ef00646-33c0-47e9-8260-2692ad58a204}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\script\FighterApp.h">
+      <Filter>script</Filter>
+    </ClInclude>
+    <ClInclude Include="..\script\def\fighter_def.h">
+      <Filter>script\def</Filter>
+    </ClInclude>
+    <ClInclude Include="..\script\gui\UIManager.h">
+      <Filter>script\gui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\script\gui\UIViewBase.h">
+      <Filter>script\gui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\script\object\FighterActor.h">
+      <Filter>script\object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\script\object\FighterAirplane.h">
+      <Filter>script\object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\script\object\FighterBullet.h">
+      <Filter>script\object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\script\object\FighterEnemyAirplane.h">
+      <Filter>script\object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\script\object\FighterEnemyManager.h">
+      <Filter>script\object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\script\object\FighterPlayerAirplane.h">
+      <Filter>script\object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\script\scene\FighterTerrain.h">
+      <Filter>script\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\script\panel\FighterResultPanel.h">
+      <Filter>script\panel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\script\panel\FighterSetterPanel.h">
+      <Filter>script\panel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\script\panel\FighterMainPanel.h">
+      <Filter>script\panel</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\script\FighterApp.cpp">
+      <Filter>script</Filter>
+    </ClCompile>
+    <ClCompile Include="..\script\gui\UIManager.cpp">
+      <Filter>script\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\script\gui\UIViewBase.cpp">
+      <Filter>script\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\script\object\FighterActor.cpp">
+      <Filter>script\object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\script\object\FighterAirplane.cpp">
+      <Filter>script\object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\script\object\FighterBullet.cpp">
+      <Filter>script\object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\script\object\FighterEnemyAirplane.cpp">
+      <Filter>script\object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\script\object\FighterEnemyManager.cpp">
+      <Filter>script\object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\script\object\FighterPlayerAirplane.cpp">
+      <Filter>script\object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\script\scene\FighterTerrain.cpp">
+      <Filter>script\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\script\panel\FighterMainPanel.cpp">
+      <Filter>script\panel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\script\panel\FighterResultPanel.cpp">
+      <Filter>script\panel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\script\panel\FighterSetterPanel.cpp">
+      <Filter>script\panel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\script\main.cpp">
+      <Filter>script</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\CMakeLists.txt" />
+  </ItemGroup>
+</Project>

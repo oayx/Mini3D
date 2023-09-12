@@ -1,0 +1,16 @@
+set(LIBS_MIMALLOC_SRC
+  source/external/mimalloc/stats.c
+  source/external/mimalloc/random.c
+  source/external/mimalloc/os.c
+  source/external/mimalloc/bitmap.c
+  source/external/mimalloc/arena.c
+  source/external/mimalloc/region.c
+  source/external/mimalloc/segment.c
+  source/external/mimalloc/page.c
+  source/external/mimalloc/alloc.c
+  source/external/mimalloc/alloc-aligned.c
+  source/external/mimalloc/alloc-posix.c
+  source/external/mimalloc/heap.c
+  source/external/mimalloc/options.c
+  source/external/mimalloc/init.c
+)

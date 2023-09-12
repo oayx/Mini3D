@@ -1,0 +1,26 @@
+#version 100
+precision mediump float;
+precision highp int;
+
+struct type_CustomBuffer
+{
+    highp vec4 _MainTex_TexelSize;
+    highp vec4 _ColorThreshold;
+    highp vec4 _BlurOffsets;
+    highp vec4 _BloomColor;
+    highp float _BloomFactor;
+};
+
+uniform type_CustomBuffer CustomBuffer;
+
+uniform highp sampler2D _MainTex;
+uniform highp sampler2D _BlurTex;
+
+varying highp vec2 varying_TEXCOORD0;
+varying highp vec2 in_var_TEXCOORD1;
+
+void main()
+{
+    gl_FragData[0] = texture2D(_MainTex, varying_TEXCOORD0) + ((CustomBuffer._BloomColor * texture2D(_BlurTex, varying_TEXCOORD0)) * CustomBuffer._BloomFactor);
+}
+

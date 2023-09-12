@@ -1,0 +1,19 @@
+<Root>
+    <Shader>
+        <ShaderFile>internal/material/Character.shader</ShaderFile>
+    </Shader>
+    <Tag>
+        <CastShadow>true</CastShadow>
+        <ReceiveShadow>false</ReceiveShadow>
+    </Tag>
+    <Properties/>
+    <TextureUnits>
+        <TextureUnit>
+            <Name>_MainTex</Name>
+            <File>a6403563b7f4be96b209c70db86cbd76</File>
+            <Type>1</Type>
+            <Scale>1.000000, 1.000000</Scale>
+            <Offset>0.000000, 0.000000</Offset>
+        </TextureUnit>
+    </TextureUnits>
+</Root>

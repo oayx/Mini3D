@@ -1,0 +1,78 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{a13bc0d2-b539-438c-a517-11946204ae0f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include">
+      <UniqueIdentifier>{6948aefe-8cd2-4800-a3cf-2cd0ca9883fc}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\bitstream.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\config.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mask.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mmask.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mqrspec.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\qrencode.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\qrencode_inner.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\qrinput.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\qrspec.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rsecc.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\split.h">
+      <Filter>include</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\bitstream.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mask.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mmask.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mqrspec.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\qrencode.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\qrinput.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\qrspec.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\rsecc.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\split.c">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\CMakeLists.txt" />
+  </ItemGroup>
+</Project>

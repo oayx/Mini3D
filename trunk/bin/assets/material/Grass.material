@@ -1,0 +1,26 @@
+<Root>
+    <Shader>
+        <ShaderFile>internal/material/UnlitTransparent.shader</ShaderFile>
+    </Shader>
+    <Tag>
+        <CastShadow>false</CastShadow>
+        <ReceiveShadow>false</ReceiveShadow>
+    </Tag>
+    <Properties>
+        <Propertie>
+            <Name>_Color</Name>
+            <Type>4</Type>
+            <Value>1,1,1,1</Value>
+            <Range>0.000000, 0.000000</Range>
+        </Propertie>
+    </Properties>
+    <TextureUnits>
+        <TextureUnit>
+            <Name>_MainTex</Name>
+            <File>259b5058be681b526cf78201b49bb20e</File>
+            <Type>1</Type>
+            <Scale>1.000000, 1.000000</Scale>
+            <Offset>0.000000, 0.000000</Offset>
+        </TextureUnit>
+    </TextureUnits>
+</Root>

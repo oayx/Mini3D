@@ -1,0 +1,33 @@
+<Root>
+    <Shader>
+        <ShaderFile>internal/material/Terrain.shader</ShaderFile>
+    </Shader>
+    <Tag>
+        <CastShadow>false</CastShadow>
+        <ReceiveShadow>true</ReceiveShadow>
+    </Tag>
+    <Properties>
+        <Propertie>
+            <Name>_SpecularPower</Name>
+            <Type>3</Type>
+            <Value>0.1</Value>
+            <Range>0.000000, 1.000000</Range>
+        </Propertie>
+    </Properties>
+    <TextureUnits>
+        <TextureUnit>
+            <Name>_MainTex</Name>
+            <File>2984d49ba58bb40030625a891b36d44b</File>
+            <Type>1</Type>
+            <Scale>10.000000, 10.000000</Scale>
+            <Offset>0.000000, 0.000000</Offset>
+        </TextureUnit>
+        <TextureUnit>
+            <Name>_NormalTexture</Name>
+            <File>967bda1cfa4059c9c65e79bc95d5cb15</File>
+            <Type>1</Type>
+            <Scale>1.000000, 1.000000</Scale>
+            <Offset>0.000000, 0.000000</Offset>
+        </TextureUnit>
+    </TextureUnits>
+</Root>

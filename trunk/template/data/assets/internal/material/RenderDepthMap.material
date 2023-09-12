@@ -1,0 +1,7 @@
+<Material>
+    <Tag>
+        <CastShadow>false</CastShadow>
+        <ReceiveShadow>false</ReceiveShadow>
+    </Tag>
+    <Shader><ShaderFile>internal/material/RenderDepthMap.shader</ShaderFile></Shader>
+</Material>

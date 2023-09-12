@@ -1,0 +1,297 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="include">
+      <UniqueIdentifier>{20a05425-ef03-4318-b617-ddc7963444ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{29b3bf0c-2652-4ff8-a2e2-9e54f4e72636}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="node">
+      <UniqueIdentifier>{de516ef6-1328-4480-a799-c8bd82a52fbd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="node\detail">
+      <UniqueIdentifier>{84a9a195-d704-4fb8-b5a3-de2f427d20f6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="contrib">
+      <UniqueIdentifier>{d68c8ea8-157a-43ef-b5aa-78a50c106fbc}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\token.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\traits.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\yaml.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\anchor.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\binary.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\collectionstack.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\depthguard.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\directives.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dll.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\emitfromevents.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\emitter.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\emitterdef.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\emittermanip.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\emitterstate.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\emitterstyle.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\emitterutils.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\eventhandler.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\exceptions.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\exp.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\indentation.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mark.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\nodebuilder.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\nodeevents.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\noexcept.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\null.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ostream_wrapper.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\parser.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ptr_vector.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\regex_yaml.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\regeximpl.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\scanner.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\scanscalar.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\scantag.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\setting.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\singledocparser.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\stlemitter.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\stream.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\streamcharsource.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\stringsource.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\tag.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\contrib\graphbuilder.h">
+      <Filter>contrib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\contrib\graphbuilderadapter.h">
+      <Filter>contrib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\contrib\anchordict.h">
+      <Filter>contrib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\node\emit.h">
+      <Filter>node</Filter>
+    </ClInclude>
+    <ClInclude Include="..\node\impl.h">
+      <Filter>node</Filter>
+    </ClInclude>
+    <ClInclude Include="..\node\iterator.h">
+      <Filter>node</Filter>
+    </ClInclude>
+    <ClInclude Include="..\node\node.h">
+      <Filter>node</Filter>
+    </ClInclude>
+    <ClInclude Include="..\node\parse.h">
+      <Filter>node</Filter>
+    </ClInclude>
+    <ClInclude Include="..\node\ptr.h">
+      <Filter>node</Filter>
+    </ClInclude>
+    <ClInclude Include="..\node\type.h">
+      <Filter>node</Filter>
+    </ClInclude>
+    <ClInclude Include="..\node\convert.h">
+      <Filter>node</Filter>
+    </ClInclude>
+    <ClInclude Include="..\node\detail\iterator.h">
+      <Filter>node\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\node\detail\iterator_fwd.h">
+      <Filter>node\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\node\detail\memory.h">
+      <Filter>node\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\node\detail\node.h">
+      <Filter>node\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\node\detail\node_data.h">
+      <Filter>node\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\node\detail\node_iterator.h">
+      <Filter>node\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\node\detail\node_ref.h">
+      <Filter>node\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\node\detail\impl.h">
+      <Filter>node\detail</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\parser.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\regex_yaml.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\scanner.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\scanscalar.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\scantag.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\scantoken.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\simplekey.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\singledocparser.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\stream.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\tag.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\binary.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\convert.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\depthguard.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\directives.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\emit.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\emitfromevents.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\emitter.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\emitterstate.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\emitterutils.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\exceptions.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\exp.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\memory.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\node.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\node_data.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\nodebuilder.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\nodeevents.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\null.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ostream_wrapper.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\parse.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\contrib\graphbuilderadapter.cpp">
+      <Filter>contrib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\contrib\graphbuilder.cpp">
+      <Filter>contrib</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\CMakeLists.txt" />
+  </ItemGroup>
+</Project>

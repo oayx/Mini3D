@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="include">
+      <UniqueIdentifier>{1a21b8c4-c4a6-4d2d-88a5-1e5c52b6b53f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{19dafefb-76db-411d-850e-eb4df38ac957}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\format.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\printf.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\string.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\time.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\container.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ostream.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\posix.h">
+      <Filter>include</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\format.cc">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ostream.cc">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\posix.cc">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\printf.cc">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

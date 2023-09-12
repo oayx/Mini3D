@@ -1,0 +1,40 @@
+#version 300 es
+precision mediump float;
+precision highp int;
+
+const float _48[9] = float[](-1.0, 0.0, 1.0, -2.0, 0.0, 2.0, -1.0, 0.0, 1.0);
+const float _49[9] = float[](-1.0, -2.0, -1.0, 0.0, 0.0, 0.0, 1.0, 2.0, 1.0);
+
+struct type_CustomBuffer
+{
+    highp vec4 _MainTex_TexelSize;
+    highp vec4 _EdgeColor;
+};
+
+uniform type_CustomBuffer CustomBuffer;
+
+uniform highp sampler2D _MainTex;
+
+in highp vec2 varying_TEXCOORD0[9];
+layout(location = 0) out highp vec4 out_var_SV_Target;
+
+void main()
+{
+    highp float _58;
+    highp float _61;
+    _58 = 0.0;
+    _61 = 0.0;
+    highp vec2 _51[9];
+    highp vec2 _52[9];
+    for (int _63 = 0; _63 < 9; )
+    {
+        _52 = varying_TEXCOORD0;
+        _51 = varying_TEXCOORD0;
+        _58 += (_49[_63] * dot(texture(_MainTex, _51[_63]).xyz, vec3(0.2199999988079071044921875, 0.7070000171661376953125, 0.071000002324581146240234375)));
+        _61 += (_48[_63] * dot(texture(_MainTex, _52[_63]).xyz, vec3(0.2199999988079071044921875, 0.7070000171661376953125, 0.071000002324581146240234375)));
+        _63++;
+        continue;
+    }
+    out_var_SV_Target = mix(texture(_MainTex, varying_TEXCOORD0[4]), CustomBuffer._EdgeColor, vec4(abs(_61) + abs(_58)));
+}
+

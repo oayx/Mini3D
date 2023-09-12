@@ -1,0 +1,18 @@
+<Root>
+    <Tag>
+        <CastShadow>true</CastShadow>
+        <ReceiveShadow>false</ReceiveShadow>
+    </Tag>
+    <Shader>
+        <ShaderFile>internal/material/Sprite.shader</ShaderFile>
+    </Shader>
+    <Properties/>
+    <TextureUnits>
+        <TextureUnit>
+            <Name>_MainTex</Name>
+            <File></File>
+            <Scale>1.000000, 1.000000</Scale>
+            <Offset>0.000000, 0.000000</Offset>
+        </TextureUnit>
+    </TextureUnits>
+</Root>
