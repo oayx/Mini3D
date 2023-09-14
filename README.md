@@ -1,7 +1,6 @@
 ## 简介
-mini3D是开源跨平台游戏开发框架，使用C++开发。提供了图形渲染、音频、UI、网络、物理、粒子、动画等丰富的功能，可用于制作轻量级2/3D游戏！  
-[引擎详细介绍](https://oayx.github.io/Mini3D_Site/)  
-## 介绍
+mini3D是开源跨平台游戏开发框架，使用C++开发。提供了图形渲染、音频、UI、网络、物理、粒子、动画等丰富的功能，可用于制作轻量级2/3D游戏！    
+## 介绍([详细介绍点击这](https://oayx.github.io/Mini3D_Site/))
         跨平台  
                 核心语言使用C++，支持Windows、Android、Linux，后续支持iOS、macOS、WebGL  
         图形API  
