@@ -1,6 +1,6 @@
 ## 简介
 mini3D是开源跨平台游戏开发框架，使用C++开发。提供了图形渲染、音频、GUI、网络、物理、用户输入等丰富的功能， 可广泛应用于游戏开发及交互式应用的构建！  
-## 主要功能
+## 介绍
         跨平台  
                 核心语言使用C++，支持Windows、Android、Linux，后续支持iOS、macOS、WebGL  
         图形API  
@@ -17,4 +17,8 @@ mini3D是开源跨平台游戏开发框架，使用C++开发。提供了图形�
         linux：
 ## 编辑器介绍  
         编辑器使用了IMGUI，提供了场景编辑、UI界面编辑
-
+		<br><img src='site/assets/images/主界面.png'><br>
+## 案例
+		雷霆战机
+			一款2D射击游戏，在google商城有上线
+		<br><img src='site/assets/images/fighter.png'><br>

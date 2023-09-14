@@ -1,0 +1,479 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+        <title>Mini3D</title>
+
+        <!-- Bootstrap -->
+        <link rel="stylesheet" href="assets/css/bootstrap/bootstrap.min.css">
+
+        <!-- Optional theme -->
+        <link rel="stylesheet" href="assets/css/bootstrap/bootstrap-theme.min.css">
+
+        <!-- Custom css -->
+        <link rel="stylesheet" href="assets/css/style.css">
+        
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="assets/css/font-awesome.min.css">
+        
+        <link rel="stylesheet" href="assets/css/ionicons.min.css">
+        
+        <!-- Flexslider -->
+        <link rel="stylesheet" href="assets/css/flexslider.css">
+        
+        <!-- Owl -->
+        <link rel="stylesheet" href="assets/css/owl.carousel.css">
+        
+        <!-- Magnific Popup -->
+        <link rel="stylesheet" href="assets/css/magnific-popup.css">
+
+        <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+        <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+        <![endif]-->
+    </head>
+    <body>
+      
+        <!--  loader  -->
+        <div id="myloader">
+            <div class="loader">
+                <div class="grid">
+                    <div class="cube cube1"></div>
+                    <div class="cube cube2"></div>
+                    <div class="cube cube3"></div>
+                    <div class="cube cube4"></div>
+                    <div class="cube cube5"></div>
+                    <div class="cube cube6"></div>
+                    <div class="cube cube7"></div>
+                    <div class="cube cube8"></div>
+                    <div class="cube cube9"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!--  Header & Menu  -->
+        <header id="header">
+            <nav class="navbar navbar-default">
+            	<div class="container">
+	                <!--  Classic menu, responsive menu classic  -->
+	                <div id="menu-classic">
+	                    <div class="menu-holder">
+	                        <ul>
+	                            <li><a href="index.html">首页</a></li>
+	                            <li><a href="introduce.html">引擎介绍</a></li>
+	                            <li><a href="editor.html">编辑器使用</a></li>
+	                            <li><a href="plan.html">路线图</a></li>
+	                            <li><a href="faq.html">FAQ</a></li>
+	                            <li><a href="download.html">下载中心</a></li>
+	                        </ul>
+	                    </div>
+	                </div>
+	                <!--  END Classic menu, responsive menu classic  -->
+	                <!--  Button for Responsive Menu Classic  -->
+	                <div id="menu-responsive-classic">
+	                    <div class="menu-button">
+	                        <span class="bar bar-1"></span>
+	                        <span class="bar bar-2"></span>
+	                        <span class="bar bar-3"></span>
+	                    </div>
+	                </div>
+	                <!--  END Button for Responsive Menu Classic  -->
+	                <div class="secondary-menu-mobile">
+	                    <ul>
+	                        <li class="mail"><i class="fa fa-envelope" aria-hidden="true"></i><a href="maito:info@domain.com">xxx</a></li>
+	                        <li class="phone"><i class="fa fa-phone" aria-hidden="true"></i>xxx</li>
+	                        
+	                        <!-- Search Icon -->
+	                        <li class="search">
+	                            <i class="fa fa-search" aria-hidden="true"></i>
+	                        </li>
+	                    </ul>
+	                </div>
+                </div>
+            </nav>
+            <div id="header-searchform">
+                <form class="search-form">
+                    <div class="form-input">
+                        <input type="text" placeholder="search...">
+                        <span class="form-button-close">
+                            <button type="button"><i class="material-icons">close</i></button>
+                        </span>
+                        <span class="form-button">
+                            <button type="button">搜索</button>
+                        </span>
+                    </div>
+                </form>
+            </div>
+        </header>
+        <!--  END Header & Menu  -->
+            
+        <!--  Main Wrap  -->
+        <div id="main-wrap">
+            <!--  Page Content  -->
+            <div id="page-content" class="header-static">
+                <!--  Page Header  -->
+                <div id="page-header" class="secondary-background">
+                    <div class="container">
+                        <div class="row no-margin">
+                            <div class="text">
+                                <h1 class="white">编辑器使用手册</h1>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--  END Page Header  -->
+                <div>
+                    <div class="container">
+                        <!-- Service -->
+                        <div>
+                            <div class="col-md-4 padding-leftright-null">
+                               <div class="text padding-topbottom-null">
+                                   <h2 class="margin-bottom-null left">创建、打开项目</h2>
+                               </div>
+                            </div>
+			    <div style="float:left;padding:44px;width:100%;">
+				<ul>
+				    <li>1.运行editor.exe(在安装目录下的win\x64\editor.exe)，弹出如下界面</li>
+				</ul>
+				<div>
+                                    <picture>
+					<img src="assets/images/创建与打开.png" class="img-responsive shadow" alt="">
+                                    </picture>
+				</div>
+				<ul>
+				    <li>(1).历史项目：之前打开过的项目列表，"bin"项目名称，"path:XXX"项目路径。点击项目名称可以打开一个项目(比如图中的"bin"项目)</li>
+				    <li>(2).创建新项目：点击后弹出文件对话框，可以选择新项目的目录和项目名称</li>
+				    <li>(3).打开已有项目：点击后弹出文件对话框，可以选择一个已有的项目(选择的目录需要有名称为"assets"的子目录)</li>
+				</ul>
+				</br>
+                            </div>
+                        </div>
+                        <!-- END Service -->
+                    </div>
+                    <div class="light-background">
+                        <div class="container">
+                            <!-- Service -->
+                            <div>
+                                <div>
+                                    <div class="text padding-topbottom-null">
+                                        <h2 class="margin-bottom-null left">主界面介绍</h2>
+                                    </div>
+                                </div>
+                            </div>
+			    <div style="float:left;padding:44px;width:100%;">
+				<ul>
+				    <li>进入项目后，出现编辑器主界面，主要模块如下：</li>
+				</ul>
+				<div>
+                                    <picture>
+					<img src="assets/images/主界面.png" class="img-responsive shadow" alt="">
+                                    </picture>
+				</div>
+				<ul>
+				    <li>1.主菜单栏</li>
+				    <li>2.工具条</li>
+				    <li>3.场景树：创建游戏对象，包括相机、灯光、模型等</li>
+				    <li>4.编辑器视图：编辑游戏对象主窗口</li>
+				    <li>5.游戏视图</li>
+				    <li>6.资源视图：显示游戏中用到的资源，资源需要位于assets目录</li>
+				    <li>7.属性视图：编辑游戏对象属性，包括添加组件等</li>
+				    <li>8.日志界面</li>
+				    <li>9.编辑器布局切换</li>
+				</ul>
+				</br>
+                            </div>
+                            <!-- END Service -->
+                        </div>
+                    </div>
+                    <div class="container">
+                        <!-- Service -->
+                        <div>
+                            <div class="col-md-4 padding-leftright-null">
+                               <div class="text padding-topbottom-null">
+                                   <h2 class="margin-bottom-null left">主菜单栏</h2>
+                               </div>
+                            </div>
+			    <div style="float:left;padding:44px;width:100%;">
+                                <h3>1.File</h3>
+				<div>
+                                    <picture>
+					<img src="assets/images/主菜单栏-File.png" class="img-responsive shadow" alt="">
+                                    </picture>
+				</div>
+				<ul>
+				    <li>(1).打开项目、保存项目</li>
+				    <li>(2).打开场景、保存场景</li>
+				</ul>
+				</br>
+                                <h3>2.Edit</h3>
+				<div>
+                                    <picture>
+					<img src="assets/images/主菜单栏-Edit.png" class="img-responsive shadow" alt="">
+                                    </picture>
+				</div>
+				<ul>
+				    <li>(1).Layer和Tag：可以设置GameObject用到的Layer和Tag</li>
+					<div>
+						<img src="assets/images/Layer Tag.png">
+					</div>
+				    <li>(2).Physics：可以设置物理属性</li>
+					<div>
+						<img src="assets/images/Physic.png">
+					</div>
+				    <li>(3).Quality：可以设置MSAA，shadowmap等</li>
+					<div>
+						<img src="assets/images/Quality.png">
+					</div>
+				</ul>
+				</br>
+                                <h3>3.GameObject：创建游戏对象</h3>
+				<div>
+                                    <picture>
+					<img src="assets/images/主菜单栏-GameObject.png" class="img-responsive shadow" alt="">
+                                    </picture>
+				</div>
+				</br>
+                                <h3>4.Component：添加组件</h3>
+				<div>
+                                    <picture>
+					<img src="assets/images/主菜单栏-Component.png" class="img-responsive shadow" alt="">
+                                    </picture>
+				</div>
+				</br>
+                                <h3>5.Window：打开或关闭界面</h3>
+				<div>
+                                    <picture>
+					<img src="assets/images/主菜单栏-Window.png" class="img-responsive shadow" alt="">
+                                    </picture>
+				</div>
+				</br>
+                                <h3>6.Help</h3>
+				<div>
+                                    <picture>
+					<img src="assets/images/主菜单栏-Help.png" class="img-responsive shadow" alt="">
+                                    </picture>
+				</div>
+				</br>
+                            </div>
+                        </div>
+                        <!-- END Service -->
+                    </div>
+                    <div class="light-background">
+                        <div class="container">
+                            <!-- Service -->
+                            <div>
+                                <div>
+                                    <div class="text padding-topbottom-null">
+                                        <h2 class="margin-bottom-null left">场景树</h2>
+                                    </div>
+                                </div>
+                            </div>
+			    <div style="float:left;padding:44px;width:100%;">
+				<div>
+                                    <picture>
+					<img src="assets/images/场景树.png" class="img-responsive shadow" alt="">
+                                    </picture>
+				</div>
+				<ul>
+					<li>(1).鼠标右键，弹出菜单栏，点击对应项可以创建对象</li>
+					<li>(2).鼠标选择对象，可以在属性窗口编辑信息</li>
+					<li>(3).鼠标右键对象，可以进行复制或删除等操作</li>
+				</ul>
+				</br>
+                            </div>
+                            <!-- END Service -->
+                        </div>
+                    </div>
+                    <div class="container">
+                        <!-- Service -->
+                        <div>
+                            <div class="col-md-4 padding-leftright-null">
+                               <div class="text padding-topbottom-null">
+                                   <h2 class="margin-bottom-null left">编辑器视图</h2>
+                               </div>
+                            </div>
+			    <div style="float:left;padding:44px;width:100%;">
+				<div>
+                                    <picture>
+					<img src="assets/images/Scene.png" class="img-responsive shadow" alt="">
+                                    </picture>
+				</div>
+				<ul>
+					<li>(1).鼠标右键配合键盘WASD键，可以实现场景漫游</li>
+					<li>(2).鼠标换轮可以拉进或拉远相机</li>
+				</ul>
+				</br>
+                            </div>
+                        </div>
+                        <!-- END Service -->
+                    </div>
+                    <div class="light-background">
+                        <div class="container">
+                            <!-- Service -->
+                            <div>
+                                <div>
+                                    <div class="text padding-topbottom-null">
+                                        <h2 class="margin-bottom-null left">游戏视图</h2>
+                                    </div>
+                                </div>
+                            </div>
+			    <div style="float:left;padding:44px;width:100%;">
+				<div>
+                                    <picture>
+					<img src="assets/images/Game.png" class="img-responsive shadow" alt="">
+					<img src="assets/images/Tools_Mid.png" class="img-responsive shadow" alt="">
+                                    </picture>
+				</div>
+				<ul>
+					<li>(1).点击顶部播放按钮，可以运行创建的场景</li>
+					<li>(2).再次点击播放按钮，可以关闭播放</li>
+				</ul>
+				</br>
+                            </div>
+                            <!-- END Service -->
+                        </div>
+                    </div>
+                    <div class="container">
+                        <!-- Service -->
+                        <div>
+                            <div class="col-md-4 padding-leftright-null">
+                               <div class="text padding-topbottom-null">
+                                   <h2 class="margin-bottom-null left">资源视图</h2>
+                               </div>
+                            </div>
+			    <div style="float:left;padding:44px;width:100%;">
+				<div>
+                                    <picture>
+					<img src="assets/images/Project.png" class="img-responsive shadow" alt="">
+                                    </picture>
+				</div>
+				<ul>
+					<li>(1).显示游戏中可用的资源，包括：贴图、模型、字体、材质、shader、音频、视频、文本文件、UI图集等</li>
+					<li>(2).鼠标右键，可以删除或创建资源</li>
+					<li>(3).可以从其他文件夹拖动资源到编辑器，方式是在Windows文件夹拖动需要的文件，在资源视图界面松开鼠标</li>
+				</ul>
+				</br>
+                            </div>
+                        </div>
+                        <!-- END Service -->
+                    </div>
+                    <div class="light-background">
+                        <div class="container">
+                            <!-- Service -->
+                            <div>
+                                <div>
+                                    <div class="text padding-topbottom-null">
+                                        <h2 class="margin-bottom-null left">属性视图</h2>
+                                    </div>
+                                </div>
+                            </div>
+			    <div style="float:left;padding:44px;width:100%;">
+				<div>
+                                    <picture>
+					<img src="assets/images/Inspector.png" class="img-responsive shadow" alt="">
+                                    </picture>
+				</div>
+				<ul>
+					<li>(1).可以添加或删除组件</li>
+					<li>(2).编辑对象属性</li>
+				</ul>
+				</br>
+                                <h3>添加组件</h3>
+				<div>
+                                    <picture>
+					<img src="assets/images/AddComponent.png" class="img-responsive shadow" alt="">
+                                    </picture>
+				</div>
+				</br>
+                            </div>
+                            <!-- END Service -->
+                        </div>
+                    </div>
+                    <div class="container">
+                        <!-- Service -->
+                        <div>
+                            <div class="col-md-4 padding-leftright-null">
+                               <div class="text padding-topbottom-null">
+                                   <h2 class="margin-bottom-null left">日志界面</h2>
+                               </div>
+                            </div>
+			    <div style="float:left;padding:44px;width:100%;">
+				<div>
+                                    <picture>
+					<img src="assets/images/Log.png" class="img-responsive shadow" alt="">
+                                    </picture>
+				</div>
+				</br>
+                            </div>
+                        </div>
+                        <!-- END Service -->
+                    </div>
+                    <div class="light-background">
+                        <div class="container">
+                            <!-- Service -->
+                            <div>
+                                <div>
+                                    <div class="text padding-topbottom-null">
+                                        <h2 class="margin-bottom-null left">性能分析</h2>
+                                    </div>
+                                </div>
+                            </div>
+			    <div style="float:left;padding:44px;width:100%;">
+				<div>
+                                    <picture>
+					<img src="assets/images/profiler.png" class="img-responsive shadow" alt="">
+                                    </picture>
+				</div>
+				<ul>
+					<li>(1).引擎集成了Tracy开源性能分析工具</li>
+					<li>(2).可以分析cpu、内存等的使用情况；后面接入GPU分析</li>
+				</ul>
+				</br>
+                            </div>
+                            <!-- END Service -->
+                        </div>
+                    </div>
+		</div>	
+                </div>
+            </div>
+            <!--  END Page Content -->
+        </div>
+        <!--  Main Wrap  -->
+       
+        <div id="copy">
+            <div class="container">
+                <div class="row no-margin">
+                    <div class="col-md-12 text text-center">
+                        <p>Copyright &copy; 2021.Mini3D All rights reserved.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--  END Footer. Class fixed for fixed footer  -->
+        
+        <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+        <script src="assets/js/jquery.min.js"></script>
+        <!-- All js library -->
+        <script src="assets/js/bootstrap/bootstrap.min.js"></script>
+        <script src="assets/js/jquery.flexslider-min.js"></script>
+        <script src="assets/js/owl.carousel.min.js"></script>
+        <script src="assets/js/isotope.min.js"></script>
+        <script src="assets/js/jquery.magnific-popup.min.js"></script>
+        <!---<script src="http://ditu.google.cn/maps/api/js?v=3.exp&signed_in=false"></script>--->
+        <script src="assets/js/jquery.scrollTo.min.js"></script>
+        <script src="assets/js/smooth.scroll.min.js"></script>
+        <script src="assets/js/jquery.appear.js"></script>
+        <script src="assets/js/jquery.countTo.js"></script>
+        <script src="assets/js/jquery.scrolly.js"></script>
+        <script src="assets/js/plugins-scroll.js"></script>
+        <script src="assets/js/imagesloaded.min.js"></script>
+        <script src="assets/js/pace.min.js"></script>
+        <script src="assets/js/main.js"></script>
+    </body>
+</html>
+
