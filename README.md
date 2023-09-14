@@ -8,8 +8,9 @@ mini3D是开源跨平台游戏开发框架，使用C++开发。提供了图形�
         核心模块  
                 图形渲染、UI、音频、视频、网络、物理、粒子、网络、2/3D动画等  
 ## 编译代码
-        1.提供了vs2017的sln工程文件，在trunk\solution\win。打开后选择x64，分别编译libs、engine、editor项目。依赖windowSDK10.0.17763.0
-        2.如果编译成功，会在trunk\bin\win\x64目录生成editor.exe，这个是编辑器运行文件
+        1.提供了vs2017的sln工程文件，在trunk\solution\win。打开后选择x64，分别编译libs、engine、editor项目。
+        2.依赖windowSDK10.0.17763.0，其他版本也可以，不过需要手动修改设置
+        3.如果编译成功，会在trunk\bin\win\x64目录生成editor.exe，这个是编辑器运行文件
 ## 发布
         window：
         android：
