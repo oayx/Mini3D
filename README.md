@@ -23,4 +23,4 @@ mini3D是开源跨平台游戏开发框架，使用C++开发。提供了图形�
 一款2D射击游戏，在google商城有上线
 <br><img src='site/assets/images/fighter.png'><br>
 ## 详细介绍
-可以参考site/index.html		
+可以参考[引擎介绍](site/index.html)
