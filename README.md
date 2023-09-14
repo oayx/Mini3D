@@ -16,9 +16,11 @@ mini3D是开源跨平台游戏开发框架，使用C++开发。提供了图形�
         android：
         linux：
 ## 编辑器介绍  
-        编辑器使用了IMGUI，提供了场景编辑、UI界面编辑
-		<br><img src='site/assets/images/主界面.png'><br>
+编辑器使用了IMGUI，提供了场景编辑、UI界面编辑
+<br><img src='site/assets/images/主界面.png'><br>
 ## 案例
-		雷霆战机
-			一款2D射击游戏，在google商城有上线
-		<br><img src='site/assets/images/fighter.png'><br>
+雷霆战机
+一款2D射击游戏，在google商城有上线
+<br><img src='site/assets/images/fighter.png'><br>
+## 详细介绍
+可以参考site/index.html		
