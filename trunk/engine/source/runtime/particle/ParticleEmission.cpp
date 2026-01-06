@@ -1,4 +1,4 @@
-#include "ParticleEmission.h"
+﻿#include "ParticleEmission.h"
 #include "ParticleSystem.h"
 
 DC_BEGIN_NAMESPACE
@@ -11,7 +11,7 @@ void ParticleEmission::Simulate(float dt)
 
 	//计算需要发射的粒子数量
 	int count = 0;
-	int round_total_count = _particleSystem->Emission.RateOverTime;
+	int roundTotalCount = _particleSystem->Emission.RateOverTime;
 	_roundTime += dt;
 	if (_roundTime >= 1)
 	{//新的回合
@@ -22,17 +22,17 @@ void ParticleEmission::Simulate(float dt)
 		_roundTime = 0;
 		_roundCreateCount = 0;
 	}
-	else if(_roundCreateCount < round_total_count)
+	else if(_roundCreateCount < roundTotalCount)
 	{
-		float expect_ratio = _roundTime;
-		float real_ratio = float(_roundCreateCount) / float(round_total_count);
-		if (real_ratio < expect_ratio)
+		float expectRatio = _roundTime;
+		float realRatio = float(_roundCreateCount) / float(roundTotalCount);
+		if (realRatio < expectRatio)
 		{//如果实际发射的粒子数量少于期望的数量
-			count = Math::Round<int>(expect_ratio * round_total_count) - _roundCreateCount;
+			count = Math::Round<int>(expectRatio * roundTotalCount) - _roundCreateCount;
 		}
-		if (count + _roundCreateCount > round_total_count)
+		if (count + _roundCreateCount > roundTotalCount)
 		{//判断是否会超出
-			count = round_total_count - _roundCreateCount;
+			count = roundTotalCount - _roundCreateCount;
 		}
 		_roundCreateCount += count;
 	}

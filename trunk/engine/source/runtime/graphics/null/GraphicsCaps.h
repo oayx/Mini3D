@@ -13,7 +13,7 @@ DC_BEGIN_NAMESPACE
 class GraphicsCaps : public Object
 {
 	BEGIN_DERIVED_REFECTION_TYPE(GraphicsCaps, Object)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 public:
 	virtual void Initialize() {}
@@ -48,12 +48,12 @@ public:
 	int		maxPointSize = 1;			// 无抗锯齿点大小
 	int		maxLineWidth = 1;			// 无抗锯齿线宽
 
-	bool	hasAnisoFilter = true;		// 各项异性
+	bool	hasAnisoFilter = false;		// 各项异性
 	int		maxAnisoLevel = 1;			// 最大各向异性
 
-	bool	hasAutoMipMapGen = true;	// 自动计算mipmap
-	bool	hasMipLevelBias = true;		// mipmap是否可指定bias
-	bool	hasMipMaxLevel = true;		// 是否可以指定最大mipmap
+	bool	hasAutoMipMapGen = false;	// 自动计算mipmap
+	bool	hasMipLevelBias = false;	// mipmap是否可指定bias
+	bool	hasMipMaxLevel = false;		// 是否可以指定最大mipmap
 
 	bool	has3DTexture = false;
 	bool	hasMipTexture = true;		// mip纹理是否提供

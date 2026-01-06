@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Date：2020/8/19
@@ -14,7 +14,7 @@ class Animation;
 class AnimationClip;
 class AnimationNode;
 /********************************************************************/
-class ENGINE_DLL AnimationState Final : public Object
+class ENGINE_DLL AnimationState final : public Object
 {
 	friend class Animation;
 	friend class AnimationBlender;
@@ -22,7 +22,7 @@ class ENGINE_DLL AnimationState Final : public Object
 	FRIEND_CONSTRUCT_DESTRUCT(AnimationState);
 	DISALLOW_COPY_ASSIGN(AnimationState);
 	BEGIN_DERIVED_REFECTION_TYPE(AnimationState, Object)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 	AnimationState(Animation* animation);
 	~AnimationState();
@@ -34,8 +34,8 @@ private:
 	void			Stop();
 
 	void			SetBoneKeyFrames(int size) { _boneKeyframes.Resize(size); }
-	void			TransfromBone(const Matrix4& parent_mat, BoneTransforms& bone_transforms);
-	void			TransfromBone(AnimationNode* node, const Matrix4& parent_mat, BoneTransforms& bone_transforms);
+	void			TransfromBone(const Matrix4& parentMat, BoneTransforms& boneTransforms);
+	void			TransfromBone(AnimationNode* node, const Matrix4& parentMat, BoneTransforms& boneTransforms);
 
 public:
 	const String&	GetName()const;

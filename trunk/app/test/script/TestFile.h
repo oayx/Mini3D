@@ -38,26 +38,29 @@ public:
 public:
 	void TestFiles()
 	{
-		bool b = File::Exist(root_path + "aa.txt");
-		Debuger::Log("File::Exist aa.txt- %s", b == false ? "true" : "false");
-		b = File::Create(root_path + "aa.txt");
-		Debuger::Log("File::Create aa.txt- %s", b == true ? "true" : "false");
-		b = File::Exist(root_path + "aa.txt");
-		Debuger::Log("File::Exist aa.txt- %s", b == true ? "true" : "false");
-		b = File::Delete(root_path + "aa.txt");
-		Debuger::Log("File::Delete aa.txt- %s", b == true ? "true" : "false");
-		b = File::Exist(root_path + "aa.txt");
-		Debuger::Log("File::Exist aa.txt- %s", b == false ? "true" : "false");
+		if (Directory::Exist(root_path))
+			Directory::Delete(root_path);
 
-		String str = File::ReadAllText(root_path + "bb.txt");
+		bool b = File::Exist(root_path + "aa.txt");
+		MyAssert(!b);
+		b = File::Create(root_path + "aa.txt");
+		MyAssert(b);
+		b = File::Exist(root_path + "aa.txt");
+		MyAssert(b);
+		b = File::Delete(root_path + "aa.txt");
+		MyAssert(b);
+		b = File::Exist(root_path + "aa.txt");
+		MyAssert(!b);
+
 		b = File::WriteAllText(root_path + "bb.txt", "asdf");
-		Debuger::Log("File::WriteAllText bb.txt- %s", "asdf");
-		str = File::ReadAllText(root_path + "bb.txt");
-		Debuger::Log("File::ReadAllText bb.txt- %s", str.c_str());
+		MyAssert(b);
+		String str = File::ReadAllText(root_path + "bb.txt");
+		MyAssert(str == "asdf");
 
 		byte cc[] = "ddffdd";
-		File::WriteAllBytes(root_path + "cc.txt", cc, sizeof(cc) - 1);
-		Debuger::Log("File::WriteAllBytes cc.txt- %s", cc);
+		b = File::WriteAllBytes(root_path + "cc.txt", cc, sizeof(cc) - 1);
+		MyAssert(b);
+		Debuger::Log("File::WriteAllBytes cc.txt -> ddffdd");
 
 		Debuger::Log("File::ReadAllBytes cc.txt");
 		byte* buf = nullptr;
@@ -73,78 +76,91 @@ public:
 		Debuger::Log("\nFile::ReadAllBytes cc.txt end");
 
 		b = File::Copy(root_path + "cc.txt", root_path + "copy.txt");
-		Debuger::Log("File::Copy - %s", b == true ? "true" : "false");
+		MyAssert(b);
 		b = File::Move(root_path + "cc.txt", root_path + "move.txt");
-		Debuger::Log("File::Move - %s", b == true ? "true" : "false");
+		MyAssert(b);
 
 		//中文
 		b = File::Create(root_path + "中文.txt");
-		Debuger::Log("File::Create 中文.txt- %s", b == true ? "true" : "false");
+		MyAssert(b);
 		b = File::Exist(root_path + "中文.txt");
-		Debuger::Log("File::Exist 中文.txt- %s", b == true ? "true" : "false");
+		MyAssert(b);
 		b = File::Delete(root_path + "中文.txt");
-		Debuger::Log("File::Delete 中文.txt- %s", b == true ? "true" : "false");
+		MyAssert(b);
 		b = File::Exist(root_path + "中文.txt");
-		Debuger::Log("File::Exist 中文.txt- %s", b == false ? "true" : "false");
+		MyAssert(!b);
+
+		//重命名
+		b = File::Create(root_path + "中文.txt");
+		MyAssert(b);
+		b = File::Rename(root_path + "中文.txt", "新中文.txt");
+		MyAssert(b);
 	}
 
 	void TestDirectory()
 	{
+		if (Directory::Exist(root_path))
+			Directory::Delete(root_path);
+
 		//创建+删除目录
 		bool b = Directory::Exist(root_path + "1/2");
-		Debuger::Log("Directory::Exist - %s", b == false ? "true" : "false");
+		MyAssert(!b);
 		b = Directory::Create(root_path + "1/2");
-		Debuger::Log("Directory::Create - %s", b == true ? "true" : "false");
+		MyAssert(b);
 		b = Directory::Exist(root_path + "1/2");
-		Debuger::Log("Directory::Exist - %s", b == true ? "true" : "false");
+		MyAssert(b);
 		b = Directory::IsDirectory(root_path + "1/2");
-		Debuger::Log("Directory::IsDirectory - %s", b == true ? "true" : "false");
+		MyAssert(b);
 
 		b = File::Create(root_path + "1/2/3.txt");
-		Debuger::Log("Directory::Create - %s", b == true ? "true" : "false");
+		MyAssert(b);
 		b = File::WriteAllText(root_path + "1/2/3.txt", "1234");
-		Debuger::Log("Directory::WriteAllText - %s", b == true ? "true" : "false");
+		MyAssert(b);
 		b = File::Create(root_path + "1/2/3.txt");
-		Debuger::Log("Directory::Create - %s", b == false ? "true" : "false");
+		MyAssert(!b);
 		b = File::Create(root_path + "1/2/3/4/5/6/7.txt");
-		Debuger::Log("Directory::Create - %s", b == true ? "true" : "false");
+		MyAssert(b);
 
 		//获得目录和文件列表
 		VecString vec;
 		Directory::GetDirectorys(root_path + "1", SearchOption::AllDirectories, vec);
-		for (auto p : vec)
+		for (auto& p : vec)
 		{
 			Debuger::Log("Directory::GetDirectorys - %s", p.c_str());
 		}
 		Directory::GetFiles(root_path + "1", SearchOption::AllDirectories, vec);
-		for (auto p : vec)
+		for (auto& p : vec)
 		{
 			Debuger::Log("Directory::GetFiles - %s", p.c_str());
 		}
 
 		//删除
 		b = Directory::Delete(root_path + "1/2");
-		Debuger::Log("Directory::Delete - %s", b == true ? "true" : "false");
+		MyAssert(b);
 		b = Directory::Exist(root_path + "1/2");
-		Debuger::Log("Directory::Exist - %s", b == false ? "true" : "false");
+		MyAssert(!b);
 	}
 
 	void TestPath()
 	{
+		if (Directory::Exist(root_path))
+			Directory::Delete(root_path);
+
 		//当前目录
 		String cur_path = Path::GetCurrentProcessDirectory();
 		Debuger::Log("Path::GetCurrentDirectory - %s", cur_path.c_str());
 
 		bool b = Directory::Create(root_path + "1/2");
-		Debuger::Log("Directory::Create - %s", b == true ? "true" : "false");
+		MyAssert(b);
 		b = Path::SetCurrentProcessDirectory(root_path + "1/2");
-		Debuger::Log("Directory::Exist - %s", b == true ? "true" : "false");
+		MyAssert(b);
 
 		String new_path = Path::GetCurrentProcessDirectory();
-		Debuger::Log("Path::GetCurrentDirectory - %s", new_path.c_str());
+		MyAssert(new_path.Replace("\\", "/") == root_path + "1/2");
 
 		//还原
-		Path::SetCurrentProcessDirectory(cur_path);
+		b = Path::SetCurrentProcessDirectory(cur_path);
+		MyAssert(b);
 
 		//取完整路径
 		String fullpath = Path::GetFullDataPath("App.config");  //c:\\users\\qqq\\source\\repos\\StudyDesignMode\\StudyDesignMode\\bin\\Debug\\App.config
@@ -159,49 +175,49 @@ public:
 
 		//取文件夹
 		String folder = Path::GetFolderName("D:\\1\\2\\App.config"); //D:/
-		Debuger::Log("Path::GetFolderName - %s", folder.c_str());
+		MyAssert(folder == "2")
 			
 		//取文件名
 		String name = Path::GetFileName("D:\\1\\2\\App.config"); //App.config
-		Debuger::Log("Path::GetFileName - %s", name.c_str());
+		MyAssert(name == "App.config")
 		//无扩展名
 		name = Path::GetFileName("D:\\1\\2\\App"); //App 
-		Debuger::Log("Path::GetFileName - %s", name.c_str());
+		MyAssert(name == "App")
 		//只有扩展名
 		name = Path::GetFileName("D:\\1\\2\\.config"); //.config
-		Debuger::Log("Path::GetFileName - %s", name.c_str());
+		MyAssert(name == ".config")
 		//无文件名
 		name = Path::GetFileName("D:\\1\\2\\");
-		Debuger::Log("Path::GetFileName - %s", name.c_str());
+		MyAssert(name == "")
 		//只有盘符
 		name = Path::GetFileName("D:"); //  ""
-		Debuger::Log("Path::GetFileName - %s", name.c_str());
+		MyAssert(name == "")
 		//参数为""
 		name = Path::GetFileName(""); // ""
-		Debuger::Log("Path::GetFileName - %s", name.c_str());
+		MyAssert(name == "")
 
 		//取文件名 不带扩展名
 		String nameWithoutExtension = Path::GetFileNameWithoutExtension("D:\\1\\2\\App.config"); //App
-		Debuger::Log("Path::GetFileNameWithoutExtension - %s", nameWithoutExtension.c_str());
+		MyAssert(nameWithoutExtension == "App")
 
 		//取扩展名
 		String extension = Path::GetExtension("D:\\1\\2\\App.config"); //.config
-		Debuger::Log("Path::GetExtension - %s", extension.c_str());
+		MyAssert(extension == ".config")
 		//无扩展名
 		extension = Path::GetExtension("D:\\1\\2\\App"); //""
-		Debuger::Log("Path::GetExtension - %s", extension.c_str());
+		MyAssert(extension == "")
 		//只有扩展名
 		extension = Path::GetExtension("D:\\1\\2\\.config"); //.config
-		Debuger::Log("Path::GetExtension - %s", extension.c_str());
+		MyAssert(extension == "")
 		//无文件名
 		extension = Path::GetExtension("D:\\1\\2\\");
-		Debuger::Log("Path::GetExtension - %s", extension.c_str());
+		MyAssert(extension == "")
 		//只有盘符
 		extension = Path::GetExtension("D:"); //  ""
-		Debuger::Log("Path::GetExtension - %s", extension.c_str());
+		MyAssert(extension == "")
 		//参数为""
 		extension = Path::GetExtension(""); // ""
-		Debuger::Log("Path::GetExtension - %s", extension.c_str());
+		MyAssert(extension == "")
 
 		//连接路径
 		String combine = Path::Combine("1", "2"); // 1\\2
@@ -211,14 +227,22 @@ public:
 		Debuger::Log("Path::Combine - %s", combine.c_str());
 
 		//取所在文件夹
-		String dir = Path::GetDirectoryName("D:\\1\\2\\App.config"); //D:\\1\\2
-		Debuger::Log("Path::GetDirectoryName - %s", dir.c_str());
-		dir = Path::GetDirectoryName("D:\\1\\2\\"); //D:\\1\\2
-		Debuger::Log("Path::GetDirectoryName - %s", dir.c_str());
-		dir = Path::GetDirectoryName(Path::Combine("D:\\1", "Temp"));  //  D:\\1
-		Debuger::Log("Path::GetDirectoryName - %s", dir.c_str());
-		dir = Path::GetDirectoryName(Path::Combine("D:\\1\\", "Temp")); //  D:\\1
-		Debuger::Log("Path::GetDirectoryName - %s", dir.c_str());
+		String dir = Path::GetDirectoryName("D:/1/2/App.config"); //D:/1/2
+		MyAssert(dir == "D:/1/2");
+		dir = Path::GetDirectoryName("D:/1/2/"); //D:/1/2
+		MyAssert(dir == "D:/1/2");
+		dir = Path::GetDirectoryName(Path::Combine("D:/1", "Temp"));  //  D:/1
+		MyAssert(dir == "D:/1");
+		dir = Path::GetDirectoryName(Path::Combine("D:/1/", "Temp")); //  D:/1
+		MyAssert(dir == "D:/1");
+
+		//相对路径
+		dir = Path::GetRelativePath("/a/b/c/d/e.txt","/a/b");
+		MyAssert(dir.Replace("\\", "/") == "c/d/e.txt");
+
+		//绝对路径
+		dir = Path::GetAbsolutePath("/a/b/c/d/e.txt");
+		Debuger::Log("Path::GetAbsolutePath - %s", dir.c_str());
 	}
 };
 DC_END_NAMESPACE

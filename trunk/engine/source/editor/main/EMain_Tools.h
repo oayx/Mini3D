@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2021/8/13
@@ -15,7 +15,7 @@ class EMain_Tools : public EWindowBase
 	friend class EditorMain;
 	DISALLOW_CONSTRUCTOR_COPY_ASSIGN(EMain_Tools);
 	BEGIN_DERIVED_REFECTION_TYPE(EMain_Tools, EWindowBase)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 public:
 	static GizmoOperation GetOperation();
@@ -31,6 +31,6 @@ private:
 	static void ResetOperation();
 
 private:
-	static bool _gizmoOperation[(int)GizmoOperation::Max];//移动+旋转+缩放
+	inline static bool _gizmoOperation[(int)GizmoOperation::Max] = { false, false, true, false, false, false };//移动+旋转+缩放
 };
 DC_END_NAMESPACE

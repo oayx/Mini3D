@@ -1,4 +1,4 @@
-#include "Win32DXRenderWindow.h"
+﻿#include "Win32DXRenderWindow.h"
 #include "core/time/Timer.h"
 #include "runtime/input/Input.h"
 #include "runtime/input/MouseInput.h"
@@ -147,45 +147,44 @@ LRESULT CALLBACK WinAppProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 }
 /********************************************************************/
 IMPL_DERIVED_REFECTION_TYPE(Win32DXRenderWindow, RenderWindow);
-bool Win32DXRenderWindow::_initialize = false;
 Win32DXRenderWindow::Win32DXRenderWindow()
 {
 	Initialize();
 }
 Win32DXRenderWindow::~Win32DXRenderWindow()
 {
-	if (m_hWnd != nullptr)
+	if (_hWnd != nullptr)
 	{
-		::DestroyWindow(m_hWnd);
-		m_hWnd = nullptr;
+		::DestroyWindow(_hWnd);
+		_hWnd = nullptr;
 	}
 	Destroy();
 }
 bool Win32DXRenderWindow::Create(WindowDesc& info)
 {
 	//计算屏幕大小
-	int screen_width = ::GetSystemMetrics(SM_CXSCREEN);
-	int screen_height = ::GetSystemMetrics(SM_CYSCREEN);
-	Platform::AdjustWindowRect(info.x, info.y, info.width, info.height, screen_width, screen_height, info.flags & WindowFlag::FullScreen);
+	int screenWidth = ::GetSystemMetrics(SM_CXSCREEN);
+	int screenHeight = ::GetSystemMetrics(SM_CYSCREEN);
+	Platform::AdjustWindowRect(info.x, info.y, info.width, info.height, screenWidth, screenHeight, info.flags & WindowFlag::FullScreen);
 
 	//创建窗口
 	DWORD dwStyle = WS_OVERLAPPEDWINDOW;
 	if (!(info.flags & WindowFlag::Resizable))dwStyle = dwStyle ^ WS_THICKFRAME;
-	m_hWnd = ::CreateWindow(L"MainWnd", info.name.ToWString().c_str(), dwStyle, info.x, info.y, info.width, info.height, NULL, NULL, ::GetModuleHandle(NULL), this);
-	if (!m_hWnd)
+	_hWnd = ::CreateWindow(L"MainWnd", info.name.ToWString().c_str(), dwStyle, info.x, info.y, info.width, info.height, NULL, NULL, ::GetModuleHandle(NULL), this);
+	if (!_hWnd)
 	{
 		Debuger::Error("CreateWindow Failed");
 		return false;
 	}
 
-	m_isIgnoreSizeChange = true;
+	_isIgnoreSizeChange = true;
 	int show_flag = SW_SHOWDEFAULT;
 	if (info.flags & WindowFlag::MaxSize) show_flag = SW_MAXIMIZE;
-	::ShowWindow(m_hWnd, show_flag);
-	::UpdateWindow(m_hWnd);
+	::ShowWindow(_hWnd, show_flag);
+	::UpdateWindow(_hWnd);
 	if (Application::IsEditor())
 	{//确定窗口是否接收文件拖拽。
-		::DragAcceptFiles(m_hWnd, TRUE);
+		::DragAcceptFiles(_hWnd, TRUE);
 	}
 
 	//注册鼠标消息
@@ -193,26 +192,26 @@ bool Win32DXRenderWindow::Create(WindowDesc& info)
 	rid.usUsagePage = 0x1; /* HID_USAGE_PAGE_GENERIC */
 	rid.usUsage = 0x2; /* HID_USAGE_GENERIC_MOUSE */
 	rid.dwFlags = RIDEV_INPUTSINK;
-	rid.hwndTarget = m_hWnd;
+	rid.hwndTarget = _hWnd;
 	if (!::RegisterRawInputDevices(&rid, 1, sizeof(RAWINPUTDEVICE)))
 		Debuger::Error("Win32DXRenderWindow::Create - RegisterRawInputDevices");
-	m_isIgnoreSizeChange = false;
+	_isIgnoreSizeChange = false;
 
 	//最终有效区域大小
 	RECT rect;
-	::GetClientRect(m_hWnd, &rect);
+	::GetClientRect(_hWnd, &rect);
 	info.width = rect.right - rect.left; info.height = rect.bottom - rect.top;
 	
 	return base::Create(info);
 }
 void Win32DXRenderWindow::Resize(WindowResizeDesc& desc)
 {	
-	m_isIgnoreSizeChange = true;
+	_isIgnoreSizeChange = true;
 
 	//使用之前设定
-	if (!desc.fullscreen_valid)
+	if (!desc.fullscreenValid)
 	{
-		desc.fullscreen = m_fullscreen;
+		desc.fullscreen = _fullscreen;
 	}
 
 	//位置
@@ -220,24 +219,24 @@ void Win32DXRenderWindow::Resize(WindowResizeDesc& desc)
 	if (!desc.fullscreen)
 	{
 		RECT rect;
-		::GetWindowRect(m_hWnd, &rect);
+		::GetWindowRect(_hWnd, &rect);
 		left = rect.left; top = rect.top;
 	}
 
 	//计算屏幕大小
-	int screen_width = ::GetSystemMetrics(SM_CXSCREEN);
-	int screen_height = ::GetSystemMetrics(SM_CYSCREEN);
+	int screenWidth = ::GetSystemMetrics(SM_CXSCREEN);
+	int screenHeight = ::GetSystemMetrics(SM_CYSCREEN);
 
 	//限定窗口大小不超过屏幕尺寸
 	int width = desc.width, height = desc.height;
 	if (!desc.fullscreen)
 	{
-		if (width > screen_width || width <= 0) width = screen_width;
-		if (height > screen_height || height <= 0) height = screen_height;
+		if (width > screenWidth || width <= 0) width = screenWidth;
+		if (height > screenHeight || height <= 0) height = screenHeight;
 	}
 	else
 	{
-		width = screen_width; height = screen_height;
+		width = screenWidth; height = screenHeight;
 	}
 
 	//获得最终窗口大小
@@ -245,30 +244,31 @@ void Win32DXRenderWindow::Resize(WindowResizeDesc& desc)
 	::AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, false);
 	width = rect.right - rect.left;
 	height = rect.bottom - rect.top;
-	::MoveWindow(m_hWnd, left, top, width, height, true);
+	::MoveWindow(_hWnd, left, top, width, height, true);
 
 	//最终有效区域大小
-	::GetClientRect(m_hWnd, &rect);
+	::GetClientRect(_hWnd, &rect);
 	desc.width = rect.right - rect.left; desc.height = rect.bottom - rect.top;
 
-	m_isIgnoreSizeChange = false;
+	_isIgnoreSizeChange = false;
 	base::Resize(desc);
 }
 void Win32DXRenderWindow::OnFocus(bool focused)
 {
 	base::OnFocus(focused);
-	if (m_mouseClip)
+	if (_mouseClip)
 	{
-		Win32Mouse::ClipToWindow(focused ? m_hWnd : nullptr);
+		Win32Mouse::ClipToWindow(focused ? _hWnd : nullptr);
 	}
 }
 #define GET_X_LPARAM(lp) ((float)(short)LOWORD(lp))
 #define GET_Y_LPARAM(lp) ((float)(short)HIWORD(lp))
 int Win32DXRenderWindow::OnWinMsg(uint uMsg, int64 param1, int64 param2, int64 param3, int64 param4)
 {
-	DC_PROFILE_FUNCTION();
+	DC_PROFILE_FUNCTION;
 	WPARAM wParam = WPARAM(param1); LPARAM lParam = LPARAM(param2);
-	int win_width = this->GetWidth(), win_height = this->GetHeight();
+	//int win_width = this->GetWidth();
+	int win_height = this->GetHeight();
 	switch (uMsg)
 	{
 	case WM_ACTIVATE:
@@ -343,15 +343,15 @@ int Win32DXRenderWindow::OnWinMsg(uint uMsg, int64 param1, int64 param2, int64 p
 	case WM_SYSCHAR:
 		break;
 	case WM_LBUTTONDOWN:
-		SetCapture(m_hWnd);
+		SetCapture(_hWnd);
 		MouseInput::HandleLBtnDown(GET_X_LPARAM(lParam), win_height - GET_Y_LPARAM(lParam));
 		break;
 	case WM_RBUTTONDOWN:
-		SetCapture(m_hWnd);
+		SetCapture(_hWnd);
 		MouseInput::HandleRBtnDown(GET_X_LPARAM(lParam), win_height - GET_Y_LPARAM(lParam));
 		break;
 	case WM_MBUTTONDOWN:
-		SetCapture(m_hWnd);
+		SetCapture(_hWnd);
 		MouseInput::HandleMBtnDown(GET_X_LPARAM(lParam), win_height - GET_Y_LPARAM(lParam));
 		break;
 	case WM_LBUTTONUP:
@@ -392,7 +392,7 @@ int Win32DXRenderWindow::OnWinMsg(uint uMsg, int64 param1, int64 param2, int64 p
 	break;
 	case WM_INPUT:
 	{
-		if (m_isPaused)break;
+		if (_isPaused)break;
 
 		RAWINPUT raw;
 		UINT rawSize = sizeof(raw);
@@ -413,42 +413,46 @@ int Win32DXRenderWindow::OnWinMsg(uint uMsg, int64 param1, int64 param2, int64 p
 	case WM_SIZE:
 	{
 		Debuger::Log("resize");
-		if (m_isIgnoreSizeChange)
+		if (_isIgnoreSizeChange)
 			break;
 
 		int width = LOWORD(lParam);
 		int height = HIWORD(lParam);
 		if (wParam == SIZE_MINIMIZED)
 		{
-			m_isMaximized = false;
-			m_isMinimized = true;
-			m_isPaused = true;
+			_isMaximized = false;
+			_isMinimized = true;
+			_isPaused = true;
 		}
 		else if (wParam == SIZE_MAXIMIZED)
 		{//Window maximized
-			m_isMaximized = true;
-			m_isMinimized = false;
-			Application::Resize(WindowResizeDesc(m_hWnd, width, height, false, false));
+			_isMaximized = true;
+			_isMinimized = false;
+			WindowResizeDesc desc(_hWnd, width, height, false, false);
+			Application::Resize(desc);
 		}
 		else if (wParam == SIZE_RESTORED)
 		{//Window restored
-			if (m_isMaximized)
+			if (_isMaximized)
 			{//From maximized to restore
-				m_isMaximized = false;
-				m_isPaused = false;
-				Application::Resize(WindowResizeDesc(m_hWnd, width, height, false, false));
+				_isMaximized = false;
+				_isPaused = false;
+				WindowResizeDesc desc(_hWnd, width, height, false, false);
+				Application::Resize(desc);
 			}
-			else if (m_isMinimized)
+			else if (_isMinimized)
 			{//From minimized to restore
-				m_isMinimized = false;
-				m_isPaused = false;
-				Application::Resize(WindowResizeDesc(m_hWnd, width, height, false, false));
+				_isMinimized = false;
+				_isPaused = false;
+				WindowResizeDesc desc(_hWnd, width, height, false, false);
+				Application::Resize(desc);
 			}
 			else
 			{
-				if (!m_isResizing)
+				if (!_isResizing)
 				{
-					Application::Resize(WindowResizeDesc(m_hWnd, width, height, false, false));
+					WindowResizeDesc desc(_hWnd, width, height, false, false);
+					Application::Resize(desc);
 				}
 			}
 		}
@@ -468,7 +472,7 @@ int Win32DXRenderWindow::OnWinMsg(uint uMsg, int64 param1, int64 param2, int64 p
 		//这里再设置一次鼠标位置，有可能拖动文件时窗口丢失焦点
 		POINT point;
 		GetCursorPos(&point);				// 获取鼠标指针位置（屏幕坐标）
-		ScreenToClient(m_hWnd, &point);		// 将鼠标指针位置转换为窗口坐标
+		ScreenToClient(_hWnd, &point);		// 将鼠标指针位置转换为窗口坐标
 		MouseInput::HandleInputPosition(point.x, win_height - point.y);
 
 		HDROP hDrop = (HDROP)wParam;
@@ -487,10 +491,10 @@ int Win32DXRenderWindow::OnWinMsg(uint uMsg, int64 param1, int64 param2, int64 p
 		//WM_CLOSE	: 在系统菜单里选择了“关闭”或者点击了窗口右上角的“X”按钮，你的窗口过程就会收到WM_CLOSE。DefWindowProc对WM_CLOSE的处理是调用DestroyWindow。当然，你可以不让DefWindowProc处理，而是自己处理，例如询问用户是否保存更改等。如果用户选择“取消”，你忽略此消息，那么程序照常运行；如果用户确认要退出，你就调用DestroyWindow。
 		//WM_DESTROY: DestroyWindow完成窗口的清理工作，最后像窗口过程发送WM_DESTROY。对于WM_DESTROY，DefWindowProc不会处理。也就是说，你如果不处理这个消息，虽然你的窗口已经销毁，但进程并不会结束。一般处理WM_DESTROY时都是释放资源（例如申请的内存等），然后调用PostQuitMessage。
 		//WM_QUIT	: PostQuitMessage会发送WM_QUIT给消息队列。注意，WM_QUIT永远不会到达窗口过程，因为GetMessage得到WM_QUIT后就会返回FALSE，从而结束消息循环，最后进程结束，程序退出。
-		WindowManager::CloseWindow(m_hWnd);
+		WindowManager::CloseWindow(_hWnd);
 		break;
 	}
-	return DefWindowProc(m_hWnd, uMsg, wParam, lParam);
+	return DefWindowProc(_hWnd, uMsg, wParam, lParam);
 }
 #undef GET_WIN_SIZE
 #undef GET_X_LPARAM
@@ -531,7 +535,6 @@ void Win32DXRenderWindow::Destroy()
 }
 void Win32DXRenderWindow::PeekMessage()
 {
-	DC_PROFILE_FUNCTION();
 	MSG msg = {};
 	while (::PeekMessage(&msg, NULL, 0U, 0U, PM_REMOVE))
 	{//这里一定要用while，否则帧率低的时候可能存在响应延迟

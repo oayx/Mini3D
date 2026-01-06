@@ -12,24 +12,25 @@ AndroidGLESRenderWindow::AndroidGLESRenderWindow()
 }
 AndroidGLESRenderWindow::~AndroidGLESRenderWindow()
 {
-	EGL_Context::Destroy();
+	//EGL_Context::Destroy();
 }
 bool AndroidGLESRenderWindow::Create(WindowDesc& info)
 {
 	base::Create(info);
 
-	m_hWnd = (EGLNativeWindowType)info.hWnd;
-	return EGL_Context::Initialize(m_hWnd, 3, _antiAlias);
+	_hWnd = (EGLNativeWindowType)info.hWnd;
+	//android直接使用GLSurfaceView
+	//return EGL_Context::Initialize(_hWnd, 3, _antiAlias);
+	return true;
 }
 void AndroidGLESRenderWindow::Resize(WindowResizeDesc& desc)
 {
 	base::Resize(desc);
-	EGL_Context::Initialize(m_hWnd, 3, _antiAlias);
 }
 void AndroidGLESRenderWindow::Draw()
 {
 	base::Draw();
-	EGL_Context::Draw();
+	//EGL_Context::Draw();
 }
 DC_END_NAMESPACE
 #endif

@@ -1,4 +1,4 @@
-/*****************************************************************************************************/
+﻿/*****************************************************************************************************/
 // @author hannibal
 // @date   2021/04/29
 // @brief  类型
@@ -42,89 +42,95 @@ struct ReflectType<std::nullptr_t>
 class ENGINE_DLL Type 
 {
 	DECLARE_ALLOCATOR;
+	friend class Memory;
 
-	int m_flags;							//标记位
-    std::string m_name;						//名称
-	std::string m_editor_component;			//编辑器组件
-    const Type* m_baseType;					//基类
-	std::vector<Constructor*> m_constructors;//构造函数
+	int _flags;								//标记位
+    std::string _name;						//名称
+	std::string _editorComponent;			//编辑器组件
+    const Type* _baseType;					//基类
+	std::vector<Constructor*> _constructors;//构造函数
 
 public:
     Type()
 	{
-		this->m_flags = 0;
-		this->m_name = "Unregistered_Type";
-		this->m_editor_component = "";
-		this->m_baseType = nullptr;
+		this->_flags = 0;
+		this->_name = "Unregistered_Type";
+		this->_editorComponent = "";
+		this->_baseType = nullptr;
     }
+	Type(const Type& other) = delete;
+	Type(Type&& other) = delete;
+	Type& operator=(const Type& other) = delete;
+	Type& operator=(Type&& other) = delete;
 	~Type();
 
+public:
 	bool Is(const Type* type) const 
 	{
 		if (type == this)
 			return true;
 
-		if (m_baseType != nullptr)
-			return m_baseType->Is(type);
+		if (_baseType != nullptr)
+			return _baseType->Is(type);
 
 		return false;
 	}
 
-	const std::string& GetName() const  { return m_name; }
-	const Type* GetBaseType() const  { return m_baseType; }
+	const std::string& GetName() const noexcept { return _name; }
+	const Type* GetBaseType() const noexcept { return _baseType; }
 
-	const Constructor* GetConstructor() const 
+	const Constructor* GetConstructor() const noexcept
 	{ 
-		if (m_constructors.empty())return nullptr; 
-		return m_constructors[0]; 
+		if (_constructors.empty())return nullptr; 
+		return _constructors[0]; 
 	}
-	Type* AddConstructors(const std::vector<Constructor*>& m_constructors)
+	Type* AddConstructors(const std::vector<Constructor*>& _constructors) noexcept
 	{
-		for (auto c : m_constructors)
+		for (auto c : _constructors)
 		{
-			this->m_constructors.push_back(c);
+			this->_constructors.push_back(c);
 		}
 		return this;
 	}
 
-	Type* InsertFlags(TypeFlag flags)
+	Type* InsertFlags(TypeFlag flags) noexcept
 	{
-		m_flags |= (int)flags;
+		_flags |= (int)flags;
 		return this;
 	}
-	Type* RemoveFlags(TypeFlag flags)
+	Type* RemoveFlags(TypeFlag flags) noexcept
 	{
-		m_flags ^= (int)flags;
+		_flags ^= (int)flags;
 		return this;
 	}
-	bool HasFlag(TypeFlag flag)const
+	constexpr bool HasFlag(TypeFlag flag)const
 	{
-		return m_flags & (int)flag;
+		return _flags & (int)flag;
 	}
 
-	Type* AddEditorComponent(const std::string& group)
+	Type* AddEditorComponent(const std::string& group) noexcept
 	{
-		m_flags |= (int)TypeFlag::ShowInEditor;
-		m_editor_component = group;
+		_flags |= (int)TypeFlag::ShowInEditor;
+		_editorComponent = group;
 		return this;
 	}
-	const std::string& GetEditorComponent()const
+	const std::string& GetEditorComponent()const noexcept
 	{
-		return m_editor_component;
+		return _editorComponent;
 	}
 
 public:
-	static std::unordered_map<std::string, Type*>& GetTypes()
+	static std::unordered_map<std::string, Type*>& GetTypes() noexcept
 	{
 		static std::unordered_map<std::string, Type*> types;
 		return types;
 	}
 	//普通类型+类
-	static Type* RegisterType(Type* type, const std::string& m_name, const Type* m_baseType);
-	static const Type* GetType(const std::string& typeName);
+	static Type* RegisterType(Type* type, const std::string& _name, const Type* _baseType) noexcept;
+	static const Type* GetType(const std::string& typeName) noexcept;
 	//返回所有反射到的类型字符串
-	static void Output();
+	static void Output() noexcept;
 	//程序结束时释放所有反射的对象
-	static void Destroy();
+	static void Destroy() noexcept;
 };
 DC_END_NAMESPACE

@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Date：2020/8/19
@@ -10,7 +10,7 @@
 
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-class ENGINE_DLL Bone Final : public Object
+class ENGINE_DLL Bone final : public Object
 {
 	friend class Mesh;
 	friend class Animation;
@@ -18,7 +18,7 @@ class ENGINE_DLL Bone Final : public Object
 	FRIEND_CONSTRUCT_DESTRUCT(Bone);
 	DISALLOW_COPY_ASSIGN(Bone);
 	BEGIN_DERIVED_REFECTION_TYPE(Bone, Object)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 	Bone(const String& name, uint id) : Name(name), Id(id) {}
 	~Bone() {}

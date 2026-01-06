@@ -1,9 +1,8 @@
-#include "DllExport.h"
+﻿#include "DllExport.h"
 
 extern int astc_main(int argc, char ** argv);
 extern int dxt_main(int argc, char** argv);
 extern int etc_main(int argc, char** argv);
-extern void tinystl_main();
 
 int dll_astc_main(int argc, char ** argv)
 {
@@ -24,8 +23,4 @@ int dll_etc_main(int argc, char** argv)
 #else
 	return -1;
 #endif
-}
-void dll_tinystl_test()
-{
-	tinystl_main();
 }

@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************************************/
 // @author hannibal
 // @date   2020/10/04
@@ -11,14 +11,14 @@
 DC_BEGIN_NAMESPACE
 class VideoDecoderPrivate;
 /********************************************************************/
-class ENGINE_DLL VideoFrame Final : public object
+class ENGINE_DLL VideoFrame final : public object
 {
 	DEFAULT_CREATE(VideoFrame);
 	FRIEND_CONSTRUCT_DESTRUCT(VideoFrame);
 public:
 	Image* image = nullptr;
 	float present_time = 0;
-	bool is_last_frame = false;
+	bool isLastFrame = false;
 
 	VideoFrame(ColorFormat format, const iSize& size) 
 	{
@@ -30,7 +30,7 @@ public:
 		SAFE_RELEASE(image); 
 	}
 };
-class VideoDecoder Final : public object
+class VideoDecoder final : public object
 {
 	friend class VideoPlayer;
 	friend class Application;

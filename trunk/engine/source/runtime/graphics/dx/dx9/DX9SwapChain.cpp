@@ -1,4 +1,4 @@
-#include "DX9SwapChain.h"
+﻿#include "DX9SwapChain.h"
 #include "DX9Device.h"
 #include "DX9Caps.h"
 #include "core/Utility.h"
@@ -75,8 +75,8 @@ void DX9SwapChain::CreateOrReset()
 }
 void DX9SwapChain::BeginFrame(RenderFrameDesc& desc)
 {
-	desc.target_buffer = _renderTarget;
-	desc.depth_stencil_buffer = _depthStencil;
+	desc.targetBuffer = _renderTarget;
+	desc.depthStencilBuffer = _depthStencil;
 	base::BeginFrame(desc);
 }
 void DX9SwapChain::Present(uint sync)

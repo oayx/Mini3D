@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Date：2021/10/3
@@ -19,10 +19,9 @@ class ENGINE_DLL ManualRender : public Renderer
 	DECLARE_OBJECT_SERIALIZE(ManualRender);
 	BEGIN_DERIVED_REFECTION_TYPE(ManualRender, Renderer)
 		CTORS(DEFAULT_CTOR(ManualRender))
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 protected:
-	~ManualRender();
 	virtual bool CanRemove()override;
 	virtual void OnDrawEditor()override;
 
@@ -50,9 +49,9 @@ public:
 	void SetIndices(const Vector<uint>&& indices, int prim = 0) { base::SetIndices(std::move(indices), prim); }
 	void SetIndices(uint index_nums, uint *index, int prim = 0) { base::SetIndices(index_nums, index, prim); }
 
-	void AddSubMesh(uint elem_count, uint vtx_offset, uint idx_offset, uint start_vertex, uint start_index, int prim = 0) 
+	void AddSubMesh(uint elem_count, uint vtx_offset, uint idxOffset, uint start_vertex, uint start_index, int prim = 0) 
 	{ 
-		base::AddSubPrimitive(elem_count, vtx_offset, idx_offset, start_vertex, start_index, prim);
+		base::AddSubPrimitive(elem_count, vtx_offset, idxOffset, start_vertex, start_index, prim);
 	}
 };
 DC_END_NAMESPACE

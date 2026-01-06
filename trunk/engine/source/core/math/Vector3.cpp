@@ -10,7 +10,7 @@ const Vector3 Vector3::forward(0.0f,0.0f,1.0f);
 const Vector3 Vector3::one(1.0f,1.0f,1.0f);
 const Vector3 Vector3::infinity(std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity());
 
-Vector3 Vector3::Normalize()
+Vector3 Vector3::Normalize() noexcept
 {
 	float fLenght = Lenght();
 	if (Math::FloatEqual(fLenght, 0.0f))
@@ -26,7 +26,7 @@ Vector3 Vector3::Normalize()
 	}
 	return *this;
 }
-Vector3 Vector3::Normalize(float len)
+Vector3 Vector3::Normalize(float len) noexcept
 {
 	Normalize();
 	x = x * len;
@@ -34,12 +34,12 @@ Vector3 Vector3::Normalize(float len)
 	z = z * len;
 	return *this;
 }
-void Vector3::Projection(const Vector3 &vec, Vector3 &vecParallel, Vector3 &vecVertical) const
+void Vector3::Projection(const Vector3 &vec, Vector3 &vecParallel, Vector3 &vecVertical) const noexcept
 {
 	vecParallel = vec * ((*this).Dot(vec)/vec.SquareSize());
 	vecVertical = (*this) - vecParallel;
 }
-Vector3 Vector3::Lerp(const Vector3& from, const Vector3& to, float t, bool clamp_01)
+Vector3 Vector3::Lerp(const Vector3& from, const Vector3& to, float t, bool clamp_01) noexcept
 {
 	return Vector3(
 		Math::Lerp(from.x, to.x, t, clamp_01),

@@ -1,4 +1,4 @@
-#include "GraphicsDevice.h"
+﻿#include "GraphicsDevice.h"
 #include "GPUAdapter.h"
 #include "SwapChain.h"
 #include "RenderContent.h"
@@ -27,7 +27,7 @@ GraphicsDevice::~GraphicsDevice()
 void GraphicsDevice::Release()
 {
 	SAFE_DELETE(_renderContent);
-	SAFE_DELETE(_gPUAdapter);
+	SAFE_DELETE(_gpuAdapter);
 
 	for (auto swap_chain : _swapChains)
 	{
@@ -37,22 +37,39 @@ void GraphicsDevice::Release()
 
 	base::Release();
 }
+void GraphicsDevice::DestroyDevice(RenderWindow* window)
+{
+	//undo
+}
+void GraphicsDevice::DestroySwapChain(RenderWindow* window)
+{
+	SAFE_DELETE(_swapChains[int(window->GetTargetDisplay())]);
+	_swapChains[int(window->GetTargetDisplay())] = nullptr;
+}
+void GraphicsDevice::DestroyRenderContent()
+{
+	SAFE_DELETE(_renderContent);
+}
 void GraphicsDevice::Resize(const WindowResizeDesc& desc)
 {
-	_swapChains[0]->Resize(desc);
-	_renderContent->Resize(desc);
+	if (_swapChains[0])_swapChains[0]->Resize(desc);
+	if (_renderContent)_renderContent->Resize(desc);
 }
 void GraphicsDevice::PreRender(RenderWindow* window)
 {
 	_currSwapChain = _swapChains[(int)window->GetTargetDisplay()];
-	_renderContent->PreRender(window);
+	if (_renderContent)_renderContent->PreRender(window);
 }
 void GraphicsDevice::PostRender(RenderWindow* window)
 {
-	_renderContent->PostRender();
+	if (_renderContent)_renderContent->PostRender();
 }
 void GraphicsDevice::Present(RenderWindow* window)
 {
+	DC_PROFILE_FUNCTION;
+	if (!_renderContent || !_currSwapChain)
+		return;
+
 	_renderContent->Present(window->GetSync());
 	_currSwapChain->Present(window->GetSync());
 

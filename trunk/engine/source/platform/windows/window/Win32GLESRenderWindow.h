@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2020/3/9
@@ -10,14 +10,14 @@
 
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-class Win32GLESRenderWindow Final : public GLFWRenderWindow
+class Win32GLESRenderWindow final : public GLFWRenderWindow
 {
 	friend class WindowManager;
 	DEFAULT_CREATE(Win32GLESRenderWindow);
 	FRIEND_CONSTRUCT_DESTRUCT(Win32GLESRenderWindow);
 	DISALLOW_COPY_ASSIGN(Win32GLESRenderWindow);
 	BEGIN_DERIVED_REFECTION_TYPE(Win32GLESRenderWindow, GLFWRenderWindow)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 protected:
 	Win32GLESRenderWindow();

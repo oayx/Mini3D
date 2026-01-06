@@ -89,7 +89,7 @@ void GLRenderTexture::BeginFrame(RenderFrameDesc& desc)
 		GL_ERROR(glFramebufferTexture2D(GL_FRAMEBUFFER, attachments, tex_target, _colorTexture, 0));
 		GL_ERROR(glBindTexture(texture_type, 0));
 	}
-	desc.view_port.Set((float)_imageWidth, (float)_imageHeight);
+	desc.viewPort.Set((float)_imageWidth, (float)_imageHeight);
 	base::BeginFrame(desc);
 }
 void GLRenderTexture::PostRender()
@@ -112,7 +112,7 @@ bool GLRenderTexture::GetData(MemoryDataStream& stream)
 		GL_ERROR(glGetIntegerv(GL_IMPLEMENTATION_COLOR_READ_FORMAT, &read_format));
 		GL_ERROR(glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _colorTexture, 0));
 		GL_ERROR(glReadBuffer(GL_COLOR_ATTACHMENT0));
-		GL_ERROR(glReadPixels(0, 0, this->GetWidth(), this->GetHeight(), read_format, read_type, stream.data()));
+		GL_ERROR(glReadPixels(0, 0, this->GetWidth(), this->GetHeight(), read_format, read_type, stream.Buffer()));
 	}
 	GL_ERROR(glBindFramebuffer(GL_READ_FRAMEBUFFER, 0));
 	return true;
@@ -165,7 +165,7 @@ void GLRenderTexture::SaveToFile(const String& name, ImageType type)
 	MemoryDataStream stream;
 	if (this->GetData(stream) && image->GetSize() == stream.Size())
 	{
-		image->Fill(stream.data(), stream.Size());
+		image->Fill(stream.Buffer(), stream.Size());
 		image->SaveToFile(name);
 	}
 }

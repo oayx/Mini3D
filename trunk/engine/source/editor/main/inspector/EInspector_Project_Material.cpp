@@ -1,4 +1,4 @@
-#include "EInspector_Project_Material.h"
+﻿#include "EInspector_Project_Material.h"
 #include "runtime/graphics/Material.h"
 #include "runtime/graphics/null/GraphicsDevice.h"
 #include "runtime/resources/AssetsManager.h"
@@ -27,7 +27,7 @@ void EInspector_Project_Material::OnLeave()
 }
 void EInspector_Project_Material::Render(AssetMeta* meta)
 {
-	DC_PROFILE_FUNCTION();
+	DC_PROFILE_FUNCTION;
 	base::Render(meta);
 
 	if (!meta)return;
@@ -40,15 +40,14 @@ bool EInspector_Project_Material::RenderMaterial(Material* material, Action acti
 	bool result = false;
 	{
 		ImGuiEx::Label("Shader");
-		int select = -1;
 		Shader* shader = material->GetShader();
-		String shader_file = "##Empty Shader";
+		String shaderFile = "##Empty Shader";
 		if (shader)
 		{
-			shader_file = shader->GetGroupInspector();
-			if (shader_file.IsEmpty())shader_file = Path::GetFileNameWithoutExtension(shader->GetResName());
+			shaderFile = shader->GetGroupInspector();
+			if (shaderFile.IsEmpty())shaderFile = Path::GetFileNameWithoutExtension(shader->GetResName());
 		}
-		ImGui::Button(shader_file.c_str(), ImVec2(ImGui::GetContentRegionAvail().x - ImGui::CalcTextSize(ICON_FA_LINK).x - 5, 0));
+		ImGui::Button(shaderFile.c_str(), ImVec2(ImGui::GetContentRegionAvail().x - ImGui::CalcTextSize(ICON_FA_LINK).x - 5, 0));
 		if (ImGui::IsItemClicked(0) && shader)
 		{
 			EMain_Project::SetSelectFile(shader->GetResFile());
@@ -57,10 +56,10 @@ bool EInspector_Project_Material::RenderMaterial(Material* material, Action acti
 		{
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ProjectAsset"))
 			{
-				const String& file_path = EditorCursor::GetDragFile();
-				if (Resource::GetResourceType(file_path) == ResourceType::Shader)
+				const String& filePath = EditorCursor::GetDragFile();
+				if (Resource::GetResourceType(filePath) == ResourceType::Shader)
 				{
-					shader = material->SetShaderFile(file_path);
+					shader = material->SetShaderFile(filePath);
 					material->SetShaderVariable(shader->GetVariables());
 					result = true;
 				}
@@ -104,10 +103,10 @@ bool EInspector_Project_Material::RenderMaterial(Material* material, Action acti
 					{
 						if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ProjectAsset"))
 						{
-							const String& file_path = EditorCursor::GetDragFile();
-							if (Resource::GetResourceType(file_path) == ResourceType::Texture)
+							const String& filePath = EditorCursor::GetDragFile();
+							if (Resource::GetResourceType(filePath) == ResourceType::Texture)
 							{
-								tex.File = file_path;
+								tex.File = filePath;
 								shader->SetTexture(tex);
 							}
 							EditorCursor::EndDrag();
@@ -129,26 +128,26 @@ bool EInspector_Project_Material::RenderMaterial(Material* material, Action acti
 					{
 						ImGuiEx::Label("Tiling");
 						const float width = ImGui::GetContentRegionAvail().x;
-						const float char_width = ImGui::GetFontSize();
+						const float charWidth = ImGui::GetFontSize();
 
-						ImGui::SetNextItemWidth(char_width);
+						ImGui::SetNextItemWidth(charWidth);
 						ImGui::Text("X");
 
 						float min_v = -GetGraphicsCaps()->maxTextureRepeat;
 						float max_v = GetGraphicsCaps()->maxTextureRepeat;
 						ImGui::SameLine();
-						ImGui::SetNextItemWidth(width * 0.5f - char_width);
+						ImGui::SetNextItemWidth(width * 0.5f - charWidth);
 						if (ImGui::DragScalar("##TilingX", ImGuiDataType_Float, &tex.Scale.x, 0.01f, &min_v, &max_v, "%.3f"))
 						{
 							shader->SetTexture(tex);
 						}
 
 						ImGui::SameLine();
-						ImGui::SetNextItemWidth(char_width);
+						ImGui::SetNextItemWidth(charWidth);
 						ImGui::TextUnformatted("Y");
 
 						ImGui::SameLine();
-						ImGui::SetNextItemWidth(width * 0.5f - char_width);
+						ImGui::SetNextItemWidth(width * 0.5f - charWidth);
 						if (ImGui::DragScalar("##TilingY", ImGuiDataType_Float, &tex.Scale.y, 0.01f, &min_v, &max_v, "%.3f"))
 						{
 							shader->SetTexture(tex);
@@ -157,26 +156,26 @@ bool EInspector_Project_Material::RenderMaterial(Material* material, Action acti
 					{
 						ImGuiEx::Label("Offset");
 						const float width = ImGui::GetContentRegionAvail().x;
-						const float char_width = ImGui::GetFontSize();
+						const float charWidth = ImGui::GetFontSize();
 
-						ImGui::SetNextItemWidth(char_width);
+						ImGui::SetNextItemWidth(charWidth);
 						ImGui::Text("X");
 
 						float min_v = -GetGraphicsCaps()->maxTextureRepeat;
 						float max_v = GetGraphicsCaps()->maxTextureRepeat;
 						ImGui::SameLine();
-						ImGui::SetNextItemWidth(width * 0.5f - char_width);
+						ImGui::SetNextItemWidth(width * 0.5f - charWidth);
 						if (ImGui::DragScalar("##OffsetX", ImGuiDataType_Float, &tex.Offset.x, 0.01f, &min_v, &max_v, "%.3f"))
 						{
 							shader->SetTexture(tex);
 						}
 
 						ImGui::SameLine();
-						ImGui::SetNextItemWidth(char_width);
+						ImGui::SetNextItemWidth(charWidth);
 						ImGui::TextUnformatted("Y");
 
 						ImGui::SameLine();
-						ImGui::SetNextItemWidth(width * 0.5f - char_width);
+						ImGui::SetNextItemWidth(width * 0.5f - charWidth);
 						if (ImGui::DragScalar("##OffsetY", ImGuiDataType_Float, &tex.Offset.y, 0.01f, &min_v, &max_v, "%.3f"))
 						{
 							shader->SetTexture(tex);
@@ -195,9 +194,9 @@ bool EInspector_Project_Material::RenderMaterial(Material* material, Action acti
 					if(!var.HideInspector)
 					{
 						ImGui::PushID(i);
-						const char* sz_name = var.Alias.c_str();
-						if (sz_name[0] == '\0')sz_name = var.Name.c_str();
-						ImGuiEx::Label(sz_name);
+						const char* szName = var.Alias.c_str();
+						if (szName[0] == '\0')szName = var.Name.c_str();
+						ImGuiEx::Label(szName);
 						switch (var.Type)
 						{
 						case ShaderVariableType::D2:
@@ -324,9 +323,9 @@ void EInspector_Project_Material::ShowAddShader(const ShaderGroup* parent_group,
 {
 	for (const auto& obj : parent_group->Files)
 	{
-		const char* sz_name = obj.first.c_str();
+		const char* szName = obj.first.c_str();
 
-		if (ImGui::MenuItem(sz_name))
+		if (ImGui::MenuItem(szName))
 		{
 			AssetMeta* meta = AssetsManager::GetMeta(obj.second);
 			if(meta)action(meta->GetFullPath());
@@ -335,8 +334,8 @@ void EInspector_Project_Material::ShowAddShader(const ShaderGroup* parent_group,
 
 	for (const auto& obj : parent_group->Folders)
 	{
-		const char* sz_name = obj.first.c_str();
-		if (ImGui::BeginMenu(sz_name))
+		const char* szName = obj.first.c_str();
+		if (ImGui::BeginMenu(szName))
 		{
 			ShowAddShader(&obj.second, action);
 			ImGui::EndMenu();

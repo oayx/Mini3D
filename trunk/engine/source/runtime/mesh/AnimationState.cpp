@@ -1,4 +1,4 @@
-#include "AnimationState.h"
+﻿#include "AnimationState.h"
 #include "AnimationClip.h"
 #include "AnimationNode.h"
 #include "Animation.h"
@@ -23,7 +23,7 @@ void AnimationState::Update(float dt)
 		_playPosition += dt;
 
 		//计算播放进度
-		bool is_play_complete = false;
+		bool isPlayComplete = false;
 		float time = _playPosition * _currentClip->GetFPS();
 		if (_currentClip->GetFrames() > 1)
 		{
@@ -33,7 +33,7 @@ void AnimationState::Update(float dt)
 				{
 					time = (float)::fmod(time, _currentClip->GetFrames());
 					_playPosition = (float)::fmod(_playPosition, _currentClip->_duration);
-					is_play_complete = true;
+					isPlayComplete = true;
 				}
 			}
 			else
@@ -41,7 +41,7 @@ void AnimationState::Update(float dt)
 				if (time > (float)_currentClip->GetFrames() - 1.0f)
 				{//停留在最后位置
 					time = MAX_float;
-					is_play_complete = true;
+					isPlayComplete = true;
 				}
 			}
 		}
@@ -52,7 +52,7 @@ void AnimationState::Update(float dt)
 
 		_currentClip->Update(time, _boneKeyframes);
 
-		if (is_play_complete)
+		if (isPlayComplete)
 		{
 			_animation->OnPlayComplete(this);
 		}
@@ -71,14 +71,14 @@ void AnimationState::Stop()
 	_currentClip = nullptr;
 	_playPosition = 0;
 }
-void AnimationState::TransfromBone(const Matrix4& parent_mat, BoneTransforms& bone_transforms)
+void AnimationState::TransfromBone(const Matrix4& parentMat, BoneTransforms& boneTransforms)
 {
 	if (_currentClip != nullptr)
 	{
-		this->TransfromBone(_currentClip->_rootNode, parent_mat, bone_transforms);
+		this->TransfromBone(_currentClip->_rootNode, parentMat, boneTransforms);
 	}
 }
-void AnimationState::TransfromBone(AnimationNode* node, const Matrix4& parent_mat, BoneTransforms& bone_transforms)
+void AnimationState::TransfromBone(AnimationNode* node, const Matrix4& parentMat, BoneTransforms& boneTransforms)
 {
 	Matrix4 node_mat = node->GetTransfrom();
 	if (node->GetBone() != nullptr)
@@ -86,17 +86,17 @@ void AnimationState::TransfromBone(AnimationNode* node, const Matrix4& parent_ma
 		const BoneKeyFrame& keyframe = _boneKeyframes[node->GetBone()->Id];
 		node_mat = Matrix4(keyframe.Position, keyframe.Rotate, keyframe.Scale);
 	}
-	Matrix4 full_mat = node_mat * parent_mat;//这个要反着变换
+	Matrix4 fullMat = node_mat * parentMat;//这个要反着变换
 
 	if (node->GetBone() != nullptr)
 	{
-		Matrix4 mat = node->GetBone()->BoneOffset * full_mat;//这个要反着变换
-		bone_transforms[node->GetBone()->Id] = mat;
+		Matrix4 mat = node->GetBone()->BoneOffset * fullMat;//这个要反着变换
+		boneTransforms[node->GetBone()->Id] = mat;
 	}
 
 	for (int i = 0; i <node->GetChildrenCount(); ++i)
 	{
-		this->TransfromBone(node->GetChildren(i), full_mat, bone_transforms);
+		this->TransfromBone(node->GetChildren(i), fullMat, boneTransforms);
 	}
 }
 const String& AnimationState::GetName()const

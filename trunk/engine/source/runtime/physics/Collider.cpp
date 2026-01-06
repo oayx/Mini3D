@@ -1,4 +1,4 @@
-#include "Collider.h"
+﻿#include "Collider.h"
 #include "RigidBody.h"
 #include "Physics.h"
 #include "runtime/component/Component.inl"
@@ -18,16 +18,12 @@ Collider::Collider()
 }
 Collider::~Collider()
 {
-	if (_shape)
-	{
-		delete _shape;
-		_shape = nullptr;
-	}
+	SAFE_DELETE(_shape);
 	if (_rigidBody)
 	{
-		Physics::GetWorld()->removeRigidBody(_rigidBody);
-		delete _rigidBody;
-		_rigidBody = nullptr;
+		if(Physics::GetWorld())
+			Physics::GetWorld()->removeRigidBody(_rigidBody);
+		SAFE_DELETE(_rigidBody);
 	}
 }
 void Collider::getWorldTransform(btTransform& worldTrans) const
@@ -50,24 +46,24 @@ void Collider::setWorldTransform(const btTransform& worldTrans)
 	const btQuaternion& bt_rotation = worldTrans.getRotation();
 	Vector3 pos = FrombtVec3(bt_pos);
 	Quaternion q = Quaternion(bt_rotation.getX(), bt_rotation.getY(), bt_rotation.getZ(), bt_rotation.getW());
-	RigidBody* rigid_body = this->GetComponent<RigidBody>();
-	if (rigid_body)
+	RigidBody* rigidBody = this->GetComponent<RigidBody>();
+	if (rigidBody)
 	{
-		if (rigid_body->IsFixedPositionX() || rigid_body->IsFixedPositionY() || rigid_body->IsFixedPositionZ())
+		if (rigidBody->IsFixedPositionX() || rigidBody->IsFixedPositionY() || rigidBody->IsFixedPositionZ())
 		{
-			const Vector3& obj_pos = transform->GetPosition();
-			if (rigid_body->IsFixedPositionX())pos.x = obj_pos.x;
-			if (rigid_body->IsFixedPositionY())pos.y = obj_pos.y;
-			if (rigid_body->IsFixedPositionZ())pos.z = obj_pos.z;
+			const Vector3& objPos = transform->GetPosition();
+			if (rigidBody->IsFixedPositionX())pos.x = objPos.x;
+			if (rigidBody->IsFixedPositionY())pos.y = objPos.y;
+			if (rigidBody->IsFixedPositionZ())pos.z = objPos.z;
 		}
 
-		if (rigid_body->IsFixedRotationX() || rigid_body->IsFixedRotationY() || rigid_body->IsFixedRotationZ())
+		if (rigidBody->IsFixedRotationX() || rigidBody->IsFixedRotationY() || rigidBody->IsFixedRotationZ())
 		{
 			Vector3 euler = q.ToEuler();
-			Vector3 obj_euler = transform->GetRotation().ToEuler();
-			if (rigid_body->IsFixedRotationX())euler.x = obj_euler.x;
-			if (rigid_body->IsFixedRotationY())euler.y = obj_euler.y;
-			if (rigid_body->IsFixedRotationZ())euler.z = obj_euler.z;
+			Vector3 objEuler = transform->GetRotation().ToEuler();
+			if (rigidBody->IsFixedRotationX())euler.x = objEuler.x;
+			if (rigidBody->IsFixedRotationY())euler.y = objEuler.y;
+			if (rigidBody->IsFixedRotationZ())euler.z = objEuler.z;
 			q = Quaternion(euler);
 		}
 	}
@@ -86,10 +82,10 @@ void Collider::Start()
 	float mass = 0.0f;
 	//惯性    　　　
 	btVector3 inertia(0.0f, 0.0f, 0.0f);
-	RigidBody* rigid_body = this->GetComponent<RigidBody>();
-	if (rigid_body)
+	RigidBody* rigidBody = this->GetComponent<RigidBody>();
+	if (rigidBody)
 	{
-		mass = rigid_body->GetMass();
+		mass = rigidBody->GetMass();
 		if (mass > 0)
 		{
 			inertia = this->CalculateInertia(mass);
@@ -147,11 +143,11 @@ btVector3 Collider::CalculateInertia(float mass)const
 	if(mass > 0.0f && _shape)_shape->calculateLocalInertia(mass, inertia);
 	return inertia;
 }
-Object* Collider::Clone(Object* new_obj)
+Object* Collider::Clone(Object* newObj)
 {
-	base::Clone(new_obj);
-	Collider* obj = dynamic_cast<Collider*>(new_obj);
-	if (!obj)return new_obj;
+	base::Clone(newObj);
+	Collider* obj = dynamic_cast<Collider*>(newObj);
+	if (!obj)return newObj;
 
 	obj->SetIsTrigger(_isTrigger);
 	obj->SetOffset(_offset);
@@ -214,17 +210,17 @@ void Collider::OnDrawEditor()
 	if(_rigidBody)
 	{
 		ImGuiEx::Label("Friction");
-		float min_value = 0.0f;
-		float man_value = MAX_float;
-		if (ImGui::DragScalar("##Friction", ImGuiDataType_Float, &_friction, 0.001f, &min_value, &man_value, "%.3f"))
+		float minValue = 0.0f;
+		float maxValue = MAX_float;
+		if (ImGui::DragScalar("##Friction", ImGuiDataType_Float, &_friction, 0.001f, &minValue, &maxValue, "%.3f"))
 		{
 			_rigidBody->setFriction(_friction);
 		}
 
 		ImGuiEx::Label("Restitution");
-		min_value = 0.0f;
-		man_value = 1.0f;
-		if (ImGui::DragScalar("##Restitution", ImGuiDataType_Float, &_restitution, 0.001f, &min_value, &man_value, "%.3f"))
+		minValue = 0.0f;
+		maxValue = 1.0f;
+		if (ImGui::DragScalar("##Restitution", ImGuiDataType_Float, &_restitution, 0.001f, &minValue, &maxValue, "%.3f"))
 		{
 			_rigidBody->setRestitution(_restitution);
 		}
@@ -271,8 +267,8 @@ btCollisionShape* BoxCollider::CreateShape()
 {
 	Transform* transform = GetGameObject()->GetTransform();
 	const Aabb& box = transform->GetUnscaleBoundingBox();
-	Vector3 half_size = box.GetHalfSize();
-	return new btBoxShape(TobtVec3(half_size));
+	Vector3 halfSize = box.GetHalfSize();
+	return new btBoxShape(TobtVec3(halfSize));
 }
 void BoxCollider::OnDrawEditor()
 {
@@ -297,18 +293,18 @@ btCollisionShape* SphereCollider::CreateShape()
 {
 	Transform* transform = GetGameObject()->GetTransform();
 	const Aabb& box = transform->GetUnscaleBoundingBox();
-	Vector3 half_size = box.GetHalfSize();
-	float radius = half_size.x;
-	if (half_size.y > radius)radius = half_size.y;
-	if (half_size.z > radius)radius = half_size.z;
+	Vector3 halfSize = box.GetHalfSize();
+	float radius = halfSize.x;
+	if (halfSize.y > radius)radius = halfSize.y;
+	if (halfSize.z > radius)radius = halfSize.z;
 	return new btSphereShape(radius);
 }
 void SphereCollider::OnDrawEditor()
 {
 	base::OnDrawEditor();
 	ImGuiEx::Label("Radius Scale");
-	float min_value = 0.001f;
-	if (ImGui::DragScalar("##Radius Scale", ImGuiDataType_Float, &_localScale.x, 0.01f, &min_value))
+	float minValue = 0.001f;
+	if (ImGui::DragScalar("##Radius Scale", ImGuiDataType_Float, &_localScale.x, 0.01f, &minValue))
 	{
 		_localScale = Vector3(_localScale.x, _localScale.x, _localScale.x);
 		UpdateScale();
@@ -328,20 +324,20 @@ btCollisionShape* CapsuleCollider::CreateShape()
 {
 	Transform* transform = GetGameObject()->GetTransform();
 	const Aabb& box = transform->GetUnscaleBoundingBox();
-	Vector3 half_size = box.GetHalfSize();
-	return new btCapsuleShape(half_size.x, half_size.y);
+	Vector3 halfSize = box.GetHalfSize();
+	return new btCapsuleShape(halfSize.x, halfSize.y);
 }
 void CapsuleCollider::OnDrawEditor()
 {
 	base::OnDrawEditor();
 	ImGuiEx::Label("Radius Scale");
-	float min_value = 0.001f;
-	if (ImGui::DragScalar("##Radius", ImGuiDataType_Float, &_localScale.x, 0.01f, &min_value))
+	float minValue = 0.001f;
+	if (ImGui::DragScalar("##Radius", ImGuiDataType_Float, &_localScale.x, 0.01f, &minValue))
 	{
 		UpdateScale();
 	}
 	ImGuiEx::Label("Height Scale");
-	if (ImGui::DragScalar("##Height", ImGuiDataType_Float, &_localScale.y, 0.01f, &min_value))
+	if (ImGui::DragScalar("##Height", ImGuiDataType_Float, &_localScale.y, 0.01f, &minValue))
 	{
 		UpdateScale();
 	}
@@ -360,8 +356,8 @@ btCollisionShape* CylinderCollider::CreateShape()
 {
 	Transform* transform = GetGameObject()->GetTransform();
 	const Aabb& box = transform->GetUnscaleBoundingBox();
-	Vector3 half_size = box.GetHalfSize();
-	return new btCylinderShape(TobtVec3(half_size));
+	Vector3 halfSize = box.GetHalfSize();
+	return new btCylinderShape(TobtVec3(halfSize));
 }
 void CylinderCollider::OnDrawEditor()
 {
@@ -406,16 +402,15 @@ bool TerrainCollider::CanAdd(GameObject* object)
 btCollisionShape* TerrainCollider::CreateShape()
 {
 	Terrain* terrain = GetComponent<Terrain>();
-	const float* height_data = terrain->GetHeightData();
+	const float* heightData = terrain->GetHeightData();
 	int rows = terrain->GetTileRows();
 	int cols = terrain->GetTileCols();
 	
 	_heightData.Resize(rows * cols);
 	for (int row = 0; row < rows; ++row)
 	{//转换成bullet的右手坐标系
-		Memory::Copy(&_heightData[(rows - row - 1) * cols], &height_data[row * cols], cols * sizeof(float));
+		Memory::Copy(&_heightData[(rows - row - 1) * cols], &heightData[row * cols], cols * sizeof(float));
 	}
-	float offset_y = -(terrain->GetMinHeight() + terrain->GetMaxHeight());
 	btHeightfieldTerrainShape* shape = new btHeightfieldTerrainShape(
 		cols, rows,
 		_heightData.Data(), 1.0f,
@@ -448,12 +443,12 @@ btCollisionShape* MeshCollider::CreateShape()
 	if (!mesh)return nullptr;
 
 	const Vector<Triangle>& triangles = mesh->GetTriangles();
-	m_btMesh = new btTriangleMesh(triangles.Size() >= USHRT_MAX);
+	_btMesh = new btTriangleMesh(triangles.Size() >= USHRT_MAX);
 	for(const auto& triangle : triangles)
 	{
-		m_btMesh->addTriangle(TobtVec3(triangle.first), TobtVec3(triangle.secord), TobtVec3(triangle.third));
+		_btMesh->addTriangle(TobtVec3(triangle.first), TobtVec3(triangle.secord), TobtVec3(triangle.third));
 	}
-	btBvhTriangleMeshShape* shape = new btBvhTriangleMeshShape(m_btMesh, true);
+	btBvhTriangleMeshShape* shape = new btBvhTriangleMeshShape(_btMesh, true);
 	return shape;
 }
 btVector3 MeshCollider::CalculateInertia(float mass) const

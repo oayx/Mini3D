@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Date：2021/1/18
@@ -10,7 +10,7 @@
 
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-class ENGINE_DLL TCPConnecter Final : public Socket
+class ENGINE_DLL TCPConnecter final : public Socket
 {
 	typedef std::function<void()> ConnectedCallback;
 	typedef std::function<void(byte*, int)> ReceiveCallback;
@@ -20,14 +20,14 @@ class ENGINE_DLL TCPConnecter Final : public Socket
 	FRIEND_CONSTRUCT_DESTRUCT(TCPConnecter);
 	DISALLOW_COPY_ASSIGN(TCPConnecter);
 	BEGIN_DERIVED_REFECTION_TYPE(TCPConnecter, Socket)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 public:
-	TCPConnecter();
-	~TCPConnecter();
+	TCPConnecter() = default;
+	~TCPConnecter() = default;
 
-	void Connect(const String& host_name, int port);
-	void ConnectAsync(const String& host_name, int port);
+	int Connect(const String& hostName, int port)override;
+	void ConnectAsync(const String& hostName, int port);
 
 	void OnConnected(ConnectedCallback callback) { _connectedCallback = callback; }
 	void OnReceive(ReceiveCallback callback) { _receiveCallback = callback; }

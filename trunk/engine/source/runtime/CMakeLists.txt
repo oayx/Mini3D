@@ -44,21 +44,13 @@ file(GLOB_RECURSE ENGINE_RUNTIME_SRC
 	${RUNTIME_COMMON_SRC}
 	source/runtime/graphics/dx/*.cpp
 	source/runtime/graphics/opengl/*.cpp
-)
-elseif(LINUX)
+	source/runtime/profiler/*.cpp
+	)
+elseif(LINUX OR ANDROID OR WASM OR APPLE)
 file(GLOB_RECURSE ENGINE_RUNTIME_SRC
 	${RUNTIME_COMMON_SRC}
 	source/runtime/graphics/opengl/*.cpp
-)
-elseif(ANDROID)
-file(GLOB_RECURSE ENGINE_RUNTIME_SRC
-	${RUNTIME_COMMON_SRC}
-	source/runtime/graphics/opengl/*.cpp
-)
-elseif(MACOSX OR APPLE)
-set(ENGINE_RUNTIME_SRC
-	${RUNTIME_COMMON_SRC}
-)
+	)
 else()
 	message( FATAL_ERROR "Unsupported architecture, engine" )
 endif()

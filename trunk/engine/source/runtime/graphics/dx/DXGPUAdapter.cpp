@@ -1,4 +1,4 @@
-#include "DXGPUAdapter.h"
+﻿#include "DXGPUAdapter.h"
 #include <d3d11.h>
 
 DC_BEGIN_NAMESPACE
@@ -31,17 +31,17 @@ GPUAdapterInfo* DXGPUAdapter::SelectAdapters(void* instance)
 {
 	IDXGIFactory* factory = (IDXGIFactory*)instance;
 
-	if (_gPUAdapters.IsEmpty())
+	if (_gpuAdapters.IsEmpty())
 	{
 		this->EnumAdapters(instance);
 	}
-	if (!_gPUAdapters.IsEmpty())
+	if (!_gpuAdapters.IsEmpty())
 	{
 		IDXGIAdapter* selected_adapter = nullptr;
 		int adapter_index = -1;
-		for (int i = 0; i < _gPUAdapters.Size(); ++i)
+		for (int i = 0; i < _gpuAdapters.Size(); ++i)
 		{
-			GPUAdapterInfo* adapter = _gPUAdapters[i];
+			GPUAdapterInfo* adapter = _gpuAdapters[i];
 			if (!adapter->IsValid())
 			{
 				Debuger::Warning("Failed to choose valid DirectX adapter!");
@@ -58,7 +58,7 @@ GPUAdapterInfo* DXGPUAdapter::SelectAdapters(void* instance)
 		}
 		if (adapter_index >= 0)
 		{
-			return _gPUAdapters[adapter_index];
+			return _gpuAdapters[adapter_index];
 		}
 	}
 	return nullptr;
@@ -77,7 +77,7 @@ void DXGPUAdapter::EnumAdapters(void* instance)
 			adapter->FeatureLevel = max_feature_evel;
 			tmpAdapter->GetDesc(&adapter->Description);
 
-			_gPUAdapters.Add(adapter);
+			_gpuAdapters.Add(adapter);
 		}
 	}
 }

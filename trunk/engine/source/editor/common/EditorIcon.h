@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Description：编辑器图标
@@ -14,20 +14,21 @@ class AssetMeta;
 class ENGINE_DLL EditorIcon : public Object
 {
 	friend class EditorIconCache;
+	FRIEND_CONSTRUCT_DESTRUCT(EditorIcon);
 	DISALLOW_COPY_ASSIGN(EditorIcon);
 	BEGIN_DERIVED_REFECTION_TYPE(EditorIcon, Object)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 	EditorIcon() {}
 	~EditorIcon()
 	{
 		if (_data)
 		{
-			DeleteArray(_data);
+			Memory::DeleteArray(_data);
 			_data = nullptr;
 		}
 	}
-	static EditorIcon* Create(const String& full_path);//file：完整目录
+	static EditorIcon* Create(const String& fullPath);//file：完整目录
 	static EditorIcon* GetDefaultFileIcon();
 	static EditorIcon* GetDefaultFolderIcon();
 	static void		   DestroyDefaultIcon();
@@ -45,12 +46,12 @@ private:
 	uint   _height = 0;
 	uint   _size = 0;
 	byte*  _data = nullptr;
-	static EditorIcon* _defaultFileIcon;
-	static EditorIcon* _defaultFolderIcon;
+	inline static EditorIcon* _defaultFileIcon = nullptr;
+	inline static EditorIcon* _defaultFolderIcon = nullptr;
 };
 
 /********************************************************************/
-class EditorIconCache Final : public object
+class EditorIconCache final : public object
 {
 	friend class EditorIcon;
 	friend class Application;
@@ -67,6 +68,6 @@ public:
 	static Texture*	GetTexture(const AssetMeta* meta);
 
 private:
-	static Textures	_textures;
+	inline static Textures	_textures;
 };
 DC_END_NAMESPACE

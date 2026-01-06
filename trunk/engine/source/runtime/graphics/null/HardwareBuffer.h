@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2009/11/25
@@ -17,7 +17,7 @@ class HardwareBuffer : public Object
 {
 	DISALLOW_COPY_ASSIGN(HardwareBuffer);
 	BEGIN_DERIVED_REFECTION_TYPE(HardwareBuffer, Object)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 protected:
 	HardwareBuffer() {}
@@ -39,22 +39,22 @@ class VertexElement
 {
 public:
 	VertexElement(byte stream, VertexSize ele_type, VertexSemantic ele_sem, ushort offset, byte index)
-		: _stream(stream), _vertexEleType(ele_type), _vertexEleSem(ele_sem), m_nOffset(offset), m_nIndex(index)
+		: _stream(stream), _vertexEleType(ele_type), _vertexEleSem(ele_sem), _nOffset(offset), _nIndex(index)
 	{}
 
 public:
 	byte				GetStream()const { return _stream; }
 	VertexSize			GetType(void) const { return _vertexEleType; }
 	VertexSemantic		GetSemantic(void) const { return _vertexEleSem; }
-	ushort				GetOffset(void) const { return m_nOffset; }
-	byte				GetIndex(void) const { return m_nIndex; }
+	ushort				GetOffset(void) const { return _nOffset; }
+	byte				GetIndex(void) const { return _nIndex; }
 
 private:
 	byte				_stream = 0;
 	VertexSize			_vertexEleType = VertexSize::Float4;
 	VertexSemantic		_vertexEleSem = VertexSemantic::Position;
-	ushort				m_nOffset = 0;
-	byte				m_nIndex = 0;
+	ushort				_nOffset = 0;
+	byte				_nIndex = 0;
 };
 /********************************************************************/
 class HardwareVertexBuffer : public HardwareBuffer
@@ -64,7 +64,7 @@ class HardwareVertexBuffer : public HardwareBuffer
 	FRIEND_CONSTRUCT_DESTRUCT(HardwareVertexBuffer);
 	DISALLOW_COPY_ASSIGN(HardwareVertexBuffer);
 	BEGIN_DERIVED_REFECTION_TYPE(HardwareVertexBuffer, HardwareBuffer)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 protected:
 	HardwareVertexBuffer();
@@ -110,7 +110,7 @@ class HardwareIndexBuffer : public HardwareBuffer
 	FRIEND_CONSTRUCT_DESTRUCT(HardwareIndexBuffer);
 	DISALLOW_COPY_ASSIGN(HardwareIndexBuffer);
 	BEGIN_DERIVED_REFECTION_TYPE(HardwareIndexBuffer, HardwareBuffer)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 protected:
 	HardwareIndexBuffer()
@@ -120,7 +120,7 @@ protected:
 	{
 		if (_bufferData)
 		{
-			DeleteArray(_bufferData);
+			Memory::DeleteArray(_bufferData);
 			_bufferData = nullptr;
 		}
 	}

@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************************************/
 // @author hannibal
 // @date   2020/02/12
@@ -16,7 +16,7 @@ typedef std::function<void(String)> TimerCallback1;
 /**
 * 定时器内容
 */
-class TimerEntity Final : public object
+class TimerEntity final : public object
 {
 public:
 	TimerEntity(uint id_, float rate_, int ticks_, TimerCallback0 callback_);
@@ -43,11 +43,11 @@ public:
 /**
 * 定时器
 */
-class ENGINE_DLL Timer Final : public Object
+class ENGINE_DLL Timer final : public Object
 {
 	DISALLOW_CONSTRUCTOR_COPY_ASSIGN(Timer);
 	BEGIN_DERIVED_REFECTION_TYPE(Timer, Object)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 public:
 	// <summary>
@@ -95,8 +95,8 @@ private:
 	static void Remove();
 
 private:
-	static uint	m_idCounter;
-	static bool _useUnscaledTime;
-	static List<TimerEntity> m_listTimers;
+	inline static uint _idCounter = 0;
+	inline static bool _useUnscaledTime = false;
+	inline static List<TimerEntity> _listTimers;
 };//Timer
 DC_END_NAMESPACE

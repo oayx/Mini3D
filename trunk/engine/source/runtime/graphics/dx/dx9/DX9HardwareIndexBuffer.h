@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Date：2009年11月26日
@@ -11,13 +11,14 @@
 
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-class DX9HardwareIndexBuffer Final : public HardwareIndexBuffer
+class DX9HardwareIndexBuffer final : public HardwareIndexBuffer
 {
 	friend class DX9Device;
 	DEFAULT_CREATE(DX9HardwareIndexBuffer);
 	FRIEND_CONSTRUCT_DESTRUCT(DX9HardwareIndexBuffer);
+	DISALLOW_COPY_ASSIGN(DX9HardwareIndexBuffer);
 	BEGIN_DERIVED_REFECTION_TYPE(DX9HardwareIndexBuffer, HardwareIndexBuffer)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 protected:
 	DX9HardwareIndexBuffer();

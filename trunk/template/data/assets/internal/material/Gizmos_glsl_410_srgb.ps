@@ -1,0 +1,10 @@
+#version 410
+
+layout(location = 0) in vec4 var_TEXCOORD0;
+layout(location = 0) out vec4 out_var_SV_Target;
+
+void main()
+{
+    out_var_SV_Target = vec4(max((pow(max(var_TEXCOORD0.xyz, vec3(0.0)), vec3(0.4166666567325592041015625)) * 1.05499994754791259765625) - vec3(0.054999999701976776123046875), vec3(0.0)), var_TEXCOORD0.w);
+}
+

@@ -1,14 +1,14 @@
 <Root>
     <Lighting>
         <AmbientColor>0.200000, 0.200000, 0.200000, 1.000000</AmbientColor>
-        <SkyboxMaterial>3766671e950823dc963e31d522d70755</SkyboxMaterial>
+        <SkyboxMaterial>2c2d336dbf1804d1e8503de784fc3469</SkyboxMaterial>
         <ReflectionsIntensity>0.5</ReflectionsIntensity>
-        <enable>false</enable>
-        <mode>0</mode>
-        <color>1.000000, 1.000000, 1.000000, 1.000000</color>
-        <start>0</start>
-        <end>0</end>
-        <density>0.0099999998</density>
+        <Enable>false</Enable>
+        <Mode>0</Mode>
+        <Color>1.000000, 1.000000, 1.000000, 1.000000</Color>
+        <Start>0</Start>
+        <End>0</End>
+        <Density>0.0099999998</Density>
         <GameObject>
             <InstanceName>New Scane</InstanceName>
             <Flags>0</Flags>
@@ -23,7 +23,77 @@
                 <LocalRotation>0.000000, 0.000000, 0.000000, 1.000000</LocalRotation>
                 <LocalScale>1.000000, 1.000000, 1.000000</LocalScale>
             </Transform>
-            <Childrens/>
+            <Childrens>
+                <Children>Main Camera</Children>
+                <Children>Cube</Children>
+            </Childrens>
+            <GameObject>
+                <InstanceName>Main Camera</InstanceName>
+                <Flags>0</Flags>
+                <Layer>0</Layer>
+                <IsActiveSelf>true</IsActiveSelf>
+                <Components>
+                    <Component>Transform</Component>
+                    <Component>Camera</Component>
+                </Components>
+                <Transform>
+                    <Enable>true</Enable>
+                    <LocalPosition>0.000000, 0.000000, -3.936289</LocalPosition>
+                    <LocalRotation>0.000000, 0.000000, 0.000000, 1.000000</LocalRotation>
+                    <LocalScale>1.000000, 1.000000, 1.000000</LocalScale>
+                </Transform>
+                <Camera>
+                    <Enable>true</Enable>
+                    <TargetDisplay>0</TargetDisplay>
+                    <FFov>0.78539813</FFov>
+                    <FAspect>1.7777778</FAspect>
+                    <FZNear>0.1</FZNear>
+                    <FZFar>1000</FZFar>
+                    <IsOrthographic>false</IsOrthographic>
+                    <OrthographicSize>5.000000, 5.000000</OrthographicSize>
+                    <ClearFlag>7</ClearFlag>
+                    <ClearColor>0.000000, 0.000000, 0.000000, 0.000000</ClearColor>
+                    <ViewPort>
+                        <X>0</X>
+                        <Y>0</Y>
+                        <W>1</W>
+                        <H>1</H>
+                        <Z_near>0</Z_near>
+                        <Z_far>1</Z_far>
+                    </ViewPort>
+                    <NDepth>0</NDepth>
+                    <CullMask>4294967295</CullMask>
+                    <EnableHDR>false</EnableHDR>
+                    <EnableMSAA>false</EnableMSAA>
+                </Camera>
+                <Childrens/>
+            </GameObject>
+            <GameObject>
+                <InstanceName>Cube</InstanceName>
+                <Flags>0</Flags>
+                <Layer>0</Layer>
+                <IsActiveSelf>true</IsActiveSelf>
+                <Components>
+                    <Component>Transform</Component>
+                    <Component>MeshRender</Component>
+                </Components>
+                <Transform>
+                    <Enable>true</Enable>
+                    <LocalPosition>0.000000, 0.000000, 0.000000</LocalPosition>
+                    <LocalRotation>0.000000, 0.000000, 0.000000, 1.000000</LocalRotation>
+                    <LocalScale>1.000000, 1.000000, 1.000000</LocalScale>
+                </Transform>
+                <MeshRender>
+                    <Enable>true</Enable>
+                    <SortLayer>0</SortLayer>
+                    <OrderInLayer>0</OrderInLayer>
+                    <Materials>
+                        <Material>64abc6bc063384453079ceffc448a34b</Material>
+                    </Materials>
+                    <MeshFile>8a1ab0c77210935dd3f9708ba2534eb1</MeshFile>
+                </MeshRender>
+                <Childrens/>
+            </GameObject>
         </GameObject>
     </Lighting>
 </Root>

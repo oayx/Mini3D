@@ -1,0 +1,31 @@
+#version 100
+precision mediump float;
+precision highp int;
+
+struct type_CameraBuffer
+{
+    highp mat4 MATRIX_V;
+    highp mat4 MATRIX_P;
+    highp mat4 MATRIX_VP;
+    highp mat4 MATRIX_I_VP;
+    highp vec3 _WorldSpaceCameraPos;
+    highp vec3 _WorldSpaceCameraDir;
+    highp vec4 _ProjectionParams;
+    highp vec4 _ScreenParams;
+    highp vec4 _ZBufferParams;
+};
+
+uniform type_CameraBuffer CameraBuffer;
+
+uniform highp sampler2D _MainTex;
+uniform highp samplerCube _SkyBox;
+
+varying highp vec2 varying_TEXCOORD0;
+varying highp vec3 varying_TEXCOORD1;
+varying highp vec3 varying_TEXCOORD2;
+
+void main()
+{
+    gl_FragData[0] = mix(texture2D(_MainTex, varying_TEXCOORD0), textureCube(_SkyBox, reflect(normalize(varying_TEXCOORD1 - CameraBuffer._WorldSpaceCameraPos), normalize(varying_TEXCOORD2))), vec4(0.5));
+}
+

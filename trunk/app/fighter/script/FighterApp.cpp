@@ -1,4 +1,4 @@
-#include "FighterApp.h"
+﻿#include "FighterApp.h"
 #include "gui/UIManager.h"
 #include "panel/FighterMainPanel.h"
 #include "panel/FighterResultPanel.h"
@@ -15,7 +15,7 @@ FighterApp::~FighterApp()
 }
 void FighterApp::Start()
 {
-#if defined(DC_PLATFORM_WIN32) || defined(DC_PLATFORM_LINUX)
+#if defined(DC_PLATFORM_WIN32) || defined(DC_PLATFORM_LINUX) || defined(DC_PLATFORM_MAC)
 	Application::SetAssetsPath("../../assets");
 	ProjectManager::OpenProject("../..");
 #else
@@ -29,9 +29,9 @@ void FighterApp::Start()
 	RegisterEvent();
 
 	//相机
-	GameObject* camera_obj = GameObject::Instantiation("MainCamera");
-	camera_obj->GetTransform()->SetLocalPosition(Vector3(0, 0, -10));
-	Camera* camera = camera_obj->AddComponent<Camera>();
+	GameObject* cameraObj = GameObject::Instantiation("MainCamera");
+	cameraObj->GetTransform()->SetLocalPosition(Vector3(0, 0, -10));
+	Camera* camera = cameraObj->AddComponent<Camera>();
 	camera->SetOrthographic(true);
 	camera->SetOrthographicSize(512 * 0.01f, ((Screen::GetHeight()*512.0f) / Screen::GetWidth())*0.01f);
 	camera->SetAspect(Screen::GetWidth() / Screen::GetHeight());

@@ -1,4 +1,4 @@
-#include "DX9Device.h"
+﻿#include "DX9Device.h"
 #include "DX9Caps.h"
 #include "DX9GPUAdapter.h"
 #include "DX9HardwareVertexBuffer.h"
@@ -28,7 +28,7 @@ DX9Device::DX9Device()
 
 	_shaderVersion = "3_0";
 
-	_gPUAdapter = DX9GPUAdapter::Create();
+	_gpuAdapter = DX9GPUAdapter::Create();
 	_graphicsCaps = DX9Caps::Create();
 	_videoList = VideoModeList::Create(_d3DInstance);
 }
@@ -41,7 +41,7 @@ DX9Device::~DX9Device()
 bool DX9Device::CreateDevice(RenderWindow* window)
 {
 	//尝试获得显卡
-	GPUAdapterInfo* adapter = _gPUAdapter->SelectAdapters(nullptr);
+	GPUAdapterInfo* adapter = _gpuAdapter->SelectAdapters(nullptr);
 	if (adapter)
 	{
 		_d3DAdapter = adapter->GetIndex();
@@ -110,8 +110,15 @@ void DX9Device::CreateRenderContent()
 	content->Initialize();
 	_renderContent = content;
 }
+void DX9Device::DestroyDevice(RenderWindow* window)
+{
+	SAFE_RELEASE(_d3DDevice);
+}
 void DX9Device::Resize(const WindowResizeDesc& desc)
 {
+	if (!_d3DDevice)
+		return;
+
 	this->HandlePreLostDevice();
 
 	// If we're resetting device mid-frame (e.g. script calls Screen.SetResolution),
@@ -162,12 +169,15 @@ FinalProcess* DX9Device::CreateFinalProcess()
 
 bool DX9Device::SetD3DRenderState(D3DRENDERSTATETYPE render_type, DWORD value)
 {
+	if (!_d3DDevice)
+		return false;
+
 	HRESULT hr = S_OK;
 	DWORD dwOldValue;
 	hr = _d3DDevice->GetRenderState(render_type, &dwOldValue);
 	if (FAILED(hr))
 	{
-		Debuger::Error("DX9RenderContent::SetD3DRenderState - GetRenderState:" + GetLastError());
+		Debuger::Error("DX9RenderContent::SetD3DRenderState - GetRenderState:%u", GetLastError());
 		return false;
 	}
 
@@ -177,7 +187,7 @@ bool DX9Device::SetD3DRenderState(D3DRENDERSTATETYPE render_type, DWORD value)
 	hr = _d3DDevice->SetRenderState(render_type, value);
 	if (FAILED(hr))
 	{
-		Debuger::Error("DX9RenderContent::SetD3DRenderState - SetRenderState:" + GetLastError());
+		Debuger::Error("DX9RenderContent::SetD3DRenderState - SetRenderState:%u", GetLastError());
 		return false;
 	}
 
@@ -185,6 +195,9 @@ bool DX9Device::SetD3DRenderState(D3DRENDERSTATETYPE render_type, DWORD value)
 }
 bool DX9Device::SetD3DSamplerState(DWORD sampler, D3DSAMPLERSTATETYPE sampler_type, DWORD value)
 {
+	if (!_d3DDevice)
+		return false;
+
 	HRESULT hr = S_OK;
 	DWORD dwOldValue;
 	hr = _d3DDevice->GetSamplerState(sampler, sampler_type, &dwOldValue);
@@ -202,6 +215,9 @@ bool DX9Device::SetD3DSamplerState(DWORD sampler, D3DSAMPLERSTATETYPE sampler_ty
 }
 bool DX9Device::SetD3DTextureStageState(DWORD stage, D3DTEXTURESTAGESTATETYPE type, DWORD value)
 {
+	if (!_d3DDevice)
+		return false;
+
 	HRESULT hr = S_OK;
 	DWORD dwOldValue;
 	hr = _d3DDevice->GetTextureStageState(stage, type, &dwOldValue);
@@ -219,24 +235,33 @@ bool DX9Device::SetD3DTextureStageState(DWORD stage, D3DTEXTURESTAGESTATETYPE ty
 }
 bool DX9Device::ClearD3DTexture(int stage)
 {
+	if (!_d3DDevice)
+		return false;
+
 	HRESULT hr = _d3DDevice->SetTexture(stage, 0);
 	if (FAILED(hr))
 	{
-		Debuger::Error("DX9RenderContent::ClearD3DTexture - 清除纹理失败:" + GetLastError());
+		Debuger::Error("DX9RenderContent::ClearD3DTexture - 清除纹理失败:%u", GetLastError());
 	}
 	return hr == S_OK ? true : false;
 }
 bool DX9Device::SetD3DTexture(int stage, Texture *texture)
 {
+	if (!_d3DDevice)
+		return false;
+
 	CHECK_RETURN_PTR_FALSE(texture);
 	return SetD3DTexture(stage, (IDirect3DTexture9*)texture->GetTexture());
 }
 bool DX9Device::SetD3DTexture(int stage, IDirect3DTexture9* texture)
 {
+	if (!_d3DDevice)
+		return false;
+
 	HRESULT hr = _d3DDevice->SetTexture(stage, texture);
 	if (FAILED(hr))
 	{
-		Debuger::Error("DX9RenderContent::SetD3DTexture - 设置纹理失败:" + GetLastError());
+		Debuger::Error("DX9RenderContent::SetD3DTexture - 设置纹理失败:%u", GetLastError());
 	}
 	return hr == S_OK ? true : false;
 }
@@ -261,6 +286,9 @@ void DX9Device::HandleResetDevice()
 }
 void DX9Device::CheckDeviceLost()
 {
+	if (!_d3DDevice)
+		return;
+
 	if (!this->IsDeviceInLostState())
 		return;
 

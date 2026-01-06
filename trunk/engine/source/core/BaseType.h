@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************************************/
 // @author hannibal
 // @date   2015/04/21
@@ -43,7 +43,6 @@
 //其他
 #include <variant>
 #include <limits>
-#include <limits.h>
 
 #include "BaseType.h"
 #include "Compiler.h"
@@ -52,7 +51,7 @@
 #include "memory/Memory.h"
 #include "reflection/Reflection.h"
 
-#include <tracy/Tracy.hpp>
+#include "tracy/tracy/Tracy.hpp"
 
 DC_BEGIN_NAMESPACE
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -67,7 +66,7 @@ typedef std::uint64_t		uint64;//8字节
 #ifndef DC_PLATFORM_WIN32
 typedef std::uint32_t		DWORD;//windows 在64位和32位系统下这个值始终是32位的；linux long 32系统是4字节，64位系统是8字节；这里统一定义成4字节
 typedef std::int16_t		WORD;
-typedef int                 BOOL;
+typedef int              BOOL;
 #endif
 
 //回调
@@ -76,29 +75,31 @@ typedef std::function<void()> Action;
 
 ///////////////////////////////////////////////////////////////////////////////////////
 #ifdef TRACY_ENABLE // Use Tracy profiler
-	#define DC_PROFILE(name) ZoneScopedN(#name)
+	#define DC_PROFILE ZoneScoped
+	#define DC_PROFILE_NAME(name) ZoneScopedN(#name)
     /// Macro for scoped profiling with a name and color.
     #define DC_PROFILE_COLOR(name, color) ZoneScopedNC(#name, color)
     /// Macro for scoped profiling with a dynamic string name.
     #define DC_PROFILE_STR(nameStr, size) ZoneName(nameStr, size)
     /// Macro for marking a game frame.
-    #define DC_PROFILE_FRAME() FrameMark
+    #define DC_PROFILE_FRAME FrameMark
     /// Macro for recording name of current thread.
     #define DC_PROFILE_THREAD(name) tracy::SetThreadName(name)
     /// Macro for scoped profiling of a function.
-    #define DC_PROFILE_FUNCTION() ZoneScopedN(__FUNCTION__)
+    #define DC_PROFILE_FUNCTION ZoneScopedN(__FUNCTION__)
 
     /// Color used for highlighting event.
     #define DC_PROFILE_EVENT_COLOR tracy::Color::OrangeRed
     /// Color used for highlighting resource.
     #define DC_PROFILE_RESOURCE_COLOR tracy::Color::MediumSeaGreen
 #else // Tracy profiler off
-	#define DC_PROFILE(name)
+	#define DC_PROFILE
+	#define DC_PROFILE_NAME(name)
     #define DC_PROFILE_COLOR(name, color)
     #define DC_PROFILE_STR(nameStr, size)
-    #define DC_PROFILE_FRAME()
+    #define DC_PROFILE_FRAME
     #define DC_PROFILE_THREAD(name)
-    #define DC_PROFILE_FUNCTION()
+    #define DC_PROFILE_FUNCTION
 
     #define DC_PROFILE_EVENT_COLOR
     #define DC_PROFILE_RESOURCE_COLOR
@@ -125,24 +126,24 @@ public:
 	KeyValuePair(const KeyValuePair<K, V>& f) : key(f.key), value(f.value)
 	{
 	}
-	const KeyValuePair<K, V>& operator=(const KeyValuePair<K, V>& f) 
+	const KeyValuePair<K, V>& operator=(const KeyValuePair<K, V>& f) noexcept
 	{
 		key = f.key; value = f.value;
 		return *this;
 	}
-	bool operator> (const KeyValuePair<K, V>& f)const
+	constexpr bool operator> (const KeyValuePair<K, V>& f)const noexcept
 	{
 		return key > f.key;
 	}
-	bool operator< (const KeyValuePair<K,V>& f)const
+	constexpr bool operator< (const KeyValuePair<K,V>& f)const noexcept
 	{
 		return key < f.key;
 	}	
-	bool operator== (const KeyValuePair<K, V>& f)const
+	constexpr bool operator== (const KeyValuePair<K, V>& f)const noexcept
 	{
 		return key == f.key && value == f.value;
 	}
-	bool operator!= (const KeyValuePair<K, V>& f)const
+	constexpr bool operator!= (const KeyValuePair<K, V>& f)const noexcept
 	{
 		return key != f.key || value != f.value;
 	}

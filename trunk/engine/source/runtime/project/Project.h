@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Description：单个项目
@@ -17,7 +17,7 @@ class Project : public Object
 	DISALLOW_COPY_ASSIGN(Project);
 	DECLARE_OBJECT_SERIALIZE(Project);
 	BEGIN_DERIVED_REFECTION_TYPE(Project, Object)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 	Project(const String& path) :_fullPath(path) {}
 	~Project() { this->Close(); }

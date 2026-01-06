@@ -1,6 +1,7 @@
-#include "TerrainObjectInstance.h"
+﻿#include "TerrainObjectInstance.h"
 #include "Terrain.h"
 #include "runtime/Application.h"
+#include "runtime/component/Component.inl"
 #include "editor/main/EMain_GameView.h"
 #include "editor/EditorAppliction.h"
 
@@ -13,6 +14,7 @@ void TerrainObjectInstance::Start()
 }
 void TerrainObjectInstance::GenerateObjects()
 {
+	DC_PROFILE_FUNCTION;
 	//包围盒
 	Vector3 min = Vector3::zero, max = Vector3::zero;
 	Vector<Matrix4> mats;
@@ -20,7 +22,7 @@ void TerrainObjectInstance::GenerateObjects()
 	Terrain* terrain = GetGameObject()->GetComponentInParent<Terrain>(true);
 	if (_density > 0.0f && _probability > 0 && terrain)
 	{
-		const Vector3& terrain_scale = terrain->GetTransform()->GetScale();
+		const Vector3& terrainScale = terrain->GetTransform()->GetScale();
 		int rows = terrain->GetTileRows();
 		int cols = terrain->GetTileCols();
 		for (int row = 0; row < rows; row++)
@@ -49,7 +51,7 @@ void TerrainObjectInstance::GenerateObjects()
 					position.x = terrain->GetPositionX(col);
 					position.z = terrain->GetPositionZ(row);
 					if (_positionMin != _positionMax)position += Vector3::Lerp(_positionMin, _positionMax, Math::RandomRange(0.0f, 1.0f));
-					position = position / terrain_scale;
+					position = position / terrainScale;
 					if (_scaleMin != _scaleMax)scale = Vector3::Lerp(_scaleMin, _scaleMax, Math::RandomRange(0.0f, 1.0f));
 					if (_rotateMin != _rotateMax)euler = Vector3::Lerp(_rotateMin, _rotateMax, Math::RandomRange(0.0f, 1.0f));
 					mats.Add(Matrix4(position, Quaternion(euler), scale));
@@ -76,22 +78,22 @@ void TerrainObjectInstance::GenerateObjects()
 IMPL_DERIVED_REFECTION_TYPE(TerrainObjectInstance, MeshRender);
 void TerrainObjectInstance::OnDrawEditor()
 {
-	ImGuiTreeNodeFlags tree_flags = ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_DefaultOpen;
-	if (ImGui::TreeNodeEx("Instance Data", tree_flags))
+	ImGuiTreeNodeFlags treeFlags = ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_DefaultOpen;
+	if (ImGui::TreeNodeEx("Instance Data", treeFlags))
 	{
 		{
 			ImGuiEx::Label("Density");
-			float min_value = 0.0f;
-			if (ImGui::DragScalar("##Density", ImGuiDataType_Float, &_density, 0.05f, &min_value, nullptr, "%.2f"))
+			float minValue = 0.0f;
+			if (ImGui::DragScalar("##Density", ImGuiDataType_Float, &_density, 0.05f, &minValue, nullptr, "%.2f"))
 			{
 				this->GenerateObjects();
 			}
 		}
 		{
 			ImGuiEx::Label("Probability");
-			int min_value = 0;
-			int max_value = 100;
-			if (ImGui::DragScalar("##Probability", ImGuiDataType_U32, &_probability, 0.05f, &min_value, &max_value))
+			int minValue = 0;
+			int maxValue = 100;
+			if (ImGui::DragScalar("##Probability", ImGuiDataType_U32, &_probability, 0.05f, &minValue, &maxValue))
 			{
 				this->GenerateObjects();
 			}
@@ -101,12 +103,12 @@ void TerrainObjectInstance::OnDrawEditor()
 			ImGuiEx::Label("Position Min");
 
 			const float width = ImGui::GetContentRegionAvail().x;
-			const float char_width = ImGui::GetFontSize();
+			const float charWidth = ImGui::GetFontSize();
 			float min = MIN_float;
 			float max = MAX_float;
 			ImGui::TextUnformatted("X");
 			ImGui::SameLine();
-			ImGui::SetNextItemWidth(width * 0.333f - char_width);
+			ImGui::SetNextItemWidth(width * 0.333f - charWidth);
 			if (ImGui::DragScalar("##X", ImGuiDataType_Float, &_positionMin.x, 0.1f, &min, &max))
 			{
 				this->GenerateObjects();
@@ -115,7 +117,7 @@ void TerrainObjectInstance::OnDrawEditor()
 			ImGui::SameLine();
 			ImGui::TextUnformatted("Y");
 			ImGui::SameLine();
-			ImGui::SetNextItemWidth(width * 0.333f - char_width);
+			ImGui::SetNextItemWidth(width * 0.333f - charWidth);
 			if (ImGui::DragScalar("##Y", ImGuiDataType_Float, &_positionMin.y, 0.1f, &min, &max))
 			{
 				this->GenerateObjects();
@@ -124,7 +126,7 @@ void TerrainObjectInstance::OnDrawEditor()
 			ImGui::SameLine();
 			ImGui::TextUnformatted("Z");
 			ImGui::SameLine();
-			ImGui::SetNextItemWidth(width * 0.333f - char_width);
+			ImGui::SetNextItemWidth(width * 0.333f - charWidth);
 			if (ImGui::DragScalar("##Z", ImGuiDataType_Float, &_positionMin.z, 0.1f, &min, &max))
 			{
 				this->GenerateObjects();
@@ -136,12 +138,11 @@ void TerrainObjectInstance::OnDrawEditor()
 			ImGuiEx::Label("Position Max");
 
 			const float width = ImGui::GetContentRegionAvail().x;
-			const float char_width = ImGui::GetFontSize();
-			float min = MIN_float;
+			const float charWidth = ImGui::GetFontSize();
 			float max = MAX_float;
 			ImGui::TextUnformatted("X");
 			ImGui::SameLine();
-			ImGui::SetNextItemWidth(width * 0.333f - char_width);
+			ImGui::SetNextItemWidth(width * 0.333f - charWidth);
 			if (ImGui::DragScalar("##X", ImGuiDataType_Float, &_positionMax.x, 0.1f, &_positionMin.x, &max))
 			{
 				this->GenerateObjects();
@@ -150,7 +151,7 @@ void TerrainObjectInstance::OnDrawEditor()
 			ImGui::SameLine();
 			ImGui::TextUnformatted("Y");
 			ImGui::SameLine();
-			ImGui::SetNextItemWidth(width * 0.333f - char_width);
+			ImGui::SetNextItemWidth(width * 0.333f - charWidth);
 			if (ImGui::DragScalar("##Y", ImGuiDataType_Float, &_positionMax.y, 0.1f, &_positionMin.y, &max))
 			{
 				this->GenerateObjects();
@@ -159,7 +160,7 @@ void TerrainObjectInstance::OnDrawEditor()
 			ImGui::SameLine();
 			ImGui::TextUnformatted("Z");
 			ImGui::SameLine();
-			ImGui::SetNextItemWidth(width * 0.333f - char_width);
+			ImGui::SetNextItemWidth(width * 0.333f - charWidth);
 			if (ImGui::DragScalar("##Z", ImGuiDataType_Float, &_positionMax.z, 0.1f, &_positionMin.z, &max))
 			{
 				this->GenerateObjects();
@@ -171,12 +172,12 @@ void TerrainObjectInstance::OnDrawEditor()
 			ImGuiEx::Label("Rotate Min");
 
 			const float width = ImGui::GetContentRegionAvail().x;
-			const float char_width = ImGui::GetFontSize();
+			const float charWidth = ImGui::GetFontSize();
 			float min = 0;
 			float max = 360;
 			ImGui::TextUnformatted("X");
 			ImGui::SameLine();
-			ImGui::SetNextItemWidth(width * 0.333f - char_width);
+			ImGui::SetNextItemWidth(width * 0.333f - charWidth);
 			if (ImGui::DragScalar("##X", ImGuiDataType_Float, &_rotateMin.x, 0.01f, &min, &max))
 			{
 				this->GenerateObjects();
@@ -185,7 +186,7 @@ void TerrainObjectInstance::OnDrawEditor()
 			ImGui::SameLine();
 			ImGui::TextUnformatted("Y");
 			ImGui::SameLine();
-			ImGui::SetNextItemWidth(width * 0.333f - char_width);
+			ImGui::SetNextItemWidth(width * 0.333f - charWidth);
 			if (ImGui::DragScalar("##Y", ImGuiDataType_Float, &_rotateMin.y, 0.01f, &min, &max))
 			{
 				this->GenerateObjects();
@@ -194,7 +195,7 @@ void TerrainObjectInstance::OnDrawEditor()
 			ImGui::SameLine();
 			ImGui::TextUnformatted("Z");
 			ImGui::SameLine();
-			ImGui::SetNextItemWidth(width * 0.333f - char_width);
+			ImGui::SetNextItemWidth(width * 0.333f - charWidth);
 			if (ImGui::DragScalar("##Z", ImGuiDataType_Float, &_rotateMin.z, 0.01f, &min, &max))
 			{
 				this->GenerateObjects();
@@ -206,12 +207,11 @@ void TerrainObjectInstance::OnDrawEditor()
 			ImGuiEx::Label("Rotate Max");
 
 			const float width = ImGui::GetContentRegionAvail().x;
-			const float char_width = ImGui::GetFontSize();
-			float min = 0;
+			const float charWidth = ImGui::GetFontSize();
 			float max = 360;
 			ImGui::TextUnformatted("X");
 			ImGui::SameLine();
-			ImGui::SetNextItemWidth(width * 0.333f - char_width);
+			ImGui::SetNextItemWidth(width * 0.333f - charWidth);
 			if (ImGui::DragScalar("##X", ImGuiDataType_Float, &_rotateMax.x, 0.01f, &_rotateMin.x, &max))
 			{
 				this->GenerateObjects();
@@ -220,7 +220,7 @@ void TerrainObjectInstance::OnDrawEditor()
 			ImGui::SameLine();
 			ImGui::TextUnformatted("Y");
 			ImGui::SameLine();
-			ImGui::SetNextItemWidth(width * 0.333f - char_width);
+			ImGui::SetNextItemWidth(width * 0.333f - charWidth);
 			if (ImGui::DragScalar("##Y", ImGuiDataType_Float, &_rotateMax.y, 0.01f, &_rotateMin.y, &max))
 			{
 				this->GenerateObjects();
@@ -229,7 +229,7 @@ void TerrainObjectInstance::OnDrawEditor()
 			ImGui::SameLine();
 			ImGui::TextUnformatted("Z");
 			ImGui::SameLine();
-			ImGui::SetNextItemWidth(width * 0.333f - char_width);
+			ImGui::SetNextItemWidth(width * 0.333f - charWidth);
 			if (ImGui::DragScalar("##Z", ImGuiDataType_Float, &_rotateMax.z, 0.01f, &_rotateMin.z, &max))
 			{
 				this->GenerateObjects();
@@ -241,12 +241,12 @@ void TerrainObjectInstance::OnDrawEditor()
 			ImGuiEx::Label("Scale Min");
 
 			const float width = ImGui::GetContentRegionAvail().x;
-			const float char_width = ImGui::GetFontSize();
+			const float charWidth = ImGui::GetFontSize();
 			float min = 0;
 			float max = MAX_float;
 			ImGui::TextUnformatted("X");
 			ImGui::SameLine();
-			ImGui::SetNextItemWidth(width * 0.333f - char_width);
+			ImGui::SetNextItemWidth(width * 0.333f - charWidth);
 			if (ImGui::DragScalar("##X", ImGuiDataType_Float, &_scaleMin.x, 0.01f, &min, &max))
 			{
 				this->GenerateObjects();
@@ -255,7 +255,7 @@ void TerrainObjectInstance::OnDrawEditor()
 			ImGui::SameLine();
 			ImGui::TextUnformatted("Y");
 			ImGui::SameLine();
-			ImGui::SetNextItemWidth(width * 0.333f - char_width);
+			ImGui::SetNextItemWidth(width * 0.333f - charWidth);
 			if (ImGui::DragScalar("##Y", ImGuiDataType_Float, &_scaleMin.y, 0.01f, &min, &max))
 			{
 				this->GenerateObjects();
@@ -264,7 +264,7 @@ void TerrainObjectInstance::OnDrawEditor()
 			ImGui::SameLine();
 			ImGui::TextUnformatted("Z");
 			ImGui::SameLine();
-			ImGui::SetNextItemWidth(width * 0.333f - char_width);
+			ImGui::SetNextItemWidth(width * 0.333f - charWidth);
 			if (ImGui::DragScalar("##Z", ImGuiDataType_Float, &_scaleMin.z, 0.01f, &min, &max))
 			{
 				this->GenerateObjects();
@@ -276,12 +276,11 @@ void TerrainObjectInstance::OnDrawEditor()
 			ImGuiEx::Label("Scale Max");
 
 			const float width = ImGui::GetContentRegionAvail().x;
-			const float char_width = ImGui::GetFontSize();
-			float min = 0;
+			const float charWidth = ImGui::GetFontSize();
 			float max = MAX_float;
 			ImGui::TextUnformatted("X");
 			ImGui::SameLine();
-			ImGui::SetNextItemWidth(width * 0.333f - char_width);
+			ImGui::SetNextItemWidth(width * 0.333f - charWidth);
 			if (ImGui::DragScalar("##X", ImGuiDataType_Float, &_scaleMax.x, 0.01f, &_scaleMin.x, &max))
 			{
 				this->GenerateObjects();
@@ -290,7 +289,7 @@ void TerrainObjectInstance::OnDrawEditor()
 			ImGui::SameLine();
 			ImGui::TextUnformatted("Y");
 			ImGui::SameLine();
-			ImGui::SetNextItemWidth(width * 0.333f - char_width);
+			ImGui::SetNextItemWidth(width * 0.333f - charWidth);
 			if (ImGui::DragScalar("##Y", ImGuiDataType_Float, &_scaleMax.y, 0.01f, &_scaleMin.y, &max))
 			{
 				this->GenerateObjects();
@@ -299,7 +298,7 @@ void TerrainObjectInstance::OnDrawEditor()
 			ImGui::SameLine();
 			ImGui::TextUnformatted("Z");
 			ImGui::SameLine();
-			ImGui::SetNextItemWidth(width * 0.333f - char_width);
+			ImGui::SetNextItemWidth(width * 0.333f - charWidth);
 			if (ImGui::DragScalar("##Z", ImGuiDataType_Float, &_scaleMax.z, 0.01f, &_scaleMin.z, &max))
 			{
 			}

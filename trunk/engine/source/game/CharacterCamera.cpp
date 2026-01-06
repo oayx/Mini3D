@@ -1,4 +1,4 @@
-#include "CharacterCamera.h"
+﻿#include "CharacterCamera.h"
 #include "runtime/input/Input.h"
 #include "runtime/mesh/Animation.h"
 #include "runtime/physics/CharacterController.h"
@@ -68,17 +68,17 @@ void ThirdFreeCamera::Update()
 	if (!camera)return;
 
 	Transform* transform = GetTransform();
-	Transform* camera_transform = camera->GetTransform();
+	Transform* cameraTransform = camera->GetTransform();
 
-	bool is_walking = false;
+	bool isWalking = false;
 	if (Input::GetKey(KeyCode::W))
 	{
 		CharacterController* controller = GetGameObject()->GetComponent<CharacterController>();
 		if (controller)
 		{
-			Vector3 forward = Vector3(camera_transform->GetForward().x, 0.0f, camera_transform->GetForward().z);
+			Vector3 forward = Vector3(cameraTransform->GetForward().x, 0.0f, cameraTransform->GetForward().z);
 			controller->Move(forward.Normalize() * _moveSpeed);
-			is_walking = true;
+			isWalking = true;
 		}
 	}
 	if (Input::GetKey(KeyCode::S))
@@ -86,37 +86,37 @@ void ThirdFreeCamera::Update()
 		CharacterController* controller = GetGameObject()->GetComponent<CharacterController>();
 		if (controller)
 		{
-			Vector3 forward = Vector3(camera_transform->GetForward().x, 0.0f, camera_transform->GetForward().z);
+			Vector3 forward = Vector3(cameraTransform->GetForward().x, 0.0f, cameraTransform->GetForward().z);
 			controller->Move(-forward.Normalize() * _moveSpeed);
-			is_walking = true;
+			isWalking = true;
 		}
 	}
 
 	Animation* animation = GetGameObject()->GetComponent<Animation>();
 	if (animation)
 	{
-		animation->Play(is_walking ? "run" : "idle", true);
+		animation->Play(isWalking ? "run" : "idle", true);
 	}
 
 	Vector3 lookat = transform->GetPosition() + _cameraLookatOffset;
 	if (Input::IsMouseMove() && Input::GetMouseButton(MouseBtnID::Right))
 	{//旋转镜头
-		float offset_x = Input::mousePositionDelta.x;
-		float offset_y = -Input::mousePositionDelta.y;			
-		if (Math::Abs(offset_x) > 0 || Math::Abs(offset_y) > 0)
+		float offsetX = Input::mousePositionDelta.x;
+		float offsetY = -Input::mousePositionDelta.y;			
+		if (Math::Abs(offsetX) > 0 || Math::Abs(offsetY) > 0)
 		{
-			Vector3 old_target = transform->GetPosition() + _cameraLookatOffset;
-			Vector3 old_forward = old_target - camera_transform->GetPosition();
-			camera->Rotate(offset_x, offset_y);
-			Vector3 now_target = camera_transform->GetPosition() + camera_transform->GetForward() * _cameraOffset.Lenght();
-			Vector3 offset = old_target - now_target;
-			Vector3 pos = transform->GetPosition() + _cameraLookatOffset + offset - old_forward;
-			camera_transform->SetPosition(pos);
-			camera_transform->LookAt(transform->GetPosition() + _cameraLookatOffset, Vector3::up);
+			Vector3 oldTarget = transform->GetPosition() + _cameraLookatOffset;
+			Vector3 oldForward = oldTarget - cameraTransform->GetPosition();
+			camera->Rotate(offsetX, offsetY);
+			Vector3 nowTarget = cameraTransform->GetPosition() + cameraTransform->GetForward() * _cameraOffset.Lenght();
+			Vector3 offset = oldTarget - nowTarget;
+			Vector3 pos = transform->GetPosition() + _cameraLookatOffset + offset - oldForward;
+			cameraTransform->SetPosition(pos);
+			cameraTransform->LookAt(transform->GetPosition() + _cameraLookatOffset, Vector3::up);
 		}
-		if (Math::Abs(offset_x) > 0)
+		if (Math::Abs(offsetX) > 0)
 		{
-			const Vector3& forward = camera_transform->GetForward();
+			const Vector3& forward = cameraTransform->GetForward();
 			transform->LookTo(Vector3(forward.x, 0.0f, forward.z), Vector3::up);
 		}
 	}
@@ -126,8 +126,8 @@ void ThirdFreeCamera::OnDrawEditor()
 	base::OnDrawEditor();
 
 	ImGuiEx::Label("MoveSpeed");
-	float min_value = 0.0f;
-	ImGui::DragScalar("##MoveSpeed", ImGuiDataType_Float, &_moveSpeed, 0.01f, &min_value);
+	float minValue = 0.0f;
+	ImGui::DragScalar("##MoveSpeed", ImGuiDataType_Float, &_moveSpeed, 0.01f, &minValue);
 
 	ImGuiEx::Label("Camera Offset");
 	ImGui::DragFloat3("##CameraOffset", _cameraOffset.ptr(), 0.1f);

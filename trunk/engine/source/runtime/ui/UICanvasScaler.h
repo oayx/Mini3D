@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Date：2020/9/1
@@ -26,7 +26,7 @@ enum class UIScaleMatchMode
 };
 DECLARE_ENUM_OPERATORS(UIScaleMatchMode);
 
-class ENGINE_DLL UICanvasScaler Final : public Component
+class ENGINE_DLL UICanvasScaler final : public Component
 {
 	friend class GameObject;
 	friend class UICanvas;
@@ -37,7 +37,7 @@ class ENGINE_DLL UICanvasScaler Final : public Component
 	BEGIN_DERIVED_REFECTION_TYPE(UICanvasScaler, Component)
 		CTORS(DEFAULT_CTOR(UICanvasScaler))
 		ADD_EDITOR_COMPONENT("UI/CanvasScaler")
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 protected:
 	virtual bool		CanRemove()override;

@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2021/6/18
@@ -10,7 +10,7 @@
 
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-class ENGINE_DLL FXAAEffect Final : public PostEffect
+class ENGINE_DLL FXAAEffect final : public PostEffect
 {
 	friend class PostProcess;
 	DECLARE_OBJECT_CLONE;
@@ -19,7 +19,7 @@ class ENGINE_DLL FXAAEffect Final : public PostEffect
 	BEGIN_DERIVED_REFECTION_TYPE(FXAAEffect, PostEffect)
 		CTORS(DEFAULT_CTOR(FXAAEffect))
 		ADD_EDITOR_COMPONENT("FXAA")
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 	FXAAEffect();
 	~FXAAEffect();

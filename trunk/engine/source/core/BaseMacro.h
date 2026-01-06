@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************************************/
 // @author hannibal
 // @date   2015/04/21
@@ -34,15 +34,14 @@
 #if defined(DC_PLATFORM_WIN32)
 	#undef  FD_SETSIZE
 	#define FD_SETSIZE		1024
-
-	#define I64FMT			"%016I64X"					//十六进制输出: 0表示空余的位用零填充，16表示显示16位数字(格式化的字符数宽度)，I64表示64位int值（I32表示32位int值，i必须大写）, x表示十六进制形式显示
-	#define I64FMTD			"%I64u"						//uint64
-	#define SI64FMTD		"%I64d"						//int64
-#elif defined(DC_PLATFORM_LINUX) || defined(DC_PLATFORM_ANDROID) || defined(DC_PLATFORM_MAC) || defined(DC_PLATFORM_IOS)
+#endif
+	//windows下，新的long long int，已经支持%lld
+	//#define I64FMT		"%016I64X"					//十六进制输出: 0表示空余的位用零填充，16表示显示16位数字(格式化的字符数宽度)，I64表示64位int值（I32表示32位int值，i必须大写）, x表示十六进制形式显示
+	//#define I64FMTD		"%I64u"						//uint64
+	//#define SI64FMTD		"%I64d"						//int64
 	#define I64FMT			"%016llX"
 	#define I64FMTD			"%llu"
 	#define SI64FMTD		"%lld"
-#endif
 
 //枚举操作
 #define DECLARE_ENUM_OPERATORS(T) \
@@ -97,7 +96,7 @@ enum class PlatformType : unsigned char
 	/// <summary>
 	/// Running on Windows.
 	/// </summary>
-	Win32 = 1,
+	Windows = 1,
 
 	/// <summary>
 	/// Running on Linux system.
@@ -110,14 +109,19 @@ enum class PlatformType : unsigned char
 	Android = 3,
 
 	/// <summary>
-	/// Running on Android.
+	/// Running on Mac.
 	/// </summary>
 	Mac = 4,
 
 	/// <summary>
-	/// Running on Android.
+	/// Running on iOS.
 	/// </summary>
 	iOS = 5,
+
+	/// <summary>
+	/// Running on WASM.
+	/// </summary>
+	WASM = 6,
 };
 DECLARE_ENUM_OPERATORS(PlatformType);
 
@@ -137,7 +141,7 @@ DECLARE_ENUM_OPERATORS(PlatformType);
 		#define PLATFORM_ARCH ArchitectureType::x86
 	#endif
 	#define PLATFORM_DESKTOP 1
-	#define PLATFORM_TYPE PlatformType::Win32
+	#define PLATFORM_TYPE PlatformType::Windows
 #elif defined(DC_PLATFORM_LINUX)
 	#if defined(_LINUX64)
 		#define PLATFORM_64BITS 1
@@ -175,6 +179,43 @@ DECLARE_ENUM_OPERATORS(PlatformType);
 		#error "Unknown Android ABI"
 	#endif	
 	#define PLATFORM_TYPE PlatformType::Android
+#elif defined(DC_PLATFORM_WASM)
+	#if defined(_WASM64)
+		#define PLATFORM_64BITS 1
+		#define PLATFORM_ARCH_X64 1
+		#define PLATFORM_ARCH ArchitectureType::x64
+	#else
+		#define PLATFORM_64BITS 0
+		#define PLATFORM_ARCH_X86 1
+		#define PLATFORM_ARCH ArchitectureType::x86
+	#endif
+	#define PLATFORM_DESKTOP 1
+	#define PLATFORM_TYPE PlatformType::WASM
+#elif defined(DC_PLATFORM_MAC)
+	#if defined(_ARM64) ||  defined(_X64)
+		#define PLATFORM_64BITS 1
+		#define PLATFORM_ARCH_X64 1
+		#define PLATFORM_ARCH ArchitectureType::x64
+	#else
+		#define PLATFORM_64BITS 0
+		#define PLATFORM_ARCH_X86 1
+		#define PLATFORM_ARCH ArchitectureType::x86
+	#endif
+	#define PLATFORM_DESKTOP 1
+	#define PLATFORM_TYPE PlatformType::Mac
+#elif defined(DC_PLATFORM_IOS)
+	#if defined(_ARM64) ||  defined(_X64)
+		#define PLATFORM_64BITS 1
+		#define PLATFORM_ARCH_X64 1
+		#define PLATFORM_ARCH ArchitectureType::x64
+	#else
+		#define PLATFORM_64BITS 0
+		#define PLATFORM_ARCH_X86 1
+		#define PLATFORM_ARCH ArchitectureType::x86
+	#endif
+	#define PLATFORM_TYPE PlatformType::iOS
+#else
+	#error "Unknown PlatformType"
 #endif
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -200,17 +241,17 @@ DECLARE_ENUM_OPERATORS(PlatformType);
 //禁止默认拷贝构造函数和赋值函数
 #define DISALLOW_COPY_ASSIGN(TypeName) \
 	TypeName(const TypeName&) = delete; \
-	TypeName(const TypeName&&) = delete; \
+	TypeName(TypeName&&) = delete; \
 	TypeName& operator=(const TypeName&) = delete; \
-	TypeName& operator=(const TypeName&&) = delete;
+	TypeName& operator=(TypeName&&) = delete;
 //禁止默认拷贝构造函数和赋值函数
 #define DISALLOW_CONSTRUCTOR_COPY_ASSIGN(TypeName) \
 	protected:\
 	TypeName(){}\
 	TypeName(const TypeName&) = delete; \
-	TypeName(const TypeName&&) = delete; \
+	TypeName(TypeName&&) = delete; \
 	TypeName& operator=(const TypeName&) = delete; \
-	TypeName& operator=(const TypeName&&) = delete;
+	TypeName& operator=(TypeName&&) = delete;
 
 ///////////////////////////////////////////////////////////////////////////////////////
 //文件名
@@ -282,17 +323,19 @@ DECLARE_ENUM_OPERATORS(PlatformType);
 #define Strchr strchr
 #define Strncmp strncmp
 #define Stricmp _stricmp
+#define Strnicmp _strnicmp
 #define Strlen strlen
 #define Strnlen strnlen
 #define Strstr strstr
 #define Strtok strtok_s
-#elif defined(DC_PLATFORM_LINUX) || defined(DC_PLATFORM_ANDROID) || defined(DC_PLATFORM_MAC) || defined(DC_PLATFORM_IOS)
+#else
 #define Strcpy strcpy
 #define Strncpy strncpy
 #define Strcat strcat
 #define Strchr strchr
 #define Strncmp strncmp
 #define Stricmp strcasecmp
+#define Strnicmp strncasecmp
 #define Strlen strlen
 #define Strnlen strnlen
 #define Strstr strstr
@@ -301,12 +344,12 @@ DECLARE_ENUM_OPERATORS(PlatformType);
 
 #if defined(DC_PLATFORM_WIN32)
 #define Sscanf sscanf_s
-#define Sprintf sprintf_s
+//#define Sprintf sprintf_s
 #define Snprintf _snprintf_s
 #define Vsnprintf vsnprintf_s
-#elif defined(DC_PLATFORM_LINUX) || defined(DC_PLATFORM_ANDROID) || defined(DC_PLATFORM_MAC) || defined(DC_PLATFORM_IOS)
+#else
 #define Sscanf sscanf
-#define Sprintf sprintf
+//#define Sprintf sprintf
 #define Snprintf snprintf
 #define Vsnprintf vsnprintf
 #endif
@@ -314,7 +357,7 @@ DECLARE_ENUM_OPERATORS(PlatformType);
 ///////////////////////////////////////////////////////////////////////////////////////
 
 //线程锁
-#define thread_lock(_mutex)		std::lock_guard<std::mutex> lock(_mutex)
+#define LOCK(_mutex) std::lock_guard<std::mutex> lock(_mutex)
 
 //未使用参数
 #ifndef UNUSED

@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2020/3/18
@@ -36,7 +36,7 @@ class ENGINE_DLL CGProgram : public Resource
 	typedef Vector<VertexAttrib> VertexAttribs;
 	DISALLOW_COPY_ASSIGN(CGProgram);
 	BEGIN_DERIVED_REFECTION_TYPE(CGProgram, Resource)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 protected:
 	CGProgram() : base(ResourceType::Shader) {}
@@ -46,14 +46,14 @@ public:
 	static CGProgram* CreateFromMemory(const String& name, const VecString& codes, const VecString& defines);
 
 public:
-	virtual bool LoadFromFile(const ShaderDesc& info);
-	virtual bool LoadFromMemory(const String& name, const VecString& codes, const VecString& defines) { return false; }
-	virtual void PreRender() = 0;
-	virtual void Render(Camera* camera, Pass* pass, const Matrix4& obj_mat);
-	virtual void PostRender() = 0;
+	virtual bool	LoadFromDesc(const ShaderDesc& info);
+	virtual bool	LoadFromMemory(const String& name, const VecString& codes, const VecString& defines) { return false; }
+	virtual void	PreRender() = 0;
+	virtual void	Render(Camera* camera, Pass* pass, const Matrix4& obj_mat);
+	virtual void	PostRender() = 0;
 
-	VertexSemantic GetInputVertexSemantic()const { return _reflectVertexSemantic; }
-	bool		   HasInputVertexSemantic(VertexSemantic sem)const { return _reflectVertexSemantic & sem; }
+	VertexSemantic	GetInputVertexSemantic()const { return _reflectVertexSemantic; }
+	bool			HasInputVertexSemantic(VertexSemantic sem)const { return _reflectVertexSemantic & sem; }
 
 public:
 	virtual bool SetVariable(const String& name, const Matrix4& mat) = 0;

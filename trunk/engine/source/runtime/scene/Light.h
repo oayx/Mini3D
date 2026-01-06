@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Date：2009/12/2
@@ -14,7 +14,7 @@
 DC_BEGIN_NAMESPACE
 class ShadowMap;
 /********************************************************************/
-class ENGINE_DLL Light Final : public Component
+class ENGINE_DLL Light final : public Component
 {
 	friend class GameObject;
 	DECLARE_OBJECT_CLONE;
@@ -24,7 +24,7 @@ class ENGINE_DLL Light Final : public Component
 	BEGIN_DERIVED_REFECTION_TYPE(Light, Component)
 		CTORS(DEFAULT_CTOR(Light))
 		ADD_EDITOR_COMPONENT("Light")
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 	Light();
 	~Light();
@@ -38,12 +38,15 @@ public:
 	void			DisableShadowMap();
 	ShadowMap*		GetShadowMap()const { return _shadowMap; }
 	ShadowType		GetShadowType()const { return _shadowType; }
-	ShadowType		GetValidShadowType()const;
+	ShadowType		GetValidShadowType()const;				//目前只能通过.shader文件的Defines宏控制
 	void			SetShadowStrength(float strength) { _shadowStrength = strength; }
 	float			GetShadowStrength()const { return _shadowStrength; }
 	void			SetShadowBias(float bias) { _shadowBias = bias; }
 	float			GetShadowBias()const { return _shadowBias; }
-	
+
+	void			SetCullMask(uint mask) { _cullMask = mask; }
+	uint			GetCullMask()const { return _cullMask; }
+
 public:
 	LightType		mType = LightType::Direction;			//定义灯光类型，我们能够使用下面三种类型之一：D3DLIGHT_POINT, D3DLIGHT_SPOT, D3DLIGHT_DIRECTIONAL
 	Color			Diffuse = Color::White;					//此光源发出的颜色。
@@ -52,12 +55,12 @@ public:
 	float			Intensity = 1.0f;						//强度    
 	float			SpotAngle = 30;							//聚光灯角度大小[0,180]
 
-	uint			CullMask = LayerMask::Everything;
-
 private:
-	ShadowMap*		 _shadowMap = nullptr;
-	ShadowType		 _shadowType = ShadowType::None;
-	float			 _shadowStrength = 0.8f;
-	float			 _shadowBias = 0.0f;
+	ShadowMap*		_shadowMap = nullptr;
+	ShadowType		_shadowType = ShadowType::None;
+	float			_shadowStrength = 0.8f;
+	float			_shadowBias = 0.0f;
+
+	uint			_cullMask = LayerMask::Everything;
 };//Light
 DC_END_NAMESPACE

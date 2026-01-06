@@ -1,4 +1,4 @@
-#include "Graphics.h"
+﻿#include "Graphics.h"
 #include "runtime/graphics/Material.h"
 #include "runtime/graphics/null/SwapChain.h"
 #include "runtime/input/Input.h"
@@ -11,8 +11,6 @@
 DC_BEGIN_NAMESPACE
 /********************************************************************/
 IMPL_DERIVED_REFECTION_TYPE(Graphics, Object);
-Material* Graphics::_blitMaterial = nullptr;
-VariablePrimitive* Graphics::_primitive = nullptr;
 void Graphics::Destroy()
 {
 	SAFE_RELEASE(_blitMaterial);
@@ -52,8 +50,8 @@ void Graphics::Blit(Camera* camera, Texture* source, RenderTexture* dest, Materi
 	mat->SetTexture(source, pass);
 
 	RenderFrameDesc desc;
-	desc.clear_flag = ClearFlag::SolidColor;
-	desc.clear_color = Color::Clear;
+	desc.clearFlag = ClearFlag::SolidColor;
+	desc.clearColor = Color::Clear;
 	if (dest)
 	{
 		dest->PreRender();

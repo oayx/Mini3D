@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal 
 * Date：2009/11/20
@@ -19,7 +19,7 @@ class ENGINE_DLL Resource : public Object
 	DECLARE_OBJECT_CLONE;
 	DISALLOW_CONSTRUCTOR_COPY_ASSIGN(Resource);
 	BEGIN_DERIVED_REFECTION_TYPE(Resource, Object)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 protected:
 	Resource(const ResourceType &type);
@@ -49,6 +49,6 @@ protected:
 	String			_resFile = "";						//资源文件
 	ResourceType	_type = ResourceType::Undefined;	//资源类型
 
-	static String	_internalPath;
+	inline static String _internalPath = "data/assets";
 };//Resource
 DC_END_NAMESPACE

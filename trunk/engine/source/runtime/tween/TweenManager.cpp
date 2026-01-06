@@ -1,15 +1,10 @@
-#include "TweenManager.h"
+﻿#include "TweenManager.h"
 #include "Tween.h"
 #include "core/time/Time.h"
  
 DC_BEGIN_NAMESPACE
 /********************************************************************/
 IMPL_REFECTION_TYPE(TweenManager);
-List<Tween*> TweenManager::_inactiveList;
-List<Tween*> TweenManager::_updateList;
-bool TweenManager::_autoSimulate = true;
-bool TweenManager::_useUnscaledTime = false;
-float TweenManager::_speed = 1.0f;
 void TweenManager::Destroy()
 {
 	Stop();
@@ -29,6 +24,7 @@ void TweenManager::Update()
 }
 void TweenManager::Simulate(float dt)
 {
+	DC_PROFILE_FUNCTION;
 	float delta_time = dt * _speed;
 
 	for (auto& tween : _inactiveList)

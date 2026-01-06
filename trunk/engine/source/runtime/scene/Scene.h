@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Description：单个场景
@@ -20,7 +20,7 @@ class ENGINE_DLL Scene : public Object
 	DISALLOW_COPY_ASSIGN(Scene);
 	DECLARE_OBJECT_SERIALIZE(Scene);
 	BEGIN_DERIVED_REFECTION_TYPE(Scene, Object)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 	Scene(const String& name);
 	~Scene();

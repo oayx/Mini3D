@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2020/3/30
@@ -14,13 +14,14 @@ DC_BEGIN_NAMESPACE
 class DX11SwapChain;
 /********************************************************************/
 // d3d设备
-class DX11Device Final : public GraphicsDevice
+class DX11Device final : public GraphicsDevice
 {
 	friend class Application;
 	DEFAULT_CREATE(DX11Device);
 	FRIEND_CONSTRUCT_DESTRUCT(DX11Device);
+	DISALLOW_COPY_ASSIGN(DX11Device);
 	BEGIN_DERIVED_REFECTION_TYPE(DX11Device, GraphicsDevice)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 	DX11Device();
 	~DX11Device();
@@ -29,9 +30,12 @@ public:
 	virtual bool			CreateDevice(RenderWindow* window)override;
 	virtual bool			CreateSwapChain(RenderWindow* window)override;
 	virtual void			CreateRenderContent()override;
+	virtual void			DestroyDevice(RenderWindow* window)override;
+	virtual void			DestroySwapChain(RenderWindow* window)override { base::DestroySwapChain(window); }
+	virtual void			DestroyRenderContent()override { base::DestroyRenderContent(); }
 	virtual void			Resize(const WindowResizeDesc& desc)override;
 
-	virtual CGProgram*			CreateShader()override;
+	virtual CGProgram*		CreateShader()override;
 	virtual Texture*		CreateTexture(const TextureDesc& desc)override;
 	virtual RenderTexture*	CreateRenderTexture(const TextureDesc& desc)override;
 	virtual FinalProcess*	CreateFinalProcess()override;

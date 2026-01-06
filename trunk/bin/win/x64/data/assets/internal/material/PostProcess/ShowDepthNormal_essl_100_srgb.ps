@@ -1,0 +1,13 @@
+#version 100
+precision mediump float;
+precision highp int;
+
+uniform highp sampler2D _CameraDepthNormalTexture;
+
+varying highp vec2 varying_TEXCOORD0;
+
+void main()
+{
+    gl_FragData[0] = vec4(texture2D(_CameraDepthNormalTexture, varying_TEXCOORD0).xyz, 1.0);
+}
+

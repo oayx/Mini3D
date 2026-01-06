@@ -22,23 +22,20 @@ static const ImWchar ICONS_RANGES[] = { ICON_MIN_FA, ICON_MAX_FA, 0 };
 static ImFont* AddFontFromFile(const String& file, float size, bool has_icons, const ImWchar* font_ranges)
 {
 	ImGuiIO& io = ImGui::GetIO();
-	ImFontConfig icons_config;
-	icons_config.FontDataOwnedByAtlas = false;
-	ImFont* font = io.Fonts->AddFontFromFileTTF(Resource::GetFullDataPath(file).c_str(), size, &icons_config, font_ranges);
+	ImFontConfig iconsConfig;
+	iconsConfig.FontDataOwnedByAtlas = false;
+	ImFont* font = io.Fonts->AddFontFromFileTTF(Resource::GetFullDataPath(file).c_str(), size, &iconsConfig, font_ranges);
 	if (font && has_icons)
 	{
-		icons_config.MergeMode = true;
-		icons_config.GlyphMinAdvanceX = size;
-		io.Fonts->AddFontFromFileTTF(Resource::GetFullDataPath("internal/font/fa-regular-400.ttf").c_str(), size * 0.75f, &icons_config, ICONS_RANGES);
-		io.Fonts->AddFontFromFileTTF(Resource::GetFullDataPath("internal/font/fa-solid-900.ttf").c_str(), size * 0.75f, &icons_config, ICONS_RANGES);
+		iconsConfig.MergeMode = true;
+		iconsConfig.GlyphMinAdvanceX = size;
+		io.Fonts->AddFontFromFileTTF(Resource::GetFullDataPath("internal/font/fa-regular-400.ttf").c_str(), size * 0.75f, &iconsConfig, ICONS_RANGES);
+		io.Fonts->AddFontFromFileTTF(Resource::GetFullDataPath("internal/font/fa-solid-900.ttf").c_str(), size * 0.75f, &iconsConfig, ICONS_RANGES);
 	}
 	return font;
 }
 /********************************************************************/
 IMPL_DERIVED_REFECTION_TYPE(EditorMain, Object);
-ImFont* EditorMain::_defaultFont = nullptr;
-ImFont* EditorMain::_bigFont = nullptr;
-ImFont* EditorMain::_bigIconFont = nullptr;
 void EditorMain::Initialize()
 {
 	//配置文件
@@ -84,7 +81,7 @@ void EditorMain::Destroy()
 }
 void EditorMain::Render()
 {
-	DC_PROFILE_FUNCTION();
+	DC_PROFILE_FUNCTION;
 	ImGui::PushFont(_defaultFont);
 
 	//创建菜单
@@ -120,7 +117,7 @@ void EditorMain::Resize(const WindowResizeDesc& desc)
 }
 void EditorMain::CreateDock()
 {
-	ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
+	ImGuiWindowFlags windowFlags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
 	const ImGuiViewport* viewport = ImGui::GetMainViewport();
 	ImGui::SetNextWindowPos(viewport->WorkPos);
 	ImGui::SetNextWindowSize(viewport->WorkSize);
@@ -128,18 +125,18 @@ void EditorMain::CreateDock()
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-	window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
-	window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
-	window_flags |= ImGuiWindowFlags_NoBackground;
+	windowFlags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+	windowFlags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+	windowFlags |= ImGuiWindowFlags_NoBackground;
 
 	bool p_open = true;
-	ImGui::Begin("DockSpace", &p_open, window_flags);
+	ImGui::Begin("DockSpace", &p_open, windowFlags);
 	ImGui::PopStyleVar();
 	ImGui::PopStyleVar(2);
 
-	static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_PassthruCentralNode;
-	ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
-	ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
+	static ImGuiDockNodeFlags dockspaceFlags = ImGuiDockNodeFlags_PassthruCentralNode;
+	ImGuiID dockspaceId = ImGui::GetID("MyDockSpace");
+	ImGui::DockSpace(dockspaceId, ImVec2(0.0f, 0.0f), dockspaceFlags);
 
 	if (ImGui::BeginMenuBar())
 	{

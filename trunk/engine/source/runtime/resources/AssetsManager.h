@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Description：asset管理
@@ -17,7 +17,7 @@ struct ShaderGroup
 	Map<String, ShaderGroup> Folders;
 };
 /********************************************************************/
-class ENGINE_DLL AssetsManager Final : public Object
+class ENGINE_DLL AssetsManager final : public Object
 {
 	friend class Project;
 	friend class Application;
@@ -48,23 +48,23 @@ public://事件
 
 private:
 	static void			Refresh();
-	static void			RefreshAsset(AssetMeta* asset_meta, const FileInfo& file_info, const String& assets_root_path, bool is_internal);
-	static void			InitMeta(AssetMeta* asset_meta, const FileInfo& file_info, const String& assets_root_path, bool is_internal);
-	static void			AddShaderGroup(String group_path, ShaderGroup& shader_group, const String& meta_guid);
+	static void			RefreshAsset(AssetMeta* assetMeta, const FileInfo& fileInfo, const String& assetsRootPath, bool isInternal);
+	static void			InitMeta(AssetMeta* assetMeta, const FileInfo& fileInfo, const String& assetsRootPath, bool isInternal);
+	static void			AddShaderGroup(String groupPath, ShaderGroup& shaderGroup, const String& metaGuid);
 
 private:
-	static EventController	_eventController;
+	inline static EventController				_eventController;
 
-	static AssetMeta*					_internalFile;
-	static Map<String, AssetMeta*>		_internalGuid2Metas;
-	static HashMap<uint64, AssetMeta*>	_internalFile2Metas;
+	inline static AssetMeta*					_internalFile = nullptr;
+	inline static Map<String, AssetMeta*>		_internalGuid2Metas;
+	inline static HashMap<uint64, AssetMeta*>	_internalFile2Metas;
 
-	static AssetMeta*					_assetsFile;
-	static Map<String, AssetMeta*>		_guid2Metas;
-	static HashMap<uint64, AssetMeta*>	_file2Metas;
-	static ShaderGroup					_shaderGroup;
+	inline static AssetMeta*					_assetsFile = nullptr;
+	inline static Map<String, AssetMeta*>		_guid2Metas;
+	inline static HashMap<uint64, AssetMeta*>	_file2Metas;
+	inline static ShaderGroup					_shaderGroup;
 
-	static HashMap<ResourceType, Vector<AssetMeta*>>	_internalGroup;	//value->meta guid
-	static HashMap<ResourceType, Vector<AssetMeta*>>	_assetsGroup;		//value->meta guid
+	inline static HashMap<ResourceType, Vector<AssetMeta*>>	_internalGroup;	//value->meta guid
+	inline static HashMap<ResourceType, Vector<AssetMeta*>>	_assetsGroup;		//value->meta guid
 };
 DC_END_NAMESPACE

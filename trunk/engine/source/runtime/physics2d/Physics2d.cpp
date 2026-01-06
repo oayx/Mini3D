@@ -1,4 +1,4 @@
-#include "Physics2d.h"
+﻿#include "Physics2d.h"
 #include "Collider2d.h"
 #include "PhysicsDebugDraw2d.h"
 #include "runtime/component/GameObject.h"
@@ -8,19 +8,10 @@
  
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-b2World* Physics2d::_physxWorld = nullptr;
-ContactListener2d* Physics2d::_contactListener2d = nullptr;
-PhysicsDebugDraw2d* Physics2d::_debugDraw = nullptr;
-int Physics2d::_velocityIterations = 10;
-int Physics2d::_positionIterations = 10;
-bool Physics2d::_autoSimulate = true;
-bool Physics2d::_useUnscaledTime = false;
-float Physics2d::_defaultFriction = 0.6f;
-float Physics2d::_defaultRestitution = 0.0f;
 IMPL_DERIVED_REFECTION_TYPE(Physics2d, Object);
 void Physics2d::Initialize()
 {
-	_physxWorld = DBG_NEW b2World(b2Vec2(0, -9.8f));
+	_physxWorld = Memory::New<b2World>(b2Vec2(0, -9.8f));
 	_physxWorld->SetAllowSleeping(true);
 	_physxWorld->SetContinuousPhysics(true);
 
@@ -46,6 +37,7 @@ void Physics2d::Update()
 }
 void Physics2d::Simulate(float dt)
 {
+	DC_PROFILE_FUNCTION;
 	if (_physxWorld != nullptr)
 	{
 		_physxWorld->Step(dt, _velocityIterations, _positionIterations);
@@ -63,16 +55,16 @@ void Physics2d::Simulate(float dt)
 		}
 	}
 }
-bool Physics2d::Raycast(const Vector2& origin, const Vector2& direction, float distance, RaycastHit2D& hit_info)
+bool Physics2d::Raycast(const Vector2& origin, const Vector2& direction, float distance, RaycastHit2D& hitInfo)
 {
-	return Raycast(origin, direction, distance, 0, hit_info);
+	return Raycast(origin, direction, distance, 0, hitInfo);
 }
-bool Physics2d::Raycast(const Vector2& origin, const Vector2& direction, float distance, uint layerMask, RaycastHit2D& hit_info)
+bool Physics2d::Raycast(const Vector2& origin, const Vector2& direction, float distance, uint layerMask, RaycastHit2D& hitInfo)
 {
-	RayCastClosestCallback callback(std::move(hit_info), layerMask);
+	RayCastClosestCallback callback(std::move(hitInfo), layerMask);
 	Vector2 end = origin + direction.Normalize() * distance;
 	_physxWorld->RayCast(&callback, b2Vec2(origin.x / PTM_RATIO, origin.y / PTM_RATIO), b2Vec2(end.x / PTM_RATIO, end.y / PTM_RATIO));
-	hit_info = std::move(callback._info);
+	hitInfo = std::move(callback._info);
 	return callback._hit;
 }
 bool Physics2d::RaycastAll(const Vector2& origin, const Vector2& direction, float distance, Vector<RaycastHit2D>& list)

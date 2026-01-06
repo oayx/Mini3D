@@ -11,80 +11,136 @@
 DC_BEGIN_NAMESPACE
 /********************************************************************/
 template <class T>
-class Array Final : public object
+class Array final : public object
 {
-	DISALLOW_COPY_ASSIGN(Array);
-	
 public:
-	Array() :_data(0), m_len(0), m_cap(0)
+	constexpr Array() :_data(0), _len(0), _cap(0)
 	{
 	}
-	explicit Array(int size) : _data(0), m_len(0), m_cap(0)
+	explicit Array(int size) : _data(0), _len(0), _cap(0)
 	{
 		SetSize(size);
 	}
+	Array(const Array& other)
+	{
+		SetSize(other._cap);
+		_len = other._len;
+		::memcpy(_data, other._data, sizeof(T) * _cap);
+	}
+	Array(Array&& other)
+		: _data(std::move(other._data))
+		, _len(other._len)
+		, _cap(other._cap)
+	{
+		other._data = nullptr;
+	}
+
 	~Array()
 	{
 		if (_data)
 		{
-			DeleteArray(_data, m_cap);
+			Memory::DeleteArray(_data, _cap);
 			_data = nullptr;
 		}
 	}
-	void Add(const T & item)
+
+	Array& operator =(const Array& other) noexcept 
 	{
-		if (m_len + 1 > m_cap)
-			SetCapacity(m_len + 1);
-		_data[m_len++] = item;
+		if (_data)
+		{
+			Memory::DeleteArray(_data, _cap);
+			_data = nullptr;
+		}
+		SetSize(other._cap);
+		::memcpy(_data, other._data, sizeof(T) * _cap);
+		return *this; 
 	}
-	void SetSize(int size)
+	Array& operator =(Array&& other) noexcept 
 	{
-		if (size > m_cap)
+		if (_data)
+		{
+			Memory::DeleteArray(_data, _cap);
+			_data = nullptr;
+		}
+		_data = std::move(other._data);
+		_len = other._len;
+		_cap = other._cap;
+		return *this; 
+	}	
+	bool operator ==(const Array& other)const noexcept
+	{
+		if (_len != other._len)
+			return false;
+		if (_cap != other._cap)
+			return false;
+		for (int i = 0; i < _len; ++i)
+		{
+			if (_data[i] != other._data[i])
+				return false;
+		}
+
+		return true;
+	}
+	bool operator !=(const Array& other)const noexcept
+	{
+		return !(*this == other);
+	}
+
+public:
+	void Add(const T & item) noexcept
+	{
+		if (_len + 1 >= _cap)
+			SetCapacity(_len + 1);
+		_data[_len++] = item;
+	}
+	void SetSize(int size) noexcept
+	{
+		if (size > _cap)
 			SetCapacity(size);
-		m_len = size;
+		_len = size;
 	}
-	T & operator[](int i)
+	T & operator[](int i) noexcept
 	{
 		return _data[i];
 	}
-	T* Begin()
+	T* Begin()noexcept
 	{
 		return _data;
 	}
-	T* End()
+	T* End()noexcept
 	{
-		return _data + m_len;
+		return _data + _len;
 	}
-	const T* Begin() const
+	const T* Begin() const noexcept
 	{
 		return _data;
 	}
-	const T* End() const
+	const T* End() const noexcept
 	{
-		return _data + m_len;
+		return _data + _len;
 	}
-	int Size() const
+	constexpr int Size() const noexcept
 	{
-		return m_len;
+		return _len;
 	}
-	T MaxValue()const
+	T MaxValue()const noexcept
 	{
-		T max_value = std::numeric_limits<T>::min();
-		for (int i = 0; i < m_len; ++i)
+		T maxValue = std::numeric_limits<T>::min();
+		for (int i = 0; i < _len; ++i)
 		{
-			if (_data[i] > max_value)
+			if (_data[i] > maxValue)
 			{
-				max_value = _data[i];
+				maxValue = _data[i];
 			}
 		}
-		return max_value;
+		return maxValue;
 	}
 	//最大位数
-	int MaxBit()
+	int MaxBit() noexcept
 	{
 		int d = 1; //保存最大的位数
 		int p = 10;
-		for (int i = 0; i < m_len; ++i)
+		for (int i = 0; i < _len; ++i)
 		{
 			while (_data[i] >= p)
 			{
@@ -94,7 +150,7 @@ public:
 		}
 		return d;
 	}
-	const T & operator[](int i) const
+	const T & operator[](int i) const noexcept
 	{
 		return _data[i];
 	}
@@ -111,7 +167,7 @@ public://排序
 			3.针对所有的元素重复以上的步骤，除了最后一个；
 			4.重复步骤1~3，直到排序完成。
 	*/
-	void BubbleSort();
+	void BubbleSort() noexcept;
 	/*
 		选择排序
 		介绍:
@@ -123,7 +179,7 @@ public://排序
 			  将它与无序区的第1个记录R交换，使R[1..i]和R[i+1..n)分别变为记录个数增加1个的新有序区和记录个数减少1个的新无序区；
 			3.n-1趟结束，数组有序化了。
 	*/
-	void SelectionSort();
+	void SelectionSort() noexcept;
 	/*
 		插入排序
 		介绍:
@@ -137,7 +193,7 @@ public://排序
 			5.将新元素插入到该位置后；
 			重复步骤2~5
 	*/
-	void InsertionSort();
+	void InsertionSort() noexcept;
 	/*
 		希尔排序
 		介绍:
@@ -149,7 +205,7 @@ public://排序
 			3.每趟排序，根据对应的增量ti，将待排序列分割成若干长度为m 的子序列，分别对各子表进行直接插入排序。
 			  仅增量因子为1 时，整个序列作为一个表来处理，表长度即为整个序列的长度。
 	*/
-	void ShellSort();
+	void ShellSort() noexcept;
 	/*
 		快速排序
 		介绍:
@@ -159,9 +215,9 @@ public://排序
 			2.重新排序数列，所有元素比基准值小的摆放在基准前面，所有元素比基准值大的摆在基准的后面（相同的数可以到任一边）。在这个分区退出之后，该基准就处于数列的中间位置。这个称为分区（partition）操作；
 			3.递归地（recursive）把小于基准值元素的子数列和大于基准值元素的子数列排序。
 	*/
-	void QuickSort();
-	int  Parition(int low, int high);
-	void QuickSort(int low, int high);
+	void QuickSort() noexcept;
+	int  Parition(int low, int high) noexcept;
+	void QuickSort(int low, int high) noexcept;
 	/*
 		归并排序
 		介绍:
@@ -172,9 +228,9 @@ public://排序
 			2.对这两个子序列分别采用归并排序；
 			3.将两个排序好的子序列合并成一个最终的排序序列。
 	*/
-	void MergeSort();
-	void MergeSort(T* temp_arr, int l, int r);
-	void Merge(T* temp_arr, int l, int q, int r);
+	void MergeSort() noexcept;
+	void MergeSort(T* temp_arr, int l, int r) noexcept;
+	void Merge(T* temp_arr, int l, int q, int r) noexcept;
 	/*
 		堆排序
 		介绍:
@@ -198,8 +254,8 @@ public://排序
 			  /
 			  8
 	*/
-	void HeapSort();
-	void AdjustHeap(int len, int index);
+	void HeapSort() noexcept;
+	void AdjustHeap(int len, int index) noexcept;
 	/*
 		计数排序
 		介绍:
@@ -210,7 +266,7 @@ public://排序
 			3.对所有的计数累加（从C中的第一个元素开始，每一项和前一项相加）；
 			4.反向填充目标数组：将每个元素i放在新数组的第C(i)项，每放一个元素就将C(i)减去1。
 	*/
-	void CountingSort();
+	void CountingSort() noexcept;
 	/*
 		桶排序
 		介绍:
@@ -222,7 +278,7 @@ public://排序
 			3.对每个不是空的桶进行排序；
 			4.从不是空的桶里把排好序的数据拼接起来。
 	*/
-	void BucketSort();
+	void BucketSort() noexcept;
 	/*
 		基数排序
 		介绍:
@@ -233,24 +289,24 @@ public://排序
 			2.arr为原始数组，从最低位开始取每个位组成radix数组；
 			3.对radix进行计数排序（利用计数排序适用于小范围数的特点）；
 	*/
-	void RadixSort();
+	void RadixSort() noexcept;
 
 private:
-	void SetCapacity(int cap);
+	void SetCapacity(int cap) noexcept;
 	// 元素交换
-	void Swap(int i, int j);
+	void Swap(int i, int j) noexcept;
 
 private:
-	T*		_data;
-	int		m_len;
-	int		m_cap;
+	T*		_data = nullptr;
+	int		_len = 0;
+	int		_cap = 0;
 };
 template <class T>
-void Array<T>::BubbleSort()
+void Array<T>::BubbleSort() noexcept
 {
-	for (int i = 0; i < m_len - 1; i++)
+	for (int i = 0; i < _len - 1; i++)
 	{
-		for (int j = 0; j < m_len - 1 - i; j++)
+		for (int j = 0; j < _len - 1 - i; j++)
 		{
 			if (_data[j] > _data[j + 1])		// 相邻元素两两对比
 			{
@@ -260,27 +316,27 @@ void Array<T>::BubbleSort()
 	}
 }
 template <class T>
-void Array<T>::SelectionSort()
+void Array<T>::SelectionSort() noexcept
 {
-	int min_index = -1;
-	for (int i = 0; i < m_len - 1; i++)
+	int minIndex = -1;
+	for (int i = 0; i < _len - 1; i++)
 	{
-		min_index = i;
-		for (int j = i + 1; j < m_len; j++)
+		minIndex = i;
+		for (int j = i + 1; j < _len; j++)
 		{
-			if (_data[j] < _data[min_index])	// 寻找最小的数
+			if (_data[j] < _data[minIndex])	// 寻找最小的数
 			{
-				min_index = j;					// 将最小数的索引保存
+				minIndex = j;					// 将最小数的索引保存
 			}
 		}
-		Swap(i, min_index);
+		Swap(i, minIndex);
 	}
 }
 template <class T>
-void Array<T>::InsertionSort()
+void Array<T>::InsertionSort() noexcept
 {
 	T current;
-	for (int i = 1; i < m_len; i++)
+	for (int i = 1; i < _len; i++)
 	{
 		int j  = i;
 		current = _data[i];
@@ -293,11 +349,11 @@ void Array<T>::InsertionSort()
 	}
 }
 template <class T>
-void Array<T>::ShellSort()
+void Array<T>::ShellSort() noexcept
 {
-	for (int gap = (int)::floor(m_len / 2); gap > 0; gap = (int)::floor(gap / 2))
+	for (int gap = (int)::floor(_len / 2); gap > 0; gap = (int)::floor(gap / 2))
 	{
-		for (int i = gap; i < m_len; i++)
+		for (int i = gap; i < _len; i++)
 		{
 			int j = i;
 			T current = _data[i];
@@ -311,12 +367,12 @@ void Array<T>::ShellSort()
 	}
 }
 template <class T>
-void Array<T>::QuickSort()
+void Array<T>::QuickSort() noexcept
 {
-	QuickSort(0, m_len - 1);
+	QuickSort(0, _len - 1);
 }
 template <class T>
-int Array<T>::Parition(int low, int high)
+int Array<T>::Parition(int low, int high) noexcept
 {
 	int pivot = _data[high];
 	int i = low;
@@ -335,7 +391,7 @@ int Array<T>::Parition(int low, int high)
 
 }
 template <class T>
-void Array<T>::QuickSort(int low, int high)
+void Array<T>::QuickSort(int low, int high) noexcept
 {
 	if (low < high)
 	{
@@ -345,14 +401,14 @@ void Array<T>::QuickSort(int low, int high)
 	}
 }
 template <class T>
-void Array<T>::MergeSort()
+void Array<T>::MergeSort() noexcept
 {
-	T* arr = NewArray<T>(m_len);
-	MergeSort(arr, 0, m_len - 1);
-	DeleteArray(arr, m_len);
+	T* arr = Memory::NewArray<T>(_len);
+	MergeSort(arr, 0, _len - 1);
+	Memory::DeleteArray(arr, _len);
 }
 template <class T>
-void Array<T>::MergeSort(T* temp_arr, int l, int r)
+void Array<T>::MergeSort(T* temp_arr, int l, int r) noexcept
 {
 	if (l == r)return;  //递归基是让数组中的每个数单独成为长度为1的区间
 	int q = (l + r) / 2;
@@ -361,7 +417,7 @@ void Array<T>::MergeSort(T* temp_arr, int l, int r)
 	Merge(temp_arr, l, q, r);
 }
 template <class T>
-void Array<T>::Merge(T* temp_arr, int l, int q, int r)
+void Array<T>::Merge(T* temp_arr, int l, int q, int r) noexcept
 {
 	int n = r - l + 1;//临时数组存合并后的有序序列
 	int i = 0;
@@ -377,16 +433,16 @@ void Array<T>::Merge(T* temp_arr, int l, int q, int r)
 		_data[l + j] = temp_arr[j];
 }
 template <class T>
-void Array<T>::HeapSort()
+void Array<T>::HeapSort() noexcept
 {
 	// 构建大根堆（从最后一个非叶子节点向上）
-	for (int i = m_len / 2 - 1; i >= 0; i--)
+	for (int i = _len / 2 - 1; i >= 0; i--)
 	{
-		AdjustHeap(m_len, i);
+		AdjustHeap(_len, i);
 	}
 
 	// 调整大根堆
-	for (int i = m_len - 1; i >= 1; i--)
+	for (int i = _len - 1; i >= 1; i--)
 	{
 		Swap(0, i);						// 将当前最大的放置到数组末尾
 		AdjustHeap(i, 0);				// 将未完成排序的部分继续进行堆排序
@@ -394,7 +450,7 @@ void Array<T>::HeapSort()
 }
 // 递归方式构建大根堆(len是arr的长度，index是第一个非叶子节点的下标)
 template <class T>
-void Array<T>::AdjustHeap(int len, int index)
+void Array<T>::AdjustHeap(int len, int index) noexcept
 {
 	int left = 2 * index + 1;			// index的左子节点
 	int right = 2 * index + 2;			// index的右子节点
@@ -409,19 +465,19 @@ void Array<T>::AdjustHeap(int len, int index)
 	}
 }
 template <class T>
-void Array<T>::CountingSort()
+void Array<T>::CountingSort() noexcept
 {
-	T max_value = MaxValue() + 1;
-	T* arr = NewArray<T>(max_value);
-	::memset(arr, 0, sizeof(T) * max_value);
+	T maxValue = MaxValue() + 1;
+	T* arr = Memory::NewArray<T>(maxValue);
+	::memset(arr, 0, sizeof(T) * maxValue);
 
 	int sorted_index = 0;
-	for (int i = 0; i < m_len; i++) 
+	for (int i = 0; i < _len; i++) 
 	{
 		arr[_data[i]]++;
 	}
 
-	for (int j = 0; j < max_value; j++)
+	for (int j = 0; j < maxValue; j++)
 	{
 		while (arr[j] > 0)
 		{
@@ -430,18 +486,18 @@ void Array<T>::CountingSort()
 		}
 	}
 
-	DeleteArray(arr, max_value);
+	Memory::DeleteArray(arr, maxValue);
 }
 template <class T>
-void Array<T>::BucketSort()
+void Array<T>::BucketSort() noexcept
 {
 
 }
 template <class T>
-void Array<T>::RadixSort()
+void Array<T>::RadixSort() noexcept
 {
-	T* arr = NewArray<T>(m_len);
-	::memset(arr, 0, sizeof(T) * m_len);
+	T* arr = Memory::NewArray<T>(_len);
+	::memset(arr, 0, sizeof(T) * _len);
 
 	int d = MaxBit();
 	int count[10]; //计数器
@@ -451,45 +507,46 @@ void Array<T>::RadixSort()
 	{
 		for (j = 0; j < 10; j++)
 			count[j] = 0;						//每次分配前清空计数器
-		for (j = 0; j < m_len; j++)
+		for (j = 0; j < _len; j++)
 		{
 			k = (_data[j] / radix) % 10;		//统计每个桶中的记录数
 			count[k]++;
 		}
 		for (j = 1; j < 10; j++)
 			count[j] = count[j - 1] + count[j]; //将tmp中的位置依次分配给每个桶
-		for (j = m_len - 1; j >= 0; j--)		//将所有桶中记录依次收集到tmp中
+		for (j = _len - 1; j >= 0; j--)			//将所有桶中记录依次收集到tmp中
 		{
 			k = (_data[j] / radix) % 10;
 			arr[count[k] - 1] = _data[j];
 			count[k]--;
 		}
-		for (j = 0; j < m_len; j++)				//将临时数组的内容复制到data中
+		for (j = 0; j < _len; j++)				//将临时数组的内容复制到data中
 			_data[j] = arr[j];
-		::memcpy(_data, arr, sizeof(T) * m_len);
+		::memcpy(_data, arr, sizeof(T) * _len);
 		radix = radix * 10;
 	}
-	DeleteArray(arr, m_len);
+	Memory::DeleteArray(arr, _len);
 }
 template <class T>
-void Array<T>::SetCapacity(int cap)
+void Array<T>::SetCapacity(int cap) noexcept
 {
-	++cap;
 	if (cap < 8)
 		cap = 8;
-	else if (cap < m_cap * 2)
-		cap = m_cap * 2;
-	int old_cap = m_cap;
-	m_cap = cap;
+	else if (cap < _cap * 2)
+		cap = _cap * 2;
+	int old_cap = _cap;
+	_cap = cap;
 
-	T* data = NewArray<T>(cap);
-	for (int i = 0; i < m_len; ++i)
-		data[i] = _data[i];
-	if (old_cap)DeleteArray(_data, old_cap);
+	T* data = Memory::NewArray<T>(cap);
+	if (old_cap) 
+	{
+		::memcpy(data, _data, sizeof(T) * cap);
+		Memory::DeleteArray(_data, old_cap);
+	}
 	_data = data;
 }
 template <class T>
-void Array<T>::Swap(int i, int j)
+void Array<T>::Swap(int i, int j) noexcept
 {
 	auto temp = _data[j];
 	_data[j] = _data[i];

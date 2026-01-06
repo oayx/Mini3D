@@ -24,12 +24,12 @@ uniform type_CustomBuffer CustomBuffer;
 
 layout(location = 0) in vec4 in_var_POSITION;
 layout(location = 1) in vec4 in_var_COLOR0;
-layout(location = 0) out vec4 out_var_POSITION;
-layout(location = 1) out vec4 out_var_COLOR0;
+layout(location = 0) out vec4 var_POSITION;
+layout(location = 1) out vec4 var_COLOR0;
 
 void main()
 {
-    out_var_POSITION = in_var_POSITION * TransformBuffer.MATRIX_MVP;
-    out_var_COLOR0 = in_var_COLOR0 * CustomBuffer._Color;
+    var_POSITION = in_var_POSITION * TransformBuffer.MATRIX_MVP;
+    var_COLOR0 = in_var_COLOR0 * CustomBuffer._Color;
 }
 

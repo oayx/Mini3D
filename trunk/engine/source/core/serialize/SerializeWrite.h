@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Description：写入
@@ -16,7 +16,7 @@ class SerializeWrite : public SerializeBase
 	FRIEND_CONSTRUCT_DESTRUCT(SerializeWrite);
 	DISALLOW_COPY_ASSIGN(SerializeWrite);
 	BEGIN_DERIVED_REFECTION_TYPE(SerializeWrite, SerializeBase)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 public:
 	SerializeWrite(const String& file);
@@ -26,30 +26,30 @@ public:
 
 	void Save();
 
-	inline bool Push(const char* node_name)
+	inline bool Push(const char* nodeName)
 	{
 		if (!_isOpen || !_currNode)return false;
 
-		_currNode = _currNode->InsertNewChildElement(node_name);
+		_currNode = _currNode->InsertNewChildElement(nodeName);
 		_isSaved = false;
 		return true;
 	}
-	inline bool Push(const char* node_name, int index)
+	inline bool Push(const char* nodeName, int index)
 	{
 		if (!_isOpen || !_currNode)return false;
 
 		tinyxml2::XMLElement* curr_node = _currNode;
 
 		//获取当前已经有的数量
-		_currNode = _currNode->FirstChildElement(node_name);
+		_currNode = _currNode->FirstChildElement(nodeName);
 		while (_currNode && index > 0)
 		{
 			index--;
-			_currNode = _currNode->NextSiblingElement(node_name);
+			_currNode = _currNode->NextSiblingElement(nodeName);
 		}
 
 		//如果不够，创建新的
-		while(index-- >= 0 || !_currNode)_currNode = curr_node->InsertNewChildElement(node_name);
+		while(index-- >= 0 || !_currNode)_currNode = curr_node->InsertNewChildElement(nodeName);
 
 		_isSaved = false;
 		return true;

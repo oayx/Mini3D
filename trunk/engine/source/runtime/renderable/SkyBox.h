@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Date：2020/8/27 
@@ -13,7 +13,7 @@ class Camera;
 class Texture;
 /********************************************************************/
 // 天空盒
-class SkyBox Final : public Object
+class SkyBox final : public Object
 {
 	friend class Camera;
 	DEFAULT_CREATE(SkyBox);
@@ -21,7 +21,7 @@ class SkyBox Final : public Object
 	DISALLOW_COPY_ASSIGN(SkyBox);
 	BEGIN_DERIVED_REFECTION_TYPE(SkyBox, Object)
 		CTORS(DEFAULT_CTOR(SkyBox))
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 	SkyBox();
 	~SkyBox();

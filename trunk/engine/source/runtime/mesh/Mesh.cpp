@@ -1,4 +1,4 @@
-#include "Mesh.h"
+﻿#include "Mesh.h"
 #include "MeshManager.h"
 #include "Bone.h"
 #include "KeyFrame.h"
@@ -52,7 +52,7 @@ static const Assimp::Importer* LoadScene(const String &file)
 			is_import_animation = meta->IsImportAnimation();
 		}
 
-		Assimp::Importer* importer = DBG_NEW Assimp::Importer();
+		Assimp::Importer* importer = Memory::New<Assimp::Importer>();
 		importer->SetPropertyInteger(AI_CONFIG_PP_SBP_REMOVE, aiPrimitiveType_LINE | aiPrimitiveType_POINT);
 		importer->SetPropertyFloat(AI_CONFIG_PP_GSN_MAX_SMOOTHING_ANGLE, 175.0f);
 		importer->SetPropertyFloat(AI_CONFIG_PP_CT_MAX_SMOOTHING_ANGLE, 45.0f);
@@ -84,8 +84,8 @@ static const Assimp::Importer* LoadScene(const String &file)
 }
 static bool IsValidNode(const aiNode* node)
 {
-	std::string node_name = node->mName.data;
-	if (node_name.find_first_of('$') == std::string::npos || node_name.find_first_of('$') == node_name.find_last_of('$'))
+	std::string nodeName = node->mName.data;
+	if (nodeName.find_first_of('$') == std::string::npos || nodeName.find_first_of('$') == nodeName.find_last_of('$'))
 		return true;
 	return false;
 }
@@ -118,9 +118,9 @@ static aiNodeAnim* FindNodeAnim(const aiAnimation* anim, const String& name)
 //是否有动画
 static bool HasBones(const aiScene* scene)
 {
-	for (uint mesh_index = 0; mesh_index < scene->mNumMeshes; ++mesh_index)
+	for (uint meshIndex = 0; meshIndex < scene->mNumMeshes; ++meshIndex)
 	{
-		aiMesh* mesh = scene->mMeshes[mesh_index];
+		aiMesh* mesh = scene->mMeshes[meshIndex];
 		if (mesh->mNumBones > 0)
 		{
 			return true;
@@ -144,7 +144,7 @@ Mesh* Mesh::Create(const String& file)
 	if (mesh != nullptr)
 		return mesh;
 
-	mesh = DBG_NEW Mesh();
+	mesh = Memory::New<Mesh>();
 	mesh->AutoRelease();
 	if (mesh->Load(file))
 	{
@@ -182,24 +182,24 @@ bool Mesh::LoadFromFile(const String &file)
 {
 	base::LoadFromFile(file);
 
-	const Assimp::Importer* importer = LoadScene(file);
+	auto importer = LoadScene(file);
 	if (importer == nullptr)return false;
 
-	const aiScene* scene = importer->GetScene();
+	auto scene = importer->GetScene();
 	//重命名
 	this->RenameNode(scene->mRootNode);
 
-	bool import_animation = false;
+	bool importAnimation = false;
 	MeshMeta* meta = dynamic_cast<MeshMeta*>(AssetsManager::GetMetaByFile(file));
 	if (meta && meta->IsImportAnimation())
 	{
-		import_animation = true;
+		importAnimation = true;
 	}
 
 	// 递归处理结点
-	this->LoadNode(scene, scene->mRootNode, import_animation);
+	this->LoadNode(scene, scene->mRootNode, importAnimation);
 
-	if (import_animation)
+	if (importAnimation)
 	{
 		//动画
 		for (uint i = 0; i < scene->mNumAnimations; ++i)
@@ -218,7 +218,7 @@ bool Mesh::LoadFromFile(const String &file)
 }
 bool Mesh::LoadAnimation(const String &file, const String& name)
 {
-	const Assimp::Importer* importer = LoadScene(file);
+	auto importer = LoadScene(file);
 	if (importer == nullptr)return false;
 
 	const aiScene* scene = importer->GetScene();
@@ -271,7 +271,7 @@ Vector<Triangle>& Mesh::GetTriangles()
 	}
 	return _triangles;
 }
-void Mesh::LoadNode(const aiScene* scene, const aiNode* node, bool import_animation)
+void Mesh::LoadNode(const aiScene* scene, const aiNode* node, bool importAnimation)
 {
 	// 先处理自身结点
 	for (size_t i = 0; i < node->mNumMeshes; ++i)
@@ -285,16 +285,16 @@ void Mesh::LoadNode(const aiScene* scene, const aiNode* node, bool import_animat
 		MeshEntity* entity = MeshEntity::Create();
 		_entities.Add(entity);
 		//读取模型数据
-		this->LoadMesh(scene, node, mesh, node->mMeshes[i], import_animation);
+		this->LoadMesh(scene, node, mesh, node->mMeshes[i], importAnimation);
 	}
 
 	// 再处理孩子结点
 	for (size_t i = 0; i < node->mNumChildren; ++i)
 	{
-		this->LoadNode(scene, node->mChildren[i], import_animation);
+		this->LoadNode(scene, node->mChildren[i], importAnimation);
 	}
 }
-void Mesh::LoadMesh(const aiScene* scene, const aiNode* node, const aiMesh* mesh, int mesh_index, bool import_animation)
+void Mesh::LoadMesh(const aiScene* scene, const aiNode* node, const aiMesh* mesh, int meshIndex, bool importAnimation)
 {
 	//获得变化矩阵
 	Matrix4 mat_node = Matrix4::identity;
@@ -309,7 +309,7 @@ void Mesh::LoadMesh(const aiScene* scene, const aiNode* node, const aiMesh* mesh
 	}
 
 	//Vertex
-	MeshEntity* entity = _entities[mesh_index];
+	MeshEntity* entity = _entities[meshIndex];
 	entity->Vertexs.Reserve(mesh->mNumVertices);
 	if (mesh->mColors[0])entity->Colors.Reserve(mesh->mNumVertices);
 	if (mesh->mTextureCoords[0])entity->TexCoords1.Reserve(mesh->mNumVertices);
@@ -318,7 +318,7 @@ void Mesh::LoadMesh(const aiScene* scene, const aiNode* node, const aiMesh* mesh
 	{
 		auto v = mesh->mVertices[j];
 		Vector3 vertex(v.x, v.y, v.z);
-		entity->Vertexs.Add(import_animation ? vertex : mat_node.TransformPoint(vertex));
+		entity->Vertexs.Add(importAnimation ? vertex : mat_node.TransformPoint(vertex));
 
 		if (mesh->mColors[0])
 		{
@@ -379,8 +379,8 @@ void Mesh::LoadMesh(const aiScene* scene, const aiNode* node, const aiMesh* mesh
 			// 处理每一个骨骼中的所有weights(单个weight影响单个顶点)
 			for (uint j = 0; j < bone->mNumWeights; j++)
 			{
-				uint vertex_id = bone->mWeights[j].mVertexId;
-				entity->Weights[vertex_id].AddBoneData(bone3d->Id, bone->mWeights[j].mWeight);
+				uint vertexId = bone->mWeights[j].mVertexId;
+				entity->Weights[vertexId].AddBoneData(bone3d->Id, bone->mWeights[j].mWeight);
 			}
 		}
 	}
@@ -398,60 +398,60 @@ void Mesh::LoadAnimationClip(const aiScene* scene, aiAnimation* anim, const Stri
 	}
 
 	AnimationClip* clip = this->CreateClip(name);
-	uint max_frames = Math::Ceil<uint>((float)anim->mDuration) + 1;
-	clip->SetFrames(max_frames, (int)anim->mTicksPerSecond);
+	uint maxFrames = Math::Ceil<uint>((float)anim->mDuration) + 1;
+	clip->SetFrames(maxFrames, (int)anim->mTicksPerSecond);
 	_animationClips.Add(name, clip);
 
 	//root node
-	AnimationNode* animation_node = clip->CreateNode(this, GetNodeName(scene->mRootNode));
-	animation_node->SetTransfrom(aiToMatrix4(scene->mRootNode->mTransformation));
-	clip->SetRootNode(animation_node);
+	AnimationNode* animationNode = clip->CreateNode(this, GetNodeName(scene->mRootNode));
+	animationNode->SetTransfrom(aiToMatrix4(scene->mRootNode->mTransformation));
+	clip->SetRootNode(animationNode);
 
 	for (uint i = 0; i < scene->mRootNode->mNumChildren; i++)
 	{
-		LoadAnimationNode(scene, scene->mRootNode->mChildren[i], anim, clip, animation_node, max_frames);
+		LoadAnimationNode(scene, scene->mRootNode->mChildren[i], anim, clip, animationNode, maxFrames);
 	}
 }
-void Mesh::LoadAnimationNode(const aiScene* scene, const aiNode* node,const aiAnimation* anim, AnimationClip* clip, AnimationNode* parent_node, uint max_frames)
+void Mesh::LoadAnimationNode(const aiScene* scene, const aiNode* node,const aiAnimation* anim, AnimationClip* clip, AnimationNode* parentNode, uint maxFrames)
 {
 	if (IsValidNode(node))
 	{
-		String node_name = GetNodeName(node);
-		AnimationNode* animation_node = clip->CreateNode(this, node_name);
-		animation_node->SetTransfrom(aiToMatrix4(node->mTransformation));
-		parent_node->AddChildren(animation_node);
-		parent_node = animation_node;
+		String nodeName = GetNodeName(node);
+		AnimationNode* animationNode = clip->CreateNode(this, nodeName);
+		animationNode->SetTransfrom(aiToMatrix4(node->mTransformation));
+		parentNode->AddChildren(animationNode);
+		parentNode = animationNode;
 
 		//帧数据
-		aiNodeAnim* node_anim = FindNodeAnim(anim, node_name);
+		aiNodeAnim* node_anim = FindNodeAnim(anim, nodeName);
 		if (node_anim != nullptr)
 		{
-			auto it = _bonesByName.Find(node_name);
+			auto it = _bonesByName.Find(nodeName);
 			if (it == _bonesByName.end())
 			{//创建骨骼	
 				aiMatrix4x4 aimat;
 				GetNodeFullTransform(node, aimat);
-				Bone* bone3d = this->CreateBone(node_name);
+				Bone* bone3d = this->CreateBone(nodeName);
 				bone3d->BoneOffset = Matrix4::identity;
 				bone3d->FinalTransform = bone3d->BoneOffset * aiToMatrix4(aimat);
 			}
 
-			for (uint k = 0; k < max_frames; ++k)
+			for (uint k = 0; k < maxFrames; ++k)
 			{
-				const aiVectorKey& pos_key = node_anim->mNumPositionKeys > k ? node_anim->mPositionKeys[k] : node_anim->mPositionKeys[0];
-				const aiQuatKey& rotate_key = node_anim->mNumRotationKeys > k ? node_anim->mRotationKeys[k] : node_anim->mRotationKeys[0];
-				const aiVectorKey& scale_key = node_anim->mNumScalingKeys > k ? node_anim->mScalingKeys[k] : node_anim->mScalingKeys[0];
-				KeyFrame* key_frame = animation_node->CreateKeyFrame(k);
-				key_frame->Position = Vector3(pos_key.mValue.x, pos_key.mValue.y, pos_key.mValue.z);
-				key_frame->Rotate = Quaternion(rotate_key.mValue.x, rotate_key.mValue.y, rotate_key.mValue.z, rotate_key.mValue.w);
-				key_frame->Scale = Vector3(scale_key.mValue.x, scale_key.mValue.y, scale_key.mValue.z);
+				const aiVectorKey& posKey = node_anim->mNumPositionKeys > k ? node_anim->mPositionKeys[k] : node_anim->mPositionKeys[0];
+				const aiQuatKey& rotateKey = node_anim->mNumRotationKeys > k ? node_anim->mRotationKeys[k] : node_anim->mRotationKeys[0];
+				const aiVectorKey& scaleKey = node_anim->mNumScalingKeys > k ? node_anim->mScalingKeys[k] : node_anim->mScalingKeys[0];
+				KeyFrame* keyFrame = animationNode->CreateKeyFrame(k);
+				keyFrame->Position = Vector3(posKey.mValue.x, posKey.mValue.y, posKey.mValue.z);
+				keyFrame->Rotate = Quaternion(rotateKey.mValue.x, rotateKey.mValue.y, rotateKey.mValue.z, rotateKey.mValue.w);
+				keyFrame->Scale = Vector3(scaleKey.mValue.x, scaleKey.mValue.y, scaleKey.mValue.z);
 			}
 		}
 	}
 
 	for (uint i = 0; i < node->mNumChildren; i++)
 	{
-		LoadAnimationNode(scene, node->mChildren[i], anim, clip, parent_node, max_frames);
+		LoadAnimationNode(scene, node->mChildren[i], anim, clip, parentNode, maxFrames);
 	}
 }
 void Mesh::LoadMetaClip(const String& file)
@@ -466,26 +466,26 @@ void Mesh::LoadMetaClip(const String& file)
 }
 void Mesh::RenameNode(const aiNode* node)
 {
-	String node_name = node->mName.data;
+	String nodeName = node->mName.data;
 	if (IsValidNode(node))
 	{
-		if (_name2Nodes.Find(node_name) != _name2Nodes.end())
+		if (_name2Nodes.Find(nodeName) != _name2Nodes.end())
 		{//重命名
-			node_name += " 1";
-			while (_name2Nodes.Find(node_name) != _name2Nodes.end())
+			nodeName += " 1";
+			while (_name2Nodes.Find(nodeName) != _name2Nodes.end())
 			{//防止多个重用同一个名称
-				node_name += " 1";
+				nodeName += " 1";
 			}
-			_node2Names.Add(node, node_name);
-			Debuger::Debug("rename node:%s to:%s", node->mName.data, node_name.c_str());
+			_node2Names.Add(node, nodeName);
+			Debuger::Debug("rename node:%s to:%s", node->mName.data, nodeName.c_str());
 		}
-		AssertEx(_name2Nodes.Add(node_name, node), "");
+		AssertEx(_name2Nodes.Add(nodeName, node), "");
 	}
 
 	for (uint i = 0; i < node->mNumChildren; i++)
 	{
-		aiNode* child_node = node->mChildren[i];
-		RenameNode(child_node);
+		aiNode* childNode = node->mChildren[i];
+		RenameNode(childNode);
 	}
 }
 String Mesh::GetNodeName(const aiNode* node)
@@ -534,7 +534,9 @@ Bone* Mesh::GetBone(const String& name)const
 }
 Bone* Mesh::GetBone(uint id)const
 {
-	CHECK_RETURN_PTR_NULL(id >= 0 && id < GetNumBones());
-	return _bones[id];
+	if (id >= 0 && id < GetNumBones())
+		return _bones[id];
+	else
+		return nullptr;
 }
 DC_END_NAMESPACE

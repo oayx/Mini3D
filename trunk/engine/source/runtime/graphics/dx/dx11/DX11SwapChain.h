@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Description：
@@ -10,14 +10,14 @@
 
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-class DX11SwapChain Final : public SwapChain
+class DX11SwapChain final : public SwapChain
 {
 	friend class DX11Device;
 	DEFAULT_CREATE(DX11SwapChain);
 	FRIEND_CONSTRUCT_DESTRUCT(DX11SwapChain);
 	DISALLOW_COPY_ASSIGN(DX11SwapChain);
 	BEGIN_DERIVED_REFECTION_TYPE(DX11SwapChain, SwapChain)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 	DX11SwapChain();
 	~DX11SwapChain();

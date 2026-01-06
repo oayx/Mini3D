@@ -1,4 +1,4 @@
-#include "DX11Caps.h"
+﻿#include "DX11Caps.h"
 #include "DX11Device.h"
 
 DC_BEGIN_NAMESPACE
@@ -7,40 +7,24 @@ IMPL_DERIVED_REFECTION_TYPE(DX11Caps, GraphicsCaps);
 void DX11Caps::Initialize()
 {
 	D3D_FEATURE_LEVEL d3dlevel = GetDX11Device()->GetDevice()->GetFeatureLevel();
-	D3DFeatureLevel level = D3DFeatureLevel_9_1;
-	switch (d3dlevel) {
-	case D3D_FEATURE_LEVEL_9_1: level = D3DFeatureLevel_9_1; break;
-	case D3D_FEATURE_LEVEL_9_2: level = D3DFeatureLevel_9_2; break;
-	case D3D_FEATURE_LEVEL_9_3: level = D3DFeatureLevel_9_3; break;
-	case D3D_FEATURE_LEVEL_10_0: level = D3DFeatureLevel_10_0; break;
-	case D3D_FEATURE_LEVEL_10_1: level = D3DFeatureLevel_10_1; break;
-	case D3D_FEATURE_LEVEL_11_0: level = D3DFeatureLevel_11_0; break;
-	case D3D_FEATURE_LEVEL_11_1: level = D3DFeatureLevel_11_1; break;
-	}
-
 	maxVSyncInterval = 4;
 	maxLights = 8;
 
 	// 纹理大小
-	static const int kTextureSizes[D3DFeatureLevelCount] = { 2048, 2048, 4096, 8192, 8192, 16384, 16384 };
-	static const int kCubemapSizes[D3DFeatureLevelCount] = { 512,  512, 4096, 8192, 8192, 16384, 16384 };
-	maxTextureSize = kTextureSizes[level];
-	maxCubeMapSize = kCubemapSizes[level];
+	maxTextureSize = D3D11_REQ_TEXTURE2D_U_OR_V_DIMENSION;
+	maxCubeMapSize = D3D11_REQ_TEXTURE2D_U_OR_V_DIMENSION;
 	maxRenderTextureSize = maxTextureSize;
-	static const int kMRTCount[D3DFeatureLevelCount] = { 1, 1, 4, 8, 8, 8, 8 };
-	maxRenderTargets = Math::Min<int>(kMRTCount[level], kMaxSupportedRenderTargets);
+	maxRenderTargets = D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT;
 
 	maxTexUnits = kMaxSupportedTextureUnits;
 	maxTexCoords = 8;
 
-	static const int kMaxVertexCount[D3DFeatureLevelCount] = { 65534, 1048575, 1048575, 1048575, 1048575, 1048575, 1048575 };
-	maxPrimitiveCount = kMaxVertexCount[level];
-	maxVertexCount = kMaxVertexCount[level];
-	maxIndexCount = kMaxVertexCount[level];
+	maxVertexCount = 1048575;
+	maxIndexCount = 1048575;
+	maxPrimitiveCount = maxIndexCount / 3;
 
 	hasAnisoFilter = true;
-	static const int kMaxAniso[D3DFeatureLevelCount] = { 2, 16, 16, 16, 16, 16, 16 };
-	maxAnisoLevel = kMaxAniso[level];
+	maxAnisoLevel = D3D11_REQ_MAXANISOTROPY;
 
 	hasAutoMipMapGen = true;
 	hasMipLevelBias = true;
@@ -49,8 +33,8 @@ void DX11Caps::Initialize()
 	hasMipTexture = true;
 	hasCubeTexture = true;
 	hasRenderToTexture = true;
-	hasRenderToCubemap = (level >= D3D_FEATURE_LEVEL_10_0);
-	hasRenderTo3D = (level >= D3D_FEATURE_LEVEL_11_0);
+	hasRenderToCubemap = (d3dlevel >= D3D_FEATURE_LEVEL_10_0);
+	hasRenderTo3D = (d3dlevel >= D3D_FEATURE_LEVEL_11_0);
 
 	hasDXT1Texture = true;
 	hasDXT3Texture = true;
@@ -59,25 +43,25 @@ void DX11Caps::Initialize()
 	hasMultiSample = true;
 	hasSRGBReadWrite = true;
 
-	hasGeometryShader = (level >= D3D_FEATURE_LEVEL_10_0);
-	hasHullShader = (level >= D3D_FEATURE_LEVEL_11_0);
-	hasDomainShader = (level >= D3D_FEATURE_LEVEL_11_0);
-	hasComputeShader = (level >= D3D_FEATURE_LEVEL_11_0);
-	hasInstancing = (level >= D3D_FEATURE_LEVEL_9_3);
+	hasGeometryShader = (d3dlevel >= D3D_FEATURE_LEVEL_10_0);
+	hasHullShader = (d3dlevel >= D3D_FEATURE_LEVEL_11_0);
+	hasDomainShader = (d3dlevel >= D3D_FEATURE_LEVEL_11_0);
+	hasComputeShader = (d3dlevel >= D3D_FEATURE_LEVEL_11_0);
+	hasInstancing = (d3dlevel >= D3D_FEATURE_LEVEL_9_3);
 
 	hasStencil = true;
 
-//#if !defined(DC_DEBUG)
-//	useProgramBinary = true;
-//#endif
+#if !defined(DC_DEBUG)
+	useProgramBinary = true;
+#endif
 }
 bool DX11Caps::CheckTextureFormat(uint usage, ColorFormat format)
 {
 	UINT support = 0;
-	GetDX11Device()->GetDevice()->CheckFormatSupport(DX11GetTextureFormat(format, false), &support);
+	GetDX11Device()->GetDevice()->CheckFormatSupport(DX10GetTextureFormat(format, false), &support);
 	if (support & D3D11_FORMAT_SUPPORT_TEXTURE2D)
 	{
-		GetDX11Device()->GetDevice()->CheckFormatSupport(DX11GetTextureViewFormat(format, false), &support);
+		GetDX11Device()->GetDevice()->CheckFormatSupport(DX10GetTextureViewFormat(format, false), &support);
 		if (support & D3D11_FORMAT_SUPPORT_SHADER_SAMPLE)
 		{
 			return true;
@@ -88,10 +72,10 @@ bool DX11Caps::CheckTextureFormat(uint usage, ColorFormat format)
 bool DX11Caps::CheckCubeTextureFormat(uint usage, ColorFormat format)
 {
 	UINT support = 0;
-	GetDX11Device()->GetDevice()->CheckFormatSupport(DX11GetTextureFormat(format, false), &support);
+	GetDX11Device()->GetDevice()->CheckFormatSupport(DX10GetTextureFormat(format, false), &support);
 	if (support & D3D11_FORMAT_SUPPORT_TEXTURECUBE)
 	{
-		GetDX11Device()->GetDevice()->CheckFormatSupport(DX11GetTextureViewFormat(format, false), &support);
+		GetDX11Device()->GetDevice()->CheckFormatSupport(DX10GetTextureViewFormat(format, false), &support);
 		if (support & D3D11_FORMAT_SUPPORT_SHADER_SAMPLE)
 		{
 			return true;
@@ -102,7 +86,7 @@ bool DX11Caps::CheckCubeTextureFormat(uint usage, ColorFormat format)
 bool DX11Caps::IsGenerateMipsSupported(TextureType type, ColorFormat format)
 {
 	UINT fmtSupport = 0;
-	HRESULT hr = GetDX11Device()->GetDevice()->CheckFormatSupport(DX11GetTextureFormat(format, false), &fmtSupport);
+	HRESULT hr = GetDX11Device()->GetDevice()->CheckFormatSupport(DX10GetTextureFormat(format, false), &fmtSupport);
 	if (SUCCEEDED(hr) && (fmtSupport & D3D11_FORMAT_SUPPORT_MIP_AUTOGEN))
 	{
 		return true;

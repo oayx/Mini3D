@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Date：2020/9/9
@@ -10,7 +10,7 @@
 
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-class ENGINE_DLL UIImageList Final : public UIImage
+class ENGINE_DLL UIImageList final : public UIImage
 {
 	typedef Vector<std::pair<String, String>> Atlases;
 	friend class UICanvas;
@@ -20,7 +20,7 @@ class ENGINE_DLL UIImageList Final : public UIImage
 	FRIEND_CONSTRUCT_DESTRUCT(UIImageList);
 	BEGIN_DERIVED_REFECTION_TYPE(UIImageList, UIImage)
 		CTORS(DEFAULT_CTOR(UIImageList))
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 protected:
 	virtual void Start()override;

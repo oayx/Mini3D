@@ -28,7 +28,7 @@ bool Win32GLRenderWindow::Create(WindowDesc& info)
 void Win32GLRenderWindow::OnFocus(bool focused)
 {
 	base::OnFocus(focused);
-	if (m_mouseClip)
+	if (_mouseClip)
 	{
 		HWND hWnd = (HWND)this->GetHwnd();
 		Win32Mouse::ClipToWindow(focused ? hWnd : nullptr);

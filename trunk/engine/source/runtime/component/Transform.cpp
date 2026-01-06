@@ -1,4 +1,4 @@
-#include "Transform.h"
+﻿#include "Transform.h"
 #include "runtime/component/GameObject.h"
 #include "runtime/scene/LayerMask.h"
 #include "runtime/scene/SceneManager.h"
@@ -119,12 +119,12 @@ void Transform::OnDrawRotateScale(const float width, const float reset_width)
 	}
 	if (ImGui::IsItemHovered()) ImGui::SetTooltip("Reset Scale");
 }
-Object* Transform::Clone(Object* new_obj)
+Object* Transform::Clone(Object* newObj)
 {
-	base::Clone(new_obj);
+	base::Clone(newObj);
 
-	Transform* obj = dynamic_cast<Transform*>(new_obj);
-	if (!obj)return new_obj;
+	Transform* obj = dynamic_cast<Transform*>(newObj);
+	if (!obj)return newObj;
 
 	obj->SetLocalBoundingBox(_unscaleBoundingBox);
 
@@ -265,22 +265,22 @@ Transform* Transform::Find(const String& path)const
 	}
 
 	String name = path;
-	String child_path = "";
+	String childPath = "";
 	int split_index = path.IndexOf('/');
 	if (split_index >= 0)
 	{
 		name = path.Substring(0, split_index);
-		child_path = path.Substring(split_index + 1);
+		childPath = path.Substring(split_index + 1);
 	}
 
 	if (name == "..")
 	{
 		if (_parentNode != nullptr)
 		{
-			if (child_path.IsEmpty())
+			if (childPath.IsEmpty())
 				return _parentNode;
 			else
-				return _parentNode->Find(child_path);
+				return _parentNode->Find(childPath);
 		}
 		else
 		{
@@ -293,9 +293,9 @@ Transform* Transform::Find(const String& path)const
 		Transform* child = this->GetChild(j);
 		if (name == child->GetInstanceName())
 		{
-			if (!child_path.IsEmpty())
+			if (!childPath.IsEmpty())
 			{
-				Transform* find = child->Find(child_path);
+				Transform* find = child->Find(childPath);
 				if (find != nullptr)
 				{
 					return find;

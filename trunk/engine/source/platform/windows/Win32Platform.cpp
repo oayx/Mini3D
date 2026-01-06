@@ -1,4 +1,4 @@
-#include "Win32Platform.h"
+﻿#include "Win32Platform.h"
 #include "Win32FolderMonitor.h"
 #include "core/Encoding.h"
 #include "core/file/Path.h"
@@ -127,9 +127,9 @@ std::string Win32Platform::OpenFolderDialog(const std::string& title, const std:
 		}
 	}
 
-	std::string ret_path = Encoding::WCharToUtf8(result);
-	std::replace(ret_path.begin(), ret_path.end(), '\\', '/');
-	return ret_path;
+	std::string retPath = Encoding::WCharToUtf8(result);
+	std::replace(retPath.begin(), retPath.end(), '\\', '/');
+	return retPath;
 }
 void Win32Platform::OpeninExplorer(const std::string& path)
 {
@@ -139,55 +139,55 @@ void Win32Platform::OpeninExplorer(const std::string& path)
 		folder = Path::GetDirectoryName(folder);
 	}
 
-	std::wstring w_path = folder.ToWString();
-	std::replace(w_path.begin(), w_path.end(), L'/', L'\\');
-	::ShellExecuteW(NULL, L"open", L"explorer.exe", w_path.c_str(), NULL, SW_SHOWNORMAL);
+	std::wstring wPath = folder.ToWString();
+	std::replace(wPath.begin(), wPath.end(), L'/', L'\\');
+	::ShellExecuteW(NULL, L"open", L"explorer.exe", wPath.c_str(), NULL, SW_SHOWNORMAL);
 }
 bool Win32Platform::WatchFolder(const std::string& folder, const Function<void()>& callback)
 {
 	return Win32FolderMonitor::Watch(folder, callback);
 }
-void Win32Platform::AdjustWindowRect(int& left, int& top, int& width, int& height, int screen_width, int screen_height, bool full_screen)
+void Win32Platform::AdjustWindowRect(int& left, int& top, int& width, int& height, int screenWidth, int screenHeight, bool fullScreen)
 {
-	int init_width = width; int init_height = height;
+	int initWidth = width; int initHeight = height;
 	//限定窗口大小不超过屏幕尺寸
-	if (!full_screen)
+	if (!fullScreen)
 	{
-		if (init_width == 0 || init_height == 0)
+		if (initWidth == 0 || initHeight == 0)
 		{//最大化
 			HWND hwnd = ::FindWindow(L"Shell_TrayWnd", L"");
 			if (hwnd)
 			{//任务栏
 				RECT rect;
 				::GetWindowRect(hwnd, &rect);
-				if (rect.left == 0 && rect.right > (screen_width >> 1))
+				if (rect.left == 0 && rect.right > (screenWidth >> 1))
 				{//任务栏在上下
 					width = rect.right - rect.left;
-					height = screen_height - (rect.bottom - rect.top);
+					height = screenHeight - (rect.bottom - rect.top);
 
 					left = 0;
-					top = rect.bottom == screen_height ? 0 : rect.bottom;
+					top = rect.bottom == screenHeight ? 0 : rect.bottom;
 				}
 				else
 				{//任务栏在左右
-					width = screen_width - (rect.right - rect.left);
+					width = screenWidth - (rect.right - rect.left);
 					height = rect.bottom - rect.top;
 
-					left = rect.right == screen_width ? 0 : rect.right;
+					left = rect.right == screenWidth ? 0 : rect.right;
 					top = 0;
 				}
 			}
 		}
 		else
 		{
-			if (width > screen_width) width = screen_width;
-			if (height > screen_height) height = screen_height;
+			if (width > screenWidth) width = screenWidth;
+			if (height > screenHeight) height = screenHeight;
 		}
 	}
 	else
 	{
-		width = screen_width;
-		height = screen_height;
+		width = screenWidth;
+		height = screenHeight;
 	}
 
 	//获得最终窗口大小
@@ -197,16 +197,16 @@ void Win32Platform::AdjustWindowRect(int& left, int& top, int& width, int& heigh
 	height = rect.bottom - rect.top;
 
 	//某个方向的位置为负数则使窗口剧中
-	if (full_screen)
+	if (fullScreen)
 	{
 		left = top = 0;
 	}
 	else
 	{
-		if (init_width != 0 && init_height != 0)
+		if (initWidth != 0 && initHeight != 0)
 		{
-			if (left < 0)left = (screen_width - width) / 2;
-			if (top < 0)top = (screen_height - height) / 2;
+			if (left < 0)left = (screenWidth - width) / 2;
+			if (top < 0)top = (screenHeight - height) / 2;
 		}
 	}
 }

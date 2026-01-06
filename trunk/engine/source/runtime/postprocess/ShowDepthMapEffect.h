@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2020/6/18
@@ -10,13 +10,13 @@
 
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-class ENGINE_DLL ShowDepthMapEffect Final : public PostEffect
+class ENGINE_DLL ShowDepthMapEffect final : public PostEffect
 {
 	friend class PostProcess;
 	FRIEND_CONSTRUCT_DESTRUCT(ShowDepthMapEffect);
 	BEGIN_DERIVED_REFECTION_TYPE(ShowDepthMapEffect, PostEffect)
 		CTORS(DEFAULT_CTOR(ShowDepthMapEffect))
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 	ShowDepthMapEffect();
 	~ShowDepthMapEffect();

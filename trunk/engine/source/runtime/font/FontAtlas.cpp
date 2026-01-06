@@ -1,4 +1,4 @@
-#include "FontAtlas.h"
+﻿#include "FontAtlas.h"
 #include "Font.h"
 #include "core/image/Image.h"
 #include "core/time/Time.h"
@@ -8,9 +8,6 @@
  
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-FontAtlasManager::Atlases FontAtlasManager::_atlases;
-int FontAtlasManager::_defaultWidth = DEFAULT_FONT_TEXTURE_SIZE;
-int FontAtlasManager::_defaultHeight = DEFAULT_FONT_TEXTURE_SIZE;
 IMPL_DERIVED_REFECTION_TYPE(FontAtlasManager, Object);
 void FontAtlasManager::Destroy()
 {
@@ -20,9 +17,9 @@ void FontAtlasManager::Destroy()
 	}
 	_atlases.Clear();
 }
-bool FontAtlasManager::AddAtlas(const String& name, int texture_w, int texture_h, ushort size, bool bold, bool italic)
+bool FontAtlasManager::AddAtlas(const String& name, int textureWidth, int textureHeight, ushort size, bool bold, bool italic)
 {
-	if (!Math::Is2Power(texture_w) || !Math::Is2Power(texture_h))
+	if (!Math::Is2Power(textureWidth) || !Math::Is2Power(textureHeight))
 		return false;
 	String key = GetAtlasKey(name, size, bold, italic);
 	auto it = _atlases.Find(key);
@@ -31,7 +28,7 @@ bool FontAtlasManager::AddAtlas(const String& name, int texture_w, int texture_h
 		Debuger::Error("the atlas already exists:%s", name.c_str());
 		return false;
 	}
-	FontAtlas* atlas = FontAtlas::Create(name, texture_w, texture_h, size, bold, italic);
+	FontAtlas* atlas = FontAtlas::Create(name, textureWidth, textureHeight, size, bold, italic);
 	AssertEx(_atlases.Add(key, atlas), "");
 	return true;
 }
@@ -53,7 +50,7 @@ String FontAtlasManager::GetAtlasKey(const String& name, ushort size, bool bold,
 	if (size > MAX_FONT_SIZE)size = MAX_FONT_SIZE;
 	AssertEx(name.Size() < MAX_FILE_NAME, "name out range:%s", name.c_str());
 	char str[MAX_FILE_NAME] = { 0 };
-	Sprintf(str, "%s_%d_%d_%d", name.c_str(), (int)size, (int)bold, (int)italic);
+	Snprintf(str, sizeof(str), "%s_%d_%d_%d", name.c_str(), (int)size, (int)bold, (int)italic);
 	return String(str);
 }
 bool FontAtlasManager::AddFont(const String& name, const String& txt, ushort size, bool bold, bool italic)
@@ -107,8 +104,8 @@ Texture* FontAtlasManager::GetTexture(const String& name, ushort size, bool bold
 }
 /********************************************************************/
 IMPL_DERIVED_REFECTION_TYPE(FontAtlas, Object);
-FontAtlas::FontAtlas(const String& name, int texture_w, int texture_h, ushort size, bool bold, bool italic)
-	: _name(name), _width(texture_w), _height(texture_h), _size(size), _bold(bold), _italic(italic)
+FontAtlas::FontAtlas(const String& name, int textureWidth, int textureHeight, ushort size, bool bold, bool italic)
+	: _name(name), _size(size), _bold(bold), _italic(italic), _width(textureWidth), _height(textureHeight)
 {
 	if (_size > MAX_FONT_SIZE)_size = MAX_FONT_SIZE;
 	_width = Math::Clamp<int>(_width, MIN_FONT_TEXTURE_SIZE, MAX_FONT_TEXTURE_SIZE);
@@ -127,6 +124,7 @@ bool FontAtlas::Add(const String& txt)
 }
 bool FontAtlas::Add(const Vector<char32_t>& chs)
 {
+	DC_PROFILE_FUNCTION;
 	if (chs.IsEmpty())
 		return true;
 
@@ -177,7 +175,7 @@ bool FontAtlas::Add(const Vector<char32_t>& chs)
 		info.advance_x = glyph_info->advance_x;
 		info.advance_y = glyph_info->advance_y;
 		info.rect = Rect((float)_cursorX, (float)_cursorY, (float)font_w, (float)font_h);
-		info.uv_rect = Rect((float)_cursorX / (float)_width, (float)_cursorY / (float)_height, (float)font_w / (float)_width, (float)font_h / (float)_height);
+		info.uvRect = Rect((float)_cursorX / (float)_width, (float)_cursorY / (float)_height, (float)font_w / (float)_width, (float)font_h / (float)_height);
 		info.last_access_time = Time::GetRealTimeSinceStartup();
 		AssertEx(_atlasInfoes.Add(ch, info),"");
 
@@ -232,7 +230,7 @@ void FontAtlas::CreateTexture(int w, int h)
 	SAFE_RELEASE(_texture);
 
 	uint pitch = w * 4;
-	byte* by = NewArray<byte>(h * pitch);
+	byte* by = Memory::NewArray<byte>(h * pitch);
 	memset(by, 0, h * pitch);
 
 	TextureDesc desc;
@@ -241,7 +239,7 @@ void FontAtlas::CreateTexture(int w, int h)
 	_texture = Texture::CreateFromMemroy(by, desc);
 	_texture->Retain();
 	//_texture->SetName("Font_" + _name + "_" + String::ToString(w) + "_" + String::ToString(h));
-	DeleteArray(by);
+	Memory::DeleteArray(by);
 
 	//还原旧的
 	_atlasInfoes.Clear();
@@ -252,8 +250,8 @@ void FontAtlas::CreateTexture(int w, int h)
 bool FontAtlas::IsTextureFull(const Vector<char32_t>& chs)
 {
 	Font* font = Font::GetFont(_name);
-	int cursor_x = _cursorX;
-	int cursor_y = _cursorY;
+	int cursorX = _cursorX;
+	int cursorY = _cursorY;
 	int max_line_height = _maxCurLineHeight;
 	for (const auto& ch : chs)
 	{
@@ -264,28 +262,28 @@ bool FontAtlas::IsTextureFull(const Vector<char32_t>& chs)
 		Image* image = glyph_info->data;
 		int font_w = image->GetWidth();
 		int font_h = image->GetHeight();
-		if (cursor_x + OffsetX + font_w > _width)
+		if (cursorX + OffsetX + font_w > _width)
 		{//换行
-			if (cursor_y + max_line_height + OffsetY + font_h > _height)
+			if (cursorY + max_line_height + OffsetY + font_h > _height)
 			{
 				return true;
 			}
 		}
-		else if (cursor_y + font_h > _height)
+		else if (cursorY + font_h > _height)
 		{//超过底部
 			return true;
 		}
 
 		//起始位置:由于上一步取Texture，超出当前贴图会自动创建新贴图；所以到这里当前贴图一定能满足大小要求
-		if (cursor_x + OffsetX + font_w > _width)
+		if (cursorX + OffsetX + font_w > _width)
 		{//换行
-			cursor_x = 0;
-			cursor_y = cursor_y + max_line_height + OffsetY;
+			cursorX = 0;
+			cursorY = cursorY + max_line_height + OffsetY;
 			max_line_height = 1;
 		}
 
 		max_line_height = Math::Max<int>(max_line_height, font_h);
-		cursor_x += font_w + OffsetX;
+		cursorX += font_w + OffsetX;
 	}
 
 	return false;

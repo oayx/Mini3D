@@ -1,11 +1,11 @@
-#include "Quaternion.h"
+﻿#include "Quaternion.h"
 #include "Matrix3.h"
  
 DC_BEGIN_NAMESPACE
 /********************************************************************/
 IMPL_REFECTION_TYPE(Quaternion);
 Quaternion Quaternion::identity(0.0f, 0.0f, 0.0f, 1.0f);
-Quaternion Quaternion::operator *= (const Quaternion &q)
+Quaternion Quaternion::operator *= (const Quaternion &q) noexcept
 {
 	float qx, qy, qz, qw;
 	qx = x;
@@ -20,7 +20,7 @@ Quaternion Quaternion::operator *= (const Quaternion &q)
 
 	return *this;
 }
-Quaternion Quaternion::operator *= (const Vector3& v)
+Quaternion Quaternion::operator *= (const Vector3& v) noexcept
 {
 	float qx, qy, qz, qw;
 	qx = x;
@@ -35,17 +35,7 @@ Quaternion Quaternion::operator *= (const Vector3& v)
 
 	return *this;
 }
-Quaternion Quaternion::operator *(const Quaternion &q) const
-{
-	return Quaternion
-	(
-		w * q.x + x * q.w + y * q.z - z * q.y,
-		w * q.y + y * q.w + z * q.x - x * q.z,
-		w * q.z + z * q.w + x * q.y - y * q.x,
-		w * q.w - x * q.x - y * q.y - z * q.z
-	);
-}
-Vector3 Quaternion::operator *(const Vector3 &vec) const
+Vector3 Quaternion::operator *(const Vector3 &vec) const noexcept
 {
 	Vector3 uv, uuv;
 	Vector3 qvec(x, y, z);
@@ -56,11 +46,11 @@ Vector3 Quaternion::operator *(const Vector3 &vec) const
 
 	return vec + uv + uuv;
 }
-Quaternion operator* (float scale, const Quaternion& q2)
+Quaternion operator* (float scale, const Quaternion& q2) noexcept
 {
 	return Quaternion(scale*q2.x, scale*q2.y, scale*q2.z, scale*q2.w);
 }
-Quaternion Quaternion::Normalize()
+Quaternion Quaternion::Normalize() noexcept
 {
 	float dist, square;
 	square = x * x + y * y + z * z + w * w;
@@ -75,7 +65,7 @@ Quaternion Quaternion::Normalize()
 	w *= dist;
 	return *this;
 }
-Quaternion Quaternion::Inverse() const
+Quaternion Quaternion::Inverse() const noexcept
 {
 	float fNorm = w * w + x * x + y * y + z * z;
 	if (fNorm > 0.0f)
@@ -88,7 +78,7 @@ Quaternion Quaternion::Inverse() const
 		return identity;
 	}
 }
-Quaternion Quaternion::FromEuler(const Vector3& euler)
+Quaternion Quaternion::FromEuler(const Vector3& euler) noexcept
 {
 	float eulerX = Math::Deg2Rad * euler.x * 0.5f;
 	float eulerY = Math::Deg2Rad * euler.y * 0.5f;
@@ -108,7 +98,7 @@ Quaternion Quaternion::FromEuler(const Vector3& euler)
 
 	return*this;
 }
-Vector3 Quaternion::ToEuler()const
+Vector3 Quaternion::ToEuler()const noexcept
 {
 	const float sqw = w * w;
 	const float sqx = x * x;
@@ -152,7 +142,7 @@ Vector3 Quaternion::ToEuler()const
 
 	return Vector3(roll, yaw, pitch) * Math::Rad2Deg;
 }
-Quaternion Quaternion::FromRadianAxis(float degree, const Vector3 &axis)
+Quaternion Quaternion::FromRadianAxis(float degree, const Vector3 &axis) noexcept
 {
 	Vector3 v = axis.Normalize();
 	float cosv, sinv;
@@ -164,7 +154,7 @@ Quaternion Quaternion::FromRadianAxis(float degree, const Vector3 &axis)
 	w = cosv;
 	return  *this;
 }
-void Quaternion::ToRadianAxis(float &degree, Vector3 &axis)const
+void Quaternion::ToRadianAxis(float &degree, Vector3 &axis)const noexcept
 {
 	float angle = 2.0f * acos(w);
 	degree = Math::Rad2Deg * angle;
@@ -176,7 +166,7 @@ void Quaternion::ToRadianAxis(float &degree, Vector3 &axis)const
 	float div = 1.0f / sqrt(1.0f - w*w);
 	axis.Set(x*div, y*div, z*div);
 }
-Quaternion Quaternion::FromAxis(const Vector3 &xAxis, const Vector3 &yAxis, const Vector3 &zAxis)
+Quaternion Quaternion::FromAxis(const Vector3 &xAxis, const Vector3 &yAxis, const Vector3 &zAxis) noexcept
 {
 	Matrix3 mat;
 	mat._11 = xAxis.x;
@@ -194,7 +184,7 @@ Quaternion Quaternion::FromAxis(const Vector3 &xAxis, const Vector3 &yAxis, cons
 	*this = mat.ToRotate();
 	return *this;
 }
-void Quaternion::ToAxis(Vector3 &xAxis, Vector3 &yAxis, Vector3 &zAxis)const
+void Quaternion::ToAxis(Vector3 &xAxis, Vector3 &yAxis, Vector3 &zAxis)const noexcept
 {
 	Matrix3 mat(*this);
 	xAxis.x = mat._11;
@@ -209,7 +199,7 @@ void Quaternion::ToAxis(Vector3 &xAxis, Vector3 &yAxis, Vector3 &zAxis)const
 	zAxis.y = mat._32;
 	zAxis.z = mat._33;
 }
-Quaternion Quaternion::Slerp(const Quaternion& q1,const Quaternion& q2, float dt)
+Quaternion Quaternion::Slerp(const Quaternion& q1,const Quaternion& q2, float dt) noexcept
 {
 	float dot = q1.Dot(q2);
 	Quaternion temp_q;
@@ -240,7 +230,7 @@ Quaternion Quaternion::Slerp(const Quaternion& q1,const Quaternion& q2, float dt
 		return Lerp(q1, temp_q, dt);
 	}
 }
-Quaternion Quaternion::Lerp(const Quaternion& q1, const Quaternion& q2, float dt)
+Quaternion Quaternion::Lerp(const Quaternion& q1, const Quaternion& q2, float dt) noexcept
 {
 	Quaternion result;
 	float dot = q1.Dot(q2);

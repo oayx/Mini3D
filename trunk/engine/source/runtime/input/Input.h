@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2009/12/11
@@ -12,7 +12,7 @@ DC_BEGIN_NAMESPACE
 /********************************************************************/
 // ClassName：Input
 // Description：输入系统
-class ENGINE_DLL Input Final : public Object
+class ENGINE_DLL Input final : public Object
 {
 	friend class Application;
 	friend class TouchInput;
@@ -21,12 +21,12 @@ class ENGINE_DLL Input Final : public Object
 	friend class RenderWindow;
 	DISALLOW_CONSTRUCTOR_COPY_ASSIGN(Input);
 	BEGIN_DERIVED_REFECTION_TYPE(Input, Object)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 public:
 	static void UpdateMousePosition(float x, float y);
 	static void UpdateMouseMove(float x, float y);
-	static void SetSimulateMouseWithTouches(bool b) { m_simulateMouseWithTouches = b; }
+	static void SetSimulateMouseWithTouches(bool b) { _simulateMouseWithTouches = b; }
 
 public://mouse
 	static bool GetMouseButton(MouseBtnID button);
@@ -53,11 +53,11 @@ private:
 	static void Reset();
 
 public:
-	static Vector3 mousePosition;
-	static Vector3 mousePositionDelta;
+	inline static Vector3 mousePosition = Vector3::zero;
+	inline static Vector3 mousePositionDelta = Vector3::zero;
 
 private:
-	static Vector3 m_oldMousePosition;
-	static bool m_simulateMouseWithTouches;
+	inline static Vector3 _oldMousePosition = Vector3::zero;
+	inline static bool _simulateMouseWithTouches = true;
 };
 DC_END_NAMESPACE

@@ -1,6 +1,6 @@
 ﻿
 file(GLOB ENGINE_PLATFORM_LINUX_SRC1 "source/platform/*.cpp")
-file(GLOB_RECURSE ENGINE_PLATFORM_LINUX_SRC2 "source/platform/common/*.cpp")
+file(GLOB_RECURSE ENGINE_PLATFORM_LINUX_SRC2 "source/platform/common/glfw/*.cpp")
 file(GLOB_RECURSE ENGINE_PLATFORM_LINUX_SRC3 "source/platform/linux/*.cpp")
 set(ENGINE_PLATFORM_LINUX_SRC 
 	${ENGINE_PLATFORM_LINUX_SRC1} 

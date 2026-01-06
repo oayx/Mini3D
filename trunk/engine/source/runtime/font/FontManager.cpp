@@ -1,4 +1,4 @@
- #include "FontManager.h"
+﻿ #include "FontManager.h"
 #include "Font.h"
 #include "runtime/resources/AssetsManager.h"
 #include "runtime/resources/Resources.h"
@@ -9,8 +9,6 @@
 DC_BEGIN_NAMESPACE
 /********************************************************************/
 static FT_Library g_ft_lib;
-String FontManager::_defaultFont = "msyh";
-FontManager::Fonts FontManager::_fonts;
 IMPL_REFECTION_TYPE(FontManager);
 void FontManager::Initialize()
 {
@@ -35,15 +33,16 @@ void FontManager::Destroy()
 }
 bool FontManager::LoadFont(const String& name, const String& file)
 {
-	String full_path = Resource::GetFullDataPath(file);
+	DC_PROFILE_FUNCTION;
+	String fullPath = Resource::GetFullDataPath(file);
 	String guid = name;
-	int font_size = DEFAULT_FONT_SIZE;
+	int fontSize = DEFAULT_FONT_SIZE;
 
 	FontMeta* meta = dynamic_cast<FontMeta*>(AssetsManager::GetMetaByFile(file));
 	if (meta)
 	{
 		guid = meta->GetGUID();
-		font_size = meta->GetFontSize();
+		fontSize = meta->GetFontSize();
 	}
 
 	if (_fonts.Contains(guid))
@@ -52,14 +51,14 @@ bool FontManager::LoadFont(const String& name, const String& file)
 		return false;
 	}
 
-	if (!File::Exist(full_path))
+	if (!File::Exist(fullPath))
 	{
-		Debuger::Error("FontManager::LoadFont font file not exist: %s", full_path.c_str());
+		Debuger::Error("FontManager::LoadFont font file not exist: %s", fullPath.c_str());
 		return false;
 	}
 
 	FT_Face face;
-	FT_Error err = FT_New_Face(g_ft_lib, full_path.c_str(), 0, &face);
+	FT_Error err = FT_New_Face(g_ft_lib, fullPath.c_str(), 0, &face);
 	if (err)
 	{
 		Debuger::Error("FontManager::LoadFont FT_New_Memory_Face error: %d", err);
@@ -88,7 +87,7 @@ bool FontManager::LoadFont(const String& name, const String& file)
 	}
 
 	int dpi = 72;
-	int fontSizePoints = 64 * font_size;
+	int fontSizePoints = 64 * fontSize;
 	if (FT_Set_Char_Size(
 		face, 
 		fontSizePoints,		//字符宽度,单位为1/64点
@@ -120,7 +119,7 @@ Font* FontManager::GetFont(const String& name)
 	}
 	else if(name == _defaultFont && !_defaultFont.IsEmpty())
 	{
-		if (LoadFont(_defaultFont, String::Format("internal/font/{0}.ttf", _defaultFont.c_str())))
+		if (LoadFont(_defaultFont, "internal/font/" + _defaultFont + ".ttf"))
 		{
 			return GetFont(name);
 		}

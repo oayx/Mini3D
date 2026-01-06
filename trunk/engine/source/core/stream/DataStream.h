@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2009/11/22
@@ -15,10 +15,12 @@ DC_BEGIN_NAMESPACE
 class ENGINE_DLL DataStream : public Object
 {
 	BEGIN_DERIVED_REFECTION_TYPE(DataStream, Object)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 public:
 	DataStream() : mSize(0) {}
+	DataStream(const DataStream& other) :mSize(other.mSize) {}
+	DataStream(DataStream&& other) :mSize(other.mSize) {}
 	virtual ~DataStream() {}
 
 public:
@@ -26,46 +28,46 @@ public:
 	// @par：buf - 存储读取的字符
 	// @par：buf - 读取数量
 	// @return：实际读取的字节数
-	virtual int Read(void* buf, int count) = 0;
+	virtual int Read(void* buf, int count) noexcept = 0;
 
 	//- Description：写入指定数量的字节到文件中
 	// @par：buf - 存储字符
 	// @par：buf - 写入数量
 	// @return：实际写入的字节数
-	virtual int Write(const void* buf, uint offset, int count) = 0;
+	virtual int Write(const void* buf, uint offset, int count) noexcept = 0;
 
 	//- Description：跳过指定字节
 	// @par：count - 跳过的字节数，可以为负值
 	// @return：
-	virtual void Skip(int count) = 0;
+	virtual void Skip(int count) noexcept = 0;
 
 	//- Description：定位到指定的位置
 	// @par：
 	// @return：
-	virtual void Seek(int pos, bool relative = false) = 0;
+	virtual void Seek(int pos, bool relative = false) noexcept = 0;
 
 	//- Description：返回当前流的位置
 	// @par：
 	// @return：
-	virtual uint Tell(void) = 0;
+	virtual uint Position(void) noexcept = 0;
 
 	//- Description：是否在文件未
 	// @par：
 	// @return：
-	virtual bool eof(void) = 0;
+	virtual bool eof(void) noexcept = 0;
 
 	//- Description：清空流
 	// @par：
 	// @return：
-	virtual void Flush() = 0;
+	virtual void Flush() noexcept = 0;
 
 	//- Description：关闭流
 	// @par：
 	// @return：
-	virtual void Close(void) = 0;
+	virtual void Close(void) noexcept = 0;
 
 public:
-	uint Size(void) const { return mSize; }
+	uint Size(void) const noexcept { return mSize; }
 
 protected:
 	uint mSize = 0;
@@ -74,42 +76,44 @@ protected:
 /********************************************************************/
 // ClassName：MemoryDataStream
 // Description：处理已经存在的内存
-class ENGINE_DLL MemoryDataStream Final : public DataStream
+class ENGINE_DLL MemoryDataStream final : public DataStream
 {
 	DEFAULT_CREATE(MemoryDataStream);
 	FRIEND_CONSTRUCT_DESTRUCT(MemoryDataStream);
 	BEGIN_DERIVED_REFECTION_TYPE(MemoryDataStream, DataStream)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 public:
 	explicit MemoryDataStream(uint size = 0);
 	MemoryDataStream(byte* buffer, uint size);
-	MemoryDataStream(const MemoryDataStream& buffer);
+	MemoryDataStream(const MemoryDataStream& other);
+	MemoryDataStream(MemoryDataStream&& other);
 	~MemoryDataStream();
 
-	MemoryDataStream& operator =(const MemoryDataStream& buffer);
-	byte& operator [](int index) { return mData[index]; }
-	const byte& operator [](int index) const { return mData[index]; }
+	MemoryDataStream& operator =(const MemoryDataStream& other) noexcept;
+	MemoryDataStream& operator =(MemoryDataStream&& other) noexcept;
+	byte& operator [](int index) noexcept { return mData[index]; }
+	const byte& operator [](int index) const noexcept { return mData[index]; }
 
 public:
-	virtual int Read(void* buf, int count)override;
-	virtual int Write(const void* buf, uint offset, int count)override;
-	virtual void Skip(int count)override;
-	virtual void Seek(int pos, bool relative = false)override;
-	virtual uint Tell(void)override;
-	virtual bool eof(void)override;
-	virtual void Flush()override {}
-	virtual void Close(void)override;
+	virtual int Read(void* buf, int count) noexcept override;
+	virtual int Write(const void* buf, uint offset, int count) noexcept override;
+	virtual void Skip(int count) noexcept override;
+	virtual void Seek(int pos, bool relative = false) noexcept override;
+	virtual uint Position(void) noexcept override;
+	virtual bool eof(void) noexcept override;
+	virtual void Flush() noexcept override {}
+	virtual void Close(void) noexcept override;
 
 public:
 	template<class T>
-	T Read()
+	T Read() noexcept
 	{
 		T t;
 		Read((void*)&t, sizeof(T));
 		return t;
 	}
-	String ReadString(int cnt)
+	String ReadString(int cnt) noexcept
 	{
 		if (mPos + cnt > mSize)
 			cnt = mSize - mPos;
@@ -121,14 +125,15 @@ public:
 	}
 
 	template<class T>
-	void Write(const T& t)
+	void Write(const T& t) noexcept
 	{
 		Write((void*)&t, 0, sizeof(T));
 	}
 
-	byte* data(void)const { return mData; }
+	byte* Buffer()const noexcept { return mData; }
+	byte* CurrBuffer()const noexcept { return mData + mPos; }
 
-	void Resize(uint size);
+	void Resize(uint size) noexcept;
 
 protected:
 	byte* mData = nullptr;		//开始位置
@@ -138,12 +143,12 @@ protected:
 /********************************************************************/
 // ClassName：FileDataStream
 // Description：文件处理
-class ENGINE_DLL FileDataStream Final : public DataStream
+class ENGINE_DLL FileDataStream final : public DataStream
 {
 	DEFAULT_CREATE(FileDataStream);
 	FRIEND_CONSTRUCT_DESTRUCT(FileDataStream);
 	BEGIN_DERIVED_REFECTION_TYPE(FileDataStream, DataStream)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 public:
 	explicit FileDataStream(FILE* handle);
@@ -161,6 +166,8 @@ public:
 	//at+	读写打开一个文本文件，允许读或在文本末追加数据。
 	//ab+	读写打开一个二进制文件，允许读或在文件末追加数据。
 	FileDataStream(const String& path, const String& mode);
+	FileDataStream(const FileDataStream& other) :DataStream(other) {}
+	FileDataStream(FileDataStream&& other) :DataStream(other) {}
 	~FileDataStream();
 
 public:
@@ -184,13 +191,13 @@ public:
 	另一方面,用户程序调用fputc 通常只是写到I/O缓 冲区中,这样fputc函数可以很快地返回,如果I/O缓冲区写满了,fputc 就通过系统调用把I/O缓冲区中的数据传给内核,内核最终把数据写回磁盘或设备。
 		有时候用户程序希望把I/O缓冲区中的数据立刻传给内核,让内核写回设备或磁盘,这称为Flush操作,对应的库函数是fflush,fclose函数在关闭文件之前也会做Flush操作。
 	*/
-	virtual int Read(void* buf, int count)override;
-	virtual int Write(const void* buf, uint offset, int count)override;
+	virtual int Read(void* buf, int count) noexcept override;
+	virtual int Write(const void* buf, uint offset, int count) noexcept override;
 
-	virtual void Skip(int count)override;
-	virtual void Seek(int pos, bool relative = false)override;
-	virtual uint Tell(void) override;
-	virtual bool eof(void) override;
+	virtual void Skip(int count) noexcept override;
+	virtual void Seek(int pos, bool relative = false) noexcept override;
+	virtual uint Position(void) noexcept override;
+	virtual bool eof(void) noexcept override;
 	/*
 		传统的UNIX实现在内核中设有缓冲区、高速缓存或页面高速缓存，大多数磁盘I/O都通过缓冲进行。
 	当将数据写入文件时，内核通常先将该数据复制到其中一个缓冲区中，如果该缓冲区尚未写满，则并不将其排入输出队列，
@@ -204,11 +211,11 @@ public:
 	（4）fflush：标准I / O函数（如：fread，fwrite）会在内存建立缓冲，该函数刷新内存缓冲，将内容写入内核缓冲，要想将其写入磁盘，还需要调用fsync（先调用fflush后调用fsync，否则不起作用）。fflush接受一个参数FILE * 。
 	c库缓冲----- fflush-------〉内核缓冲--------fsync-----〉磁盘
 	*/
-	virtual void Flush()override;
-	virtual void Close(void)override;
+	virtual void Flush() noexcept override;
+	virtual void Close(void) noexcept override;
 
 	template<class T>
-	T Read()
+	T Read() noexcept
 	{
 		T t;
 		Read((void*)&t, sizeof(T));
@@ -216,8 +223,8 @@ public:
 	}
 
 public:
-	bool IsOpen();
-	FILE* GetHandle()const { return mFileHandle; }
+	bool IsOpen() noexcept;
+	FILE* GetHandle()const noexcept { return mFileHandle; }
 
 protected:
 	FILE* mFileHandle = nullptr;

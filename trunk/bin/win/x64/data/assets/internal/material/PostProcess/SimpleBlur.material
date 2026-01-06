@@ -1,0 +1,7 @@
+<Material>
+    <Tag>
+        <CastShadow>false</CastShadow>
+        <ReceiveShadow>false</ReceiveShadow>
+    </Tag>
+    <Shader><ShaderFile>internal/material/PostProcess/SimpleBlur.shader</ShaderFile></Shader>
+</Material>

@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Date：2020/12/13
@@ -11,7 +11,7 @@
 DC_BEGIN_NAMESPACE
 class Mesh;
 /********************************************************************/
-class MeshManager Final : public object
+class MeshManager final : public object
 {
 	friend class Mesh;
 	friend class Application;
@@ -32,6 +32,6 @@ public:
 	static void DestroyMesh();
 
 private:
-	static Meshes _meshes;
+	inline static Meshes _meshes;
 };
 DC_END_NAMESPACE

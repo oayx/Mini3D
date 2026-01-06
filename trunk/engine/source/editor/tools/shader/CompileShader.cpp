@@ -1,15 +1,17 @@
-﻿#include "CompileShader.h"
+﻿#if defined(DC_PLATFORM_WIN32) && defined(_WIN64)
+#include "CompileShader.h"
 #include "core/stream/DataStream.h"
+#include "runtime/graphics/ShaderlabUtils.h"
 #include "runtime/thread/Thread.h"
 #include "external/tinyxml2/tinyxml2.h"
-#if defined(DC_PLATFORM_WIN32)
+#include "external/shaderlab/ShaderParser.h"
 #include "runtime/graphics/dx/dx11/DX11ShaderReflect.h"
 #include <ShaderConductor/ShaderConductor.hpp>
+
 using namespace ShaderConductor;
-#endif
+using namespace shaderlab;
  
 DC_BEGIN_NAMESPACE
-#if defined(DC_PLATFORM_WIN32)
 static ShaderConductor::ShaderStage ConvertToShaderStage(ShaderType type)
 {
 	switch (type)
@@ -23,7 +25,6 @@ static ShaderConductor::ShaderStage ConvertToShaderStage(ShaderType type)
 	default: AssertEx(0, "%d", type); return ShaderConductor::ShaderStage::NumShaderStages;
 	}
 }
-#endif
 
 /********************************************************************/
 void CompileShader::StartCompile()
@@ -49,30 +50,30 @@ void CompileShader::CompilePlatform(const List<ShaderLanguage>& targetLanguages)
 	ReplaceShaders();
 	Debuger::Log("替换完成");
 }
-void CompileShader::CompileLanguage(ShaderLanguage target_language)
+void CompileShader::CompileLanguage(ShaderLanguage targetLanguage)
 {
-	List<String> target_versions;
-	switch (target_language)
+	List<String> targetVersions;
+	switch (targetLanguage)
 	{
 	case ShaderLanguage::Dxil:
-		//target_versions.Add("5.1");
-		target_versions.Add("5.0");
+		//targetVersions.Add("5.1");
+		targetVersions.Add("5.0");
 		break;
 	case ShaderLanguage::Glsl:
-		target_versions.Add("460");
-		target_versions.Add("450");
-		//target_versions.Add("440");
-		//target_versions.Add("430");
-		//target_versions.Add("420");
-		//target_versions.Add("410");
-		//target_versions.Add("400");
-		target_versions.Add("330");
+		targetVersions.Add("460");
+		targetVersions.Add("450");
+		//targetVersions.Add("440");
+		//targetVersions.Add("430");
+		//targetVersions.Add("420");
+		targetVersions.Add("410");
+		//targetVersions.Add("400");
+		targetVersions.Add("330");
 		break;
 	case ShaderLanguage::Essl:
-		target_versions.Add("320");
-		//target_versions.Add("310");
-		target_versions.Add("300");
-		target_versions.Add("100");
+		targetVersions.Add("320");
+		//targetVersions.Add("310");
+		targetVersions.Add("300");
+		targetVersions.Add("100");
 		break;
 	case ShaderLanguage::SpirV:
 		break;
@@ -82,17 +83,20 @@ void CompileShader::CompileLanguage(ShaderLanguage target_language)
 		break;
 	}
 
-	while (target_versions.Size() > 0)
+	while (targetVersions.Size() > 0)
 	{
 		sCompileInfo info;
-		info.hlsl_version = HLSLVersion;
+		info.hlslVersion = HLSLVersion;
 		info.path = "../../../template/data/assets/internal";
-		info.target_language = target_language;
-		info.target_version = target_versions.RemoveFirst();
+		info.targetLanguage = targetLanguage;
+		info.targetVersion = targetVersions.RemoveFirst();
 		info.vs_main = Default_VS_Enter;
 		info.gs_main = Default_GS_Enter;
 		info.ps_main = Default_PS_Enter;
-		info.vulkan_text = false;
+		info.ds_main = Default_DS_Enter;
+		info.hs_main = Default_HS_Enter;
+		info.cs_main = Default_CS_Enter;
+		info.isVulkanText = false;
 		info.srgb = true;
 
 		CompileFolder(info);
@@ -100,10 +104,10 @@ void CompileShader::CompileLanguage(ShaderLanguage target_language)
 }
 void CompileShader::CompileFolder(sCompileInfo info)
 {
-	String folder_path = info.path;
-	VecString hlsl_files;
-	Directory::GetFiles(folder_path, SearchOption::AllDirectories, hlsl_files);
-	for (auto file : hlsl_files)
+	String folderPath = info.path;
+	VecString hlslFiles;
+	Directory::GetFiles(folderPath, SearchOption::AllDirectories, hlslFiles);
+	for (auto file : hlslFiles)
 	{
 		if (file.EndsWith(".hlsl"))
 		{
@@ -114,50 +118,50 @@ void CompileShader::CompileFolder(sCompileInfo info)
 }
 bool CompileShader::CompileFile(sCompileInfo info)
 {
-	String file_path = info.path;
-	String file_name = Path::GetFileNameWithoutExtension(file_path);
-	String dir_path = Path::GetDirectoryName(file_path);
-	String shader_path = dir_path + "/" + file_name + ".shader";
+	String filePath = info.path;
+	String fileName = Path::GetFileNameWithoutExtension(filePath);
+	String dirPath = Path::GetDirectoryName(filePath);
+	String shaderPath = dirPath + "/" + fileName + ".shader";
 	List<sShaderInfo> shaders;
-	if (File::Exist(shader_path))
+	if (File::Exist(shaderPath))
 	{//判断是否有同名材质
-		GetMaterialShader(shader_path, shaders);
+		GetMaterialShader(shaderPath, shaders);
 	}
 	else
 	{
-		sShaderInfo shader_info;
-		shader_info.vs_file = file_path;
-		shader_info.gs_file = file_path;
-		shader_info.ps_file = file_path;
-		shaders.Add(shader_info);
+		sShaderInfo shaderInfo;
+		shaderInfo.vsFile = filePath;
+		shaderInfo.gsFile = filePath;
+		shaderInfo.psFile = filePath;
+		shaders.Add(shaderInfo);
 	}
 
 	bool result = true;
-	for(auto shader_info : shaders)
+	for(auto shaderInfo : shaders)
 	{
-		info.pass = shader_info.pass;
-		if (!shader_info.vs_enter.IsEmpty()) info.vs_main = shader_info.vs_enter;
-		if (!shader_info.gs_enter.IsEmpty()) info.gs_main = shader_info.gs_enter;
-		if (!shader_info.ps_enter.IsEmpty()) info.ps_main = shader_info.ps_enter;
+		info.pass = shaderInfo.pass;
+		if (!shaderInfo.vsEnter.IsEmpty()) info.vs_main = shaderInfo.vsEnter;
+		if (!shaderInfo.gsEnter.IsEmpty()) info.gs_main = shaderInfo.gsEnter;
+		if (!shaderInfo.psEnter.IsEmpty()) info.ps_main = shaderInfo.psEnter;
 
-		if (!shader_info.vs_file.IsEmpty())
+		if (!shaderInfo.vsFile.IsEmpty())
 		{
-			file_name = Path::GetFileName(shader_info.vs_file);
-			if (!CompileDefine(info, ShaderType::Vertex, info.vs_main, shader_info.defines))
+			fileName = Path::GetFileName(shaderInfo.vsFile);
+			if (!CompileDefine(info, ShaderType::Vertex, info.vs_main, shaderInfo.defines))
 				if (result)result = false;
 		}
 
-		if (!shader_info.gs_file.IsEmpty())
+		if (!shaderInfo.gsFile.IsEmpty())
 		{
-			file_name = Path::GetFileName(shader_info.gs_file);
-			if (!CompileDefine(info, ShaderType::Geometry, info.gs_main, shader_info.defines))
+			fileName = Path::GetFileName(shaderInfo.gsFile);
+			if (!CompileDefine(info, ShaderType::Geometry, info.gs_main, shaderInfo.defines))
 				if (result)result = false;
 		}
 
-		if (!shader_info.ps_file.IsEmpty())
+		if (!shaderInfo.psFile.IsEmpty())
 		{
-			file_name = Path::GetFileName(shader_info.ps_file);
-			if (!CompileDefine(info, ShaderType::Pixel, info.ps_main, shader_info.defines))
+			fileName = Path::GetFileName(shaderInfo.psFile);
+			if (!CompileDefine(info, ShaderType::Pixel, info.ps_main, shaderInfo.defines))
 				if(result)result = false;
 		}
 	}
@@ -165,10 +169,10 @@ bool CompileShader::CompileFile(sCompileInfo info)
 }
 bool CompileShader::CompileDefine(sCompileInfo info, ShaderType shader_stage, const String& enter_point, const VecString& defines)
 {
-	String language_name = ShadingLanguageFileName(info.target_language);
+	String languageName = ShadingLanguageFileName(info.targetLanguage);
 	bool result = true;
 	{//写不带预编译宏的
-		bool r = CompileSRGB(info, shader_stage, enter_point, language_name, "");
+		bool r = CompileSRGB(info, shader_stage, enter_point, languageName, "");
 		if (!r) result = false;
 	}
 	if (defines.Size() > 0)
@@ -178,33 +182,32 @@ bool CompileShader::CompileDefine(sCompileInfo info, ShaderType shader_stage, co
 			const String& define = defines[i];
 			if (define.IsEmpty()) continue;
 
-			bool r = CompileSRGB(info, shader_stage, enter_point, language_name, define + "=1");
+			bool r = CompileSRGB(info, shader_stage, enter_point, languageName, define);
 			if (!r)result = false;
 		}
 	}
 	return result;
 }
-bool CompileShader::CompileSRGB(sCompileInfo info, ShaderType shader_stage, const String& enter_point, const String& language_name, const String& define)
+bool CompileShader::CompileSRGB(sCompileInfo info, ShaderType shader_stage, const String& enter_point, const String& languageName, const String& define)
 {
 	bool result = true;
 	{
-		bool r = CompileImpl(info, shader_stage, enter_point, language_name, define, false);
+		bool r = CompileImpl(info, shader_stage, enter_point, languageName, define, false);
 		if (!r) result = false;
 	}
 	if (info.srgb)
 	{
-		bool r = CompileImpl(info, shader_stage, enter_point, language_name, define, true);
+		bool r = CompileImpl(info, shader_stage, enter_point, languageName, define, true);
 		if (!r) result = false;
 	}
 	return result;
 }
-bool CompileShader::CompileImpl(sCompileInfo info, ShaderType shader_stage, const String& enter_point, const String& language_name, const String& define, bool srgb)
+bool CompileShader::CompileImpl(sCompileInfo info, ShaderType shader_stage, const String& enter_point, const String& languageName, const String& define, bool srgb)
 {
-#if defined(DC_PLATFORM_WIN32)
 	String source = File::ReadAllText(info.path);
 
 	String defines = define;
-	switch (info.target_language)
+	switch (info.targetLanguage)
 	{
 		case ShaderLanguage::Dxil:
 		{
@@ -221,14 +224,14 @@ bool CompileShader::CompileImpl(sCompileInfo info, ShaderType shader_stage, cons
 				defines = "SHADER_API_OPENGL=1";
 			else
 				defines += ",SHADER_API_OPENGL=1";
-			int version = info.target_version.ToInt();
-			if (info.target_language == ShaderLanguage::Essl)
+			int version = info.targetVersion.ToInt();
+			if (info.targetLanguage == ShaderLanguage::Essl)
 			{
 				if (version < 300) defines += ",SM_1_0,SM_2_0";
 				else if (version < 320)defines += ",SM_3_0";
 				else defines += ",SM_4_0";
 			}
-			else if (info.target_language == ShaderLanguage::Glsl)
+			else if (info.targetLanguage == ShaderLanguage::Glsl)
 			{
 				if (version < 110) defines += ",SM_1_0";
 				else if (version < 130) defines += ",SM_2_0";
@@ -283,20 +286,22 @@ bool CompileShader::CompileImpl(sCompileInfo info, ShaderType shader_stage, cons
 				{
 					memset(macroDefine.name, 0, sizeof(macroDefine.name));
 					strcpy_s(macroDefine.name, key_values.length() + 1, key_values.data());
+					strcpy_s(macroDefine.value, 2, "1");
 				}
 				macroDefines.push_back(macroDefine);
 			}
 		}
 
+		String fileName = Path::GetFileName(info.path);
 		sourceDesc.entryPoint = enter_point.c_str();
 		sourceDesc.stage = ConvertToShaderStage(shader_stage);
 		sourceDesc.source = source.c_str();
-		sourceDesc.fileName = nullptr;
+		sourceDesc.fileName = fileName.c_str();
 		sourceDesc.defines = macroDefines.data();
 		sourceDesc.numDefines = static_cast<uint32_t>(macroDefines.size());
 
-		targetDesc.language = (ShaderConductor::ShadingLanguage)info.target_language;
-		targetDesc.version = info.target_version.c_str();
+		targetDesc.language = (ShaderConductor::ShadingLanguage)info.targetLanguage;
+		targetDesc.version = info.targetVersion.c_str();
 
 		try
 		{
@@ -304,11 +309,11 @@ bool CompileShader::CompileImpl(sCompileInfo info, ShaderType shader_stage, cons
 			if (result.errorWarningMsg.Size() > 0)
 			{
 				const char* msg = reinterpret_cast<const char*>(result.errorWarningMsg.Data());
-				Debuger::Warning("Error or warning from shader compiler: %s", std::string(msg, msg + result.errorWarningMsg.Size()).c_str());
+				Debuger::Warning("compiler shader file: %s, msg: %s",info.path.c_str(), std::string(msg, msg + result.errorWarningMsg.Size()).c_str());
 			}
 			if (result.target.Size() > 0)
 			{
-				String outputName = GetWriteShaderToFilePath(Path::GetDirectoryName(info.path), Path::GetFileNameWithoutExtension(info.path), GetExtensionByShaderStage(shader_stage), info.target_version, define, language_name, info.pass, srgb);
+				String outputName = GetWriteShaderToFilePath(Path::GetDirectoryName(info.path), Path::GetFileNameWithoutExtension(info.path), GetExtensionByShaderStage(shader_stage), info.targetVersion, define, languageName, info.pass, srgb);
 				std::ofstream outputFile(outputName.c_str(), std::ios_base::binary);
 				if (!outputFile)
 				{
@@ -316,7 +321,11 @@ bool CompileShader::CompileImpl(sCompileInfo info, ShaderType shader_stage, cons
 					return false;
 				}
 
-				outputFile.write(reinterpret_cast<const char*>(result.target.Data()), result.target.Size());
+				//替换out_和in_，mac下需要vs和ps互通的变量命名一样
+				String content(reinterpret_cast<const char*>(result.target.Data()), result.target.Size());
+				content = ReplaceInOut(outputName, content);
+
+				outputFile.write(content.data(), content.Size());
 			}
 			else
 			{
@@ -330,109 +339,94 @@ bool CompileShader::CompileImpl(sCompileInfo info, ShaderType shader_stage, cons
 		}
 	}
 	return true;
-#else
-	return false;
-#endif
 }
 
-bool CompileShader::GetMaterialShader(const String& material_file, List<sShaderInfo>& list)
+bool CompileShader::GetMaterialShader(const String& shaderPath, List<sShaderInfo>& list)
 {
-	tinyxml2::XMLDocument doc;
-	FileDataStream open_stream(material_file, "rb");
-	tinyxml2::XMLError error = doc.LoadFile(open_stream.GetHandle());
-	if (error != tinyxml2::XML_SUCCESS)
-	{
-		Debuger::Error("open material file error1:%s", material_file.c_str());
+	const std::shared_ptr<ASTNode>& root = ShaderlabUtils::ParseShader(shaderPath);
+	if (root == nullptr)
 		return false;
-	}
-
 	int passIdx = 0;
-	tinyxml2::XMLElement* root = doc.RootElement();
-	tinyxml2::XMLElement* pass_node = root->FirstChildElement("Pass");
-	while (pass_node != nullptr)
+	for (const auto& node : root->children)
 	{
-		tinyxml2::XMLElement* shader_node = pass_node->FirstChildElement("CG");
-		if (shader_node != nullptr)
+		if (node->Type == ASTNodeType::SubShader)
 		{
-			sShaderInfo shader_info;
-			shader_info.pass = passIdx;
-
-			String shader_file = "";
-			if (shader_node->Attribute("File") != nullptr)
-				shader_file = shader_node->Attribute("File");
-
-			tinyxml2::XMLElement* shader_child_node = shader_node->FirstChildElement("VS");
-			if (shader_child_node != nullptr)
+			for (const auto& subShaderNode : node->children)
 			{
-				shader_info.vs_file = shader_file;
-				shader_info.vs_enter = shader_child_node->Attribute("Enter");
-				shader_info.vs_version = shader_child_node->Attribute("Target");
-			}
-			shader_child_node = shader_node->FirstChildElement("HS");
-			if (shader_child_node != nullptr)
-			{
-				shader_info.hs_file = shader_file;
-				shader_info.hs_enter = shader_child_node->Attribute("Enter");
-				shader_info.hs_version = shader_child_node->Attribute("Target");
-			}
-			shader_child_node = shader_node->FirstChildElement("DS");
-			if (shader_child_node != nullptr)
-			{
-				shader_info.ds_file = shader_file;
-				shader_info.ds_enter = shader_child_node->Attribute("Enter");
-				shader_info.ds_version = shader_child_node->Attribute("Target");
-			}
-			shader_child_node = shader_node->FirstChildElement("GS");
-			if (shader_child_node != nullptr)
-			{
-				shader_info.gs_file = shader_file;
-				shader_info.gs_enter = shader_child_node->Attribute("Enter");
-				shader_info.gs_version = shader_child_node->Attribute("Target");
-			}
-			shader_child_node = shader_node->FirstChildElement("PS");
-			if (shader_child_node != nullptr)
-			{
-				shader_info.ps_file = shader_file;
-				shader_info.ps_enter = shader_child_node->Attribute("Enter");
-				shader_info.ps_version = shader_child_node->Attribute("Target");
-			}
-			shader_child_node = shader_node->FirstChildElement("CS");
-			if (shader_child_node != nullptr)
-			{
-				shader_info.cs_file = shader_file;
-				shader_info.cs_enter = shader_child_node->Attribute("Enter");
-				shader_info.cs_version = shader_child_node->Attribute("Target");
-			}
-			//TODO:未测试
-			shader_child_node = shader_node->FirstChildElement("Defines");
-			if (shader_child_node != nullptr)
-			{
-				String name = shader_child_node->Attribute("Name");
-				VecString defines = name.Split(",");
-				for (auto define : defines)
+				if (subShaderNode->Type == ASTNodeType::Pass)
 				{
-					shader_info.defines.Add(define);
+					for (const auto& passNode : subShaderNode->children)
+					{
+						if (passNode->Type == ASTNodeType::ShaderBlock)
+						{
+							const auto& node = std::dynamic_pointer_cast<ASTShaderBlockNode>(passNode);
+							CGProgramData data = ShaderlabUtils::ParseCG(node->ShaderCode);
+							if (data.Includes.size() > 0)
+							{
+								sShaderInfo shaderInfo;
+								shaderInfo.pass = passIdx++;
+
+								String shaderFile = data.Includes[0];
+								for (auto& define : data.Defines)
+								{
+									shaderInfo.defines.Add(define);
+								}
+								for (auto& enter : data.Pragmas)
+								{
+									String type = enter.first;
+									if (type.Equals("vertex", true))
+									{
+										shaderInfo.vsFile = shaderFile;
+										shaderInfo.vsEnter = enter.second;
+									}
+									else if (type.Equals("fragment", true))
+									{
+										shaderInfo.psFile = shaderFile;
+										shaderInfo.psEnter = enter.second;
+									}
+									else if (type.Equals("geometry", true))
+									{
+										shaderInfo.gsFile = shaderFile;
+										shaderInfo.gsEnter = enter.second;
+									}
+									else if (type.Equals("hull", true))
+									{
+										shaderInfo.hsFile = shaderFile;
+										shaderInfo.hsEnter = enter.second;
+									}
+									else if (type.Equals("domain", true))
+									{
+										shaderInfo.dsFile = shaderFile;
+										shaderInfo.dsEnter = enter.second;
+									}
+									else if (type.Equals("compute", true))
+									{
+										shaderInfo.csFile = shaderFile;
+										shaderInfo.csEnter = enter.second;
+									}
+								}
+
+								list.Add(shaderInfo);
+							}
+						}
+					}
 				}
 			}
-			list.Add(shader_info);
 		}
-
-		passIdx++;
-		pass_node = pass_node->NextSiblingElement("Pass");
 	}
 	return true;
 }
-String CompileShader::GetWriteShaderToFilePath(const String& dir_path, const String& file_name, const String& file_ext, const String& target_version, const String& define, const String& language_name, int pass, bool srgb)
+String CompileShader::GetWriteShaderToFilePath(const String& dirPath, const String& fileName, const String& fileExt, const String& targetVersion, const String& define, const String& languageName, int pass, bool srgb)
 {
-	String shader_file_path = dir_path + "/" + file_name + "_" + language_name;
-	if (!target_version.IsEmpty())
-		shader_file_path += "_" + target_version;
+	String shaderFilePath = dirPath + "/" + fileName + "_" + languageName;
+	if (!targetVersion.IsEmpty())
+		shaderFilePath += "_" + targetVersion;
 	if (!define.IsEmpty())
-		shader_file_path += "_" + define;
-	if (pass > 0) shader_file_path += "_pass" + String::ToString(pass);
-	if (srgb) shader_file_path += "_srgb";
-	shader_file_path += file_ext;
-	return shader_file_path;
+		shaderFilePath += "_" + define;
+	if (pass > 0) shaderFilePath += "_pass" + String::ToString(pass);
+	if (srgb) shaderFilePath += "_srgb";
+	shaderFilePath += fileExt;
+	return shaderFilePath;
 }
 String CompileShader::GetExtensionByShaderStage(ShaderType shader_stage)
 {
@@ -447,9 +441,9 @@ String CompileShader::GetExtensionByShaderStage(ShaderType shader_stage)
 	default: return "";
 	}
 }
-String CompileShader::ShadingLanguageFileName(ShaderLanguage target_language)
+String CompileShader::ShadingLanguageFileName(ShaderLanguage targetLanguage)
 {
-	switch (target_language)
+	switch (targetLanguage)
 	{
 	case ShaderLanguage::Dxil:return "dxil";
 	case ShaderLanguage::SpirV: return "spirV";
@@ -461,120 +455,187 @@ String CompileShader::ShadingLanguageFileName(ShaderLanguage target_language)
 	default:return "";
 	}
 }
+String CompileShader::ReplaceInOut(const String& filePath, const String& content)
+{
+	String outContent;
+	String ext = Path::GetExtension(filePath);
+	if (ext == ".vs")
+	{
+		outContent = content.Replace("out_", "");
+	}
+	else if (ext == ".ps")
+	{
+		outContent = content.Replace("in_", "");
+	}
+	else if (ext == ".gs")
+	{
+		outContent = content.Replace("out_", "");
+		outContent = outContent.Replace("in_", "");
+	}
+	return outContent;
+}
 void CompileShader::ReplaceShaders()
 {
-	VecString hlsl_files;
-	Directory::GetFiles("../../../template/data/assets/internal", SearchOption::AllDirectories, hlsl_files);
-	for (auto file : hlsl_files)
+	VecString hlslFiles;
+	Directory::GetFiles("../../../template/data/assets/internal", SearchOption::AllDirectories, hlslFiles);
+	for (auto file : hlslFiles)
 	{
-		if (file.EndsWith(".shader"))
+		if (file.EndsWith(".shader") && !file.EndsWith("1.shader"))
 		{
 			ReplaceShader(file);
 		}
 	}
 }
-void CompileShader::ReplaceShader(const String& shader_path)
+void CompileShader::ReplaceShader(const String& shaderPath)
 {
 	//替换材质
-	if (File::Exist(shader_path))
+	if (File::Exist(shaderPath))
 	{
-		int result_code = ReplaceShaderImpl(shader_path, HLSLVersion);
-		if (result_code != 0)
+		int resultCode = ReplaceShaderImpl(shaderPath, HLSLVersion);
+		if (resultCode != 0)
 		{
-			Debuger::Error("替换材质失败,file:%s,result:%d", shader_path.c_str(), result_code);
+			Debuger::Error("replace shader error,file:%s,result:%d", shaderPath.c_str(), resultCode);
 		}
 	}
 }
-int CompileShader::ReplaceShaderImpl(const String& shader_path, const String& hlsl_version)
+int CompileShader::ReplaceShaderImpl(const String& shaderPath, const String& hlslVersion)
 {
-	String material_file(shader_path);
-	material_file = material_file.Replace('\\', '/');
-	String asset_path = Path::GetDirectoryName(material_file);
+	String shaderFullPath = shaderPath.Replace('\\', '/');
+	String assetPath = Path::GetDirectoryName(shaderFullPath);
+
+	//读取shader cg info
+	std::shared_ptr<ASTNode> astRoot = ShaderlabUtils::ParseShader(shaderFullPath);
+	if (astRoot == nullptr)
+	{
+		Debuger::Error("Parse shaderlab file error:%s", shaderPath.c_str());
+		return 1;
+	}
+	Vector<std::shared_ptr<ASTNode>> astShaderBlockNodes;
+	for (const auto& astChildNode : astRoot->children)
+	{
+		if (astChildNode->Type == ASTNodeType::SubShader)
+		{
+			for (const auto& astSubShaderNode : astChildNode->children)
+			{
+				if (astSubShaderNode->Type == ASTNodeType::Pass)
+				{
+					for (const auto& astPassNode : astSubShaderNode->children)
+					{
+						if (astPassNode->Type == ASTNodeType::ShaderBlock)
+						{
+							astShaderBlockNodes.Add(astPassNode);
+						}
+					}
+				}
+			}
+		}
+	}
+
+	//通过编译shader，反射出信息后，写入xml文件
+	String cgFullPath = shaderFullPath.Replace(".shader", ".cache");
+	if (!File::Exist(cgFullPath))
+	{
+		tinyxml2::XMLDocument docNew;
+		tinyxml2::XMLElement* shaderNode = docNew.NewElement("Shader");
+		docNew.InsertEndChild(shaderNode);
+		tinyxml2::XMLElement* passNode = docNew.NewElement("Pass");
+		shaderNode->InsertEndChild(passNode);
+		tinyxml2::XMLElement* cgNode = docNew.NewElement("CG");
+		passNode->InsertEndChild(cgNode);
+		tinyxml2::XMLError err = docNew.SaveFile(cgFullPath.c_str());
+		if (err != tinyxml2::XML_SUCCESS)
+		{
+			Debuger::Error("Create new xml error:%s", cgFullPath.c_str());
+			return 2;
+		}
+	}
 
 	tinyxml2::XMLDocument doc;
-	FileDataStream open_stream(material_file, "rb+");
-	tinyxml2::XMLError error = doc.LoadFile(open_stream.GetHandle());
+	FileDataStream openStream(cgFullPath, "rb+");
+	tinyxml2::XMLError error = doc.LoadFile(openStream.GetHandle());
 	if (error != tinyxml2::XML_SUCCESS)
-		return 1;
+	{
+		Debuger::Error("Open xml error:%s", cgFullPath.c_str());
+		return 3;
+	}
 
 	int result = 0;
-	tinyxml2::XMLElement* root = doc.RootElement();
-	tinyxml2::XMLElement* pass_node = root->FirstChildElement("Pass");
-	while (pass_node != nullptr)
+	int passIdx = 0;
+	tinyxml2::XMLElement* xmlRoot = doc.RootElement();
+	tinyxml2::XMLElement* passNode = xmlRoot->FirstChildElement("Pass");
+	while (passNode != nullptr)
 	{
-		tinyxml2::XMLElement* shader_node = pass_node->FirstChildElement("CG");
-		if (shader_node != nullptr)
+		tinyxml2::XMLElement* shaderNode = passNode->FirstChildElement("CG");
+		if (shaderNode != nullptr)
 		{
-			String shader_file = "";
-			if (shader_node->Attribute("File") != nullptr)
-				shader_file = shader_node->Attribute("File");
+			ShaderDesc shaderInfo;
+			const auto& astShaderNode = std::dynamic_pointer_cast<ASTShaderBlockNode>(astShaderBlockNodes[passIdx]);
+			CGProgramData data = ShaderlabUtils::ParseCG(astShaderNode->ShaderCode);
+			if (data.Includes.size() > 0)
+			{
+				String shaderFile = data.Includes[0];
+				for (auto& define : data.Defines)
+				{
+					shaderInfo.ShaderDefines.Add(define);
+				}
+				for (auto& enter : data.Pragmas)
+				{
+					String type = enter.first;
+					if (type.Equals("vertex", true))
+					{
+						shaderInfo.ShaderFile[int(ShaderType::Vertex)] = shaderFile;
+						shaderInfo.Enter[int(ShaderType::Vertex)] = enter.second;
+					}
+					else if (type.Equals("fragment", true))
+					{
+						shaderInfo.ShaderFile[int(ShaderType::Pixel)] = shaderFile;
+						shaderInfo.Enter[int(ShaderType::Pixel)] = enter.second;
+					}
+					else if (type.Equals("geometry", true))
+					{
+						shaderInfo.ShaderFile[int(ShaderType::Geometry)] = shaderFile;
+						shaderInfo.Enter[int(ShaderType::Geometry)] = enter.second;
+					}
+					else if (type.Equals("hull", true))
+					{
+						shaderInfo.ShaderFile[int(ShaderType::Hull)] = shaderFile;
+						shaderInfo.Enter[int(ShaderType::Hull)] = enter.second;
+					}
+					else if (type.Equals("domain", true))
+					{
+						shaderInfo.ShaderFile[int(ShaderType::Domain)] = shaderFile;
+						shaderInfo.Enter[int(ShaderType::Domain)] = enter.second;
+					}
+					else if (type.Equals("compute", true))
+					{
+						shaderInfo.ShaderFile[int(ShaderType::Compute)] = shaderFile;
+						shaderInfo.Enter[int(ShaderType::Compute)] = enter.second;
+					}
+				}
+			}
 
-			ShaderDesc shader_info;
-			tinyxml2::XMLElement* shader_child_node = shader_node->FirstChildElement("VS");
-			if (shader_child_node != nullptr)
-			{
-				shader_info.ShaderFile[int(ShaderType::Vertex)] = shader_file;
-				shader_info.Enter[int(ShaderType::Vertex)] = shader_child_node->Attribute("Enter");
-				shader_info.Target[int(ShaderType::Vertex)] = shader_child_node->Attribute("Target");
-			}
-			shader_child_node = shader_node->FirstChildElement("HS");
-			if (shader_child_node != nullptr)
-			{
-				shader_info.ShaderFile[int(ShaderType::Hull)] = shader_file;
-				shader_info.Enter[int(ShaderType::Hull)] = shader_child_node->Attribute("Enter");
-				shader_info.Target[int(ShaderType::Hull)] = shader_child_node->Attribute("Target");
-			}
-			shader_child_node = shader_node->FirstChildElement("DS");
-			if (shader_child_node != nullptr)
-			{
-				shader_info.ShaderFile[int(ShaderType::Domain)] = shader_file;
-				shader_info.Enter[int(ShaderType::Domain)] = shader_child_node->Attribute("Enter");
-				shader_info.Target[int(ShaderType::Domain)] = shader_child_node->Attribute("Target");
-			}
-			shader_child_node = shader_node->FirstChildElement("GS");
-			if (shader_child_node != nullptr)
-			{
-				shader_info.ShaderFile[int(ShaderType::Geometry)] = shader_file;
-				shader_info.Enter[int(ShaderType::Geometry)] = shader_child_node->Attribute("Enter");
-				shader_info.Target[int(ShaderType::Geometry)] = shader_child_node->Attribute("Target");
-			}
-			shader_child_node = shader_node->FirstChildElement("PS");
-			if (shader_child_node != nullptr)
-			{
-				shader_info.ShaderFile[int(ShaderType::Pixel)] = shader_file;
-				shader_info.Enter[int(ShaderType::Pixel)] = shader_child_node->Attribute("Enter");
-				shader_info.Target[int(ShaderType::Pixel)] = shader_child_node->Attribute("Target");
-			}
-			shader_child_node = shader_node->FirstChildElement("CS");
-			if (shader_child_node != nullptr)
-			{
-				shader_info.ShaderFile[int(ShaderType::Compute)] = shader_file;
-				shader_info.Enter[int(ShaderType::Compute)] = shader_child_node->Attribute("Enter");
-				shader_info.Target[int(ShaderType::Compute)] = shader_child_node->Attribute("Target");
-			}
-#if defined(DC_PLATFORM_WIN32)
 			DX11ShaderReflect reflect;
-			result = reflect.Reflect(asset_path, shader_info, hlsl_version.c_str());
+			result = reflect.Reflect(assetPath, shaderInfo, hlslVersion.c_str());
 			if (result == 0)
 			{
 				//删除已有的
-				tinyxml2::XMLElement* reflect_node = shader_node->FirstChildElement("Reflect");
-				while (reflect_node != nullptr)
+				tinyxml2::XMLElement* reflectNode = shaderNode->FirstChildElement("Reflect");
+				while (reflectNode != nullptr)
 				{
-					shader_node->DeleteChild(reflect_node);
-					reflect_node = shader_node->FirstChildElement("Reflect");
+					shaderNode->DeleteChild(reflectNode);
+					reflectNode = shaderNode->FirstChildElement("Reflect");
 				}
 
 				//插入新的
 				{
-					reflect_node = shader_node->InsertNewChildElement("Reflect");
+					reflectNode = shaderNode->InsertNewChildElement("Reflect");
 					//输入语义
-					tinyxml2::XMLElement* semantics_node = reflect_node->InsertNewChildElement("Semantics");
+					tinyxml2::XMLElement* semantics_node = reflectNode->InsertNewChildElement("Semantics");
 					semantics_node->SetAttribute("Value", (uint)reflect.mVertexSemantic);
 					//CBuffer
 					if (!reflect.mCBBuffers.IsEmpty())
 					{
-						tinyxml2::XMLElement* cbuffers_node = reflect_node->InsertNewChildElement("CBuffers");
+						tinyxml2::XMLElement* cbuffers_node = reflectNode->InsertNewChildElement("CBuffers");
 						for (const auto& obj : reflect.mCBBuffers)
 						{
 							const sShaderReflectCBuffer& cbuffer_info = obj.second;
@@ -605,7 +666,7 @@ int CompileShader::ReplaceShaderImpl(const String& shader_path, const String& hl
 					//纹理
 					if (!reflect.mTextures.IsEmpty())
 					{
-						tinyxml2::XMLElement* textures_node = reflect_node->InsertNewChildElement("Textures");
+						tinyxml2::XMLElement* textures_node = reflectNode->InsertNewChildElement("Textures");
 						for (const auto& obj : reflect.mTextures)
 						{
 							const sShaderReflectTexture& texture_info = obj.second;
@@ -618,16 +679,19 @@ int CompileShader::ReplaceShaderImpl(const String& shader_path, const String& hl
 					}
 				}
 			}
-#endif
 		}
-
-		pass_node = pass_node->NextSiblingElement("Pass");
+		passIdx++;
+		passNode = passNode->NextSiblingElement("Pass");
 	}
 
-	FileDataStream save_stream(material_file, "wb+");
+	FileDataStream save_stream(cgFullPath, "wb+");
 	error = doc.SaveFile(save_stream.GetHandle());
 	if (error != tinyxml2::XML_SUCCESS)
-		return 3;
+	{
+		Debuger::Error("Save xml error:%s", cgFullPath.c_str());
+		return 4;
+	}
 	return result;
 }
 DC_END_NAMESPACE
+#endif

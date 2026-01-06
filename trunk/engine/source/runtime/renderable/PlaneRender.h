@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal 
 * Date：2009/12/8
@@ -12,14 +12,14 @@ DC_BEGIN_NAMESPACE
 /********************************************************************/
 // ClassName：PlaneRender
 // Description：创建一个法线=-z,d=0的平面
-class ENGINE_DLL PlaneRender Final : public Renderer
+class ENGINE_DLL PlaneRender final : public Renderer
 {
 	friend class GameObject;
 	FRIEND_CONSTRUCT_DESTRUCT(PlaneRender);
 	DISALLOW_CONSTRUCTOR_COPY_ASSIGN(PlaneRender);
 	BEGIN_DERIVED_REFECTION_TYPE(PlaneRender, Renderer)
 		CTORS(DEFAULT_CTOR(PlaneRender))
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 private:
 	virtual void Awake()override;

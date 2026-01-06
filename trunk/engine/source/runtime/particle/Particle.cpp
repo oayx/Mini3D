@@ -1,4 +1,4 @@
-#include "Particle.h"
+﻿#include "Particle.h"
 #include "ParticleSystem.h"
 #include "runtime/physics/Physics.h"
 
@@ -124,7 +124,6 @@ void Particle::Simulate(float dt)
 }
 /********************************************************************/
 IMPL_DERIVED_REFECTION_TYPE(ParticlePools, Object);
-ParticlePools::Particles ParticlePools::_particles;
 void ParticlePools::Destroy()
 {
 	for (auto p : _particles)

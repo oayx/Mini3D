@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Date：2020/9/9
@@ -10,7 +10,7 @@
 
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-class ENGINE_DLL UINormalButton Final : public UIButton
+class ENGINE_DLL UINormalButton final : public UIButton
 {
 	friend class UICanvas;
 	friend class GameObject;
@@ -21,7 +21,7 @@ class ENGINE_DLL UINormalButton Final : public UIButton
 	BEGIN_DERIVED_REFECTION_TYPE(UINormalButton, UIButton)
 		CTORS(DEFAULT_CTOR(UINormalButton))
 		ADD_EDITOR_COMPONENT("UI/NormalButton")
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 public:
 	virtual void	OnDrawEditor()override;

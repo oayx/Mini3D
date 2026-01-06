@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Date：2009/12/13 
@@ -10,14 +10,14 @@
 
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-class ENGINE_DLL LineRender Final : public Renderer
+class ENGINE_DLL LineRender final : public Renderer
 {
 	friend class GameObject;
 	FRIEND_CONSTRUCT_DESTRUCT(LineRender);
 	DISALLOW_CONSTRUCTOR_COPY_ASSIGN(LineRender);
 	BEGIN_DERIVED_REFECTION_TYPE(LineRender, Renderer)
 		CTORS(DEFAULT_CTOR(LineRender))
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 private:
 	virtual void Awake()override;

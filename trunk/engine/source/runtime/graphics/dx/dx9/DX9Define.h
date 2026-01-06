@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Date：2009年11月25日
@@ -196,10 +196,10 @@ inline D3DCMPFUNC DX9GetStencilCmp(StencilCmp value)
 	case StencilCmp::Never:return D3DCMP_NEVER;
 	case StencilCmp::Less:return D3DCMP_LESS;
 	case StencilCmp::Equal:return D3DCMP_EQUAL;
-	case StencilCmp::LessEqual:return D3DCMP_LESSEQUAL;
+	case StencilCmp::LEqual:return D3DCMP_LESSEQUAL;
 	case StencilCmp::Greater:return D3DCMP_GREATER;
 	case StencilCmp::NotEqual:return D3DCMP_NOTEQUAL;
-	case StencilCmp::GreaterEqual:return D3DCMP_GREATEREQUAL;
+	case StencilCmp::GEqual:return D3DCMP_GREATEREQUAL;
 	case StencilCmp::Always:return D3DCMP_ALWAYS;
 	default:AssertEx(0, "%d", value); return D3DCMP_GREATER;
 	}
@@ -227,7 +227,7 @@ inline D3DPRIMITIVETYPE DX9GetPrimitiveType(PrimitiveType value)
 	case PrimitiveType::LineStrip:return D3DPT_LINESTRIP;
 	case PrimitiveType::TriangleList:return D3DPT_TRIANGLELIST;
 	case PrimitiveType::TriangleStrip:return D3DPT_TRIANGLESTRIP;
-	case PrimitiveType::TriangleFun:return D3DPT_TRIANGLEFAN;
+	case PrimitiveType::TriangleFan:return D3DPT_TRIANGLEFAN;
 	default:AssertEx(0, "%d", value); return D3DPT_TRIANGLELIST;
 	}
 }

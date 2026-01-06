@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Date：2021/1/8
@@ -17,7 +17,7 @@ class ENGINE_DLL Tween : public Object
 	friend class TweenManager;
 	DISALLOW_COPY_ASSIGN(Tween);
 	BEGIN_DERIVED_REFECTION_TYPE(Tween, Object)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 protected:
 	Tween();
@@ -69,7 +69,7 @@ public:
 
 protected:
 	//更新
-	virtual void OnUpdate(float curr_time) = 0;
+	virtual void OnUpdate(float currTime) = 0;
 	//开始更新变换函数
 	virtual void OnStarted() = 0;
 	//完成单次变换函数

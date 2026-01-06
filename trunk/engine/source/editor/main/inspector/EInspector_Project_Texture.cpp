@@ -1,4 +1,4 @@
-#include "EInspector_Project_Texture.h"
+﻿#include "EInspector_Project_Texture.h"
 #include "runtime/graphics/null/Texture.h"
 #include "runtime/resources/AssetsManager.h"
 #include "runtime/ui/GUI.h"
@@ -11,7 +11,7 @@ DC_BEGIN_NAMESPACE
 /********************************************************************/
 void EInspector_Project_Texture::Render(AssetMeta* meta)
 {
-	DC_PROFILE_FUNCTION();
+	DC_PROFILE_FUNCTION;
 	base::Render(meta);
 
 	if (!meta)return;
@@ -26,27 +26,27 @@ void EInspector_Project_Texture::RenderGUI(TextureMeta* meta)
 	{
 		const char* values[] = { "Default", "Normal map", "Sprite Atlas" };
 		ImGuiEx::Label("Texture Type");
-		int select_index = (int)_textureMeta._textureGroup;
-		if (ImGui::Combo("##Texture Group", &select_index, values, ARRAY_SIZE(values)))
+		int selectIndex = (int)_textureMeta._textureGroup;
+		if (ImGui::Combo("##Texture Group", &selectIndex, values, ARRAY_SIZE(values)))
 		{
-			if (select_index == (int)TextureGroup::SpriteAtlas)
+			if (selectIndex == (int)TextureGroup::SpriteAtlas)
 			{//判断是否合法图集
 				String json_file = UIAtlasManager::GetAtlasJsonFile(meta->GetFullPath());
-				if (!File::Exist(Resource::GetFullDataPath(json_file)))select_index = (int)TextureGroup::Default;
+				if (!File::Exist(Resource::GetFullDataPath(json_file)))selectIndex = (int)TextureGroup::Default;
 			}
-			_textureMeta.SetTextureGroup((TextureGroup)select_index);
+			_textureMeta.SetTextureGroup((TextureGroup)selectIndex);
 		}
 	}
 
 	{
 		const char* values[] = { "2D", "Cube" };
 		ImGuiEx::Label("Texture Shape");
-		int select_index = _textureMeta._textureType == TextureType::Cube ? 1 : 0;
-		if (ImGui::Combo("##Texture Type", &select_index, values, ARRAY_SIZE(values)))
+		int selectIndex = _textureMeta._textureType == TextureType::Cube ? 1 : 0;
+		if (ImGui::Combo("##Texture Type", &selectIndex, values, ARRAY_SIZE(values)))
 		{
 			if (_textureMeta._textureGroup != TextureGroup::SpriteAtlas)
 			{
-				_textureMeta._textureType = select_index == 1 ? TextureType::Cube : TextureType::D2;
+				_textureMeta._textureType = selectIndex == 1 ? TextureType::Cube : TextureType::D2;
 			}
 		}
 	}
@@ -55,7 +55,7 @@ void EInspector_Project_Texture::RenderGUI(TextureMeta* meta)
 		ImGui::NewLine();
 
 		ImGuiEx::Label("sRGB");
-		ImGui::Checkbox("##srgb", &_textureMeta.m_sRGB);
+		ImGui::Checkbox("##srgb", &_textureMeta._sRGB);
 
 		ImGuiEx::Label("Read/Write Enabled");
 		ImGui::Checkbox("##Read/Write", &_textureMeta._enableReadWrite);
@@ -69,19 +69,19 @@ void EInspector_Project_Texture::RenderGUI(TextureMeta* meta)
 		{
 			const char* values[] = { "Wrap", "Mirror", "Clamp" };
 			ImGuiEx::Label("Wrap Mode");
-			int select_index = (int)_textureMeta._addressMode;
-			if (ImGui::Combo("##Wrap Mode", &select_index, values, ARRAY_SIZE(values)))
+			int selectIndex = (int)_textureMeta._addressMode;
+			if (ImGui::Combo("##Wrap Mode", &selectIndex, values, ARRAY_SIZE(values)))
 			{
-				_textureMeta._addressMode = TextureAddress(select_index);
+				_textureMeta._addressMode = TextureAddress(selectIndex);
 			}
 		}
 		{
 			const char* values[] = { "Point", "Bilinear", "Trilinear" };
 			ImGuiEx::Label("Filter Mode");
-			int select_index = (int)_textureMeta._filterType;
-			if (ImGui::Combo("##Filter Mode", &select_index, values, ARRAY_SIZE(values)))
+			int selectIndex = (int)_textureMeta._filterType;
+			if (ImGui::Combo("##Filter Mode", &selectIndex, values, ARRAY_SIZE(values)))
 			{
-				_textureMeta._filterType = TextureFilter(select_index);
+				_textureMeta._filterType = TextureFilter(selectIndex);
 			}
 
 			ImGuiEx::Label("Aniso Level");
@@ -102,16 +102,16 @@ void EInspector_Project_Texture::RenderGUI(TextureMeta* meta)
 				{
 					const char* values[] = { "32", "64", "128", "256", "512", "1024", "2048", "4096", "8192" };
 					ImGuiEx::Label("Max Size");
-					int select_index = 5;
-					if (ImGui::Combo("##Max Size", &select_index, values, ARRAY_SIZE(values), ARRAY_SIZE(values)))
+					int selectIndex = 5;
+					if (ImGui::Combo("##Max Size", &selectIndex, values, ARRAY_SIZE(values), ARRAY_SIZE(values)))
 					{
 					}
 				}
 				{
 					const char* values[] = { "None", "Low Quality", "Normal Quality", "High Quality" };
 					ImGuiEx::Label("Compression");
-					int select_index = 2;
-					if (ImGui::Combo("##Compression", &select_index, values, ARRAY_SIZE(values), ARRAY_SIZE(values)))
+					int selectIndex = 2;
+					if (ImGui::Combo("##Compression", &selectIndex, values, ARRAY_SIZE(values), ARRAY_SIZE(values)))
 					{
 					}
 				}
@@ -127,8 +127,8 @@ void EInspector_Project_Texture::RenderGUI(TextureMeta* meta)
 					"ASTC_RGB_4x4", "ASTC_RGB_5x5", "ASTC_RGB_6x6", "ASTC_RGB_8x8", "ASTC_RGB_10x10", "ASTC_RGB_12x12",
 				"ASTC_RGBA_4x4", "ASTC_RGBA_5x5", "ASTC_RGBA_6x6", "ASTC_RGBA_8x8", "ASTC_RGBA_10x10", "ASTC_RGBA_12x12" };
 				ImGuiEx::Label("Compression");
-				int select_index = 4;
-				if (ImGui::Combo("##FormatPC", &select_index, values, ARRAY_SIZE(values), ARRAY_SIZE(values)))
+				int selectIndex = 4;
+				if (ImGui::Combo("##FormatPC", &selectIndex, values, ARRAY_SIZE(values), ARRAY_SIZE(values)))
 				{
 				}
 
@@ -143,8 +143,8 @@ void EInspector_Project_Texture::RenderGUI(TextureMeta* meta)
 					"ASTC_RGB_4x4", "ASTC_RGB_5x5", "ASTC_RGB_6x6", "ASTC_RGB_8x8", "ASTC_RGB_10x10", "ASTC_RGB_12x12",
 				"ASTC_RGBA_4x4", "ASTC_RGBA_5x5", "ASTC_RGBA_6x6", "ASTC_RGBA_8x8", "ASTC_RGBA_10x10", "ASTC_RGBA_12x12" };
 				ImGuiEx::Label("Compression");
-				int select_index = 1;
-				if (ImGui::Combo("##FormatAndroid", &select_index, values, ARRAY_SIZE(values), ARRAY_SIZE(values)))
+				int selectIndex = 1;
+				if (ImGui::Combo("##FormatAndroid", &selectIndex, values, ARRAY_SIZE(values), ARRAY_SIZE(values)))
 				{
 				}
 
@@ -159,8 +159,8 @@ void EInspector_Project_Texture::RenderGUI(TextureMeta* meta)
 					"ASTC_RGB_4x4", "ASTC_RGB_5x5", "ASTC_RGB_6x6", "ASTC_RGB_8x8", "ASTC_RGB_10x10", "ASTC_RGB_12x12",
 				"ASTC_RGBA_4x4", "ASTC_RGBA_5x5", "ASTC_RGBA_6x6", "ASTC_RGBA_8x8", "ASTC_RGBA_10x10", "ASTC_RGBA_12x12" };
 				ImGuiEx::Label("Compression");
-				int select_index = 1;
-				if (ImGui::Combo("##FormatiOS", &select_index, values, ARRAY_SIZE(values), ARRAY_SIZE(values)))
+				int selectIndex = 1;
+				if (ImGui::Combo("##FormatiOS", &selectIndex, values, ARRAY_SIZE(values), ARRAY_SIZE(values)))
 				{
 				}
 
@@ -173,8 +173,8 @@ void EInspector_Project_Texture::RenderGUI(TextureMeta* meta)
 
 				const char* values[] = { "RGB24", "RGBA32" };
 				ImGuiEx::Label("Compression");
-				int select_index = 1;
-				if (ImGui::Combo("##FormatWebGL", &select_index, values, ARRAY_SIZE(values), ARRAY_SIZE(values)))
+				int selectIndex = 1;
+				if (ImGui::Combo("##FormatWebGL", &selectIndex, values, ARRAY_SIZE(values), ARRAY_SIZE(values)))
 				{
 				}
 
@@ -205,42 +205,42 @@ void EInspector_Project_Texture::RenderGUI(TextureMeta* meta)
 	ImGui::NewLine();
 	if (ImGui::CollapsingHeader("ImageView", ImGuiTreeNodeFlags_DefaultOpen))
 	{//预览
-		ImVec2 content_size = ImGui::GetContentRegionAvail();
+		ImVec2 contentSize = ImGui::GetContentRegionAvail();
 		Texture* tex = GUITextureCache::Get(meta->GetFullPath());
 		if (tex)
 		{
 			ImVec2 old_cursor_pos = ImGui::GetCursorScreenPos();
 			{
 				int width = tex->GetWidth(); int height = tex->GetHeight();
-				if (width > content_size.x)
+				if (width > contentSize.x)
 				{
-					height = (content_size.x * height) / width;
-					width = content_size.x;
+					height = (contentSize.x * height) / width;
+					width = contentSize.x;
 				}
 
 				float start_x = ImGui::GetCursorScreenPos().x;
 				float start_y = ImGui::GetCursorScreenPos().y;
-				if (width < content_size.x)
+				if (width < contentSize.x)
 				{
-					start_x = ImGui::GetCursorScreenPos().x + (content_size.x - width) * 0.5f;
+					start_x = ImGui::GetCursorScreenPos().x + (contentSize.x - width) * 0.5f;
 				}
-				if (height < content_size.y)
+				if (height < contentSize.y)
 				{
-					start_y = ImGui::GetCursorScreenPos().y + (content_size.y - height) * 0.5f;
+					start_y = ImGui::GetCursorScreenPos().y + (contentSize.y - height) * 0.5f;
 				}
 				ImGui::SetCursorScreenPos(ImVec2(start_x, start_y));
 				ImGui::Image(tex, ImVec2(width, height));
 			}
 			{
-				char sz_name[50] = { 0 };
-				String format_name = GetImageFormatname(tex->GetFormat());
-				Snprintf(sz_name, ARRAY_SIZE(sz_name), "%dx%d %s", tex->GetWidth(), tex->GetHeight(), format_name.c_str());
-				float content_width = ImGui::CalcTextSize(sz_name).x;
+				char szName[50] = { 0 };
+				String format_name = GetImageFormatName(tex->GetFormat());
+				Snprintf(szName, ARRAY_SIZE(szName), "%dx%d %s", tex->GetWidth(), tex->GetHeight(), format_name.c_str());
+				float content_width = ImGui::CalcTextSize(szName).x;
 
-				float offset_y = content_size.y - 50.0f;
-				if (offset_y < 0.0f)offset_y = 0.0f;
-				ImGui::SetCursorScreenPos(ImVec2(old_cursor_pos.x + (content_size.x - content_width)*0.5f, old_cursor_pos.y + offset_y));
-				ImGui::TextUnformatted(sz_name);
+				float offsetY = contentSize.y - 50.0f;
+				if (offsetY < 0.0f)offsetY = 0.0f;
+				ImGui::SetCursorScreenPos(ImVec2(old_cursor_pos.x + (contentSize.x - content_width)*0.5f, old_cursor_pos.y + offsetY));
+				ImGui::TextUnformatted(szName);
 			}
 		}
 	}

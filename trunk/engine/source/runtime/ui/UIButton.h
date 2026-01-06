@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Date：2020/9/9
@@ -28,7 +28,7 @@ class ENGINE_DLL UIButton : public UIImage
 	BEGIN_DERIVED_REFECTION_TYPE(UIButton, UIImage)
 		CTORS(DEFAULT_CTOR(UIButton))
 		ADD_EDITOR_COMPONENT("UI/Button")
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 protected:
 	virtual void Awake()override;

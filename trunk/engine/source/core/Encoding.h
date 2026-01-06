@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************************************/
 // @author hannibal
 // @date   2015/04/21
@@ -9,7 +9,7 @@
 #if DC_PLATFORM_WIN32
 #	define ICONV_CONST
 #	include "external/iconv/iconv.h"
-#elif defined(DC_PLATFORM_LINUX) || defined(DC_PLATFORM_ANDROID) || defined(DC_PLATFORM_MAC) || defined(DC_PLATFORM_IOS)
+#else
 #	include <iconv.h>
 #endif
 #include "Debuger.h"
@@ -28,7 +28,7 @@ enum class EncodingType
 DECLARE_ENUM_OPERATORS(EncodingType);
 
 /********************************************************************/
-class ENGINE_DLL Encoding Final : public object
+class ENGINE_DLL Encoding final : public object
 {
 	DISALLOW_CONSTRUCTOR_COPY_ASSIGN(Encoding);
 	BEGIN_REFECTION_TYPE(Encoding)
@@ -39,6 +39,7 @@ public:
 	static int Convert(EncodingType from, EncodingType to, const char *src, int srclen, char* save, int savelen);
 	static String Convert(EncodingType from, EncodingType to, const char *src, int srclen);
 	static String Convert(EncodingType from, EncodingType to, const String& src);
+	static String Convert(const char* from_charset, const char* to_charset, const String& src);
 
 public:
 	//返回0表示成功
@@ -60,7 +61,7 @@ private:
 		param src		原始需要转换的字符串
 		param srclen	原始字符串长度
 	*/
-	static bool Convert(char *from_charset, char *to_charset, const char *inbuf, size_t inlen, char *outbuf, size_t outlen);
+	static bool Convert(const char *from_charset, const char *to_charset, const char *inbuf, size_t inlen, char *outbuf, size_t outlen);
 	static char* GetEncodingType(EncodingType type);
 
 public:

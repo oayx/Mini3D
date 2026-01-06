@@ -23,89 +23,84 @@ public:
 
 public:
 	Vector() { }
-	Vector(int size) :m_vector(size) {}
-	Vector(int size, const V& v) :m_vector(size, v) {}
-	Vector(const Vector& from) :m_vector(from.m_vector) {}
-	Vector(std::initializer_list<V> list):m_vector(list) {}
-	Vector(const_iterator begin, const_iterator end):m_vector(begin, end) { }
+	Vector(int size) :_vector(size) {}
+	Vector(int size, const V& v) :_vector(size, v) {}
+	Vector(const Vector& other) :_vector(other._vector) {}
+	Vector(Vector&& other) :_vector(std::move(other._vector)) {}
+	Vector(std::initializer_list<V> list):_vector(list) {}
+	Vector(const_iterator begin, const_iterator end):_vector(begin, end) { }
 
-	V& operator [](int index) { return m_vector[index]; }
-	const V& operator [](int index) const { return m_vector[index]; }
-	Vector& operator =(const Vector& from);
-	V* Data()const { return const_cast<V*>(m_vector.data()); }
-	const V* CData()const { return m_vector.data(); }
+	V& operator [](int index) noexcept { return _vector[index]; }
+	const V& operator [](int index) const noexcept { return _vector[index]; }
+	Vector& operator =(const Vector& other) noexcept { _vector = other._vector; return *this; }
+	Vector& operator =(Vector&& other) noexcept { _vector = std::move(other._vector); return *this; }
+	V* Data()const noexcept { return const_cast<V*>(_vector.data()); }
+	const V* CData()const noexcept { return _vector.data(); }
 
-	void Add(const V& v) { m_vector.push_back(v); }
-	void AddRange(const V* vs, int count);
-	void AddRange(std::initializer_list<V> list) { m_vector.insert(m_vector.end(), list.begin(), list.end()); }
-	void AddRange(const Vector<V>& vs) { m_vector.insert(m_vector.end(), vs.begin(), vs.end()); }
-	void AddRange(const_iterator begin, const_iterator end) { return m_vector.insert(m_vector.end(), begin, end); }
-	byte* Bytes(int index = 0) const { return (byte*)&m_vector[index]; }
-	int Capacity()const { return (int)m_vector.capacity(); }
-	bool Contains(const V& v) const;
-	void Clear() { m_vector.clear(); }
-	V& First() { return m_vector.front(); }
-	const V& First() const { return m_vector.front(); }
-	void ForEach(std::function<void(V)> fun);//使用方式：vec.ForEach([](int val)->void {Debuger::Log("%d", val);});
-	void ForEachTrue(std::function<bool(V)> fun);
-	int IndexOf(const V& v) const;
-	int IndexOf(const V& v, int index) const;
-	int IndexOf(const V& v, int index, int count) const;
-	iterator Insert(const_iterator it, const V& v) { return m_vector.insert(it, v); }
-	bool IsEmpty() const { return m_vector.empty(); }
-	V& Last() { return m_vector.back(); }
-	const V& Last() const { return m_vector.back(); }
-	int LastIndexOf(const V& v) const;
-	int LastIndexOf(const V& v, int index) const;
-	int LastIndexOf(const V& v, int index, int count) const;
-	void Reserve(int size) { m_vector.reserve(size); }
-	void Resize(int size) { m_vector.resize(size); }
-	void Resize(int size, const V& v) { m_vector.resize(size, v); }
-	iterator Remove(const_iterator it) { return m_vector.erase(it); }
-	bool Remove(const V& v);
-	void RemoveAt(int index) { m_vector.erase(m_vector.begin() + index); }
-	void RemoveRange(int index, int count) { m_vector.erase(m_vector.begin() + index, m_vector.begin() + index + count); }
-	void Reverse() { std::reverse(m_vector.begin(), m_vector.end()); }
-	void Reverse(int index, int count);
-	int Size() const { return (int)m_vector.size(); }
-	int SizeInBytes() const { return sizeof(V) * Size(); }
-	void Sort() { std::sort(m_vector.begin(), m_vector.end()); }//不稳定排序
-	void Sort(SortFunc func) { std::sort(m_vector.begin(), m_vector.end(), func); }
-	void Sort(int index, int count);
-	void Sort(int index, int count, SortFunc func);//如果存在相等元素，则比较算法必须实现严格严格弱排序(在运算符<和>中实现的"小于"或"大于")，否则会报错
-	void StableSort() { std::stable_sort(m_vector.begin(), m_vector.end()); }
-	void StableSort(SortFunc func) { std::stable_sort(m_vector.begin(), m_vector.end(), func); }
-	void StableSort(int index, int count);
-	void StableSort(int index, int count, SortFunc func);
+	void Add(const V& v) noexcept { _vector.push_back(v); }
+	void AddRange(const V* vs, int count) noexcept;
+	void AddRange(std::initializer_list<V> list) noexcept { _vector.insert(_vector.end(), list.begin(), list.end()); }
+	void AddRange(const Vector<V>& vs) noexcept { _vector.insert(_vector.end(), vs.begin(), vs.end()); }
+	void AddRange(const_iterator begin, const_iterator end) noexcept { return _vector.insert(_vector.end(), begin, end); }
+	byte* Bytes(int index = 0) const noexcept { return (byte*)&_vector[index]; }
+	int Capacity()const noexcept { return (int)_vector.capacity(); }
+	bool Contains(const V& v) const noexcept;
+	void Clear() noexcept { _vector.clear(); }
+	V& First() noexcept { return _vector.front(); }
+	const V& First() const noexcept { return _vector.front(); }
+	void ForEach(std::function<void(V)> fun) noexcept;//使用方式：vec.ForEach([](int val)->void {Debuger::Log("%d", val);});
+	void ForEachTrue(std::function<bool(V)> fun) noexcept;
+	int IndexOf(const V& v) const noexcept;
+	int IndexOf(const V& v, int index) const noexcept;
+	int IndexOf(const V& v, int index, int count) const noexcept;
+	iterator Insert(const_iterator it, const V& v) noexcept { return _vector.insert(it, v); }
+	bool IsEmpty() const noexcept { return _vector.empty(); }
+	V& Last() noexcept { return _vector.back(); }
+	const V& Last() const noexcept { return _vector.back(); }
+	int LastIndexOf(const V& v) const noexcept;
+	int LastIndexOf(const V& v, int index) const noexcept;
+	int LastIndexOf(const V& v, int index, int count) const noexcept;
+	void Reserve(int size) noexcept { _vector.reserve(size); }
+	void Resize(int size) noexcept { _vector.resize(size); }
+	void Resize(int size, const V& v) noexcept { _vector.resize(size, v); }
+	iterator Remove(const_iterator it) noexcept { return _vector.erase(it); }
+	bool Remove(const V& v) noexcept;
+	void RemoveAt(int index) noexcept { _vector.erase(_vector.begin() + index); }
+	void RemoveRange(int index, int count) noexcept { _vector.erase(_vector.begin() + index, _vector.begin() + index + count); }
+	void Reverse() noexcept { std::reverse(_vector.begin(), _vector.end()); }
+	void Reverse(int index, int count) noexcept;
+	int Size() const noexcept { return (int)_vector.size(); }
+	int SizeInBytes() const noexcept { return sizeof(V) * Size(); }
+	void Sort() noexcept { std::sort(_vector.begin(), _vector.end()); }//不稳定排序
+	void Sort(SortFunc func) noexcept { std::sort(_vector.begin(), _vector.end(), func); }
+	void Sort(int index, int count) noexcept;
+	void Sort(int index, int count, SortFunc func) noexcept;//如果存在相等元素，则比较算法必须实现严格严格弱排序(在运算符<和>中实现的"小于"或"大于")，否则会报错
+	void StableSort() noexcept { std::stable_sort(_vector.begin(), _vector.end()); }
+	void StableSort(SortFunc func) noexcept { std::stable_sort(_vector.begin(), _vector.end(), func); }
+	void StableSort(int index, int count) noexcept;
+	void StableSort(int index, int count, SortFunc func) noexcept;
 
-	iterator begin() { return m_vector.begin(); }
-	iterator end() { return m_vector.end(); }
-	reverse_iterator rbegin() { return m_vector.rbegin(); }
-	reverse_iterator rend() { return m_vector.rend(); }
-	const_iterator begin() const { return (const_iterator)m_vector.begin(); }
-	const_iterator end() const { return (const_iterator)m_vector.end(); }
-	const_reverse_iterator rbegin() const { return (const_reverse_iterator)m_vector.rbegin(); }
-	const_reverse_iterator rend() const { return (const_reverse_iterator)m_vector.rend(); }
+	iterator begin() noexcept { return _vector.begin(); }
+	iterator end() noexcept { return _vector.end(); }
+	reverse_iterator rbegin() noexcept { return _vector.rbegin(); }
+	reverse_iterator rend() noexcept { return _vector.rend(); }
+	const_iterator begin() const noexcept { return (const_iterator)_vector.begin(); }
+	const_iterator end() const noexcept { return (const_iterator)_vector.end(); }
+	const_reverse_iterator rbegin() const noexcept { return (const_reverse_iterator)_vector.rbegin(); }
+	const_reverse_iterator rend() const noexcept { return (const_reverse_iterator)_vector.rend(); }
 
 private:
-	int ValidCount(int index, int count)const;
+	int ValidCount(int index, int count)const noexcept;
 
 private:
-	std::vector<V, STLAlloc<V>> m_vector;
+	std::vector<V, STLAlloc<V>> _vector;
 };
 template<class V>
-Vector<V>& Vector<V>::operator =(const Vector<V>& from)
-{
-	m_vector.clear();
-	AddRange(from);
-	return *this;
-}
-template<class V>
-bool Vector<V>::Contains(const V& v) const
+bool Vector<V>::Contains(const V& v) const noexcept
 {
 	for (int i = 0; i < this->Size(); ++i)
 	{
-		if (m_vector[i] == v)
+		if (_vector[i] == v)
 		{
 			return true;
 		}
@@ -113,11 +108,11 @@ bool Vector<V>::Contains(const V& v) const
 	return false;
 }
 template<class V>
-int Vector<V>::IndexOf(const V& v) const
+int Vector<V>::IndexOf(const V& v) const noexcept
 {
 	for (int i = 0; i < this->Size(); ++i)
 	{
-		if (m_vector[i] == v)
+		if (_vector[i] == v)
 		{
 			return i;
 		}
@@ -125,13 +120,13 @@ int Vector<V>::IndexOf(const V& v) const
 	return -1;
 }
 template<class V>
-int Vector<V>::IndexOf(const V& v, int index) const
+int Vector<V>::IndexOf(const V& v, int index) const noexcept
 {
 	AssertEx(index >= 0, "");
 	if (index >= this->Size())return -1;
 	for (int i = index; i < this->Size(); ++i)
 	{
-		if (m_vector[i] == v)
+		if (_vector[i] == v)
 		{
 			return i;
 		}
@@ -139,14 +134,14 @@ int Vector<V>::IndexOf(const V& v, int index) const
 	return -1;
 }
 template<class V>
-int Vector<V>::IndexOf(const V& v, int index, int count) const
+int Vector<V>::IndexOf(const V& v, int index, int count) const noexcept
 {
 	AssertEx(index >= 0 && count >= 0, "");
 	if (index >= this->Size())return -1;
 	count = ValidCount(index, count);
 	for (int i = index; i < index + count && i < this->Size(); ++i)
 	{
-		if (m_vector[i] == v)
+		if (_vector[i] == v)
 		{
 			return i;
 		}
@@ -154,11 +149,11 @@ int Vector<V>::IndexOf(const V& v, int index, int count) const
 	return -1;
 }
 template<class V>
-int Vector<V>::LastIndexOf(const V& v) const
+int Vector<V>::LastIndexOf(const V& v) const noexcept
 {
 	for (int i = this->Size() - 1; i >= 0; --i)
 	{
-		if (m_vector[i] == v)
+		if (_vector[i] == v)
 		{
 			return i;
 		}
@@ -166,13 +161,13 @@ int Vector<V>::LastIndexOf(const V& v) const
 	return -1;
 }
 template<class V>
-int Vector<V>::LastIndexOf(const V& v, int index) const
+int Vector<V>::LastIndexOf(const V& v, int index) const noexcept
 {
 	AssertEx(index >= 0, "");
 	if (index >= this->Size())return -1;
 	for (int i = this->Size() - 1; i >= index; --i)
 	{
-		if (m_vector[i] == v)
+		if (_vector[i] == v)
 		{
 			return i;
 		}
@@ -180,7 +175,7 @@ int Vector<V>::LastIndexOf(const V& v, int index) const
 	return -1;
 }
 template<class V>
-int Vector<V>::LastIndexOf(const V& v, int index, int count) const
+int Vector<V>::LastIndexOf(const V& v, int index, int count) const noexcept
 {
 	AssertEx(index >= 0 && count >= 0, "");
 	if (index >= this->Size())return -1;
@@ -188,7 +183,7 @@ int Vector<V>::LastIndexOf(const V& v, int index, int count) const
 	int end_index = std::min(index + count, this->Size());
 	for (int i = end_index - 1; i >= index; --i)
 	{
-		if (m_vector[i] == v)
+		if (_vector[i] == v)
 		{
 			return i;
 		}
@@ -196,41 +191,41 @@ int Vector<V>::LastIndexOf(const V& v, int index, int count) const
 	return -1;
 }
 template<class V>
-void Vector<V>::ForEach(std::function<void(V)> fun)
+void Vector<V>::ForEach(std::function<void(V)> fun) noexcept
 {
 	for (int i = 0; i < this->Size(); ++i)
 	{
-		fun(m_vector[i]);
+		fun(_vector[i]);
 	}
 }
 template<class V>
-void Vector<V>::ForEachTrue(std::function<bool(V)> fun)
+void Vector<V>::ForEachTrue(std::function<bool(V)> fun) noexcept
 {
 	for (int i = 0; i < this->Size(); ++i)
 	{
-		if (!fun(m_vector[i]))break;
+		if (!fun(_vector[i]))break;
 	}
 }
 template<class V>
-void Vector<V>::AddRange(const V* vs, int count)
+void Vector<V>::AddRange(const V* vs, int count) noexcept
 {
 	if (count > 0)
 	{
-		auto old_size = m_vector.size();
-		m_vector.resize(old_size + count);
+		auto old_size = _vector.size();
+		_vector.resize(old_size + count);
 
 		for (int i = 0; i < count; ++i)
 		{
-			m_vector[old_size + i] = vs[i];
+			_vector[old_size + i] = vs[i];
 		}
 	}
 }
 template<class V>
-bool Vector<V>::Remove(const V& v)
+bool Vector<V>::Remove(const V& v) noexcept
 {
 	for (int i = 0; i < this->Size(); ++i)
 	{
-		if (m_vector[i] == v)
+		if (_vector[i] == v)
 		{
 			this->RemoveAt(i);
 			return true;
@@ -240,52 +235,52 @@ bool Vector<V>::Remove(const V& v)
 	return false;
 }
 template<class V>
-void Vector<V>::Reverse(int index, int count)
+void Vector<V>::Reverse(int index, int count) noexcept
 {
 	CHECK_RETURN_PTR_VOID(index >= 0 && count >= 0);
 	count = ValidCount(index, count);
-	iterator it1 = m_vector.begin(); std::advance(it1, index);
-	iterator it2 = m_vector.begin(); std::advance(it2, index + count);
+	iterator it1 = _vector.begin(); std::advance(it1, index);
+	iterator it2 = _vector.begin(); std::advance(it2, index + count);
 	std::reverse(it1, it2);
 }
 template<class V>
-void Vector<V>::Sort(int index, int count, SortFunc func)
+void Vector<V>::Sort(int index, int count, SortFunc func) noexcept
 {
 	CHECK_RETURN_PTR_VOID(index >= 0 && count >= 0);
 	count = ValidCount(index, count);
-	iterator it1 = m_vector.begin(); std::advance(it1, index);
-	iterator it2 = m_vector.begin(); std::advance(it2, index + count);
+	iterator it1 = _vector.begin(); std::advance(it1, index);
+	iterator it2 = _vector.begin(); std::advance(it2, index + count);
 	std::sort(it1, it2, func);
 }
 template<class V>
-void Vector<V>::Sort(int index, int count)
+void Vector<V>::Sort(int index, int count) noexcept
 {
 	CHECK_RETURN_PTR_VOID(index >= 0 && count >= 0);
 	count = ValidCount(index, count);
-	iterator it1 = m_vector.begin(); std::advance(it1, index);
-	iterator it2 = m_vector.begin(); std::advance(it2, index + count);
+	iterator it1 = _vector.begin(); std::advance(it1, index);
+	iterator it2 = _vector.begin(); std::advance(it2, index + count);
 	std::sort(it1, it2);
 }
 template<class V>
-void Vector<V>::StableSort(int index, int count, SortFunc func)
+void Vector<V>::StableSort(int index, int count, SortFunc func) noexcept
 {
 	CHECK_RETURN_PTR_VOID(index >= 0 && count >= 0);
 	count = ValidCount(index, count);
-	iterator it1 = m_vector.begin(); std::advance(it1, index);
-	iterator it2 = m_vector.begin(); std::advance(it2, index + count);
+	iterator it1 = _vector.begin(); std::advance(it1, index);
+	iterator it2 = _vector.begin(); std::advance(it2, index + count);
 	std::stable_sort(it1, it2, func);
 }
 template<class V>
-void Vector<V>::StableSort(int index, int count)
+void Vector<V>::StableSort(int index, int count) noexcept
 {
 	CHECK_RETURN_PTR_VOID(index >= 0 && count >= 0);
 	count = ValidCount(index, count);
-	iterator it1 = m_vector.begin(); std::advance(it1, index);
-	iterator it2 = m_vector.begin(); std::advance(it2, index + count);
+	iterator it1 = _vector.begin(); std::advance(it1, index);
+	iterator it2 = _vector.begin(); std::advance(it2, index + count);
 	std::stable_sort(it1, it2);
 }
 template<class V>
-int Vector<V>::ValidCount(int index, int count)const
+int Vector<V>::ValidCount(int index, int count)const noexcept
 {
 	if (index + count > this->Size())
 	{

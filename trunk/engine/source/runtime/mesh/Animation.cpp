@@ -1,4 +1,4 @@
-#include "Animation.h"
+﻿#include "Animation.h"
 #include "AnimationNode.h"
 #include "AnimationClip.h"
 #include "AnimationState.h"
@@ -23,11 +23,11 @@ Animation::~Animation()
 	_animationClips.Clear();
 	_boneTransformes.Clear();
 }
-Object* Animation::Clone(Object* new_obj)
+Object* Animation::Clone(Object* newObj)
 {
-	base::Clone(new_obj);
-	Animation* obj = dynamic_cast<Animation*>(new_obj);
-	if (!obj)return new_obj;
+	base::Clone(newObj);
+	Animation* obj = dynamic_cast<Animation*>(newObj);
+	if (!obj)return newObj;
 
 	obj->SetPlayOnAwake(_playOnAwake);
 	obj->SetAutoSimulate(_autoSimulate);
@@ -68,6 +68,7 @@ void Animation::Simulate(float dt)
 	if (_animationClips.IsEmpty() || _currentState == nullptr)
 		return;
 
+	DC_PROFILE_FUNCTION;
 	float delta_time = dt * _speed;
 	if (_currentState->IsPlaying())
 	{
@@ -323,9 +324,9 @@ void Animation::OnDrawEditor()
 	ImGuiEx::Label("Use Unscaled Time");
 	ImGui::Checkbox("##UseUnscaledTime", &_useUnscaledTime);
 
-	float min_value = 0.0f;
+	float minValue = 0.0f;
 	ImGuiEx::Label("Speed");
-	ImGui::DragScalar("##Speed", ImGuiDataType_Float, &_speed, 0.01f, &min_value, nullptr, "%.2f");
+	ImGui::DragScalar("##Speed", ImGuiDataType_Float, &_speed, 0.01f, &minValue, nullptr, "%.2f");
 }
 /********************************************************************/
 INSTANTIATE_TEMPLATE_TRANSFER_WITH_DECL(Animation);

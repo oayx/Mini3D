@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Date：2020/8/19
@@ -16,7 +16,7 @@ class UIView;
 class Material;
 class Transform;
 /********************************************************************/
-class ENGINE_DLL UICanvas Final : public Renderer
+class ENGINE_DLL UICanvas final : public Renderer
 {
 	friend class GameObject;
 	friend class Application;
@@ -28,7 +28,7 @@ class ENGINE_DLL UICanvas Final : public Renderer
 	BEGIN_DERIVED_REFECTION_TYPE(UICanvas, Renderer)
 		CTORS(DEFAULT_CTOR(UICanvas))
 		ADD_EDITOR_COMPONENT("UI/Canvas")
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 protected:
 	UICanvas();
@@ -48,7 +48,7 @@ public:
 	void			SetCamera(Camera* camera);
 
 	UIRenderMode	GetRenderMode()const { return _renderMode; }
-	bool			ScreenToUIPoint(const Vector3& position, Vector2& ui_pos);
+	bool			ScreenToUIPoint(const Vector3& position, Vector2& uiPos);
 	void			SetNeedRebuild(bool b) { _isNeedRebuild = b; }
 
 private:

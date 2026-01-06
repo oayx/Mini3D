@@ -38,18 +38,21 @@
 #include "alError.h"
 #include "bs2b.h"
 #include "alu.h"
+#include "../OpenAL32/alAuxEffectSlot.c"
+#include "../OpenAL32/alBuffer.c"
+#include "../OpenAL32/alEffect.c"
+#include "../OpenAL32/alFilter.c"
+#include "../OpenAL32/alState.c"
 
-
-#ifdef WIN32
-int strncasecmp(const char *s1, const char *s2, int len)
+int my_strnicmp(const char* s1, const char* s2, int len)
 {
 	int len1 = strlen(s1);
 	int len2 = strlen(s2);
 	int i = 0;
 
-	if(len < 0)
+	if (len < 0)
 	{
-		if(len1 != len2)
+		if (len1 != len2)
 		{
 			return 1;
 		}
@@ -57,45 +60,32 @@ int strncasecmp(const char *s1, const char *s2, int len)
 		len = len1;
 	}
 
-	for(; i < len1 && i < len2 && i < len; i++)
+	for (; i < len1 && i < len2 && i < len; i++)
 	{
 		char c1 = s1[i];
 		char c2 = s2[i];
-		if(isupper(c1))
+		if (isupper(c1))
 		{
 			c1 = tolower(c1);
 		}
-		if(isupper(c2))
+		if (isupper(c2))
 		{
 			c2 = tolower(c2);
 		}
 
-		if(c1 != c2)
+		if (c1 != c2)
 		{
 			return 1;
 		}
 	}
 
-	if(len != len1 && i < len)
+	if (len != len1 && i < len)
 	{
 		return 1;
 	}
 
 	return 0;
 }
-int strcasecmp(const char *s1, const char *s2)
-{
-	return strncasecmp(s1, s2, -1);
-}
-#endif
-
-
-#include "../OpenAL32/alAuxEffectSlot.c"
-#include "../OpenAL32/alBuffer.c"
-#include "../OpenAL32/alEffect.c"
-#include "../OpenAL32/alFilter.c"
-#include "../OpenAL32/alState.c"
-
 
 ALC_API ALCboolean ALC_APIENTRY alcSetThreadContext(ALCcontext *context);
 ALC_API ALCcontext* ALC_APIENTRY alcGetThreadContext(void);
@@ -570,15 +560,15 @@ static void alc_init(void)
     LogFile = stderr;
 
     str = getenv("__ALSOFT_HALF_ANGLE_CONES");
-    if(str && (strcasecmp(str, "true") == 0 || strtol(str, NULL, 0) == 1))
+    if(str && (strcmp(str, "true") == 0 || strtol(str, NULL, 0) == 1))
         ConeScale = 1.0f;
 
     str = getenv("__ALSOFT_REVERSE_Z");
-    if(str && (strcasecmp(str, "true") == 0 || strtol(str, NULL, 0) == 1))
+    if(str && (strcmp(str, "true") == 0 || strtol(str, NULL, 0) == 1))
         ZScale = -1.0f;
 
     str = getenv("__ALSOFT_TRAP_ERROR");
-    if(str && (strcasecmp(str, "true") == 0 || strtol(str, NULL, 0) == 1))
+    if(str && (strcmp(str, "true") == 0 || strtol(str, NULL, 0) == 1))
     {
         TrapALError  = AL_TRUE;
         TrapALCError = AL_TRUE;
@@ -586,11 +576,11 @@ static void alc_init(void)
     else
     {
         str = getenv("__ALSOFT_TRAP_AL_ERROR");
-        if(str && (strcasecmp(str, "true") == 0 || strtol(str, NULL, 0) == 1))
+        if(str && (strcmp(str, "true") == 0 || strtol(str, NULL, 0) == 1))
             TrapALError = AL_TRUE;
 
         str = getenv("__ALSOFT_TRAP_ALC_ERROR");
-        if(str && (strcasecmp(str, "true") == 0 || strtol(str, NULL, 0) == 1))
+        if(str && (strcmp(str, "true") == 0 || strtol(str, NULL, 0) == 1))
             TrapALCError = ALC_TRUE;
     }
 
@@ -666,11 +656,11 @@ static void alc_initconfig(void)
 
     if(ConfigValueStr(NULL, "resampler", &str))
     {
-        if(strcasecmp(str, "point") == 0 || strcasecmp(str, "none") == 0)
+        if(strcmp(str, "point") == 0 || strcmp(str, "none") == 0)
             DefaultResampler = POINT_RESAMPLER;
-        else if(strcasecmp(str, "linear") == 0)
+        else if(strcmp(str, "linear") == 0)
             DefaultResampler = LINEAR_RESAMPLER;
-        else if(strcasecmp(str, "cubic") == 0)
+        else if(strcmp(str, "cubic") == 0)
             DefaultResampler = CUBIC_RESAMPLER;
         else
         {
@@ -1696,7 +1686,7 @@ ALC_API ALCdevice* ALC_APIENTRY alcCaptureOpenDevice(const ALCchar *deviceName, 
         return NULL;
     }
 
-    if(deviceName && (!deviceName[0] || strcasecmp(deviceName, "openal soft") == 0 || strcasecmp(deviceName, "openal-soft") == 0))
+    if(deviceName && (!deviceName[0] || strcmp(deviceName, "openal soft") == 0 || strcmp(deviceName, "openal-soft") == 0))
         deviceName = NULL;
 
     device = calloc(1, sizeof(ALCdevice));
@@ -2207,7 +2197,7 @@ ALC_API ALCboolean ALC_APIENTRY alcIsExtensionPresent(ALCdevice *device, const A
         const char *ptr = (device ? alcExtensionList : alcNoDeviceExtList);
         while(ptr && *ptr)
         {
-            if(strncasecmp(ptr, extName, len) == 0 &&
+            if(my_strnicmp(ptr, extName, len) == 0 &&
                (ptr[len] == '\0' || isspace(ptr[len])))
             {
                 bResult = ALC_TRUE;
@@ -2503,7 +2493,7 @@ static void GetFormatFromString(const char *str, enum DevFmtChannels *chans, enu
 
     for(i = 0;i < sizeof(formats)/sizeof(formats[0]);i++)
     {
-        if(strcasecmp(str, formats[i].name) == 0)
+        if(strcmp(str, formats[i].name) == 0)
         {
             *chans = formats[i].channels;
             *type = formats[i].type;
@@ -2534,7 +2524,7 @@ ALC_API ALCdevice* ALC_APIENTRY alcOpenDevice(const ALCchar *deviceName)
         return NULL;
     }
 
-    if(deviceName && (!deviceName[0] || strcasecmp(deviceName, "openal soft") == 0 || strcasecmp(deviceName, "openal-soft") == 0))
+    if(deviceName && (!deviceName[0] || strcmp(deviceName, "openal soft") == 0 || strcmp(deviceName, "openal-soft") == 0))
         deviceName = NULL;
 
     device = calloc(1, sizeof(ALCdevice)+sizeof(ALeffectslot));

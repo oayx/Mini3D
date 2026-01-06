@@ -1,10 +1,10 @@
-#include "TCPAccepter.h"
+﻿#include "TCPAccepter.h"
 #include "TCPChannel.h"
 #include "runtime/thread/Thread.h"
 #include "runtime/thread/ThreadScheduler.h"
 #if defined(DC_PLATFORM_WIN32)
 #include <ws2tcpip.h>
-#elif defined(DC_PLATFORM_LINUX) || defined(DC_PLATFORM_ANDROID) || defined(DC_PLATFORM_MAC) || defined(DC_PLATFORM_IOS)
+#else
 #include <sys/socket.h>
 #include <netdb.h>
 #include <sys/select.h>
@@ -16,20 +16,14 @@
 DC_BEGIN_NAMESPACE
 /********************************************************************/
 IMPL_DERIVED_REFECTION_TYPE(TCPAccepter, Socket);
-TCPAccepter::TCPAccepter()
-{
-}
-TCPAccepter::~TCPAccepter()
-{
-}
-bool TCPAccepter::Start(const String& host_name, int port, int backlog)
+bool TCPAccepter::Start(const String& hostName, int port, int backlog)
 {
 	int64 socket;
 	int err = Socket::CreateSocket(socket, AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if (err)return false;
 	
 	base::SetSocket(socket);
-	err = base::Bind(host_name.c_str(), port);
+	err = base::Bind(hostName.c_str(), port);
 	if (err)return false;
 	
 	err = base::Listen(backlog);
@@ -39,10 +33,10 @@ bool TCPAccepter::Start(const String& host_name, int port, int backlog)
 	Socket::SetNoDelay(socket, true);
 	Socket::SetBufferSize(socket, 65536, 65536);
 
-	Task task_accept;
-	task_accept.pools = false;
-	task_accept.job = CALLBACK_0(TCPAccepter::HandleAccept, this);
-	Thread::Start(task_accept);
+	Task taskAccept;
+	taskAccept.pools = false;
+	taskAccept.job = CALLBACK_0(TCPAccepter::HandleAccept, this);
+	Thread::Start(taskAccept);
 
 	_isClose = false;
 	Debuger::Log("TCPAccepter Start");
@@ -85,7 +79,7 @@ void TCPAccepter::DoAccept(int64 socket, const sockaddr_in& remoteAddr)
 	}
 
 	//再添加
-	thread_lock(ThreadScheduler::GlobalMutex);
+	LOCK(ThreadScheduler::GlobalMutex);
 	TCPChannel* channel = TCPChannel::Create(this, socket);
 	_channels.Add(socket, channel);
 	if (_acceptCallback != nullptr)_acceptCallback(socket);
@@ -93,12 +87,12 @@ void TCPAccepter::DoAccept(int64 socket, const sockaddr_in& remoteAddr)
 void TCPAccepter::DoReceive(int64 socket, byte* by, int len)
 {
 	Debuger::Log("recv:%d", len);
-	thread_lock(ThreadScheduler::GlobalMutex);
+	LOCK(ThreadScheduler::GlobalMutex);
 	if (_receiveCallback != nullptr)_receiveCallback(socket, by, len);
 }
 void TCPAccepter::DoClosed()
 {
-	thread_lock(ThreadScheduler::GlobalMutex);
+	LOCK(ThreadScheduler::GlobalMutex);
 	for (auto channel : _channels)
 	{
 		SAFE_DELETE(channel.second);
@@ -108,7 +102,7 @@ void TCPAccepter::DoClosed()
 }
 void TCPAccepter::DoClientClosed(int64 socket)
 {
-	thread_lock(ThreadScheduler::GlobalMutex);
+	LOCK(ThreadScheduler::GlobalMutex);
 	auto it = _channels.Find(socket);
 	if (it != _channels.end())
 	{
@@ -119,7 +113,7 @@ void TCPAccepter::DoClientClosed(int64 socket)
 }
 void TCPAccepter::DoSocketError(int64 socket, int code)
 {
-	thread_lock(ThreadScheduler::GlobalMutex);
+	LOCK(ThreadScheduler::GlobalMutex);
 	if (_errorCallback != nullptr)_errorCallback(socket, code);
 }
 DC_END_NAMESPACE

@@ -1,4 +1,4 @@
-#include "DX11SwapChain.h"
+﻿#include "DX11SwapChain.h"
 #include "DX11Caps.h"
 #include "DX11Device.h"
 #include "runtime/graphics/null/Texture.h"
@@ -30,7 +30,7 @@ bool DX11SwapChain::CreateSwapChain(RenderWindow* window)
 	uint height = (uint)window->GetHeight();
 	bool fullscreen = window->IsFullscreen();
 	uint refreshRate = window->GetFPS();
-	_msaa = DX11Caps::GetMSAAQualityLevel(antiAlias, DX11GetTextureFormat(DXRenderTargetFormat, false));
+	_msaa = DX11Caps::GetMSAAQualityLevel(antiAlias, DX10GetTextureFormat(DX11RenderTargetFormat, false));
 
 	ReleaseBackbufferResources();
 
@@ -43,7 +43,7 @@ bool DX11SwapChain::CreateSwapChain(RenderWindow* window)
 	sd.BufferDesc.Height = height;
 	sd.BufferDesc.RefreshRate.Numerator = refreshRate;
 	sd.BufferDesc.RefreshRate.Denominator = 1;
-	sd.BufferDesc.Format = DX11GetTextureFormat(DXRenderTargetFormat, false);
+	sd.BufferDesc.Format = DX10GetTextureFormat(DX11RenderTargetFormat, false);
 	sd.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
 	sd.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
 	sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
@@ -53,10 +53,10 @@ bool DX11SwapChain::CreateSwapChain(RenderWindow* window)
 	sd.Windowed = true;//建议设置true，然后通过SetFullscreenState实现全屏
 	sd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 
-	HR(GetDX11Device()->GetDXGIFactory()->CreateSwapChain(GetDX11Device()->GetDevice(), &sd, &_swapChain));
+	DX_ERROR(GetDX11Device()->GetDXGIFactory()->CreateSwapChain(GetDX11Device()->GetDevice(), &sd, &_swapChain));
 
 	// 禁用Alt+Enter全屏切换
-	HR(GetDX11Device()->GetDXGIFactory()->MakeWindowAssociation(hWnd, DXGI_MWA_NO_WINDOW_CHANGES | DXGI_MWA_NO_ALT_ENTER));
+	DX_ERROR(GetDX11Device()->GetDXGIFactory()->MakeWindowAssociation(hWnd, DXGI_MWA_NO_WINDOW_CHANGES | DXGI_MWA_NO_ALT_ENTER));
 	//全屏
 	_swapChain->SetFullscreenState(fullscreen, NULL);
 
@@ -82,9 +82,9 @@ void DX11SwapChain::Resize(const WindowResizeDesc& desc)
 	mode.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
 
 	//顺序不要调整，否则会出现全屏和窗口切换失败问题
-	HR(_swapChain->ResizeTarget(&mode));
-	HR(_swapChain->ResizeBuffers(sd.BufferCount, desc.width, desc.height, sd.BufferDesc.Format, sd.Flags));
-	HR(_swapChain->SetFullscreenState(desc.fullscreen, NULL));
+	DX_ERROR(_swapChain->ResizeTarget(&mode));
+	DX_ERROR(_swapChain->ResizeBuffers(sd.BufferCount, desc.width, desc.height, sd.BufferDesc.Format, sd.Flags));
+	DX_ERROR(_swapChain->SetFullscreenState(desc.fullscreen, NULL));
 	if (desc.fullscreen)
 	{
 		mode.RefreshRate.Numerator = 0;
@@ -97,17 +97,16 @@ void DX11SwapChain::Resize(const WindowResizeDesc& desc)
 }
 void DX11SwapChain::BeginFrame(RenderFrameDesc& desc)
 {
-	DC_PROFILE_FUNCTION();
-	desc.target_buffer = _renderTargetView;
-	desc.depth_stencil_buffer = _depthStencilView;
+	DC_PROFILE_FUNCTION;
+	desc.targetBuffer = _renderTargetView;
+	desc.depthStencilBuffer = _depthStencilView;
 	base::BeginFrame(desc);
 }
 void DX11SwapChain::Present(uint sync)
 {
-	DC_PROFILE_FUNCTION();
 	if (_swapChain != nullptr)
 	{
-		HR(_swapChain->Present(sync, 0));
+		DX_ERROR(_swapChain->Present(sync, 0));
 	}
 }
 bool DX11SwapChain::Copy(Texture* texture)const
@@ -115,7 +114,7 @@ bool DX11SwapChain::Copy(Texture* texture)const
 	if (!_renderTarget || !texture || !texture->IsStaging())return false;
 
 	ID3D11Texture2D* backbuffer_texture;
-	HR(_renderTarget->QueryInterface(IID_PPV_ARGS(&backbuffer_texture)));
+	DX_ERROR(_renderTarget->QueryInterface(IID_PPV_ARGS(&backbuffer_texture)));
 
 	D3D11_TEXTURE2D_DESC desc;
 	backbuffer_texture->GetDesc(&desc);
@@ -125,11 +124,11 @@ bool DX11SwapChain::Copy(Texture* texture)const
 		desc.SampleDesc.Quality = 0;
 
 		ID3D11Texture2D* temp_texture;
-		HR(GetDX11Device()->GetDevice()->CreateTexture2D(&desc, nullptr, &temp_texture));
-		DXGI_FORMAT format = DX11EnsureNotTypeless(desc.Format);
+		DX_ERROR(GetDX11Device()->GetDevice()->CreateTexture2D(&desc, nullptr, &temp_texture));
+		DXGI_FORMAT format = DX10EnsureNotTypeless(desc.Format);
 
 		UINT support_format = 0;
-		HR(GetDX11Device()->GetDevice()->CheckFormatSupport(format, &support_format));
+		DX_ERROR(GetDX11Device()->GetDevice()->CheckFormatSupport(format, &support_format));
 		if (!(support_format & D3D11_FORMAT_SUPPORT_MULTISAMPLE_RESOLVE))
 		{
 			SAFE_RELEASE(temp_texture);
@@ -157,14 +156,14 @@ bool DX11SwapChain::Copy(Texture* texture)const
 void DX11SwapChain::CreateBackbufferResources(uint width, uint height)
 {
 	{//render target
-		HR(_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)(&_renderTarget)));
+		DX_ERROR(_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)(&_renderTarget)));
 
 		// Create a render target view
 		D3D11_RENDER_TARGET_VIEW_DESC rt_desc = {};
-		rt_desc.Format = DX11GetShaderViewFormat(DXRenderTargetFormat, false);
+		rt_desc.Format = DX10GetShaderViewFormat(DX11RenderTargetFormat, false);
 		rt_desc.ViewDimension = _msaa.Count > 1 ? D3D11_RTV_DIMENSION_TEXTURE2DMS : D3D11_RTV_DIMENSION_TEXTURE2D;
 		rt_desc.Texture2D.MipSlice = 0;
-		HR(GetDX11Device()->GetDevice()->CreateRenderTargetView(_renderTarget, &rt_desc, &_renderTargetView));
+		DX_ERROR(GetDX11Device()->GetDevice()->CreateRenderTargetView(_renderTarget, &rt_desc, &_renderTargetView));
 	}
 
 	{//depth stencil
@@ -174,21 +173,21 @@ void DX11SwapChain::CreateBackbufferResources(uint width, uint height)
 		depth_desc.Height = height;
 		depth_desc.MipLevels = 1;
 		depth_desc.ArraySize = 1;
-		depth_desc.Format = DX11GetDepthTextureFormat(DXDepthStencilFormat);
+		depth_desc.Format = DX10GetDepthTextureFormat(DX11DepthStencilFormat);
 		depth_desc.SampleDesc.Count = _msaa.Count;
 		depth_desc.SampleDesc.Quality = 0;
 		depth_desc.Usage = D3D11_USAGE_DEFAULT;
 		depth_desc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 		depth_desc.CPUAccessFlags = 0;
 		depth_desc.MiscFlags = 0;
-		HR(GetDX11Device()->GetDevice()->CreateTexture2D(&depth_desc, NULL, &_depthStencil));
+		DX_ERROR(GetDX11Device()->GetDevice()->CreateTexture2D(&depth_desc, NULL, &_depthStencil));
 
 		// Create the depth stencil view
 		D3D11_DEPTH_STENCIL_VIEW_DESC depth_view_desc = {};
-		depth_view_desc.Format = DX11GetDepthTextureViewFormat(DXDepthStencilFormat);
+		depth_view_desc.Format = DX10GetDepthTextureViewFormat(DX11DepthStencilFormat);
 		depth_view_desc.ViewDimension = _msaa.Count > 1 ? D3D11_DSV_DIMENSION_TEXTURE2DMS : D3D11_DSV_DIMENSION_TEXTURE2D;
 		depth_view_desc.Texture2D.MipSlice = 0;
-		HR(GetDX11Device()->GetDevice()->CreateDepthStencilView(_depthStencil, &depth_view_desc, &_depthStencilView));
+		DX_ERROR(GetDX11Device()->GetDevice()->CreateDepthStencilView(_depthStencil, &depth_view_desc, &_depthStencilView));
 	}
 	//GetDX11Device()->GetContent()->OMSetRenderTargets(1, &_renderTargetView, _depthStencilView);
 }

@@ -1,4 +1,4 @@
-#include "SphereRender.h"
+﻿#include "SphereRender.h"
 
 DC_BEGIN_NAMESPACE
 /********************************************************************/
@@ -12,9 +12,9 @@ void SphereRender::SetSphere(ushort segments, ushort rings)
 {
 	this->ClearData();
 
-	int buff_size = (rings + 1) * (segments + 1);
+	int buffSize = (rings + 1) * (segments + 1);
 	Vector3v vertexs; Vector3v normals; Vector2v texcoords;
-	vertexs.Reserve(buff_size); normals.Reserve(buff_size); texcoords.Reserve(buff_size);
+	vertexs.Reserve(buffSize); normals.Reserve(buffSize); texcoords.Reserve(buffSize);
 
 	//顶点信息
 	{
@@ -54,7 +54,7 @@ void SphereRender::SetSphere(ushort segments, ushort rings)
 
 	//索引信息
 	{
-		uint* indexs = NewArray<uint>(segments * rings * 6);
+		uint* indexs = Memory::NewArray<uint>(segments * rings * 6);
 		int iPerEdgeVerCount = segments + 1;
 		int q = 0; int index = 0;
 		for (ushort j = 0; j < segments; j += 1)
@@ -73,7 +73,7 @@ void SphereRender::SetSphere(ushort segments, ushort rings)
 			q++;
 		}
 		this->SetIndices(segments * rings * 6, indexs);
-		DeleteArray(indexs);
+		Memory::DeleteArray(indexs);
 	}
 
 	this->UploadData();

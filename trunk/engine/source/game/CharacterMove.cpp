@@ -1,4 +1,4 @@
-#include "CharacterMove.h"
+﻿#include "CharacterMove.h"
 #include "runtime/input/Input.h"
 #include "runtime/physics/CharacterController.h"
 #include "runtime/Application.h"
@@ -53,8 +53,8 @@ void CharacterMove::OnDrawEditor()
 	base::OnDrawEditor();
 
 	ImGuiEx::Label("MoveSpeed");
-	float min_value = 0.0f;
-	ImGui::DragScalar("##MoveSpeed", ImGuiDataType_Float, &_moveSpeed, 0.01f, &min_value);
+	float minValue = 0.0f;
+	ImGui::DragScalar("##MoveSpeed", ImGuiDataType_Float, &_moveSpeed, 0.01f, &minValue);
 }
 /********************************************************************/
 INSTANTIATE_TEMPLATE_TRANSFER_WITH_DECL(CharacterMove);

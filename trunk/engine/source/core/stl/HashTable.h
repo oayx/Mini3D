@@ -13,7 +13,7 @@ DC_BEGIN_NAMESPACE
 class HashFunc_String
 {
 public:
-	int operator()(const std::string & key)
+	int operator()(const std::string & key) noexcept
 	{
 		int hash = 0;
 		for (int i = 0; i < key.length(); ++i)
@@ -28,7 +28,7 @@ public:
 class EqualKey_String
 {
 public:
-	bool operator()(const std::string & A, const std::string & B)
+	bool operator()(const std::string & A, const std::string & B) noexcept
 	{
 		if (A.compare(B) == 0)
 			return true;
@@ -55,7 +55,7 @@ public:
 	{
 
 	}
-	HashNode& operator=(const HashNode& node)
+	HashNode& operator=(const HashNode& node) noexcept
 	{
 		_key = node._key;
 		_value = node._value;
@@ -65,39 +65,39 @@ public:
 };
 /********************************************************************/
 template <class Key, class Value, class HashFunc, class EqualKey>
-class HashTable Final : public object
+class HashTable final : public object
 {
 	DISALLOW_COPY_ASSIGN(HashTable);
 
 public:
 	HashTable(int size);
 	~HashTable();
-	bool Insert(const Key& key, const Value& value);
-	bool Remove(const Key& key);
-	Value& Find(const Key& key);
-	Value& operator [](const Key& key);
+	bool Insert(const Key& key, const Value& value) noexcept;
+	bool Remove(const Key& key) noexcept;
+	Value& Find(const Key& key) noexcept;
+	Value& operator [](const Key& key) noexcept;
 
 private:
-	HashFunc m_hash;
-	EqualKey m_equal;
-	HashNode<Key, Value> **m_table;
-	uint m_size;
+	HashFunc _hash;
+	EqualKey _equal;
+	HashNode<Key, Value> **_table;
+	uint _size;
 	Value ValueNULL;
 };
 
 template <class Key, class Value, class HashFunc, class EqualKey>
-HashTable<Key, Value, HashFunc, EqualKey>::HashTable(int size) : m_size(size), m_hash(), m_equal()
+HashTable<Key, Value, HashFunc, EqualKey>::HashTable(int size) : _size(size), _hash(), _equal()
 {
-	m_table = new HashNode<Key, Value>*[m_size];
-	for (unsigned i = 0; i < m_size; i++)
-		m_table[i] = NULL;
+	_table = new HashNode<Key, Value>*[_size];
+	for (unsigned i = 0; i < _size; i++)
+		_table[i] = NULL;
 }
 template <class Key, class Value, class HashFunc, class EqualKey>
 HashTable<Key, Value, HashFunc, EqualKey>::~HashTable()
 {
-	for (unsigned i = 0; i < m_size; i++)
+	for (unsigned i = 0; i < _size; i++)
 	{
-		HashNode<Key, Value> *currentNode = m_table[i];
+		HashNode<Key, Value> *currentNode = _table[i];
 		while (currentNode)
 		{
 			HashNode<Key, Value> *temp = currentNode;
@@ -105,22 +105,22 @@ HashTable<Key, Value, HashFunc, EqualKey>::~HashTable()
 			delete temp;
 		}
 	}
-	delete[] m_table;
+	delete[] _table;
 }
 template <class Key, class Value, class HashFunc, class EqualKey>
-bool HashTable<Key, Value, HashFunc, EqualKey>::Insert(const Key& key, const Value& value)
+bool HashTable<Key, Value, HashFunc, EqualKey>::Insert(const Key& key, const Value& value) noexcept
 {
-	int index = m_hash(key) % m_size;
+	int index = _hash(key) % _size;
 	HashNode<Key, Value> * node = new HashNode<Key, Value>(key, value);
-	node->next = m_table[index];
-	m_table[index] = node;
+	node->next = _table[index];
+	_table[index] = node;
 	return true;
 }
 template <class Key, class Value, class HashFunc, class EqualKey>
-bool HashTable<Key, Value, HashFunc, EqualKey>::Remove(const Key& key)
+bool HashTable<Key, Value, HashFunc, EqualKey>::Remove(const Key& key) noexcept
 {
-	unsigned index = m_hash(key) % m_size;
-	HashNode<Key, Value> * node = m_table[index];
+	unsigned index = _hash(key) % _size;
+	HashNode<Key, Value> * node = _table[index];
 	HashNode<Key, Value> * prev = NULL;
 	while (node)
 	{
@@ -128,7 +128,7 @@ bool HashTable<Key, Value, HashFunc, EqualKey>::Remove(const Key& key)
 		{
 			if (prev == NULL)
 			{
-				m_table[index] = node->next;
+				_table[index] = node->next;
 			}
 			else
 			{
@@ -143,14 +143,14 @@ bool HashTable<Key, Value, HashFunc, EqualKey>::Remove(const Key& key)
 	return false;
 }
 template <class Key, class Value, class HashFunc, class EqualKey>
-Value& HashTable<Key, Value, HashFunc, EqualKey>::Find(const Key& key)
+Value& HashTable<Key, Value, HashFunc, EqualKey>::Find(const Key& key) noexcept
 {
-	unsigned  index = m_hash(key) % m_size;
-	if (m_table[index] == NULL)
+	unsigned  index = _hash(key) % _size;
+	if (_table[index] == NULL)
 		return ValueNULL;
 	else
 	{
-		HashNode<Key, Value> * node = m_table[index];
+		HashNode<Key, Value> * node = _table[index];
 		while (node)
 		{
 			if (node->_key == key)
@@ -161,7 +161,7 @@ Value& HashTable<Key, Value, HashFunc, EqualKey>::Find(const Key& key)
 	}
 }
 template <class Key, class Value, class HashFunc, class EqualKey>
-Value& HashTable<Key, Value, HashFunc, EqualKey>::operator [](const Key& key)
+Value& HashTable<Key, Value, HashFunc, EqualKey>::operator [](const Key& key) noexcept
 {
 	return Find(key);
 }

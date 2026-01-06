@@ -68,12 +68,15 @@ bool GLDevice::CreateDevice(RenderWindow* window)
 #if defined(DC_PLATFORM_WIN32)
 		_shaderModel = GLShaderModel::SM_30;
 		_shaderVersion = "300";
+#else
+		Debuger::Error("glGetString(GL_VERSION) is null");
 #endif
 	}
 #elif defined(DC_GRAPHICS_API_OPENGL)
 	GLint major, minor;
 	GL_ERROR(glGetIntegerv(GL_MAJOR_VERSION, &major));
 	GL_ERROR(glGetIntegerv(GL_MINOR_VERSION, &minor));
+	Debuger::Log("GL_MAJOR_VERSION:%d,GL_MINOR_VERSION:%d", (int)major, (int)minor);
 	switch (major)
 	{
 	case 1:

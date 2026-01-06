@@ -1,4 +1,4 @@
-#include "DX9RenderTexture.h"
+﻿#include "DX9RenderTexture.h"
 #include "DX9Device.h"
 #include "DX9Caps.h"
 #include "DX9RenderContent.h"
@@ -29,13 +29,13 @@ void DX9RenderTexture::BeginFrame(RenderFrameDesc& desc)
 	AssertEx(desc.face < (_textureType == TextureType::Cube ? 6 : 1), "");
 
 	if (_flags & TextureFlag::STENCIL)
-		desc.clear_flag |= ClearFlag::Stencil;
+		desc.clearFlag |= ClearFlag::Stencil;
 	else
-		desc.clear_flag ^= ClearFlag::Stencil;
+		desc.clearFlag ^= ClearFlag::Stencil;
 
-	desc.view_port.Set((float)_imageWidth, (float)_imageHeight);
-	desc.target_buffer = _colorSurface[desc.face];
-	desc.depth_stencil_buffer = _depthStencilSurface;
+	desc.viewPort.Set((float)_imageWidth, (float)_imageHeight);
+	desc.targetBuffer = _colorSurface[desc.face];
+	desc.depthStencilBuffer = _depthStencilSurface;
 	base::BeginFrame(desc);
 }
 bool DX9RenderTexture::GetData(MemoryDataStream& stream)
@@ -67,7 +67,7 @@ bool DX9RenderTexture::GetData(MemoryDataStream& stream)
 		{//复制数据
 			byte* s_bits = (byte*)lock_desc.pBits;
 			stream.Resize(lock_desc.Pitch * _imageHeight);
-			Memory::Copy(stream.data(), s_bits, lock_desc.Pitch * _imageHeight);
+			Memory::Copy(stream.Buffer(), s_bits, lock_desc.Pitch * _imageHeight);
 		}
 		surface->UnlockRect();
 	} while (false);
@@ -93,7 +93,7 @@ bool DX9RenderTexture::Copy(Texture* dst)
 		MemoryDataStream stream;
 		if (this->GetData(stream))
 		{
-			Memory::Copy(bits, stream.data(), stream.Size());
+			Memory::Copy(bits, stream.Buffer(), stream.Size());
 		}
 	}
 	dst->Unlock(lock_desc);
@@ -102,8 +102,8 @@ bool DX9RenderTexture::Copy(Texture* dst)
 }
 void DX9RenderTexture::SaveToFile(const String& name, ImageType format)
 {
-	std::wstring w_path = Encoding::Utf8ToWChar(name.c_str(), name.Size());
-	HRESULT hr = D3DXSaveTextureToFileW(w_path.c_str(), DX9GetImageType(format), _colorTexture, NULL);
+	std::wstring wPath = Encoding::Utf8ToWChar(name.c_str(), name.Size());
+	HRESULT hr = D3DXSaveTextureToFileW(wPath.c_str(), DX9GetImageType(format), _colorTexture, NULL);
 	if (FAILED(hr))
 	{
 		Debuger::Error("D3DXSaveTextureToFile 失败(%s)", name.c_str());
@@ -167,7 +167,6 @@ void DX9RenderTexture::CreateRenderTarget()
 }
 void DX9RenderTexture::CreateDepthStencil()
 {
-	D3DFORMAT format = DX9GetDepthStencilFormat(_imageFormat, _flags);
 	D3DMULTISAMPLE_TYPE msaa = D3DMULTISAMPLE_TYPE::D3DMULTISAMPLE_NONE;
 	if (_flags & TextureFlag::MSAA)
 	{

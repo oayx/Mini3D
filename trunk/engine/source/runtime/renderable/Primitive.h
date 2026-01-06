@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Date：2009/12/8
@@ -55,7 +55,7 @@ struct SubPrimitive
 		case PrimitiveType::TriangleStrip:
 			primCount = ElemCount - 2;
 			break;
-		case PrimitiveType::TriangleFun:
+		case PrimitiveType::TriangleFan:
 			primCount = ElemCount - 2;
 			break;
 		}
@@ -69,7 +69,7 @@ class Primitive : public Object
 	typedef Vector<SubPrimitive> SubPrimitives;
 	DISALLOW_COPY_ASSIGN(Primitive);
 	BEGIN_DERIVED_REFECTION_TYPE(Primitive, Object)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 public:
 	static Primitive* Create(Renderer* renderer, PrimitiveType type, VertexLayout layout = VertexLayout::Variable);
@@ -91,7 +91,7 @@ public:
 	void				SetIndices(const Vector<uint>&& indices) { _indexes = std::move(indices); }
 	void				SetIndices(uint index_nums, uint *index);
 
-	SubPrimitive&		AddSubPrimitive(uint elem_count, uint vtx_offset, uint idx_offset, uint start_vertex, uint start_index);
+	SubPrimitive&		AddSubPrimitive(uint elem_count, uint vtx_offset, uint idxOffset, uint start_vertex, uint start_index);
 	void				ClearSubPrimitive() { _subPrimitives.Clear(); }
 	void				SetPrimitiveType(PrimitiveType type) { _primitiveType = type; }
 	PrimitiveType		GetPrimitiveType()const { return _primitiveType; }
@@ -140,7 +140,7 @@ class VariablePrimitive : public Primitive
 {
 	DISALLOW_COPY_ASSIGN(VariablePrimitive);
 	BEGIN_DERIVED_REFECTION_TYPE(VariablePrimitive, Primitive)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 public:
 	VariablePrimitive(Renderer* renderer, PrimitiveType type);
@@ -217,7 +217,7 @@ public:
 	virtual bool		UploadData(const PrimitiveUploadDesc& desc)override;
 	virtual void		ClearData()override;
 
-	virtual int			GetVertexCount() { return _vertexSize; }
+	virtual int			GetVertexCount()override { return _vertexSize; }
 	virtual bool		IsEmpty()const override { return _vertexSize == 0; }
 
 public:
@@ -240,7 +240,7 @@ protected:
 template<class T>
 bool FixedPrimitive<T>::UploadData(const PrimitiveUploadDesc& desc)
 {
-	DC_PROFILE_FUNCTION();
+	DC_PROFILE_FUNCTION;
 	if (IsEmpty())
 	{
 		return false;
@@ -302,7 +302,7 @@ void FixedPrimitive<T>::SetVertexSize(int size)
 template<class T>
 void FixedPrimitive<T>::AddVertexDecl()
 {
-	DC_PROFILE_FUNCTION();
+	DC_PROFILE_FUNCTION;
 	_vertexData->ClearElement();
 	{
 		int offset = 0;
@@ -332,7 +332,7 @@ void FixedPrimitive<T>::AddVertexDecl()
 template<class T>
 void FixedPrimitive<T>::BuildVertexBuffer(const PrimitiveUploadDesc& desc)
 {
-	DC_PROFILE_FUNCTION();
+	DC_PROFILE_FUNCTION;
 	//包围盒
 	//TODO
 	Vector3 min = -Vector3::one, max = Vector3::one;

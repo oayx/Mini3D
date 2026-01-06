@@ -1,4 +1,4 @@
-#include "AnimationNode.h"
+﻿#include "AnimationNode.h"
 #include "Animation.h"
 #include "AnimationClip.h"
 #include "KeyFrame.h"
@@ -22,24 +22,24 @@ AnimationNode::~AnimationNode()
 	_parent = nullptr;
 	_childrens.Clear();
 
-	for (auto key_frame : _keyFrames)
+	for (auto keyFrame : _keyFrames)
 	{
-		SAFE_DELETE(key_frame);
+		SAFE_DELETE(keyFrame);
 	}
 	_keyFrames.Clear();
 }
-void AnimationNode::Interpolated(float time, BoneKeyFrames& bone_keyframes)
+void AnimationNode::Interpolated(float time, BoneKeyFrames& boneKeyframes)
 {
 	if (_keyFrames.Size() > 0)
 	{
-		this->InterpolatedTransfrom(time, bone_keyframes);
+		this->InterpolatedTransfrom(time, boneKeyframes);
 	}
-	for (const auto& child_node : _childrens)
+	for (const auto& childNode : _childrens)
 	{
-		child_node->Interpolated(time, bone_keyframes);
+		childNode->Interpolated(time, boneKeyframes);
 	}
 }
-void AnimationNode::InterpolatedTransfrom(float time, BoneKeyFrames& bone_keyframes)
+void AnimationNode::InterpolatedTransfrom(float time, BoneKeyFrames& boneKeyframes)
 {
 	AssertEx(_keyFrames.Size() > 0, "");
 	Vector3 position; Vector3 scale; Quaternion rotate;
@@ -91,7 +91,7 @@ void AnimationNode::InterpolatedTransfrom(float time, BoneKeyFrames& bone_keyfra
 	if (_bone)
 	{
 		BoneKeyFrame keyframe = { position, scale, rotate };
-		bone_keyframes[_bone->Id] = keyframe;
+		boneKeyframes[_bone->Id] = keyframe;
 	}
 }
 void AnimationNode::AddChildren(AnimationNode* node)
@@ -102,9 +102,9 @@ void AnimationNode::AddChildren(AnimationNode* node)
 }
 KeyFrame* AnimationNode::CreateKeyFrame(uint time)
 {
-	KeyFrame* key_frame = KeyFrame::Create(time);
-	_keyFrames.Add(key_frame);
-	return key_frame;
+	KeyFrame* keyFrame = KeyFrame::Create(time);
+	_keyFrames.Add(keyFrame);
+	return keyFrame;
 }
 uint AnimationNode::FindKeyFrame(float time)const
 {
@@ -117,30 +117,30 @@ uint AnimationNode::FindKeyFrame(float time)const
 	}
 	return (uint)_keyFrames.Size() - 1;//最后一帧
 }
-void AnimationNode::ClipAnimation(Mesh* mesh, AnimationClip* clip, AnimationNode* parent_node, const ClipAnimationDesc& clip_info)
+void AnimationNode::ClipAnimation(Mesh* mesh, AnimationClip* clip, AnimationNode* parentNode, const ClipAnimationDesc& clipInfo)
 {
 	//复制当前节点
-	AnimationNode* animation_node = clip->CreateNode(mesh, this->_name);
-	animation_node->SetBone(this->_bone);
-	animation_node->SetTransfrom(this->_transfrom);
-	if (parent_node == nullptr)
+	AnimationNode* animationNode = clip->CreateNode(mesh, this->_name);
+	animationNode->SetBone(this->_bone);
+	animationNode->SetTransfrom(this->_transfrom);
+	if (parentNode == nullptr)
 	{
-		clip->SetRootNode(animation_node);
+		clip->SetRootNode(animationNode);
 	}
 	else
 	{
-		parent_node->AddChildren(animation_node);
+		parentNode->AddChildren(animationNode);
 	}
 	//复制动画数据
-	for (uint i = 0, j = clip_info.StartFrame; i < clip_info.EndFrame - clip_info.StartFrame && j < (uint)_keyFrames.Size(); ++i, ++j)
+	for (uint i = 0, j = clipInfo.StartFrame; i < clipInfo.EndFrame - clipInfo.StartFrame && j < (uint)_keyFrames.Size(); ++i, ++j)
 	{
-		KeyFrame* frame = animation_node->CreateKeyFrame(i);
+		KeyFrame* frame = animationNode->CreateKeyFrame(i);
 		frame->Copy(this->_keyFrames[j]);
 	}
 	//子节点
-	for (AnimationNode* child_node : this->_childrens)
+	for (AnimationNode* childNode : this->_childrens)
 	{
-		child_node->ClipAnimation(mesh, clip, animation_node, clip_info);
+		childNode->ClipAnimation(mesh, clip, animationNode, clipInfo);
 	}
 }
 DC_END_NAMESPACE

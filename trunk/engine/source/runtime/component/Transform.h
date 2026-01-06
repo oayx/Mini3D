@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Date：2009/12/8
@@ -25,7 +25,7 @@ class ENGINE_DLL Transform : public Component
 	BEGIN_DERIVED_REFECTION_TYPE(Transform, Component)
 		CTORS(DEFAULT_CTOR(Transform))
 		INSERT_TYPE_FLAGS(TypeFlag::ShowInEditor)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 protected:
 	Transform();

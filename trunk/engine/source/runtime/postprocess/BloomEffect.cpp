@@ -1,4 +1,4 @@
-#include "BloomEffect.h"
+﻿#include "BloomEffect.h"
 #include "runtime/input/Input.h"
 #include "runtime/graphics/Material.h"
 #include "runtime/graphics/Pass.h"
@@ -18,11 +18,11 @@ BloomEffect::~BloomEffect()
 {
 	SAFE_RELEASE(_material);
 }
-Object* BloomEffect::Clone(Object* new_obj)
+Object* BloomEffect::Clone(Object* newObj)
 {
-	base::Clone(new_obj);
-	BloomEffect* obj = dynamic_cast<BloomEffect*>(new_obj);
-	if (!obj)return new_obj;
+	base::Clone(newObj);
+	BloomEffect* obj = dynamic_cast<BloomEffect*>(newObj);
+	if (!obj)return newObj;
 
 	obj->_colorThreshold = _colorThreshold;
 	obj->_bloomColor = _bloomColor;

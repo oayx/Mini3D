@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2009/11/21
@@ -11,20 +11,19 @@
 
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-class DX11Texture Final : public Texture
+class DX11Texture final : public Texture
 {
 	friend class DX11Device;
 	DEFAULT_CREATE(DX11Texture);
 	FRIEND_CONSTRUCT_DESTRUCT(DX11Texture);
 	DISALLOW_CONSTRUCTOR_COPY_ASSIGN(DX11Texture);
 	BEGIN_DERIVED_REFECTION_TYPE(DX11Texture, Texture)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
-protected:
 	DX11Texture(const TextureDesc& desc);
+	~DX11Texture();
 
 public:
-	~DX11Texture();
 	virtual bool  Fill(Image* image)override;
 	virtual byte* Lock(TextureLockDesc& lock_desc)override;
 	virtual void  Unlock(const TextureLockDesc& lock_desc)override;

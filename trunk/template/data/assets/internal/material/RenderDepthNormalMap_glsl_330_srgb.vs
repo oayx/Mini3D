@@ -37,13 +37,13 @@ uniform type_CameraBuffer CameraBuffer;
 
 layout(location = 0) in vec4 in_var_POSITION;
 layout(location = 1) in vec3 in_var_NORMAL;
-layout(location = 0) out float out_var_TEXCOORD0;
-layout(location = 1) out vec3 out_var_TEXCOORD1;
+layout(location = 0) out float var_TEXCOORD0;
+layout(location = 1) out vec3 var_TEXCOORD1;
 
 void main()
 {
     gl_Position = in_var_POSITION * TransformBuffer.MATRIX_MVP;
-    out_var_TEXCOORD0 = (in_var_POSITION * TransformBuffer.MATRIX_MV).z * CameraBuffer._ProjectionParams.w;
-    out_var_TEXCOORD1 = normalize(in_var_NORMAL * mat3(TransformBuffer.MATRIX_IT_MV[0].xyz, TransformBuffer.MATRIX_IT_MV[1].xyz, TransformBuffer.MATRIX_IT_MV[2].xyz));
+    var_TEXCOORD0 = (in_var_POSITION * TransformBuffer.MATRIX_MV).z * CameraBuffer._ProjectionParams.w;
+    var_TEXCOORD1 = normalize(in_var_NORMAL * mat3(TransformBuffer.MATRIX_IT_MV[0].xyz, TransformBuffer.MATRIX_IT_MV[1].xyz, TransformBuffer.MATRIX_IT_MV[2].xyz));
 }
 

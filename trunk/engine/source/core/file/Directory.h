@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2009/11/20
@@ -22,13 +22,15 @@ DECLARE_ENUM_OPERATORS(SearchOption);
 
 /********************************************************************/
 // 文件夹
-class ENGINE_DLL Directory Final : public object
+class ENGINE_DLL Directory final : public object
 {
 	DISALLOW_CONSTRUCTOR_COPY_ASSIGN(Directory);
 	BEGIN_REFECTION_TYPE(Directory)
 	END_FINAL_REFECTION_TYPE;
 	
 public:
+	//递归创建多级目录
+	//如果某个目录无法创建，它将继续创建其余目录
 	static bool Create(const String& path);
 	static bool Delete(const String& path);
 
@@ -36,12 +38,17 @@ public:
 	static bool IsDirectory(const String& path);
 
 	//如果det_path已存在，则det_path必须是一个目录，而且该目录应当是空目录（空目录指的是该目录中只有.和..项）
-	//如果det_path存在（而且是一个空目录），则先将其删除，然后将src_path更名为det_path
-	static bool Move(const String& src_path, const String& det_path);
+	//如果det_path存在（而且是一个空目录），则先将其删除，然后将srcPath更名为det_path
+	static bool Move(const String& srcPath, const String& det_path);
+	//重命名
+	//new_name:新文件名，不用带目录
+	static bool Rename(const String& srcPath, const String& new_name);
 
+	//默认递归获得所有子目录
 	static void GetDirectorys(const String& path, SearchOption op, VecString& list);
+	//默认递归获得所有子目录+文件信息
 	static void GetFiles(const String& path, SearchOption op, VecString& list);
-	//默认递归获得所有子目录信息
-	static void GetFiles(const String& path, SearchOption op, Vector<FileInfo>& list);
+	//默认递归获得所有子目录+文件信息
+	static void GetFileInfos(const String& path, SearchOption op, Vector<FileInfo>& list);
 };//Directory
 DC_END_NAMESPACE

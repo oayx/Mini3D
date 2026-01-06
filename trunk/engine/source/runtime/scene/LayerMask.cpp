@@ -1,15 +1,9 @@
-#include "LayerMask.h"
+﻿#include "LayerMask.h"
 #include "runtime/resources/Resources.h"
 
 DC_BEGIN_NAMESPACE
 static const String LayerFilePath = "settings/LayerManager.asset";
 /********************************************************************/
-String LayerMask::Default = "Default";
-String LayerMask::UI = "UI";
-String LayerMask::IgnoreRaycast = "IgnoreRaycast";
-LayerMask::Layeres LayerMask::_layeres;
-uint LayerMask::Nothing = 0;
-uint LayerMask::Everything = 4294967295;
 bool LayerMask::SetLayerName(int layer, const String& name)
 {
 	if (layer < 5 || layer >= 32)return false;
@@ -86,8 +80,8 @@ uint LayerMask::GetAllMask()
 void LayerMask::Load()
 {
 	_layeres.Clear();
-	String full_path = Resource::GetFullDataPath(LayerFilePath);
-	SerializeRead transfer(full_path);
+	String fullPath = Resource::GetFullDataPath(LayerFilePath);
+	SerializeRead transfer(fullPath);
 	{
 		if (transfer.Push("Layeres"))
 		{
@@ -107,8 +101,8 @@ void LayerMask::Load()
 }
 void LayerMask::Save()
 {
-	String full_path = Resource::GetFullDataPath(LayerFilePath);
-	SerializeWrite transfer(full_path);
+	String fullPath = Resource::GetFullDataPath(LayerFilePath);
+	SerializeWrite transfer(fullPath);
 	if (transfer.Push("Layeres"))
 	{
 		TRANSFER_VECTOR(_layeres, "Layer");

@@ -1,0 +1,15 @@
+<Material>
+    <Tag>
+        <CastShadow>false</CastShadow>
+        <ReceiveShadow>false</ReceiveShadow>
+    </Tag>
+    <TextureUnits>
+        <TextureUnit>
+            <Name>_MainTex</Name>
+            <File>2affd1469b9aa5a985ae4ead9b20d785</File>
+            <Scale>1.000000, 1.000000</Scale>
+            <Offset>0.000000, 0.000000</Offset>
+        </TextureUnit>
+    </TextureUnits> 
+    <Shader><ShaderFile>internal/material/ParticleAlphaBlend.shader</ShaderFile></Shader>
+</Material>

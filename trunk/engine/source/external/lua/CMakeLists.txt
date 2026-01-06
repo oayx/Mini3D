@@ -1,4 +1,6 @@
-﻿set(ENGINE_EXTERNAL_LUA_SRC
+﻿message("当前CMakeLists目录: ${CMAKE_CURRENT_SOURCE_DIR}")
+
+set(ENGINE_EXTERNAL_LUA_SRC
 	source/external/lua/lua/lapi.c
 	source/external/lua/lua/lauxlib.c
 	source/external/lua/lua/lbaselib.c

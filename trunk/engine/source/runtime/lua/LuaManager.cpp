@@ -5,7 +5,6 @@
 DC_BEGIN_NAMESPACE
 /********************************************************************/
 IMPL_REFECTION_TYPE(LuaManager);
-lua_State* LuaManager::_luaState = nullptr;
 void LuaManager::Initialize()
 {
 	_luaState = luaL_newstate();
@@ -45,7 +44,7 @@ bool LuaManager::DoString(const String &str)
 	}
 	return true;
 }
-bool LuaManager::DoFun(const String& fun, const char* param_format, ...)
+bool LuaManager::DoFun(const String& fun, const char* paramFormat, ...)
 {
 	if (fun.IsEmpty())
 	{
@@ -61,26 +60,26 @@ bool LuaManager::DoFun(const String& fun, const char* param_format, ...)
 	}
 
 	bool result = true;
-	bool has_param = param_format ? true : false;
-	bool has_ret = has_param;
+	bool hasParam = paramFormat ? true : false;
+	bool hasRet = hasParam;
 
 	char buf[256] = { 0 };
 	va_list param;
-	if (has_param || has_ret)
+	if (hasParam || hasRet)
 	{
-		va_start(param, param_format);
-		vsprintf(buf, param_format, param);
+		va_start(param, paramFormat);
+		vsprintf(buf, paramFormat, param);
 	}
 
 	do 
 	{
 		//处理输入参数
 		int arg_num = 0;
-		if (has_param)
+		if (hasParam)
 		{
-			while (*param_format)
+			while (*paramFormat)
 			{
-				switch (*param_format++)
+				switch (*paramFormat++)
 				{
 				case 'i': // int argument
 				{
@@ -96,7 +95,7 @@ bool LuaManager::DoFun(const String& fun, const char* param_format, ...)
 				break;
 				case 'f': // float argument
 				{
-					float val = va_arg(param, float);
+					float val = (float)va_arg(param, double);
 					lua_pushnumber(_luaState, LUA_NUMBER(val));
 				}
 				break;
@@ -137,9 +136,9 @@ ret_proc:
 		if (!result)break;
 
 		//执行函数
-		int ret_num = 0;
-		if (has_ret)ret_num = (int)strlen(param_format);
-		if (lua_pcall(_luaState, arg_num, ret_num, -1 - arg_num - 1) != 0)
+		int retNum = 0;
+		if (hasRet)retNum = (int)strlen(paramFormat);
+		if (lua_pcall(_luaState, arg_num, retNum, -1 - arg_num - 1) != 0)
 		{
 			const char* szErrInfo = lua_tostring(_luaState, -1);
 			Debuger::Error("LuaManager::DoFun - lua_pcall error : %s", szErrInfo);
@@ -148,51 +147,51 @@ ret_proc:
 		}
 
 		//处理返回值
-		if (has_ret)
+		if (hasRet)
 		{
-			ret_num = -ret_num;
+			retNum = -retNum;
 			int ret_count = 0;
-			while (*param_format && result)
+			while (*paramFormat && result)
 			{
 				ret_count++;
-				switch (*param_format++)
+				switch (*paramFormat++)
 				{
 				case 'i':
 				case 'u':
 				{
-					int t = lua_type(_luaState, ret_num);
-					if (lua_type(_luaState, ret_num) != LUA_TNUMBER)
+					int t = lua_type(_luaState, retNum);
+					if (t != LUA_TNUMBER)
 					{
 						Debuger::Error("LuaManager::DoFun - function(%s) param(%d) is invalid\n", fun.c_str(), ret_count);
 					}
-					*va_arg(param, int*) = (int)lua_tonumber(_luaState, ret_num);
+					*va_arg(param, int*) = (int)lua_tonumber(_luaState, retNum);
 				}
 				break;
 				case 'f':
 				{
-					if (lua_type(_luaState, ret_num) != LUA_TNUMBER)
+					if (lua_type(_luaState, retNum) != LUA_TNUMBER)
 					{
 						Debuger::Error("LuaManager::DoFun - function(%s) param(%d) is invalid\n", fun.c_str(), ret_count);
 					}
-					*va_arg(param, float*) = (float)lua_tonumber(_luaState, ret_num);
+					*va_arg(param, float*) = (float)lua_tonumber(_luaState, retNum);
 				}
 				break;
 				case 'p':
 				{
-					if (lua_type(_luaState, ret_num) != LUA_TLIGHTUSERDATA)
+					if (lua_type(_luaState, retNum) != LUA_TLIGHTUSERDATA)
 					{
 						Debuger::Error("LuaManager::DoFun - function(%s) param(%d) is invalid\n", fun.c_str(), ret_count);
 					}
-					*va_arg(param, int**) = (int*)lua_touserdata(_luaState, ret_num);
+					*va_arg(param, int**) = (int*)lua_touserdata(_luaState, retNum);
 				}
 				break;
 				case 's':
 				{
-					if (lua_type(_luaState, ret_num) != LUA_TSTRING)
+					if (lua_type(_luaState, retNum) != LUA_TSTRING)
 					{
 						Debuger::Error("LuaManager::DoFun - function(%s) param(%d) is invalid\n", fun.c_str(), ret_count);
 					}
-					strcpy(va_arg(param, char*), lua_tostring(_luaState, ret_num));
+					strcpy(va_arg(param, char*), lua_tostring(_luaState, retNum));
 				}
 				break;
 				default:
@@ -200,12 +199,12 @@ ret_proc:
 					result = false;
 					break;
 				}
-				ret_num++;
+				retNum++;
 			}
 		}
 	} while (false);
 
-	if (has_param || has_ret)
+	if (hasParam || hasRet)
 		va_end(param);
 
 	lua_settop(_luaState, 0);

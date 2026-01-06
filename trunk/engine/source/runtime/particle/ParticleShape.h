@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2021/1/5
@@ -12,7 +12,7 @@ DC_BEGIN_NAMESPACE
 class Particle;
 class ParticleSystem;
 /********************************************************************/
-class ENGINE_DLL ParticleShape Final : public Object
+class ENGINE_DLL ParticleShape final : public Object
 {
 	friend class GameObject;
 	friend class ParticleSystem;
@@ -20,7 +20,7 @@ class ENGINE_DLL ParticleShape Final : public Object
 	DISALLOW_COPY_ASSIGN(ParticleShape);
 	BEGIN_DERIVED_REFECTION_TYPE(ParticleShape, Object)
 		CTORS(DEFAULT_CTOR(ParticleShape))
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 	ParticleShape() = default;
 

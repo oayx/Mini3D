@@ -1,4 +1,4 @@
-#ifndef BT_TYPE_DEFINITIONS_H
+﻿#ifndef BT_TYPE_DEFINITIONS_H
 #define BT_TYPE_DEFINITIONS_H
 
 ///This file provides some platform/compiler checks for common definitions
@@ -37,15 +37,18 @@ typedef union
 		typedef unsigned char     uint8_t;
 #ifndef __PHYSICS_COMMON_H__
 #ifndef PFX_USE_FREE_VECTORMATH
+#ifndef uint64_t
 #ifndef __BT_SKIP_UINT64_H
 #if defined(_WIN64) && defined(_MSC_VER)
 		typedef unsigned __int64 uint64_t;
 #elif defined(_M_ARM)
-        typedef unsigned __int64 uint64_t;
+		typedef unsigned __int64 uint64_t;
 #else
-		typedef unsigned long int uint64_t;
+		typedef unsigned long long uint64_t;
 #endif
 #endif //__BT_SKIP_UINT64_H
+#endif
+
 #endif //PFX_USE_FREE_VECTORMATH
 		typedef unsigned int      uint32_t;
 #endif //__PHYSICS_COMMON_H__

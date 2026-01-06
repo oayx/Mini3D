@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Description：性能分析
@@ -6,7 +6,7 @@
 #pragma once
 
 #include "core/BaseType.h"
-#include "tracy/Tracy.hpp"
+#include "tracy/tracy/Tracy.hpp"
 
 DC_BEGIN_NAMESPACE
 /********************************************************************/

@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2021/6/18
@@ -10,7 +10,7 @@
 
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-class ENGINE_DLL MotionBlurEffect Final : public PostEffect
+class ENGINE_DLL MotionBlurEffect final : public PostEffect
 {
 	friend class PostProcess;
 	DECLARE_OBJECT_CLONE;
@@ -19,7 +19,7 @@ class ENGINE_DLL MotionBlurEffect Final : public PostEffect
 	BEGIN_DERIVED_REFECTION_TYPE(MotionBlurEffect, PostEffect)
 		CTORS(DEFAULT_CTOR(MotionBlurEffect))
 		ADD_EDITOR_COMPONENT("Motion Blur")
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 	MotionBlurEffect();
 	~MotionBlurEffect();
@@ -30,7 +30,7 @@ protected:
 
 private:
 	Material*	_material = nullptr;
-	Matrix4		m_matViewProj;
+	Matrix4		_matViewProj;
 	Vector4		_intensity = Vector4(1.0f, 0.5f, 0.0f, 0.0f);
 };
 DC_END_NAMESPACE

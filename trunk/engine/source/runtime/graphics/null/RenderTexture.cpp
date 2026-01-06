@@ -1,4 +1,4 @@
-#include "RenderTexture.h"
+﻿#include "RenderTexture.h"
 #include "runtime/Application.h"
 
 DC_BEGIN_NAMESPACE
@@ -65,10 +65,12 @@ void RenderTexture::Free()
 }
 void RenderTexture::BeginFrame(RenderFrameDesc& desc)
 {
+	DC_PROFILE_FUNCTION;
 	Application::GetGraphics()->GetRenderContent()->BeginFrame(desc);
 }
 void RenderTexture::EndFrame()
 {
+	DC_PROFILE_FUNCTION;
 	Application::GetGraphics()->GetRenderContent()->EndFrame();
 }
 DC_END_NAMESPACE

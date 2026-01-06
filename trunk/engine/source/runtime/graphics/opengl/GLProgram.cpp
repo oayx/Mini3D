@@ -22,7 +22,7 @@ static bool GL_CheckShaderSuccess(GLuint object, PFNGLGETSHADERIVPROC infoFunc, 
 	GLchar logBytes[2048];
 	logFunc(object, sizeof(logBytes) - 1, &charsWritten, logBytes);
 	logBytes[charsWritten] = 0;
-	AssertEx(false, "%s", logBytes);
+	AssertEx(false, "GL_CheckShaderSuccess:%s", logBytes);
 	return false;
 }
 static String GetCSOFile(const String& name)
@@ -50,19 +50,19 @@ static bool GL_SupportShader(GLenum shader_type)
 }
 GLuint GL_CompileShader(const String& name, const VecString& codes)
 {
-	String file_path = "";
+	String filePath = "";
 	if (GetGraphicsCaps()->useProgramBinary)
 	{
 		//查看是否有已经编译过的
-		file_path = GetCSOFile(name);
-		file_path = Resource::GetFullSavePath("gl/" + file_path + ".bin");
-		if (File::Exist(file_path))
+		filePath = GetCSOFile(name);
+		filePath = Resource::GetFullSavePath("gl/" + filePath + ".bin");
+		if (File::Exist(filePath))
 		{
 			MemoryDataStream stream;
-			if (File::ReadAllBytes(file_path, stream))
+			if (File::ReadAllBytes(filePath, stream))
 			{
 				GLuint program = glCreateProgram();
-				byte* binary = stream.data();
+				byte* binary = stream.Buffer();
 				GL_ERROR(glProgramBinary(program, *((GLenum*)binary), binary + sizeof(GLenum), stream.Size() - sizeof(GLenum)));
 
 				int linked = 0;
@@ -85,9 +85,10 @@ GLuint GL_CompileShader(const String& name, const VecString& codes)
 		if (!GL_SupportShader(shader_type))continue;
 
 		const char* shader_code = code.c_str();
-		shader_id[i] = glCreateShader(GL_ShaderType[i]);
-		glShaderSource(shader_id[i], 1, &shader_code, NULL);
-		glCompileShader(shader_id[i]);
+		//Debuger::Log(shader_code);
+		shader_id[i] = glCreateShader(GL_ShaderType[i]); GL_CHECK_ERROR();
+		glShaderSource(shader_id[i], 1, &shader_code, NULL); GL_CHECK_ERROR();
+		glCompileShader(shader_id[i]); GL_CHECK_ERROR();
 		if (!GL_CheckShaderSuccess(shader_id[i], glGetShaderiv, glGetShaderInfoLog, GL_COMPILE_STATUS))
 			shader_id[i] = 0;
 		else
@@ -95,6 +96,7 @@ GLuint GL_CompileShader(const String& name, const VecString& codes)
 	}
 	if (!has_valid_shader)
 	{
+		Debuger::Error("GL_CompileShader error:%s",name.c_str());
 		return 0;
 	}
 
@@ -109,7 +111,16 @@ GLuint GL_CompileShader(const String& name, const VecString& codes)
 		}
 	}
 	GL_ERROR(glLinkProgram(program));
-
+#if defined(DC_DEBUG)
+	GLint success;
+	glGetProgramiv(program, GL_LINK_STATUS, &success);
+	if(success != GL_TRUE)
+	{
+		GLchar infoLog[512];
+		glGetProgramInfoLog(program, 512, NULL, infoLog);
+		Debuger::Error("glLinkProgram error:%s",infoLog);	
+	}
+#endif
 	// 删除着色器，它们已经链接到我们的程序中了，已经不再需要了
 	for (int i = 0; i < int(ShaderType::Max); ++i)
 	{
@@ -125,15 +136,16 @@ GLuint GL_CompileShader(const String& name, const VecString& codes)
 		GL_ERROR(glGetProgramiv(program, GL_PROGRAM_BINARY_LENGTH, &binary_size));
 		if (binary_size > 0)
 		{
-			byte* program_binary = NewArray<byte>(binary_size + sizeof(GLenum));
+			byte* program_binary = Memory::NewArray<byte>(binary_size + sizeof(GLenum));
 			GL_ERROR(glGetProgramBinary(program, binary_size, 0, (GLenum*)program_binary, program_binary + sizeof(GLenum)));
 
-			String path = Path::GetDirectoryName(file_path);
+			String path = Path::GetDirectoryName(filePath);
 			Directory::Create(path);
-			File::WriteAllBytes(file_path, program_binary, binary_size + sizeof(GLenum));
-			DeleteArray(program_binary);
+			File::WriteAllBytes(filePath, program_binary, binary_size + sizeof(GLenum));
+			Memory::DeleteArray(program_binary);
 		}
 	}
+	GL_CHECK_ERROR();
 	return program;
 }
 /********************************************************************/
@@ -146,9 +158,9 @@ GLProgram::~GLProgram()
 		_shaderProgram = 0;
 	}
 }
-bool GLProgram::LoadFromFile(const ShaderDesc& info)
+bool GLProgram::LoadFromDesc(const ShaderDesc& info)
 {
-	base::LoadFromFile(info);
+	base::LoadFromDesc(info);
 
 	//获得编译宏
 	String defines = "";
@@ -161,7 +173,7 @@ bool GLProgram::LoadFromFile(const ShaderDesc& info)
 	VecString codes;
 	codes.Resize(int(ShaderType::Max));
 	const String& shader_version = Application::GetGraphics()->GetShaderVersion();
-	const String& language_name = ShadingLanguageFileName();
+	const String& languageName = ShadingLanguageFileName();
 	for (int i = 0; i < int(ShaderType::Max); ++i)
 	{
 		if (info.ShaderFile[i].IsEmpty())continue;
@@ -169,15 +181,15 @@ bool GLProgram::LoadFromFile(const ShaderDesc& info)
 		String pass_name = "";
 		if (info.PassIdx > 0)pass_name = String("_pass") + String::ToString(info.PassIdx);
 
-		String dir_path = Path::GetDirectoryName(info.ShaderFile[i]);
-		String file_name = Path::GetFileNameWithoutExtension(info.ShaderFile[i]);
-		String file_path = dir_path + "/" + file_name + "_" + language_name + "_" + shader_version + defines + pass_name;
+		String dirPath = Path::GetDirectoryName(info.ShaderFile[i]);
+		String fileName = Path::GetFileNameWithoutExtension(info.ShaderFile[i]);
+		String filePath = dirPath + "/" + fileName + "_" + languageName + "_" + shader_version + defines + pass_name;
 #if defined(DC_COLORSPACE_LINEAR)
-		file_path = file_path + "_sRGB";
+		filePath = filePath + "_sRGB";
 #endif
-		if (name.IsEmpty())name = file_path;
-		file_path = Resource::GetFullDataPath(file_path + ShaderFileExtEnum[i]);
-		codes[i] = File::ReadAllText(file_path);
+		if (name.IsEmpty())name = filePath;
+		filePath = Resource::GetFullDataPath(filePath + ShaderFileExtEnum[i]);
+		codes[i] = File::ReadAllText(filePath);
 	}
 
 	return LoadFromMemory(name, codes, info.ShaderDefines);
@@ -187,9 +199,8 @@ bool GLProgram::LoadFromMemory(const String& name, const VecString& codes, const
 	base::LoadFromMemory(name, codes, defines);
 	_shaderProgram = GL_CompileShader(name, codes);
 	if (_shaderProgram == 0)
-	{
 		return false;
-	}
+	
 	{//提取uniform信息
 		GLint uniform_count = 0;
 		GL_ERROR(glGetProgramiv(_shaderProgram, GL_ACTIVE_UNIFORMS, &uniform_count));

@@ -1,16 +1,19 @@
-#include "Pass.h"
+﻿#include "Pass.h"
 #include "Shader.h"
 #include "TextureUnit.h"
+#include "runtime/graphics/ShaderlabUtils.h"
 #include "runtime/graphics/GraphicsDefine.h"
 #include "runtime/graphics/null/CGProgram.h"
 #include "runtime/Application.h"
- 
+
+using namespace shaderlab;
+
 DC_BEGIN_NAMESPACE
 /********************************************************************/
 IMPL_DERIVED_REFECTION_TYPE(Pass, Object);
 Pass::Pass(Shader* shader, int pass)
-	: _shader(shader)
-	, PassIdx(pass)
+	: PassIdx(pass)
+	, _shader(shader)
 {
 }
 Pass::~Pass()
@@ -24,7 +27,7 @@ Pass::~Pass()
 	}
 	_textureUnits.Clear();
 }
-void Pass::Serialize(const PassSerialize& serialize)
+void Pass::SerializeFromInfo(const PassSerialize& serialize)
 {
 	SAFE_RELEASE(_program);
 
@@ -58,7 +61,6 @@ void Pass::Serialize(const PassSerialize& serialize)
 	{
 		SAFE_RELEASE(_program);
 
-		ShaderConfig.ShaderDefines = _shader->GetShaderDefines();
 		_program = CGProgram::Create(ShaderConfig);
 		_program->Retain();
 	}
@@ -93,15 +95,15 @@ bool Pass::SetTexture(Texture* tex)
 {
 	return SetTexture(0, "_MainTex", tex);
 }
-bool Pass::SetTexture(const String& shader_name, Texture* tex)
+bool Pass::SetTexture(const String& shaderName, Texture* tex)
 {
-	return SetTexture(0, shader_name, tex);
+	return SetTexture(0, shaderName, tex);
 }
-bool Pass::SetTexture(byte layer, const String& shader_name, Texture* tex)
+bool Pass::SetTexture(byte layer, const String& shaderName, Texture* tex)
 {
 	TextureUnit* unit = GetTexUnit(layer);
 	if (!unit)return false;
-	unit->SetTexture(shader_name, tex);
+	unit->SetTexture(shaderName, tex);
 	return true;
 }
 bool Pass::SetTexture(const ShaderTexture& info)
@@ -187,344 +189,14 @@ bool Pass::SetAlphaTest(byte layer, bool enable, float ref, StencilCmp fun)
 	return true;
 }
 /********************************************************************/
-void PassSerialize::Serialize(const String& file, tinyxml2::XMLElement* root_node)
+void PassSerialize::Serialize(const String& file, tinyxml2::XMLElement* rootNode)
 {
-	tinyxml2::XMLElement* child_node = nullptr;
-
-	//tags
-#if 1
-	child_node = root_node->FirstChildElement("Tag");
-	if (child_node)
+	Debuger::Log("PassSerialize::Serialize xml - %s", file.c_str());
+	tinyxml2::XMLElement* childNode = nullptr;
+	childNode = rootNode->FirstChildElement("CG");
+	if (childNode)
 	{
-		if (child_node->Attribute("LightMode"))
-		{
-			LightMode = child_node->Attribute("LightMode");
-		}
-	}
-#endif
-
-	//剔除模式
-#if 1
-	child_node = root_node->FirstChildElement("CullMode");
-	if (child_node)
-	{
-		if (child_node->Attribute("Type"))
-		{
-			String value = child_node->Attribute("Type");
-			if (value.Equals("off", true))Cullmode = CullMode::Off;
-			else if (value.Equals("front", true))Cullmode = CullMode::Front;
-			else if (value.Equals("back", true))Cullmode = CullMode::Back;
-			else AssertEx(false, "parse error:%s", value.c_str());
-		}
-	}
-#endif
-
-	//mask
-#if 1
-	child_node = root_node->FirstChildElement("Mask");
-	if (child_node)
-	{
-		if (child_node->Attribute("ColorMask"))
-			ColorMask = Vector4(child_node->Attribute("ColorMask"));
-	}
-#endif
-
-	//深度测试
-#if 1
-	child_node = root_node->FirstChildElement("Depth");
-	if (child_node)
-	{
-		if (child_node->Attribute("ZTest"))
-		{
-			DepthEnable = String(child_node->Attribute("ZTest")).ToBool();
-		}
-		if (child_node->Attribute("ZWrite"))
-		{
-			DepthWriteEnable = String(child_node->Attribute("ZWrite")).ToBool();
-		}
-		if (child_node->Attribute("CmpFun"))
-		{
-			String value = child_node->Attribute("CmpFun");
-			if (value.Equals("Never", true))DepthCmpFun = StencilCmp::Never;
-			else if (value.Equals("Less", true))DepthCmpFun = StencilCmp::Less;
-			else if (value.Equals("Equal", true))DepthCmpFun = StencilCmp::Equal;
-			else if (value.Equals("LessEqual", true))DepthCmpFun = StencilCmp::LessEqual;
-			else if (value.Equals("Greater", true))DepthCmpFun = StencilCmp::Greater;
-			else if (value.Equals("NotEqual", true))DepthCmpFun = StencilCmp::NotEqual;
-			else if (value.Equals("GreaterEqual", true))DepthCmpFun = StencilCmp::GreaterEqual;
-			else if (value.Equals("Always", true))DepthCmpFun = StencilCmp::Always;
-			else AssertEx(false, "parse error:%s", value.c_str());
-		}
-	}
-#endif
-
-	//Stencil
-#if 1
-	child_node = root_node->FirstChildElement("Stencil");
-	if (child_node)
-	{
-		if (child_node->Attribute("Enable"))
-		{
-			StencilEnable = Bool::FromString(child_node->Attribute("Enable"));
-		}
-		if (child_node->Attribute("CmpFun"))
-		{
-			String value = child_node->Attribute("CmpFun");
-			if (value.Equals("Never", true))StencilFunc = StencilCmp::Never;
-			else if (value.Equals("Less", true))StencilFunc = StencilCmp::Less;
-			else if (value.Equals("Equal", true))StencilFunc = StencilCmp::Equal;
-			else if (value.Equals("LessEqual", true))StencilFunc = StencilCmp::LessEqual;
-			else if (value.Equals("Greater", true))StencilFunc = StencilCmp::Greater;
-			else if (value.Equals("NotEqual", true))StencilFunc = StencilCmp::NotEqual;
-			else if (value.Equals("GreaterEqual", true))StencilFunc = StencilCmp::GreaterEqual;
-			else if (value.Equals("Always", true))StencilFunc = StencilCmp::Always;
-			else AssertEx(0, "parse error:%s", value.c_str());
-		}
-		if (child_node->Attribute("Ref"))
-		{
-			StencilRef = String(child_node->Attribute("Ref")).ToByte();
-		}
-		if (child_node->Attribute("ReadMask"))
-		{
-			StencilReadMask = String(child_node->Attribute("ReadMask")).ToByte();
-		}
-		if (child_node->Attribute("WriteMask"))
-		{
-			StencilWriteMask = String(child_node->Attribute("WriteMask")).ToByte();
-		}
-		if (child_node->Attribute("FailOp"))
-		{
-			String value = child_node->Attribute("FailOp");
-			if (value.Equals("Keep", true))StencilFailOp = StencilOp::Keep;
-			else if (value.Equals("Zero", true))StencilFailOp = StencilOp::Zero;
-			else if (value.Equals("Replace", true))StencilFailOp = StencilOp::Replace;
-			else if (value.Equals("Incr", true))StencilFailOp = StencilOp::Incr;
-			else if (value.Equals("Incr_Wrap", true))StencilFailOp = StencilOp::Incr_Wrap;
-			else if (value.Equals("Decr", true))StencilFailOp = StencilOp::Decr;
-			else if (value.Equals("Decr_Wrap", true))StencilFailOp = StencilOp::Decr_Wrap;
-			else AssertEx(0, "parse error:%s", value.c_str());
-		}
-		if (child_node->Attribute("DepthFailOp"))
-		{
-			String value = child_node->Attribute("DepthFailOp");
-			if (value.Equals("Keep", true))StencilDepthFailOp = StencilOp::Keep;
-			else if (value.Equals("Zero", true))StencilDepthFailOp = StencilOp::Zero;
-			else if (value.Equals("Replace", true))StencilDepthFailOp = StencilOp::Replace;
-			else if (value.Equals("Incr", true))StencilDepthFailOp = StencilOp::Incr;
-			else if (value.Equals("Incr_Wrap", true))StencilDepthFailOp = StencilOp::Incr_Wrap;
-			else if (value.Equals("Decr", true))StencilDepthFailOp = StencilOp::Decr;
-			else if (value.Equals("Decr_Wrap", true))StencilDepthFailOp = StencilOp::Decr_Wrap;
-			else AssertEx(0, "parse error:%s", value.c_str());
-		}
-		if (child_node->Attribute("PassOp"))
-		{
-			String value = child_node->Attribute("PassOp");
-			if (value.Equals("Keep", true))StencilPassOp = StencilOp::Keep;
-			else if (value.Equals("Zero", true))StencilPassOp = StencilOp::Zero;
-			else if (value.Equals("Replace", true))StencilPassOp = StencilOp::Replace;
-			else if (value.Equals("Incr", true))StencilPassOp = StencilOp::Incr;
-			else if (value.Equals("Incr_Wrap", true))StencilPassOp = StencilOp::Incr_Wrap;
-			else if (value.Equals("Decr", true))StencilPassOp = StencilOp::Decr;
-			else if (value.Equals("Decr_Wrap", true))StencilPassOp = StencilOp::Decr_Wrap;
-			else AssertEx(0, "parse error:%s", value.c_str());
-		}
-	}
-#endif
-
-	//Alpha混合
-#if 1
-	child_node = root_node->FirstChildElement("AlphaBlend");
-	if (child_node)
-	{
-		if (child_node->Attribute("Enable") != 0)
-		{
-			this->BlendEnable = String(child_node->Attribute("Enable")).ToBool();
-		}
-		if (child_node->Attribute("SrcBlend") != 0)
-		{
-			String value = child_node->Attribute("SrcBlend");
-			if (value.Equals("Zero", true))this->SrcBlend = AlphaBlend::Zero;
-			else if (value.Equals("One", true))this->SrcBlend = AlphaBlend::One;
-			else if (value.Equals("SrcColor", true))this->SrcBlend = AlphaBlend::SrcColor;
-			else if (value.Equals("OneMinusSrcColor", true))this->SrcBlend = AlphaBlend::OneMinusSrcColor;
-			else if (value.Equals("SrcAlpha", true))this->SrcBlend = AlphaBlend::SrcAlpha;
-			else if (value.Equals("OneMinusSrcAlpha", true))this->SrcBlend = AlphaBlend::OneMinusSrcAlpha;
-			else if (value.Equals("DstAlpha", true))this->SrcBlend = AlphaBlend::DestAlpha;
-			else if (value.Equals("InvDstAlpha", true))this->SrcBlend = AlphaBlend::OneMinusDestAlpha;
-			else if (value.Equals("DstColor", true))this->SrcBlend = AlphaBlend::DestColor;
-			else if (value.Equals("InvDstColor", true))this->SrcBlend = AlphaBlend::OneMinusDestColor;
-			else AssertEx(0, "%s", value.c_str());
-		}
-		if (child_node->Attribute("DstBlend") != 0)
-		{
-			String value = child_node->Attribute("DstBlend");
-			if (value.Equals("Zero", true))this->DstBlend = AlphaBlend::Zero;
-			else if (value.Equals("One", true))this->DstBlend = AlphaBlend::One;
-			else if (value.Equals("SrcColor", true))this->DstBlend = AlphaBlend::SrcColor;
-			else if (value.Equals("OneMinusSrcColor", true))this->DstBlend = AlphaBlend::OneMinusSrcColor;
-			else if (value.Equals("SrcAlpha", true))this->DstBlend = AlphaBlend::SrcAlpha;
-			else if (value.Equals("OneMinusSrcAlpha", true))this->DstBlend = AlphaBlend::OneMinusSrcAlpha;
-			else if (value.Equals("DstAlpha", true))this->DstBlend = AlphaBlend::DestAlpha;
-			else if (value.Equals("OneMinusDstAlpha", true))this->DstBlend = AlphaBlend::OneMinusDestAlpha;
-			else if (value.Equals("DstColor", true))this->DstBlend = AlphaBlend::DestColor;
-			else if (value.Equals("OneMinusDstColor", true))this->DstBlend = AlphaBlend::OneMinusDestColor;
-			else AssertEx(0, "%s", value.c_str());
-		}
-		if (child_node->Attribute("SrcAlphaSource") != 0)
-		{
-			String value = child_node->Attribute("SrcAlphaSource");
-			if (value.Equals("Zero", true))this->SrcAlphaSource = AlphaBlend::Zero;
-			else if (value.Equals("One", true))this->SrcAlphaSource = AlphaBlend::One;
-			else if (value.Equals("SrcColor", true))this->SrcAlphaSource = AlphaBlend::SrcColor;
-			else if (value.Equals("OneMinusSrcColor", true))this->SrcAlphaSource = AlphaBlend::OneMinusSrcColor;
-			else if (value.Equals("SrcAlpha", true))this->SrcAlphaSource = AlphaBlend::SrcAlpha;
-			else if (value.Equals("OneMinusSrcAlpha", true))this->SrcAlphaSource = AlphaBlend::OneMinusSrcAlpha;
-			else if (value.Equals("DstAlpha", true))this->SrcAlphaSource = AlphaBlend::DestAlpha;
-			else if (value.Equals("InvDstAlpha", true))this->SrcAlphaSource = AlphaBlend::OneMinusDestAlpha;
-			else if (value.Equals("DstColor", true))this->SrcAlphaSource = AlphaBlend::DestColor;
-			else if (value.Equals("InvDstColor", true))this->SrcAlphaSource = AlphaBlend::OneMinusDestColor;
-			else AssertEx(0, "%s", value.c_str());
-		}
-		if (child_node->Attribute("DstAlphaSource") != 0)
-		{
-			String value = child_node->Attribute("DstAlphaSource");
-			if (value.Equals("Zero", true))this->DstAlphaSource = AlphaBlend::Zero;
-			else if (value.Equals("One", true))this->DstAlphaSource = AlphaBlend::One;
-			else if (value.Equals("SrcColor", true))this->DstAlphaSource = AlphaBlend::SrcColor;
-			else if (value.Equals("OneMinusSrcColor", true))this->DstAlphaSource = AlphaBlend::OneMinusSrcColor;
-			else if (value.Equals("SrcAlpha", true))this->DstAlphaSource = AlphaBlend::SrcAlpha;
-			else if (value.Equals("OneMinusSrcAlpha", true))this->DstAlphaSource = AlphaBlend::OneMinusSrcAlpha;
-			else if (value.Equals("DstAlpha", true))this->DstAlphaSource = AlphaBlend::DestAlpha;
-			else if (value.Equals("OneMinusDstAlpha", true))this->DstAlphaSource = AlphaBlend::OneMinusDestAlpha;
-			else if (value.Equals("DstColor", true))this->DstAlphaSource = AlphaBlend::DestColor;
-			else if (value.Equals("OneMinusDstColor", true))this->DstAlphaSource = AlphaBlend::OneMinusDestColor;
-			else AssertEx(0, "%s", value.c_str());
-		}
-		if (child_node->Attribute("SrcColorBlend") != 0)
-		{
-			String value = child_node->Attribute("SrcColorBlend");
-			if (value.Equals("Zero", true))this->SrcBlend = AlphaBlend::Zero;
-			else if (value.Equals("One", true))this->SrcBlend = AlphaBlend::One;
-			else if (value.Equals("SrcColor", true))this->SrcBlend = AlphaBlend::SrcColor;
-			else if (value.Equals("OneMinusSrcColor", true))this->SrcBlend = AlphaBlend::OneMinusSrcColor;
-			else if (value.Equals("SrcAlpha", true))this->SrcBlend = AlphaBlend::SrcAlpha;
-			else if (value.Equals("OneMinusSrcAlpha", true))this->SrcBlend = AlphaBlend::OneMinusSrcAlpha;
-			else if (value.Equals("DstAlpha", true))this->SrcBlend = AlphaBlend::DestAlpha;
-			else if (value.Equals("InvDstAlpha", true))this->SrcBlend = AlphaBlend::OneMinusDestAlpha;
-			else if (value.Equals("DstColor", true))this->SrcBlend = AlphaBlend::DestColor;
-			else if (value.Equals("InvDstColor", true))this->SrcBlend = AlphaBlend::OneMinusDestColor;
-			else AssertEx(0, "%s", value.c_str());
-		}
-		if (child_node->Attribute("DstColorBlend") != 0)
-		{
-			String value = child_node->Attribute("DstColorBlend");
-			if (value.Equals("Zero", true))this->DstBlend = AlphaBlend::Zero;
-			else if (value.Equals("One", true))this->DstBlend = AlphaBlend::One;
-			else if (value.Equals("SrcColor", true))this->DstBlend = AlphaBlend::SrcColor;
-			else if (value.Equals("OneMinusSrcColor", true))this->DstBlend = AlphaBlend::OneMinusSrcColor;
-			else if (value.Equals("SrcAlpha", true))this->DstBlend = AlphaBlend::SrcAlpha;
-			else if (value.Equals("OneMinusSrcAlpha", true))this->DstBlend = AlphaBlend::OneMinusSrcAlpha;
-			else if (value.Equals("DstAlpha", true))this->DstBlend = AlphaBlend::DestAlpha;
-			else if (value.Equals("OneMinusDstAlpha", true))this->DstBlend = AlphaBlend::OneMinusDestAlpha;
-			else if (value.Equals("DstColor", true))this->DstBlend = AlphaBlend::DestColor;
-			else if (value.Equals("OneMinusDstColor", true))this->DstBlend = AlphaBlend::OneMinusDestColor;
-			else AssertEx(0, "%s", value.c_str());
-		}
-	}
-#endif
-
-	//Alpha测试
-#if 1
-	child_node = root_node->FirstChildElement("AlphaTest");
-	if (child_node)
-	{
-		if (child_node->Attribute("Enable") != 0)
-		{
-			this->AlphaTestEnable = String(child_node->Attribute("Enable")).ToBool();
-		}
-		if (this->AlphaTestEnable)
-		{
-			if (child_node->Attribute("StencilCmp") != 0)
-			{
-				String value = child_node->Attribute("StencilCmp");
-				if (value.Equals("Never", true))this->AlphaTestCmpFun = StencilCmp::Never;
-				else if (value.Equals("Less", true))this->AlphaTestCmpFun = StencilCmp::Less;
-				else if (value.Equals("Equal", true))this->AlphaTestCmpFun = StencilCmp::Equal;
-				else if (value.Equals("LessEqual", true))this->AlphaTestCmpFun = StencilCmp::LessEqual;
-				else if (value.Equals("Greater", true))this->AlphaTestCmpFun = StencilCmp::Greater;
-				else if (value.Equals("NotEqual", true))this->AlphaTestCmpFun = StencilCmp::NotEqual;
-				else if (value.Equals("GreaterEqual", true))this->AlphaTestCmpFun = StencilCmp::GreaterEqual;
-				else if (value.Equals("Always", true))this->AlphaTestCmpFun = StencilCmp::Always;
-				else AssertEx(0, "%s", value.c_str());
-			}
-			if (child_node->Attribute("Ref") != 0)
-			{
-				this->AlphaTestRef = String(child_node->Attribute("Ref")).ToFloat();
-			}
-		}
-	}
-#endif
-
-#if 1
-	child_node = root_node->FirstChildElement("CG");
-	if (child_node)
-	{
-		String shader_file = "";
-		if (child_node->Attribute("File"))
-		{
-			shader_file = child_node->Attribute("File");
-			shader_file = Path::Combine(Path::GetDirectoryName(file), shader_file);
-		}
-
-		tinyxml2::XMLElement* shader_node = child_node->FirstChildElement("VS");
-		if (shader_node)
-		{
-			ShaderConfig.ShaderFile[int(ShaderType::Vertex)] = shader_file;
-			if (shader_node->Attribute("Enter"))ShaderConfig.Enter[int(ShaderType::Vertex)] = shader_node->Attribute("Enter");
-			if (shader_node->Attribute("Target"))ShaderConfig.Target[int(ShaderType::Vertex)] = shader_node->Attribute("Target");
-		}
-
-		shader_node = child_node->FirstChildElement("HS");
-		if (shader_node)
-		{
-			ShaderConfig.ShaderFile[int(ShaderType::Hull)] = shader_file;
-			if (shader_node->Attribute("Enter"))ShaderConfig.Enter[int(ShaderType::Hull)] = shader_node->Attribute("Enter");
-			if (shader_node->Attribute("Target"))ShaderConfig.Target[int(ShaderType::Hull)] = shader_node->Attribute("Target");
-		}
-
-		shader_node = child_node->FirstChildElement("DS");
-		if (shader_node)
-		{
-			ShaderConfig.ShaderFile[int(ShaderType::Domain)] = shader_file;
-			if (shader_node->Attribute("Enter"))ShaderConfig.Enter[int(ShaderType::Domain)] = shader_node->Attribute("Enter");
-			if (shader_node->Attribute("Target"))ShaderConfig.Target[int(ShaderType::Domain)] = shader_node->Attribute("Target");
-		}
-
-		shader_node = child_node->FirstChildElement("GS");
-		if (shader_node)
-		{
-			ShaderConfig.ShaderFile[int(ShaderType::Geometry)] = shader_file;
-			if (shader_node->Attribute("Enter"))ShaderConfig.Enter[int(ShaderType::Geometry)] = shader_node->Attribute("Enter");
-			if (shader_node->Attribute("Target"))ShaderConfig.Target[int(ShaderType::Geometry)] = shader_node->Attribute("Target");
-		}
-
-		shader_node = child_node->FirstChildElement("PS");
-		if (shader_node)
-		{
-			ShaderConfig.ShaderFile[int(ShaderType::Pixel)] = shader_file;
-			if (shader_node->Attribute("Enter"))ShaderConfig.Enter[int(ShaderType::Pixel)] = shader_node->Attribute("Enter");
-			if (shader_node->Attribute("Target"))ShaderConfig.Target[int(ShaderType::Pixel)] = shader_node->Attribute("Target");
-		}
-
-		shader_node = child_node->FirstChildElement("CS");
-		if (shader_node)
-		{
-			ShaderConfig.ShaderFile[int(ShaderType::Compute)] = shader_file;
-			if (shader_node->Attribute("Enter"))ShaderConfig.Enter[int(ShaderType::Compute)] = shader_node->Attribute("Enter");
-			if (shader_node->Attribute("Target"))ShaderConfig.Target[int(ShaderType::Compute)] = shader_node->Attribute("Target");
-		}
-
-		tinyxml2::XMLElement* reflectNode = child_node->FirstChildElement("Reflect");
+		tinyxml2::XMLElement* reflectNode = childNode->FirstChildElement("Reflect");
 		if (reflectNode)
 		{
 			tinyxml2::XMLElement* node = reflectNode->FirstChildElement("Semantics");
@@ -589,6 +261,300 @@ void PassSerialize::Serialize(const String& file, tinyxml2::XMLElement* root_nod
 			}
 		}
 	}
-#endif
+}
+void PassSerialize::Serialize(const String& file, const std::shared_ptr<ASTPassNode>& passNode)
+{
+	Debuger::Log("PassSerialize::Serialize shaderlab - %s", file.c_str());
+	for (const auto& childNode : passNode->children)
+	{
+		//tags
+		switch (childNode->Type)
+		{
+		case ASTNodeType::Tags:
+		{
+			const auto& node = std::dynamic_pointer_cast<ASTTagsNode>(childNode);
+			for (const auto& tag : node->tags)
+			{
+				if (String(tag.first).Equals("LightMode", true))
+					this->LightMode = tag.second;
+				else
+					AssertEx(false, "parse error:%s", tag.first.c_str());
+			}
+			break;
+		}
+		case ASTNodeType::Cull://剔除模式
+		{
+			const auto& node = std::dynamic_pointer_cast<ASTCullNode>(childNode);
+			String value = node->Value;
+			if (value.Equals("off", true))Cullmode = CullMode::Off;
+			else if (value.Equals("front", true))Cullmode = CullMode::Front;
+			else if (value.Equals("back", true))Cullmode = CullMode::Back;
+			else AssertEx(false, "parse error:%s", value.c_str());
+			break;
+		}
+		case ASTNodeType::ColorMask://color mask
+		{
+			ColorMask = Vector4::zero;
+			const auto& node = std::dynamic_pointer_cast<ASTColorMaskNode>(childNode);
+			String value = node->Value;
+			if (value.IndexOf("R") >= 0)
+				ColorMask[0] = 1;
+			if (value.IndexOf("G") >= 0)
+				ColorMask[1] = 1;
+			if (value.IndexOf("B") >= 0)
+				ColorMask[2] = 1;
+			if (value.IndexOf("A") >= 0)
+				ColorMask[3] = 1;
+			break;
+		}
+		case ASTNodeType::ZTest://深度测试
+		{
+			const auto& node = std::dynamic_pointer_cast<ASTZTestNode>(childNode);
+			String value = node->Value;
+			if (value.Equals("Off", true) || value.Equals("Disabled", true))
+			{
+				DepthEnable = false;
+			}
+			else
+			{
+				DepthEnable = true;
+				if (value.Equals("Never", true))DepthCmpFun = StencilCmp::Never;
+				else if (value.Equals("Less", true))DepthCmpFun = StencilCmp::Less;
+				else if (value.Equals("Equal", true))DepthCmpFun = StencilCmp::Equal;
+				else if (value.Equals("LEqual", true))DepthCmpFun = StencilCmp::LEqual;
+				else if (value.Equals("Greater", true))DepthCmpFun = StencilCmp::Greater;
+				else if (value.Equals("NotEqual", true))DepthCmpFun = StencilCmp::NotEqual;
+				else if (value.Equals("GEqual", true))DepthCmpFun = StencilCmp::GEqual;
+				else if (value.Equals("Always", true))DepthCmpFun = StencilCmp::Always;
+				else AssertEx(false, "parse error:%s", value.c_str());
+			}
+			break;
+		}
+		case ASTNodeType::ZWrite://深度写入
+		{
+			const auto& node = std::dynamic_pointer_cast<ASTZWriteNode>(childNode);
+			String value = node->Value;
+			if (value.Equals("On", true))
+				DepthWriteEnable = true;
+			else if (value.Equals("Off", true))
+				DepthWriteEnable = false;
+			else
+				AssertEx(false, "parse error:%s", value.c_str());
+			break;
+		}
+		case ASTNodeType::Stencil://Stencil
+		{
+			StencilEnable = true;
+			const auto& node = std::dynamic_pointer_cast<ASTStencilNode>(childNode);
+			for (const auto& obj : node->Values)
+			{
+				String key = obj.first;
+				String value = obj.second;
+				if (key.Equals("Ref", true))
+				{
+					StencilRef = value.ToByte();
+				}
+				else if (key.Equals("Comp", true))
+				{
+					if (value.Equals("Never", true))StencilFunc = StencilCmp::Never;
+					else if (value.Equals("Less", true))StencilFunc = StencilCmp::Less;
+					else if (value.Equals("Equal", true))StencilFunc = StencilCmp::Equal;
+					else if (value.Equals("LEqual", true))StencilFunc = StencilCmp::LEqual;
+					else if (value.Equals("Greater", true))StencilFunc = StencilCmp::Greater;
+					else if (value.Equals("NotEqual", true))StencilFunc = StencilCmp::NotEqual;
+					else if (value.Equals("GEqual", true))StencilFunc = StencilCmp::GEqual;
+					else if (value.Equals("Always", true))StencilFunc = StencilCmp::Always;
+					else AssertEx(0, "parse error:%s", value.c_str());
+				}
+				else if (key.Equals("ReadMask", true))
+				{
+					StencilReadMask = value.ToByte();
+				}
+				else if (key.Equals("WriteMask", true))
+				{
+					StencilWriteMask = value.ToByte();
+				}
+				else if (key.Equals("Pass", true))
+				{
+					if (value.Equals("Keep", true))StencilPassOp = StencilOp::Keep;
+					else if (value.Equals("Zero", true))StencilPassOp = StencilOp::Zero;
+					else if (value.Equals("Replace", true))StencilPassOp = StencilOp::Replace;
+					else if (value.Equals("Incr", true))StencilPassOp = StencilOp::Incr;
+					else if (value.Equals("Incr_Wrap", true))StencilPassOp = StencilOp::Incr_Wrap;
+					else if (value.Equals("Decr", true))StencilPassOp = StencilOp::Decr;
+					else if (value.Equals("Decr_Wrap", true))StencilPassOp = StencilOp::Decr_Wrap;
+					else AssertEx(0, "parse error:%s", value.c_str());
+				}
+				else if (key.Equals("Fail", true))
+				{
+					if (value.Equals("Keep", true))StencilFailOp = StencilOp::Keep;
+					else if (value.Equals("Zero", true))StencilFailOp = StencilOp::Zero;
+					else if (value.Equals("Replace", true))StencilFailOp = StencilOp::Replace;
+					else if (value.Equals("Incr", true))StencilFailOp = StencilOp::Incr;
+					else if (value.Equals("Incr_Wrap", true))StencilFailOp = StencilOp::Incr_Wrap;
+					else if (value.Equals("Decr", true))StencilFailOp = StencilOp::Decr;
+					else if (value.Equals("Decr_Wrap", true))StencilFailOp = StencilOp::Decr_Wrap;
+					else AssertEx(0, "parse error:%s", value.c_str());
+				}
+				else if (key.Equals("ZFail", true))
+				{
+					if (value.Equals("Keep", true))StencilDepthFailOp = StencilOp::Keep;
+					else if (value.Equals("Zero", true))StencilDepthFailOp = StencilOp::Zero;
+					else if (value.Equals("Replace", true))StencilDepthFailOp = StencilOp::Replace;
+					else if (value.Equals("Incr", true))StencilDepthFailOp = StencilOp::Incr;
+					else if (value.Equals("Incr_Wrap", true))StencilDepthFailOp = StencilOp::Incr_Wrap;
+					else if (value.Equals("Decr", true))StencilDepthFailOp = StencilOp::Decr;
+					else if (value.Equals("Decr_Wrap", true))StencilDepthFailOp = StencilOp::Decr_Wrap;
+					else AssertEx(0, "parse error:%s", value.c_str());
+				}
+				else
+					AssertEx(false, "parse error:%s", key.c_str());
+			}
+			break;
+		}
+		case ASTNodeType::Blend://深度写入
+		{
+			const auto& node = std::dynamic_pointer_cast<ASTBlendNode>(childNode);
+			this->BlendEnable = !node->blendOff;
+			if (this->BlendEnable)
+			{
+				const ASTBlendNode::BlendFactors& factors = node->factors;
+				if (!factors.src.empty())
+				{
+					String value = factors.src;
+					if (value.Equals("Zero", true))this->SrcBlend = AlphaBlend::Zero;
+					else if (value.Equals("One", true))this->SrcBlend = AlphaBlend::One;
+					else if (value.Equals("SrcColor", true))this->SrcBlend = AlphaBlend::SrcColor;
+					else if (value.Equals("OneMinusSrcColor", true))this->SrcBlend = AlphaBlend::OneMinusSrcColor;
+					else if (value.Equals("SrcAlpha", true))this->SrcBlend = AlphaBlend::SrcAlpha;
+					else if (value.Equals("OneMinusSrcAlpha", true))this->SrcBlend = AlphaBlend::OneMinusSrcAlpha;
+					else if (value.Equals("DstAlpha", true))this->SrcBlend = AlphaBlend::DestAlpha;
+					else if (value.Equals("InvDstAlpha", true))this->SrcBlend = AlphaBlend::OneMinusDestAlpha;
+					else if (value.Equals("DstColor", true))this->SrcBlend = AlphaBlend::DestColor;
+					else if (value.Equals("InvDstColor", true))this->SrcBlend = AlphaBlend::OneMinusDestColor;
+					else AssertEx(0, "%s", value.c_str());
+				}
+				if (!factors.dst.empty())
+				{
+					String value = factors.dst;
+					if (value.Equals("Zero", true))this->DstBlend = AlphaBlend::Zero;
+					else if (value.Equals("One", true))this->DstBlend = AlphaBlend::One;
+					else if (value.Equals("SrcColor", true))this->DstBlend = AlphaBlend::SrcColor;
+					else if (value.Equals("OneMinusSrcColor", true))this->DstBlend = AlphaBlend::OneMinusSrcColor;
+					else if (value.Equals("SrcAlpha", true))this->DstBlend = AlphaBlend::SrcAlpha;
+					else if (value.Equals("OneMinusSrcAlpha", true))this->DstBlend = AlphaBlend::OneMinusSrcAlpha;
+					else if (value.Equals("DstAlpha", true))this->DstBlend = AlphaBlend::DestAlpha;
+					else if (value.Equals("OneMinusDstAlpha", true))this->DstBlend = AlphaBlend::OneMinusDestAlpha;
+					else if (value.Equals("DstColor", true))this->DstBlend = AlphaBlend::DestColor;
+					else if (value.Equals("OneMinusDstColor", true))this->DstBlend = AlphaBlend::OneMinusDestColor;
+					else AssertEx(0, "%s", value.c_str());
+				}
+				if (!factors.srcAlpha.empty())
+				{
+					String value = factors.srcAlpha;
+					if (value.Equals("Zero", true))this->SrcAlphaSource = AlphaBlend::Zero;
+					else if (value.Equals("One", true))this->SrcAlphaSource = AlphaBlend::One;
+					else if (value.Equals("SrcColor", true))this->SrcAlphaSource = AlphaBlend::SrcColor;
+					else if (value.Equals("OneMinusSrcColor", true))this->SrcAlphaSource = AlphaBlend::OneMinusSrcColor;
+					else if (value.Equals("SrcAlpha", true))this->SrcAlphaSource = AlphaBlend::SrcAlpha;
+					else if (value.Equals("OneMinusSrcAlpha", true))this->SrcAlphaSource = AlphaBlend::OneMinusSrcAlpha;
+					else if (value.Equals("DstAlpha", true))this->SrcAlphaSource = AlphaBlend::DestAlpha;
+					else if (value.Equals("InvDstAlpha", true))this->SrcAlphaSource = AlphaBlend::OneMinusDestAlpha;
+					else if (value.Equals("DstColor", true))this->SrcAlphaSource = AlphaBlend::DestColor;
+					else if (value.Equals("InvDstColor", true))this->SrcAlphaSource = AlphaBlend::OneMinusDestColor;
+					else AssertEx(0, "%s", value.c_str());
+				}
+				if (!factors.dstAlpha.empty())
+				{
+					String value = factors.dstAlpha;
+					if (value.Equals("Zero", true))this->DstAlphaSource = AlphaBlend::Zero;
+					else if (value.Equals("One", true))this->DstAlphaSource = AlphaBlend::One;
+					else if (value.Equals("SrcColor", true))this->DstAlphaSource = AlphaBlend::SrcColor;
+					else if (value.Equals("OneMinusSrcColor", true))this->DstAlphaSource = AlphaBlend::OneMinusSrcColor;
+					else if (value.Equals("SrcAlpha", true))this->DstAlphaSource = AlphaBlend::SrcAlpha;
+					else if (value.Equals("OneMinusSrcAlpha", true))this->DstAlphaSource = AlphaBlend::OneMinusSrcAlpha;
+					else if (value.Equals("DstAlpha", true))this->DstAlphaSource = AlphaBlend::DestAlpha;
+					else if (value.Equals("OneMinusDstAlpha", true))this->DstAlphaSource = AlphaBlend::OneMinusDestAlpha;
+					else if (value.Equals("DstColor", true))this->DstAlphaSource = AlphaBlend::DestColor;
+					else if (value.Equals("OneMinusDstColor", true))this->DstAlphaSource = AlphaBlend::OneMinusDestColor;
+					else AssertEx(0, "%s", value.c_str());
+				}
+			}
+			break;
+		}
+		case ASTNodeType::BlendOp://混合操作
+		{
+			const auto& node = std::dynamic_pointer_cast<ASTBlendOpNode>(childNode);
+			String value = node->Value;
+			if (value.Equals("Add", true))
+				BlendOp = AlphaBlendOp::Add;
+			else if (value.Equals("Sub", true))
+				BlendOp = AlphaBlendOp::Sub;
+			else if (value.Equals("RevSub", true))
+				BlendOp = AlphaBlendOp::RevSub;
+			else if (value.Equals("Min", true))
+				BlendOp = AlphaBlendOp::Min;
+			else if (value.Equals("Max", true))
+				BlendOp = AlphaBlendOp::Max;
+			else
+				AssertEx(false, "parse error:%s", value.c_str());
+			break;
+		}
+		case ASTNodeType::ShaderBlock:
+		{
+			const auto& node = std::dynamic_pointer_cast<ASTShaderBlockNode>(childNode);
+			CGProgramData data = ShaderlabUtils::ParseCG(node->ShaderCode);
+			if (data.Includes.size() > 0)
+			{
+				String shaderFile = data.Includes[0];
+				shaderFile = Path::Combine(Path::GetDirectoryName(file), shaderFile);
+				for (auto& define : data.Defines)
+				{
+					ShaderConfig.ShaderDefines.Add(define);
+				}
+				for (auto& enter : data.Pragmas)
+				{
+					String type = enter.first;
+					if (type.Equals("vertex", true))
+					{
+						ShaderConfig.ShaderFile[int(ShaderType::Vertex)] = shaderFile;
+						ShaderConfig.Enter[int(ShaderType::Vertex)] = enter.second;
+					}
+					else if (type.Equals("fragment", true))
+					{
+						ShaderConfig.ShaderFile[int(ShaderType::Pixel)] = shaderFile;
+						ShaderConfig.Enter[int(ShaderType::Pixel)] = enter.second;
+					}
+					else if (type.Equals("geometry", true))
+					{
+						ShaderConfig.ShaderFile[int(ShaderType::Geometry)] = shaderFile;
+						ShaderConfig.Enter[int(ShaderType::Geometry)] = enter.second;
+					}
+					else if (type.Equals("hull", true))
+					{
+						ShaderConfig.ShaderFile[int(ShaderType::Hull)] = shaderFile;
+						ShaderConfig.Enter[int(ShaderType::Hull)] = enter.second;
+					}
+					else if (type.Equals("domain", true))
+					{
+						ShaderConfig.ShaderFile[int(ShaderType::Domain)] = shaderFile;
+						ShaderConfig.Enter[int(ShaderType::Domain)] = enter.second;
+					}
+					else if (type.Equals("compute", true))
+					{
+						ShaderConfig.ShaderFile[int(ShaderType::Compute)] = shaderFile;
+						ShaderConfig.Enter[int(ShaderType::Compute)] = enter.second;
+					}
+				}
+			}
+			break;
+		}
+		default:
+		{
+			AssertEx(false, "parse error, unknow type:%d", (int)childNode->Type);
+			break;
+		}
+		}
+	}
 }
 DC_END_NAMESPACE

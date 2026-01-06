@@ -39,6 +39,7 @@ typedef struct ALenums {
     ALenum value;
 } ALenums;
 
+extern int my_strnicmp(const char* s1, const char* s2, int len);
 
 static const ALenums enumeration[] = {
     // Types
@@ -355,7 +356,7 @@ AL_API ALboolean AL_APIENTRY alIsExtensionPresent(const ALchar *extName)
         ptr = Context->ExtensionList;
         while(ptr && *ptr)
         {
-            if(strncasecmp(ptr, extName, len) == 0 &&
+            if(my_strnicmp(ptr, extName, len) == 0 &&
                (ptr[len] == '\0' || isspace(ptr[len])))
             {
                 bIsSupported = AL_TRUE;

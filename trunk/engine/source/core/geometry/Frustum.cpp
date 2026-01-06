@@ -1,4 +1,4 @@
-#include "Frustum.h"
+﻿#include "Frustum.h"
 #include "Sphere.h"
 #include "../math/Aabb.h"
 #include "../math/Matrix4.h"
@@ -6,14 +6,14 @@
 DC_BEGIN_NAMESPACE
 /********************************************************************/
 IMPL_REFECTION_TYPE(Frustum);
-Plane Frustum::GetPlane(int index)const
+Plane Frustum::GetPlane(int index)const noexcept
 {
 	if (index >= 0 && index < 6)
 		return _planes[index];
 	else
 		return Plane();
 }
-FrustumVisible Frustum::GetVisibility(const Aabb &bound)const
+FrustumVisible Frustum::GetVisibility(const Aabb &bound)const noexcept
 {
 	if (bound.IsNull())
 	{
@@ -34,7 +34,7 @@ FrustumVisible Frustum::GetVisibility(const Aabb &bound)const
 	else
 		return FrustumVisible::Partial;
 }
-FrustumVisible Frustum::GetVisibility(const Sphere &sphere)const
+FrustumVisible Frustum::GetVisibility(const Sphere &sphere)const noexcept
 {
 	bool all_in = true;
 	for (int i = 0; i < 6; ++i)
@@ -51,9 +51,9 @@ FrustumVisible Frustum::GetVisibility(const Sphere &sphere)const
 	else
 		return FrustumVisible::Partial;
 }
-void Frustum::Calculate(const Matrix4& mat_view, const Matrix4& mat_proj)
+void Frustum::Calculate(const Matrix4& matView, const Matrix4& matProj) noexcept
 {
-	Matrix4 mat_out = mat_view * mat_proj;
+	Matrix4 mat_out = matView * matProj;
 	_planes[0].normal.x = mat_out._14 + mat_out._13; // Near plane
 	_planes[0].normal.y = mat_out._24 + mat_out._23;
 	_planes[0].normal.z = mat_out._34 + mat_out._33;

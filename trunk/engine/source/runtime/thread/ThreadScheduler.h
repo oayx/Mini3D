@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Date：2020/9/16
@@ -10,7 +10,7 @@
 
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-class ENGINE_DLL ThreadScheduler Final : public object
+class ENGINE_DLL ThreadScheduler final : public object
 {
 	typedef List<Action> Actions;
 	friend class Application;
@@ -24,7 +24,7 @@ private:
 
 public:
 	static void PushAction(const Action& action);
-	static std::mutex GlobalMutex;
+	inline static std::mutex GlobalMutex;
 
 private:
 	static Actions* _appendList;

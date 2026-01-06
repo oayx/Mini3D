@@ -10,7 +10,7 @@
 
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-class PhysicsDebugDraw2d Final : public b2Draw
+class PhysicsDebugDraw2d final : public b2Draw
 {
 	friend class Physics2d;
 	DECLARE_ALLOCATOR;

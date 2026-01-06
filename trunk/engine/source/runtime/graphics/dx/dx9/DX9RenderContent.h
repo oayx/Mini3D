@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Date：2020年2月20日
@@ -11,13 +11,14 @@
 
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-class DX9RenderContent Final : public RenderContent
+class DX9RenderContent final : public RenderContent
 {
 	friend class DX9Device;
 	DEFAULT_CREATE(DX9RenderContent);
 	FRIEND_CONSTRUCT_DESTRUCT(DX9RenderContent);
+	DISALLOW_COPY_ASSIGN(DX9RenderContent);
 	BEGIN_DERIVED_REFECTION_TYPE(DX9RenderContent, RenderContent)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 	DX9RenderContent();
 	~DX9RenderContent();
@@ -35,9 +36,9 @@ public:
 	virtual void RenderOnePrimitive(Camera* camera, Pass* pass, Primitive* primitive, RenderMode mode)override;
 	virtual void Present(uint sync)override {}
 
-	virtual void SetViewport(const ViewPortDesc& view_port)override;
+	virtual void SetViewport(const ViewPortDesc& viewPort)override;
 	virtual void SetViewportScissor(const iRect& clip)override;
-	virtual void ClearBackbuffer(void* target_buffer, void* depth_stencil_buffer, ClearFlag flag, const Color& color)override;
+	virtual void ClearBackbuffer(void* targetBuffer, void* depthStencilBuffer, ClearFlag flag, const Color& color)override;
 
 	virtual void Resize(const WindowResizeDesc& desc)override;
 
@@ -50,7 +51,7 @@ private:
 	void SetStencil(Pass* pass);
 	void SetColorMask(Pass* pass);
 	void SetBlendState(Pass* pass);
-	void SetSubPrimitiveState(const SubPrimitive* sub_prim, Pass* pass);
+	void SetSubPrimitiveState(const SubPrimitive* subPrim, Pass* pass);
 
 	void HandleLostDevice();
 	void HandleResetDevice();

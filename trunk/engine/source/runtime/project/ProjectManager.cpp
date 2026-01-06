@@ -1,4 +1,4 @@
-#include "ProjectManager.h"
+﻿#include "ProjectManager.h"
 #include "runtime/resources/Resources.h"
 #include "runtime/Application.h"
  
@@ -6,17 +6,16 @@ DC_BEGIN_NAMESPACE
 static const String ProjectConfigFilePath = "data/settings/ProjectConfig.asset";
 /********************************************************************/
 IMPL_REFECTION_TYPE(ProjectManager);
-ProjectManager::Projectes ProjectManager::_projectes;
 void ProjectManager::Initialize()
 {
 	Load();
 }
 void ProjectManager::Destroy()
 {
-	Project* curr_project = GetCurrProject();
-	if (curr_project)
+	Project* currProject = GetCurrProject();
+	if (currProject)
 	{
-		curr_project->Close();
+		currProject->Close();
 	}
 
 	for (auto project : _projectes)
@@ -27,16 +26,16 @@ void ProjectManager::Destroy()
 }
 bool ProjectManager::OpenProject(const String& path)
 {
-	Project* old_project = GetCurrProject();
+	Project* oldProject = GetCurrProject();
 
-	String full_path = Path::ReplaceSplit(path);
-	Project* project = Project::Create(full_path);
+	String fullPath = Path::ReplaceSplit(path);
+	Project* project = Project::Create(fullPath);
 	if (project->Open())
 	{
 		//关闭当前项目
-		if (old_project)old_project->Close();
+		if (oldProject)oldProject->Close();
 
-		RemoveProject(full_path);
+		RemoveProject(fullPath);
 		_projectes.Add(project);
 		Save();
 		return true;
@@ -50,21 +49,21 @@ bool ProjectManager::OpenProject(const String& path)
 }
 bool ProjectManager::CreateProject(const String& path)
 {
-	String full_path = Path::ReplaceSplit(path);
-	if (HasProject(full_path))
+	String fullPath = Path::ReplaceSplit(path);
+	if (HasProject(fullPath))
 	{
 		Debuger::Error("The project has exist");
 		return false;
 	}
 
-	Project* old_project = GetCurrProject();
-	Project* project = Project::Create(full_path);
+	Project* oldProject = GetCurrProject();
+	Project* project = Project::Create(fullPath);
 	if (project->Create())
 	{
 		//关闭当前项目
-		if (old_project)old_project->Close();
+		if (oldProject)oldProject->Close();
 		
-		RemoveProject(full_path);
+		RemoveProject(fullPath);
 		_projectes.Add(project);
 		Save();
 		return true;
@@ -93,23 +92,23 @@ bool ProjectManager::IsCurrProjectAssets(const String& path)
 {
 	if (path.IsEmpty())return false;
 
-	Project* curr_project = GetCurrProject();
-	if (!curr_project)return false;
+	Project* currProject = GetCurrProject();
+	if (!currProject)return false;
 
-	String curr_asset_path = Path::Combine(curr_project->GetFullPath(), "assets");
-	return path.StartsWith(curr_asset_path);
+	String currAssetPath = Path::Combine(currProject->GetFullPath(), "assets");
+	return path.StartsWith(currAssetPath);
 }
 String ProjectManager::ToProjectAssetsPath(const String& path)
 {
 	if (path.IsEmpty())return "";
 
-	Project* curr_project = GetCurrProject();
-	if (!curr_project)return "";
+	Project* currProject = GetCurrProject();
+	if (!currProject)return "";
 
-	String curr_asset_path = Path::Combine(curr_project->GetFullPath(), "assets");
-	if(!path.StartsWith(curr_asset_path))return "";
+	String currAssetPath = Path::Combine(currProject->GetFullPath(), "assets");
+	if(!path.StartsWith(currAssetPath))return "";
 
-	return path.Substring(curr_asset_path.Size() + 1);
+	return path.Substring(currAssetPath.Size() + 1);
 }
 bool ProjectManager::HasProject(const String& path)
 {
@@ -140,10 +139,10 @@ void ProjectManager::Load()
 	_projectes.Clear();
 
 	VecString paths;
-	String full_path = Resource::GetFullSavePath(ProjectConfigFilePath);
-	if (File::Exist(full_path))
+	String fullPath = Resource::GetFullSavePath(ProjectConfigFilePath);
+	if (File::Exist(fullPath))
 	{
-		SerializeRead transfer(full_path);
+		SerializeRead transfer(fullPath);
 		{
 			if (transfer.Push("Projects"))
 			{
@@ -194,8 +193,8 @@ void ProjectManager::Save()
 		}
 	}
 
-	String full_path = Resource::GetFullSavePath(ProjectConfigFilePath);
-	SerializeWrite transfer(full_path);
+	String fullPath = Resource::GetFullSavePath(ProjectConfigFilePath);
+	SerializeWrite transfer(fullPath);
 	{
 		if (transfer.Push("Projects"))
 		{

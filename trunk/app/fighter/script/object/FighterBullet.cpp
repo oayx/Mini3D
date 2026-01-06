@@ -1,4 +1,4 @@
-#include "FighterBullet.h"
+﻿#include "FighterBullet.h"
  
 DC_BEGIN_NAMESPACE
 /********************************************************************/
@@ -11,9 +11,9 @@ void FighterBullet::Awake()
 
 	_collider = GetGameObject()->AddComponent<BoxCollider2d>();
 
-	RigidBody2d* rigid_body = GetGameObject()->AddComponent<RigidBody2d>();
-	rigid_body->UseGravity(false);
-	rigid_body->SetCollisionDetection(CollisionDetection2d::Continuous);
+	RigidBody2d* rigidBody = GetGameObject()->AddComponent<RigidBody2d>();
+	rigidBody->UseGravity(false);
+	rigidBody->SetCollisionDetection(CollisionDetection2d::Continuous);
 }
 void FighterBullet::Update()
 {

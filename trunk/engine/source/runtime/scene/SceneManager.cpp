@@ -1,4 +1,4 @@
-#include "SceneManager.h"
+﻿#include "SceneManager.h"
 #include "Camera.h"
 #include "Light.h"
 #include "tree/Scenetree.h"
@@ -19,26 +19,6 @@
 DC_BEGIN_NAMESPACE
 /********************************************************************/
 IMPL_REFECTION_TYPE(SceneManager);
-GameObject* SceneManager::_engineObject = nullptr;
-SceneManager::MapObjects SceneManager::_objects;
-SceneManager::Objects SceneManager::_addedObjects;
-SceneManager::Objects SceneManager::_removedObjects;
-uint SceneManager::m_nDrawTriangles = 0;
-uint SceneManager::m_nRenderBatch = 0;
-uint SceneManager::m_nSetPassCall = 0;
-uint SceneManager::m_nDrawCall = 0;
-uint SceneManager::_oldDrawTriangles = 0;
-uint SceneManager::_oldRenderBatch = 0;
-uint SceneManager::_oldSetPassCall = 0;
-uint SceneManager::_oldDrawCall = 0;
-SceneManager::Cameras SceneManager::_cameras;
-Camera* SceneManager::_mainCamera = nullptr;
-SceneManager::Lights SceneManager::_lights;
-SceneManager::UICanvases SceneManager::_uICanvas;
-ShadeMode SceneManager::_shadeMode = ShadeMode::Gouraud;
-Scene* SceneManager::_currScene = nullptr;
-SceneManager::Scenes SceneManager::_scenes;
-bool SceneManager::_isLoadScening = false;
 void SceneManager::Initialize()
 {
 	CreateSceneTree(SceneTreeType::Octree);
@@ -69,13 +49,13 @@ void SceneManager::Destroy()
 }
 void SceneManager::Update()
 {
-	DC_PROFILE_FUNCTION();
+	DC_PROFILE_FUNCTION;
 	UpdateScene();
 	UpdateUI();
 }
 void SceneManager::UpdateScene()
 {
-	DC_PROFILE_FUNCTION();
+	DC_PROFILE_FUNCTION;
 	GetSceneTree()->RemoveAllObjects();
 	//移除
 	if (!_removedObjects.IsEmpty())
@@ -136,7 +116,7 @@ void SceneManager::UpdateScene()
 }
 void SceneManager::UpdateUI()
 {
-	DC_PROFILE_FUNCTION();
+	DC_PROFILE_FUNCTION;
 	for (auto& canvas : _uICanvas)
 	{
 		if(canvas->GetRenderMode() != UIRenderMode::None)
@@ -145,6 +125,7 @@ void SceneManager::UpdateUI()
 }
 void SceneManager::Resize(const WindowResizeDesc& desc)
 {
+	DC_PROFILE_FUNCTION;
 	for (auto& camera : _cameras)
 	{
 		camera->Resize(desc);
@@ -152,7 +133,7 @@ void SceneManager::Resize(const WindowResizeDesc& desc)
 }
 void SceneManager::Render(RenderWindow* window)
 {
-	DC_PROFILE_FUNCTION();
+	DC_PROFILE_FUNCTION;
 	PreRender(window);
 	RenderScene(window);
 	RenderGUI(window);
@@ -160,20 +141,20 @@ void SceneManager::Render(RenderWindow* window)
 }
 void SceneManager::PreRender(RenderWindow* window)
 {
-	DC_PROFILE_FUNCTION();
-	_oldDrawTriangles = m_nDrawTriangles;
-	_oldRenderBatch = m_nRenderBatch;
-	_oldSetPassCall = m_nSetPassCall;
-	_oldDrawCall = m_nDrawCall;
-	m_nDrawTriangles = 0;
-	m_nRenderBatch = 0;
-	m_nSetPassCall = 0;
-	m_nDrawCall = 0;
+	DC_PROFILE_FUNCTION;
+	_oldDrawTriangles = _nDrawTriangles;
+	_oldRenderBatch = _nRenderBatch;
+	_oldSetPassCall = _nSetPassCall;
+	_oldDrawCall = _nDrawCall;
+	_nDrawTriangles = 0;
+	_nRenderBatch = 0;
+	_nSetPassCall = 0;
+	_nDrawCall = 0;
 	Application::GetGraphics()->PreRender(window);
 }
 void SceneManager::RenderScene(RenderWindow* window)
 {
-	DC_PROFILE_FUNCTION();
+	DC_PROFILE_FUNCTION;
 	//1.先对相机按照深度排序
 	List<Camera*> list_camera;
 	for (const auto& camera : _cameras)
@@ -181,27 +162,27 @@ void SceneManager::RenderScene(RenderWindow* window)
 		if (!camera->IsEnable() || !camera->GetGameObject()->ActiveInHierarchy())
 			continue;
 
-		bool is_insert = false;
+		bool isInsert = false;
 		for (List<Camera*>::iterator it = list_camera.begin(); it != list_camera.end(); ++it)
 		{
 			if ((*it)->GetDepth() > camera->GetDepth())
 			{
 				list_camera.Insert(it, camera);
-				is_insert = true;
+				isInsert = true;
 				break;
 			}
 		}
-		if (!is_insert)list_camera.Add(camera);
+		if (!isInsert)list_camera.Add(camera);
 	}
 
 	//2.再渲染
 	{
 		//先使用默认清除(TODO:这样有可能导致重复清除缓冲区，但是如果没有相机或相机只是渲染到纹理的情况下，可以保证GUI渲染正确)
-		{
+		{//TODO:需要移除
 			RenderFrameDesc desc;
-			desc.view_port = ViewPortDesc(window->GetWidth(), window->GetHeight());
-			desc.clear_flag = ClearFlag::SolidColor;//清除所有
-			desc.clear_color = Color::Clear;
+			desc.viewPort = ViewPortDesc(window->GetWidth(), window->GetHeight());
+			desc.clearFlag = ClearFlag::SolidColor;//清除所有
+			desc.clearColor = Color::Clear;
 			Application::GetGraphics()->GetSwapChain()->BeginFrame(desc);
 			Application::GetGraphics()->GetSwapChain()->EndFrame();
 		}
@@ -209,7 +190,7 @@ void SceneManager::RenderScene(RenderWindow* window)
 		if (list_camera.Size() > 0)
 		{
 			for (Camera* camera : list_camera)
-			{
+			{//TODO:如果渲染过程中，删除相机，可能导致
 				if (camera->GetTargetDisplay() == window->GetTargetDisplay())
 				{
 					camera->PreRender();
@@ -222,11 +203,11 @@ void SceneManager::RenderScene(RenderWindow* window)
 }
 void SceneManager::RenderGUI(RenderWindow* window)
 {
-	DC_PROFILE_FUNCTION();
+	DC_PROFILE_FUNCTION;
 	RenderFrameDesc desc;
-	desc.view_port = ViewPortDesc(window->GetWidth(), window->GetHeight());
-	desc.clear_flag = ClearFlag::DonotClear;//不要清除任务缓冲区，只把交换链指向默认
-	desc.clear_color = Color::Clear;
+	desc.viewPort = ViewPortDesc(window->GetWidth(), window->GetHeight());
+	desc.clearFlag = ClearFlag::DonotClear;//不要清除缓冲区，只把交换链指向默认
+	desc.clearColor = Color::Clear;
 	Application::GetGraphics()->GetSwapChain()->BeginFrame(desc);
 	{
 		GUIContext::PreRender();
@@ -246,7 +227,7 @@ void SceneManager::RenderGUI(RenderWindow* window)
 }
 void SceneManager::PostRender(RenderWindow* window)
 {
-	DC_PROFILE_FUNCTION();
+	DC_PROFILE_FUNCTION;
 	Application::GetGraphics()->PostRender(window);
 	Application::GetGraphics()->Present(window);
 }
@@ -260,6 +241,9 @@ void SceneManager::AddCamera(Camera *camera)
 }
 bool SceneManager::RemoveCamera(Camera *camera)
 {
+	if (camera == nullptr)
+		return false;
+
 	for (auto it = _cameras.begin(); it != _cameras.end(); ++it)
 	{
 		if ((*it)->GetInstanceId() == camera->GetInstanceId())
@@ -330,6 +314,9 @@ void SceneManager::AddLight(Light* light)
 }
 bool SceneManager::RemoveLight(Light* light)
 {
+	if (light == nullptr)
+		return false;
+
 	for (auto it = _lights.begin(); it != _lights.end(); ++it)
 	{
 		if (*it == light)
@@ -452,25 +439,25 @@ bool SceneManager::LoadScene(const String& file, LoadSceneMode mode)
 	if (file.IsEmpty())return false;
 
 	_isLoadScening = true;
-	String full_path = file;
+	String fullPath = file;
 	if (_currScene && mode == LoadSceneMode::Single)
 	{
 		UnloadScene(_currScene->GetName());
 	}
 
 	//防止加载同名场景
-	String name = Path::GetFileNameWithoutExtension(full_path);
+	String name = Path::GetFileNameWithoutExtension(fullPath);
 	for (const auto& it : _scenes)
 	{
 		if (it->GetName().Equals(name, true))
 		{
-			AssertEx(false, "Insert scene error:%s", full_path.c_str());
+			AssertEx(false, "Insert scene error:%s", fullPath.c_str());
 			return false;
 		}
 	}
 
 	Scene* scene = Scene::Create(name);
-	if (!scene->Load(full_path))
+	if (!scene->Load(fullPath))
 	{
 		_isLoadScening = false;
 		SAFE_DELETE(scene);

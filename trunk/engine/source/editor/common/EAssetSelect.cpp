@@ -1,13 +1,9 @@
-#include "EAssetSelect.h"
+﻿#include "EAssetSelect.h"
 #include "EditorIcon.h"
 #include "runtime/resources/AssetsManager.h"
  
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-bool EAssetSelect::IsShow = false;	
-ResourceType EAssetSelect::_resType = ResourceType::Undefined;
-Vector<AssetMeta*> EAssetSelect::_reslist;
-std::function<void(const String&)> EAssetSelect::_callback;
 void EAssetSelect::Initialize()
 {
 	//AssetsManager::AddEventListener(RefreshAssetsEvt, nullptr, MakeEventHandler());
@@ -18,7 +14,7 @@ void EAssetSelect::Destroy()
 }
 void EAssetSelect::Render()
 {
-	DC_PROFILE_FUNCTION();
+	DC_PROFILE_FUNCTION;
 	if (!IsShow)return;
 	if (_resType == ResourceType::Undefined)return;
 
@@ -71,12 +67,12 @@ void EAssetSelect::Render()
 		for (int i = 0; i < _reslist.Size(); ++i)
 		{
 			AssetMeta* meta = _reslist[i];
-			const char* sz_name = meta->GetFullPath().c_str();
-			if (filter[0] == '\0' || String::Stristr(sz_name, filter) != nullptr)
+			const char* szName = meta->GetFullPath().c_str();
+			if (filter[0] == '\0' || String::Stristr(szName, filter) != nullptr)
 			{
 				ImGui::Image((ImTextureID)EditorIconCache::GetTexture(meta), ImVec2(ICON_SIZE, ICON_SIZE));
 				ImGui::SameLine();
-				if (ImGui::Selectable(sz_name))
+				if (ImGui::Selectable(szName))
 				{
 					_callback(meta->GetFullPath());
 					is_close = true;
@@ -87,10 +83,10 @@ void EAssetSelect::Render()
 
 		if (ImGui::IsMouseClicked(0) || ImGui::IsMouseClicked(1))
 		{
-			ImVec2 mouse_pos = ImGui::GetMousePos();
+			ImVec2 mousePos = ImGui::GetMousePos();
 			ImVec2 pos = ImGui::GetWindowPos();
 			ImVec2 size = ImGui::GetWindowSize();
-			if (!(mouse_pos.x >= pos.x && mouse_pos.y >= pos.y && mouse_pos.x <= pos.x + size.x && mouse_pos.y <= pos.y + size.y))
+			if (!(mousePos.x >= pos.x && mousePos.y >= pos.y && mousePos.x <= pos.x + size.x && mousePos.y <= pos.y + size.y))
 			{
 				is_close = true;
 			}

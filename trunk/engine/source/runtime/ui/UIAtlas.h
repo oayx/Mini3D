@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Date：2020/8/29
@@ -16,10 +16,10 @@ struct UIAtlasInfo
 {
 	String	name;
 	Rect	rect;
-	Rect	uv_rect;
+	Rect	uvRect;
 };
 /********************************************************************/
-class ENGINE_DLL UIAtlasManager Final : public object
+class ENGINE_DLL UIAtlasManager final : public object
 {
 	friend class Application;
 	typedef Map<String, UIAtlas*> Atlases;
@@ -43,10 +43,10 @@ public:
 
 
 private:
-	static Atlases _atlases;
+	inline static Atlases _atlases;
 };
 
-class ENGINE_DLL UIAtlas Final : public object
+class ENGINE_DLL UIAtlas final : public object
 {
 	friend class UIAtlasManager;
 	typedef Map<String, UIAtlasInfo> AtlasInfoes;

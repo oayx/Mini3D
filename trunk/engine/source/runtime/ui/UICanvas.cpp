@@ -1,4 +1,4 @@
-#include "UICanvas.h"
+﻿#include "UICanvas.h"
 #include "UIView.h"
 #include "UIAtlas.h"
 #include "UILabel.h"
@@ -33,11 +33,11 @@ UICanvas::~UICanvas()
 	SceneManager::RemoveUICanvas(this);
 	_camera = nullptr;
 }
-Object* UICanvas::Clone(Object* new_obj)
+Object* UICanvas::Clone(Object* newObj)
 {
-	base::Clone(new_obj);
-	UICanvas* obj = dynamic_cast<UICanvas*>(new_obj);
-	if (!obj)return new_obj;
+	base::Clone(newObj);
+	UICanvas* obj = dynamic_cast<UICanvas*>(newObj);
+	if (!obj)return newObj;
 
 	obj->SetRenderMode(_renderMode);
 	obj->SetCamera(_camera);
@@ -75,6 +75,7 @@ bool UICanvas::CanRemove()
 }
 void UICanvas::OnDrawGizmos(Camera* camera)
 {
+	DC_PROFILE_FUNCTION;
 	if (_drawGizmos)
 	{
 		UICanvasScaler* scaler = GetComponent<UICanvasScaler>();
@@ -90,35 +91,35 @@ void UICanvas::OnDrawGizmos(Camera* camera)
 }
 void UICanvas::Update()
 {
-	DC_PROFILE_FUNCTION();
+	DC_PROFILE_FUNCTION;
 	base::Update();
 	//big->small
-	const auto GetSortCanvas = [this](List<UICanvas*>& sort_canvas)
+	const auto GetSortCanvas = [this](List<UICanvas*>& sortCanvas)
 	{
-		List<UICanvas*> list_canvas = this->GetGameObject()->GetComponentsInChildren<UICanvas>(true);
-		for (const auto& canvas : list_canvas)
+		List<UICanvas*> listCanvas = this->GetGameObject()->GetComponentsInChildren<UICanvas>(true);
+		for (const auto& canvas : listCanvas)
 		{
-			int64 sort_layer = canvas->GetSortLayer();
+			int64 sortLayer = canvas->GetSortLayer();
 			int64 order = canvas->GetOrderInLayer();
-			int64 max_value = UINT_MAX;
-			int64 group_id = (max_value*(sort_layer < 0 ? -1 : (sort_layer > 0 ? 1 : 0)) + sort_layer) + (order);
+			int64 maxValue = UINT_MAX;
+			int64 groupId = (maxValue*(sortLayer < 0 ? -1 : (sortLayer > 0 ? 1 : 0)) + sortLayer) + (order);
 
-			bool is_insert = false;
-			for (auto it = sort_canvas.begin(); it != sort_canvas.end(); ++it)
+			bool isInsert = false;
+			for (auto it = sortCanvas.begin(); it != sortCanvas.end(); ++it)
 			{
-				int64 s_sort_layer = (*it)->GetSortLayer();
-				int64 s_order = (*it)->GetOrderInLayer();
-				int64 s_group_id = (max_value*(s_sort_layer < 0 ? -1 : (s_sort_layer > 0 ? 1 : 0)) + s_sort_layer) + (s_order);
-				if (group_id >= s_group_id)
+				int64 sortLayer = (*it)->GetSortLayer();
+				int64 order = (*it)->GetOrderInLayer();
+				int64 s_group_id = (maxValue*(sortLayer < 0 ? -1 : (sortLayer > 0 ? 1 : 0)) + sortLayer) + (order);
+				if (groupId >= s_group_id)
 				{
-					sort_canvas.Insert(it, canvas);
-					is_insert = true;
+					sortCanvas.Insert(it, canvas);
+					isInsert = true;
 					break;
 				}
 			}
-			if (!is_insert)
+			if (!isInsert)
 			{
-				sort_canvas.Add(canvas);
+				sortCanvas.Add(canvas);
 			}
 		}
 	};
@@ -128,51 +129,51 @@ void UICanvas::Update()
 		MouseBtnID btn = (MouseBtnID)i;
 		if (Input::GetMouseButtonDown(btn))
 		{
-			Vector2 ui_pos;
-			if(!ScreenToUIPoint(Input::mousePosition, ui_pos))
+			Vector2 uiPos;
+			if(!ScreenToUIPoint(Input::mousePosition, uiPos))
 				continue;
 
-			List<UICanvas*> sort_canvas;
-			GetSortCanvas(sort_canvas);
-			for (const auto& canvas : sort_canvas)
+			List<UICanvas*> sortCanvas;
+			GetSortCanvas(sortCanvas);
+			for (const auto& canvas : sortCanvas)
 			{
-				List<UIView*> list_views;
-				this->GetViewsInChildren(canvas->GetTransform(), list_views);
-				for (auto it = list_views.rbegin(); it != list_views.rend(); ++it)
+				List<UIView*> listViews;
+				this->GetViewsInChildren(canvas->GetTransform(), listViews);
+				for (auto it = listViews.rbegin(); it != listViews.rend(); ++it)
 				{
 					UIView* view = *it;
-					if (view->GetRaycastTarget() && view->HitTest((int)ui_pos.x, (int)ui_pos.y))
+					if (view->GetRaycastTarget() && view->HitTest((int)uiPos.x, (int)uiPos.y))
 					{
-						view->OnMouseDown(ui_pos, btn);
+						view->OnMouseDown(uiPos, btn);
 					}
 				}
 			}
 		}
 		if (Input::GetMouseButtonUp(btn))
 		{
-			Vector2 ui_pos;
-			if (!ScreenToUIPoint(Input::mousePosition, ui_pos))
+			Vector2 uiPos;
+			if (!ScreenToUIPoint(Input::mousePosition, uiPos))
 				continue;
 
-			List<UICanvas*> sort_canvas;
-			GetSortCanvas(sort_canvas);
-			for (const auto& canvas : sort_canvas)
+			List<UICanvas*> sortCanvas;
+			GetSortCanvas(sortCanvas);
+			for (const auto& canvas : sortCanvas)
 			{
-				List<UIView*> list_views;
-				this->GetViewsInChildren(canvas->GetTransform(), list_views);
-				for (auto it = list_views.rbegin(); it != list_views.rend(); ++it)
+				List<UIView*> listViews;
+				this->GetViewsInChildren(canvas->GetTransform(), listViews);
+				for (auto it = listViews.rbegin(); it != listViews.rend(); ++it)
 				{
 					UIView* view = *it;
 					if (view->_isMouseDown[(int)btn])
 					{
-						if (view->HitTest((int)ui_pos.x, (int)ui_pos.y))
+						if (view->HitTest((int)uiPos.x, (int)uiPos.y))
 						{
-							view->OnMouseUpInside(ui_pos, btn);
-							view->OnMouseClick(ui_pos, btn);
+							view->OnMouseUpInside(uiPos, btn);
+							view->OnMouseClick(uiPos, btn);
 						}
 						else
 						{
-							view->OnMouseUpOutside(ui_pos, btn);
+							view->OnMouseUpOutside(uiPos, btn);
 						}
 					}
 				}
@@ -182,31 +183,32 @@ void UICanvas::Update()
 }
 void UICanvas::Refresh()
 {
+	DC_PROFILE_FUNCTION;
 	if (_isNeedRebuild)
 	{
 		//step1:sort out by material
-		List<UIView*> list_views;
-		this->GetViewsInChildren(this->GetTransform(), list_views);
+		List<UIView*> listViews;
+		this->GetViewsInChildren(this->GetTransform(), listViews);
 
-		List<std::pair<String, List<UIView*>>> map_views;
-		for (const auto& view : list_views)
+		List<std::pair<String, List<UIView*>>> mapViews;
+		for (const auto& view : listViews)
 		{
 			if (!view->IsEnable() || !view->GetGameObject()->ActiveInHierarchy())continue;
 
 			String tex_name = view->GetAtlasFile();
-			auto it = map_views.begin();
-			for (; it != map_views.end(); ++it)
+			auto it = mapViews.begin();
+			for (; it != mapViews.end(); ++it)
 			{
 				if ((*it).first == tex_name)
 				{
 					break;
 				}
 			}
-			if (it == map_views.end())
+			if (it == mapViews.end())
 			{
 				List<UIView*> list;
 				list.Add(view);
-				map_views.Add({ tex_name, list });
+				mapViews.Add({ tex_name, list });
 			}
 			else
 			{
@@ -216,19 +218,19 @@ void UICanvas::Refresh()
 
 		//step2:build mesh
 		this->ClearData();
-		int prim_index = 0;
-		for (const auto& batches : map_views)
+		int primIndex = 0;
+		for (const auto& batches : mapViews)
 		{
-			VariablePrimitive* primitive = dynamic_cast<VariablePrimitive*>(GetPrimitive(prim_index));
-			Material* material = GetMaterial(primitive, prim_index);
+			VariablePrimitive* primitive = dynamic_cast<VariablePrimitive*>(GetPrimitive(primIndex));
+			Material* material = GetMaterial(primitive, primIndex);
 			material->SetTexture(Texture::GetWhiteTexture());
 
-			int vxt_offset = 0, idx_offset = 0;
+			int vxtOffset = 0, idxOffset = 0;
 			for (auto& view : batches.second)
 			{
-				view->FillMesh(primitive, material, vxt_offset, idx_offset);
+				view->FillMesh(primitive, material, vxtOffset, idxOffset);
 			}
-			prim_index++;
+			primIndex++;
 		}
 		this->UploadData();
 
@@ -237,8 +239,8 @@ void UICanvas::Refresh()
 	}
 
 	//update child canvas
-	List<UICanvas*> list_canvas = this->GetGameObject()->GetComponentsInChildren<UICanvas>(false);
-	for (auto& canvas : list_canvas)
+	List<UICanvas*> listCanvas = this->GetGameObject()->GetComponentsInChildren<UICanvas>(false);
+	for (auto& canvas : listCanvas)
 	{
 		canvas->Refresh();
 	}
@@ -253,52 +255,53 @@ void UICanvas::SetCamera(Camera* camera)
 {
 	_camera = camera;
 }
-bool UICanvas::ScreenToUIPoint(const Vector3& position, Vector2& ui_pos)
+bool UICanvas::ScreenToUIPoint(const Vector3& position, Vector2& uiPos)
 {
-	Size screen_size(Screen::GetWidth(), Screen::GetHeight());
+	DC_PROFILE_FUNCTION;
+	Size screenSize(Screen::GetWidth(), Screen::GetHeight());
 	if (_camera)
 	{
 		RenderWindow* window = WindowManager::GetWindow(_camera->GetTargetDisplay());
-		if (window)screen_size.Set(window->GetWidth(), window->GetHeight());
+		if (window)screenSize.Set(window->GetWidth(), window->GetHeight());
 	}
 
-	ui_pos = Vector2(position.x, position.y);
+	uiPos = Vector2(position.x, position.y);
 	UICanvasScaler* scaler = this->GetComponent<UICanvasScaler>();
 	if (Application::IsEditor())
 	{
-		const Rect& game_rect = EMain_GameView::GetViewPort();//左上角为(0,0);
-		ui_pos = Vector2(ui_pos.x - game_rect.x, ui_pos.y - (screen_size.height - (game_rect.y + game_rect.height)));//鼠标位置转换成相对Game视图位置
-		if (ui_pos.x < 0.0f || ui_pos.x > game_rect.width || ui_pos.y < 0.0f || ui_pos.y > game_rect.height)return false;
+		const Rect& gameRect = EMain_GameView::GetViewPort();//左上角为(0,0);
+		uiPos = Vector2(uiPos.x - gameRect.x, uiPos.y - (screenSize.height - (gameRect.y + gameRect.height)));//鼠标位置转换成相对Game视图位置
+		if (uiPos.x < 0.0f || uiPos.x > gameRect.width || uiPos.y < 0.0f || uiPos.y > gameRect.height)return false;
 		if (scaler)
 		{
-			ui_pos.x = ui_pos.x * (scaler->GetRealResolution().width / game_rect.width);
-			ui_pos.y = ui_pos.y * (scaler->GetRealResolution().height / game_rect.height);
-			ui_pos = ui_pos - Vector2(scaler->GetRealResolution().width, scaler->GetRealResolution().height)*0.5f;
+			uiPos.x = uiPos.x * (scaler->GetRealResolution().width / gameRect.width);
+			uiPos.y = uiPos.y * (scaler->GetRealResolution().height / gameRect.height);
+			uiPos = uiPos - Vector2(scaler->GetRealResolution().width, scaler->GetRealResolution().height)*0.5f;
 		}
 		else
 		{
-			ui_pos = ui_pos - Vector2(game_rect.width, game_rect.height)*0.5f;
+			uiPos = uiPos - Vector2(gameRect.width, gameRect.height)*0.5f;
 		}
 	}
 	else
 	{
 		if (scaler)
 		{
-			ui_pos.x = ui_pos.x * (scaler->GetRealResolution().width / screen_size.width);
-			ui_pos.y = ui_pos.y * (scaler->GetRealResolution().height / screen_size.height);
-			ui_pos = ui_pos - Vector2(scaler->GetRealResolution().width, scaler->GetRealResolution().height)*0.5f;
+			uiPos.x = uiPos.x * (scaler->GetRealResolution().width / screenSize.width);
+			uiPos.y = uiPos.y * (scaler->GetRealResolution().height / screenSize.height);
+			uiPos = uiPos - Vector2(scaler->GetRealResolution().width, scaler->GetRealResolution().height)*0.5f;
 		}
 		else
 		{
-			ui_pos = ui_pos - Vector2(screen_size.width, screen_size.height)*0.5f;
+			uiPos = uiPos - Vector2(screenSize.width, screenSize.height)*0.5f;
 		}
 	}
 	return true;
 }
 void UICanvas::GetViewsInChildren(Transform* node, List<UIView*>& coms) const
 {
-	int child_count = node->GetChildCount();
-	for (int i = 0; i < child_count; ++i)
+	int childCount = node->GetChildCount();
+	for (int i = 0; i < childCount; ++i)
 	{
 		GameObject* child = node->GetChild(i)->GetGameObject();
 		if (child->GetComponent<UICanvas>() != nullptr)
@@ -328,15 +331,16 @@ Material* UICanvas::GetMaterial(Primitive* primitive, int index)
 }
 void UICanvas::OnDrawEditor()
 {
+	DC_PROFILE_FUNCTION;
 	Component::OnDrawEditor();
 	if (_renderMode != UIRenderMode::None)
 	{
-		const char* sz_flags[] = { "ScreenSpace - Overlay", "ScreenSpace - Camera", "WorldSpace" };
+		const char* szFlags[] = { "ScreenSpace - Overlay", "ScreenSpace - Camera", "WorldSpace" };
 		ImGuiEx::Label("Render Mode");
-		static int current_flags = (int)_renderMode - 1;
-		if (ImGui::Combo("##RenderMode", &current_flags, sz_flags, ARRAY_SIZE(sz_flags)))
+		static int currentFlags = (int)_renderMode - 1;
+		if (ImGui::Combo("##RenderMode", &currentFlags, szFlags, ARRAY_SIZE(szFlags)))
 		{
-			_renderMode = UIRenderMode(current_flags + 1);
+			_renderMode = UIRenderMode(currentFlags + 1);
 		}
 	}
 	ImGuiEx::Label("Sort Order");

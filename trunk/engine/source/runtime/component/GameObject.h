@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2020/7/30
@@ -35,7 +35,7 @@ class ENGINE_DLL GameObject : public Object
 	DECLARE_OBJECT_CLONE;
 	DECLARE_OBJECT_SERIALIZE(GameObject);
 	BEGIN_DERIVED_REFECTION_TYPE(GameObject, Object)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 	using base::base;
 
 private:
@@ -119,7 +119,7 @@ T* GameObject::AddComponent(ARGS... args)
 		Debuger::Error("Already has component");
 		return nullptr;
 	}
-	T* com = DBG_NEW T(args...);
+	T* com = Memory::New<T>(args...);
 	if (!AddComponent(com))return nullptr;
 	return com;
 }
@@ -178,8 +178,8 @@ T* GameObject::GetComponentInChildren(bool self, bool inactive) const
 	if (self)com = this->GetComponents<T>();
 	if (com && (inactive || (!inactive && com->IsEnable())))return com;
 
-	int child_count = this->GetTransform()->GetChildCount();
-	for (int i = 0; i < child_count; ++i)
+	int childCount = this->GetTransform()->GetChildCount();
+	for (int i = 0; i < childCount; ++i)
 	{
 		auto child = this->GetTransform()->GetChild(i);
 		T* child_com = child->GetGameObject()->GetComponentInChildren<T>(true);
@@ -197,8 +197,8 @@ List<T*> GameObject::GetComponentsInChildren(bool self) const
 	List<T*> coms;
 	if(self)coms = this->GetComponents<T>();
 
-	int child_count = this->GetTransform()->GetChildCount();
-	for (int i = 0; i < child_count; ++i)
+	int childCount = this->GetTransform()->GetChildCount();
+	for (int i = 0; i < childCount; ++i)
 	{
 		auto child = this->GetTransform()->GetChild(i);
 		List<T*> child_coms = child->GetGameObject()->GetComponentsInChildren<T>(true);
@@ -213,7 +213,7 @@ List<T*> GameObject::GetComponentsInChildren(bool self) const
 template <class T>
 T* GameObject::GetComponentInParent(bool self, bool inactive) const
 {
-	T* com;
+	T* com = nullptr;
 	if (self)com = this->GetComponent<T>();
 	if (com && (inactive || (!inactive && com->IsEnable())))return com;
 

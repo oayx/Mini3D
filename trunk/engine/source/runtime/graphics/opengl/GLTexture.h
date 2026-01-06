@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2020/3/21
@@ -11,18 +11,17 @@
 
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-class GLTexture Final : public Texture
+class GLTexture final : public Texture
 {
 	friend class GLDevice;
 	DEFAULT_CREATE(GLTexture);
 	FRIEND_CONSTRUCT_DESTRUCT(GLTexture);
 	DISALLOW_CONSTRUCTOR_COPY_ASSIGN(GLTexture);
 	BEGIN_DERIVED_REFECTION_TYPE(GLTexture, Texture)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 protected:
 	GLTexture(const TextureDesc& desc);
-public:
 	~GLTexture();
 
 public:

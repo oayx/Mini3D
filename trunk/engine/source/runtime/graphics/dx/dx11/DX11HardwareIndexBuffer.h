@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2009/11/26
@@ -11,14 +11,14 @@
 
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-class DX11HardwareIndexBuffer Final : public HardwareIndexBuffer
+class DX11HardwareIndexBuffer final : public HardwareIndexBuffer
 {
 	friend class DX11Device;
 	DEFAULT_CREATE(DX11HardwareIndexBuffer);
 	FRIEND_CONSTRUCT_DESTRUCT(DX11HardwareIndexBuffer);
 	DISALLOW_COPY_ASSIGN(DX11HardwareIndexBuffer);
 	BEGIN_DERIVED_REFECTION_TYPE(DX11HardwareIndexBuffer, HardwareIndexBuffer)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 protected:
 	DX11HardwareIndexBuffer();

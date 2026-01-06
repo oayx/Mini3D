@@ -1,4 +1,4 @@
-#include "Matrix3.h"
+﻿#include "Matrix3.h"
 #include "Matrix4.h"
 
 DC_BEGIN_NAMESPACE
@@ -16,44 +16,13 @@ Matrix3 Matrix3::identity
 	0,1,0,
 	0,0,1
 	);
-
-Matrix3::Matrix3(float m00, float m01, float m02, float m10, float m11, float m12, float m20, float m21, float m22)
+Matrix3::Matrix3(const Matrix4& mat)
 {
-	m[0][0] = m00;
-	m[0][1] = m01;
-	m[0][2] = m02;
-	m[1][0] = m10;
-	m[1][1] = m11;
-	m[1][2] = m12;
-	m[2][0] = m20;
-	m[2][1] = m21;
-	m[2][2] = m22;
+	m[0][0] = mat[0][0]; m[0][1] = mat[0][1]; m[0][2] = mat[0][2];
+	m[1][0] = mat[1][0]; m[1][1] = mat[1][1]; m[1][2] = mat[1][2];
+	m[2][0] = mat[2][0]; m[2][1] = mat[2][1]; m[2][2] = mat[2][2];
 }
-Matrix3::Matrix3(const Matrix3 &mat)
-{
-	m[0][0] = mat[0][0];
-	m[0][1] = mat[0][1];
-	m[0][2] = mat[0][2];
-	m[1][0] = mat[1][0];
-	m[1][1] = mat[1][1];
-	m[1][2] = mat[1][2];
-	m[2][0] = mat[2][0];
-	m[2][1] = mat[2][1];
-	m[2][2] = mat[2][2];
-}
-Matrix3::Matrix3(const Matrix4 &mat)
-{
-	m[0][0] = mat[0][0];
-	m[0][1] = mat[0][1];
-	m[0][2] = mat[0][2];
-	m[1][0] = mat[1][0];
-	m[1][1] = mat[1][1];
-	m[1][2] = mat[1][2];
-	m[2][0] = mat[2][0];
-	m[2][1] = mat[2][1];
-	m[2][2] = mat[2][2];
-}
-Matrix3 &Matrix3::operator = (const Matrix3& mat)
+Matrix3 &Matrix3::operator = (const Matrix3& mat) noexcept
 {
 	if (this != &mat)
 	{
@@ -63,30 +32,24 @@ Matrix3 &Matrix3::operator = (const Matrix3& mat)
 	}
 	return *this;
 }
-Matrix3 &Matrix3::operator = (const Matrix4& mat)
+Matrix3& Matrix3::operator = (Matrix3&& mat) noexcept
+{
+	if (this != &mat)
+	{
+		m[0][0] = mat.m[0][0]; m[0][1] = mat.m[0][1]; m[0][2] = mat.m[0][2];
+		m[1][0] = mat.m[1][0]; m[1][1] = mat.m[1][1]; m[1][2] = mat.m[1][2];
+		m[2][0] = mat.m[2][0]; m[2][1] = mat.m[2][1]; m[2][2] = mat.m[2][2];
+	}
+	return *this;
+}
+Matrix3 &Matrix3::operator = (const Matrix4& mat) noexcept
 {
 	m[0][0] = mat.m[0][0]; m[0][1] = mat.m[0][1]; m[0][2] = mat.m[0][2];
 	m[1][0] = mat.m[1][0]; m[1][1] = mat.m[1][1]; m[1][2] = mat.m[1][2];
 	m[2][0] = mat.m[2][0]; m[2][1] = mat.m[2][1]; m[2][2] = mat.m[2][2];
 	return *this;
 }
-Matrix3 Matrix3::operator -()const
-{
-	return Matrix3(
-		-m[0][0],
-		-m[0][1],
-		-m[0][2],
-
-		-m[1][0],
-		-m[1][1],
-		-m[1][2],
-
-		-m[2][0],
-		-m[2][1],
-		-m[2][2]
-	);
-}
-Matrix3& Matrix3::operator *(float f)
+Matrix3& Matrix3::operator *(float f) noexcept
 {
 	m[0][0] *= f;
 	m[0][1] *= f;
@@ -101,7 +64,7 @@ Matrix3& Matrix3::operator *(float f)
 	m[2][2] *= f;
 	return *this;
 }
-Matrix3 Matrix3::operator + (const Matrix3 &mat) const
+Matrix3 Matrix3::operator + (const Matrix3 &mat) const noexcept
 {
 	return Matrix3(
 		m[0][0] + mat.m[0][0],
@@ -117,7 +80,7 @@ Matrix3 Matrix3::operator + (const Matrix3 &mat) const
 		m[2][2] + mat.m[2][2]
 	);
 }
-Matrix3 Matrix3::operator - (const Matrix3 &mat)const
+Matrix3 Matrix3::operator - (const Matrix3 &mat)const noexcept
 {
 	return Matrix3(
 		m[0][0] - mat.m[0][0],
@@ -133,7 +96,7 @@ Matrix3 Matrix3::operator - (const Matrix3 &mat)const
 		m[2][2] - mat.m[2][2]
 	);
 }
-Matrix3 Matrix3::operator / (float f)const
+Matrix3 Matrix3::operator / (float f)const noexcept
 {
 	return Matrix3(
 		m[0][0] / f,
@@ -149,7 +112,7 @@ Matrix3 Matrix3::operator / (float f)const
 		m[2][2] / f
 	);
 }
-Matrix3 Matrix3::operator *(const Matrix3 &mat)const
+Matrix3 Matrix3::operator *(const Matrix3 &mat)const noexcept
 {
 	Matrix3 mat_out;
 	mat_out.m[0][0] = m[0][0] * mat.m[0][0] + m[0][1] * mat.m[1][0] + m[0][2] * mat.m[2][0];
@@ -165,37 +128,13 @@ Matrix3 Matrix3::operator *(const Matrix3 &mat)const
 	mat_out.m[2][2] = m[2][0] * mat.m[0][2] + m[2][1] * mat.m[1][2] + m[2][2] * mat.m[2][2];
 	return mat_out;
 }
-bool Matrix3::operator == (const Matrix3& mat) const
-{
-	if (
-		m[0][0] != mat.m[0][0] || m[0][1] != mat.m[0][1] || m[0][2] != mat.m[0][2] ||
-		m[1][0] != mat.m[1][0] || m[1][1] != mat.m[1][1] || m[1][2] != mat.m[1][2] ||
-		m[2][0] != mat.m[2][0] || m[2][1] != mat.m[2][1] || m[2][2] != mat.m[2][2])
-	{
-		return false;
-	}
-
-	return true;
-}
-bool Matrix3::operator != (Matrix3& mat) const
-{
-	if (
-		m[0][0] != mat.m[0][0] || m[0][1] != mat.m[0][1] || m[0][2] != mat.m[0][2] ||
-		m[1][0] != mat.m[1][0] || m[1][1] != mat.m[1][1] || m[1][2] != mat.m[1][2] ||
-		m[2][0] != mat.m[2][0] || m[2][1] != mat.m[2][1] || m[2][2] != mat.m[2][2])
-	{
-		return true;
-	}
-
-	return false;
-}
-Matrix3 Matrix3::Inverse()const
+Matrix3 Matrix3::Inverse()const noexcept
 {
 	Matrix4 mat4(*this);
 	mat4 = mat4.Inverse();
 	return mat4;
 }
-Matrix3 Matrix3::Transpose()const
+Matrix3 Matrix3::Transpose()const noexcept
 {
 	Matrix3 mat_out;
 	mat_out._11 = _11;
@@ -209,7 +148,7 @@ Matrix3 Matrix3::Transpose()const
 	mat_out._33 = _33;
 	return mat_out;
 }
-Matrix3 Matrix3::Reflect(const Vector3& normal)const
+Matrix3 Matrix3::Reflect(const Vector3& normal)const noexcept
 {
 	Vector3 vecNor = normal.Normalize();
 	Matrix3 mat_out;
@@ -226,7 +165,7 @@ Matrix3 Matrix3::Reflect(const Vector3& normal)const
 	mat_out._33 = 1 - 2 * vecNor.z*vecNor.z;
 	return mat_out;
 }
-Matrix3& Matrix3::Rotate(const Quaternion& q)
+Matrix3& Matrix3::Rotate(const Quaternion& q) noexcept
 {
 	float x = q.x * 2.0F;
 	float y = q.y * 2.0F;
@@ -252,7 +191,7 @@ Matrix3& Matrix3::Rotate(const Quaternion& q)
 	_33 = 1.0f - (xx + yy);
 	return *this;
 }
-Matrix3& Matrix3::Rotate(const Vector3 &axis, float degree)
+Matrix3& Matrix3::Rotate(const Vector3 &axis, float degree) noexcept
 {
 	float angle = Math::Deg2Rad * degree;
 	float cost = ::cos(angle), sint = ::sin(angle), one_sub_cost = 1 - cost;
@@ -262,7 +201,7 @@ Matrix3& Matrix3::Rotate(const Vector3 &axis, float degree)
 	m[2][0] = v.x * v.z * one_sub_cost + v.y * sint;	m[2][1] = v.y * v.z * one_sub_cost - v.x * sint;	m[2][2] = v.z * v.z * one_sub_cost + cost;
 	return *this;
 }
-Quaternion Matrix3::ToRotate()const
+Quaternion Matrix3::ToRotate()const noexcept
 {
 	float tr = Get(0, 0) + Get(1, 1) + Get(2, 2);
 	float s;
@@ -300,7 +239,7 @@ Quaternion Matrix3::ToRotate()const
 	return q.Normalize();
 }
 
-Matrix3& Matrix3::Euler(const Vector3& euler)
+Matrix3& Matrix3::Euler(const Vector3& euler) noexcept
 {
 	float cx = ::cos(Math::Deg2Rad * euler.x);
 	float sx = ::sin(Math::Deg2Rad * euler.x);
@@ -322,7 +261,7 @@ Matrix3& Matrix3::Euler(const Vector3& euler)
 	_33 = cx * cy;
 	return *this;
 }
-Vector3 Matrix3::ToEuler()const
+Vector3 Matrix3::ToEuler()const noexcept
 {
 	float x, y, z;
 	// from http://www.geometrictools.com/Documentation/EulerAngles.pdf
@@ -352,18 +291,18 @@ Vector3 Matrix3::ToEuler()const
 	}
 	return Vector3(Math::Rad2Deg * x, Math::Rad2Deg * y, Math::Rad2Deg * z);
 }
-Matrix3 Matrix3::FromRotate(const Quaternion& q)
+Matrix3 Matrix3::FromRotate(const Quaternion& q) noexcept
 {
 	Matrix3 mat(q);
 	return mat;
 }
-Matrix3 Matrix3::FromScale(const Vector3& scale)
+Matrix3 Matrix3::FromScale(const Vector3& scale) noexcept
 {
 	Matrix3 mat;
 	mat.Scale(scale);
 	return mat;
 }
-Matrix3 Matrix3::LookTo(const Vector3 &dir, const Vector3 &up)
+Matrix3 Matrix3::LookTo(const Vector3 &dir, const Vector3 &up) noexcept
 {
 	Vector3 xAxis;
 	Vector3 zAxis = dir.Normalize();
@@ -381,7 +320,7 @@ Matrix3 Matrix3::LookTo(const Vector3 &dir, const Vector3 &up)
 	mat._31 = xAxis.z; mat._32 = yAxis.z; mat._33 = zAxis.z;
 	return mat;
 }
-Matrix3 Matrix3::LookAt(const Vector3 &eye, const Vector3 &at, const Vector3 &up)
+Matrix3 Matrix3::LookAt(const Vector3 &eye, const Vector3 &at, const Vector3 &up) noexcept
 {
 	Vector3 dir(at - eye);
 	return LookTo(dir, up);

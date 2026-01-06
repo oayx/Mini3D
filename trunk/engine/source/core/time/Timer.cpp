@@ -1,4 +1,4 @@
-#include "Timer.h"
+﻿#include "Timer.h"
 #include "Time.h"
  
 DC_BEGIN_NAMESPACE
@@ -55,9 +55,6 @@ void TimerEntity::Update(float elapse)
 
 /********************************************************************/
 IMPL_DERIVED_REFECTION_TYPE(Timer, Object);
-uint Timer::m_idCounter = 0;
-bool Timer::_useUnscaledTime = false;
-List<TimerEntity> Timer::m_listTimers;
 uint Timer::AddLoop(float rate, TimerCallback0 callBack)
 {
 	return AddTimer(rate, 0, callBack);
@@ -77,34 +74,34 @@ uint Timer::AddOnce(float rate, TimerCallback1 callBack, String info)
 uint Timer::AddTimer(float rate, int ticks, TimerCallback0 callBack)
 {
 	if (rate < 0) rate = 0;
-	TimerEntity newTimer(++m_idCounter, rate, ticks, callBack);
-	m_listTimers.Add(newTimer);
+	TimerEntity newTimer(++_idCounter, rate, ticks, callBack);
+	_listTimers.Add(newTimer);
 	if (rate == 0) newTimer.Update(0);
 	return newTimer.id;
 }
 uint Timer::AddTimer(float rate, int ticks, TimerCallback1 callBack, String info)
 {
 	if (rate < 0) rate = 0;
-	TimerEntity newTimer(++m_idCounter, rate, ticks, callBack, info);
-	m_listTimers.Add(newTimer);
+	TimerEntity newTimer(++_idCounter, rate, ticks, callBack, info);
+	_listTimers.Add(newTimer);
 	if (rate == 0) newTimer.Update(0);
 	return newTimer.id;
 }
 void Timer::CallLater(TimerCallback0 callBack)
 {
-	TimerEntity newTimer(++m_idCounter, 0, 1, callBack);
-	m_listTimers.Add(newTimer);
+	TimerEntity newTimer(++_idCounter, 0, 1, callBack);
+	_listTimers.Add(newTimer);
 }
 void Timer::CallLater(TimerCallback1 callBack, String info)
 {
-	TimerEntity newTimer(++m_idCounter, 0, 1, callBack, info);
-	m_listTimers.Add(newTimer);
+	TimerEntity newTimer(++_idCounter, 0, 1, callBack, info);
+	_listTimers.Add(newTimer);
 }
 void Timer::RemoveTimer(uint timerId)
 {
 	if (timerId == 0) return;
 	//修改状态
-	for (TimerEntity& timer : m_listTimers)
+	for (TimerEntity& timer : _listTimers)
 	{
 		if (timer.id == timerId)
 		{
@@ -115,7 +112,7 @@ void Timer::RemoveTimer(uint timerId)
 }
 void Timer::RemoveAllTimer()
 {
-	for (TimerEntity& timer : m_listTimers)
+	for (TimerEntity& timer : _listTimers)
 	{
 		if (timer.id != 0)
 		{//只删除非循环定时器
@@ -126,11 +123,11 @@ void Timer::RemoveAllTimer()
 void Timer::Update()
 {
 	Remove();
-	if (!m_listTimers.IsEmpty())
+	if (!_listTimers.IsEmpty())
 	{
 		//时间缩放
 		float delta_time = _useUnscaledTime ? Time::GetUnscaledDeltaTime() : Time::GetDeltaTime();
-		for (TimerEntity& timer : m_listTimers)
+		for (TimerEntity& timer : _listTimers)
 		{
 			timer.Update(delta_time);
 		}
@@ -138,13 +135,13 @@ void Timer::Update()
 }
 void Timer::Remove()
 {
-	if (!m_listTimers.IsEmpty())
+	if (!_listTimers.IsEmpty())
 	{
-		std::list<TimerEntity>::iterator it = m_listTimers.begin();
-		while (it != m_listTimers.end())
+		std::list<TimerEntity>::iterator it = _listTimers.begin();
+		while (it != _listTimers.end())
 		{
 			if (!(*it).isActive)
-				m_listTimers.Remove(it++);
+				_listTimers.Remove(it++);
 			else
 				it++;
 		}

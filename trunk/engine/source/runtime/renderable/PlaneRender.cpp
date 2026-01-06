@@ -1,4 +1,4 @@
-#include "PlaneRender.h"
+﻿#include "PlaneRender.h"
 
  
 DC_BEGIN_NAMESPACE
@@ -14,9 +14,9 @@ void PlaneRender::SetPlane(float fWidth, float fHeight, ushort iXSegments, ushor
 	this->ClearData();
 	//顶点信息
 	{
-		int buff_size = (iXSegments + 1) * (iYSegments + 1);
+		int buffSize = (iXSegments + 1) * (iYSegments + 1);
 		Vector3v vertexs; Vector3v normals; Vector3v tangents; Vector2v texcoords;
-		vertexs.Reserve(buff_size); normals.Reserve(buff_size); tangents.Reserve(buff_size);  texcoords.Reserve(buff_size);
+		vertexs.Reserve(buffSize); normals.Reserve(buffSize); tangents.Reserve(buffSize);  texcoords.Reserve(buffSize);
 
 		Vector3 vec3; Vector2 vec2;
 		float xGrid = fWidth / iXSegments;  //每格大小
@@ -55,7 +55,7 @@ void PlaneRender::SetPlane(float fWidth, float fHeight, ushort iXSegments, ushor
 
 	//索引信息
 	{
-		uint* indexs = NewArray<uint>(iXSegments * iYSegments * 6);
+		uint* indexs = Memory::NewArray<uint>(iXSegments * iYSegments * 6);
 		int iPerEdgeVerCount = iXSegments + 1;
 		int q = 0; int index = 0;
 		for (ushort j = 0; j < iXSegments; j += 1)
@@ -74,7 +74,7 @@ void PlaneRender::SetPlane(float fWidth, float fHeight, ushort iXSegments, ushor
 			q++;
 		}
 		this->SetIndices(iXSegments * iYSegments * 6, indexs);
-		DeleteArray(indexs);
+		Memory::DeleteArray(indexs);
 	}
 	this->UploadData();
 }

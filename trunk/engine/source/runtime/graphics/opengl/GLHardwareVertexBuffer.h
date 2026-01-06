@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2020/3/25
@@ -11,18 +11,18 @@
 
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-class GLHardwareVertexBuffer Final : public HardwareVertexBuffer
+class GLHardwareVertexBuffer final : public HardwareVertexBuffer
 {
 	friend class GLDevice;
 	DEFAULT_CREATE(GLHardwareVertexBuffer);
 	FRIEND_CONSTRUCT_DESTRUCT(GLHardwareVertexBuffer);
 	DISALLOW_COPY_ASSIGN(GLHardwareVertexBuffer);
 	BEGIN_DERIVED_REFECTION_TYPE(GLHardwareVertexBuffer, HardwareVertexBuffer)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 protected:
 	GLHardwareVertexBuffer();
-	virtual ~GLHardwareVertexBuffer();
+	~GLHardwareVertexBuffer();
 
 public:
 	virtual void* Lock(const VertexBufferDesc& desc)override;
@@ -34,7 +34,7 @@ private:
 	void BuildInputLayout(CGProgram* shader);
 
 protected:
-	uint m_nBufferId[MAX_STREAM_COUNT] = {0};
+	uint _nBufferId[MAX_STREAM_COUNT] = {0};
 	GLuint _vao = 0;
 };//GLHardwareVertexBuffer
 DC_END_NAMESPACE

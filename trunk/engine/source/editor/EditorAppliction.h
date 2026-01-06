@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Description：编辑器
@@ -19,7 +19,7 @@ class ENGINE_DLL EditorAppliction : public Object
 	FRIEND_CONSTRUCT_DESTRUCT(EditorAppliction);
 	DISALLOW_COPY_ASSIGN(EditorAppliction);
 	BEGIN_DERIVED_REFECTION_TYPE(EditorAppliction, Object)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 private:
 	static void Initialize();
@@ -47,20 +47,20 @@ private:
 	static void OnWatchFolderChange();
 
 	static void InitComponent();
-	static void InitComponent(EComponents& parent_component, VecString& names, const String& class_name);
+	static void InitComponent(EComponents& parentComponent, VecString& names, const String& className);
 
 	static void OnSelectObject(uint64 id);
 	static void OnUnselectObject(uint64 id);
 
 private:
-	static LayoutType		_layoutType;		//修改模式
+	inline static LayoutType		_layoutType = LayoutType::Default;		//修改模式
 
-	static InspectorType	_inspectorType;
-	static uint64			_inspectorId;
-	static String			_inspectorName;
+	inline static InspectorType		_inspectorType = InspectorType::None;
+	inline static uint64			_inspectorId = 0;
+	inline static String			_inspectorName = "";
 
-	static EComponents		_components;
+	inline static EComponents		_components;
 
-	static std::atomic<bool> _isWatchFolderChange;	//监视的目录有改变
+	inline static std::atomic<bool> _isWatchFolderChange = false;	//监视的目录有改变
 };
 DC_END_NAMESPACE

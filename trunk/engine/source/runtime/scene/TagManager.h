@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Date：2021/8/23
@@ -10,7 +10,7 @@
  
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-class ENGINE_DLL TagManager Final : public Object
+class ENGINE_DLL TagManager final : public Object
 {
 	friend class Application;
 	DISALLOW_CONSTRUCTOR_COPY_ASSIGN(TagManager);
@@ -27,9 +27,9 @@ public:
 	static void Save();
 
 public:
-	static const int MAX_NAME_SIZE = 20;
+	static constexpr int MAX_NAME_SIZE = 20;
 
 private:
-	static Vector<String> _tags;
+	inline static Vector<String> _tags;
 };//Light
 DC_END_NAMESPACE

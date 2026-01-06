@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Date：2020/12/4 
@@ -19,13 +19,13 @@ enum class ReflectionMode
 DECLARE_ENUM_OPERATORS(ReflectionMode);
 
 // 实时反射，自带相机
-class ENGINE_DLL ReflectionProbe Final : protected Camera
+class ENGINE_DLL ReflectionProbe final : protected Camera
 {
 	friend class GameObject;
 	FRIEND_CONSTRUCT_DESTRUCT(ReflectionProbe);
 	DISALLOW_COPY_ASSIGN(ReflectionProbe);
 	BEGIN_DERIVED_REFECTION_TYPE(ReflectionProbe, Camera)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 private:
 	ReflectionProbe();

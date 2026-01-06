@@ -1,9 +1,8 @@
-#include "EventDispatcher.h"
+﻿#include "EventDispatcher.h"
  
 DC_BEGIN_NAMESPACE
 /*****************************************************************************************************/
 IMPL_DERIVED_REFECTION_TYPE(EventDispatcher, Object);
-EventController EventDispatcher::_eventController;
 bool EventDispatcher::AddEventListener(const String& type, Object *object, const EventHandler &selector)
 {
 	return _eventController.AddEventListener(type, object, selector);

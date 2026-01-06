@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2020/3/16
@@ -71,26 +71,22 @@ union RGBA
 	struct { unsigned char r, g, b, a; };
 	unsigned int u;
 };
-inline uint RGBAtoBGRA(uint color)
+constexpr inline uint RGBAtoBGRA(uint color)
 {
-	RGBA tmp;
-	tmp.u = color;
-	byte b = tmp.b;
-	tmp.b = tmp.r;
-	tmp.r = b;
-	return tmp.u;
+	return ((color & 0xFF000000u)) |	// 保留Alpha通道
+		((color & 0x00FF0000u) >> 16) | // 红色通道右移16位到蓝色位置
+		((color & 0x0000FF00u)) |		// 绿色通道保持不变
+		((color & 0x000000FFu) << 16);  // 蓝色通道左移16位到红色位置
 }
-inline uint BGRAtoRGBA(uint color)
+constexpr inline uint BGRAtoRGBA(uint color)
 {
-	RGBA tmp;
-	tmp.u = color;
-	byte b = tmp.b;
-	tmp.b = tmp.r;
-	tmp.r = b;
-	return tmp.u;
+	return ((color & 0xFF000000u)) |	// 保留Alpha通道
+		((color & 0x00FF0000u) >> 16) | // 蓝色通道右移16位到红色位置
+		((color & 0x0000FF00u)) |		// 绿色通道保持不变
+		((color & 0x000000FFu) << 16);  // 红色通道左移16位到蓝色位置
 }
 
-inline bool IsTransparentColor(const ColorFormat format)
+constexpr inline bool IsTransparentColor(const ColorFormat format)
 {
 	switch (format)
 	{
@@ -107,7 +103,7 @@ inline bool IsTransparentColor(const ColorFormat format)
 		return false;
 	}
 }
-inline bool IsCompressedFormat(const ColorFormat format)
+constexpr inline bool IsCompressedFormat(const ColorFormat format)
 {
 	if (format == ColorFormat::ETC_RGB4 || format == ColorFormat::ETC2_RGB4 || format == ColorFormat::ETC2_RGBA8 ||
 		format == ColorFormat::PVRTC_RGB2 || format == ColorFormat::PVRTC_RGBA2 || format == ColorFormat::PVRTC_RGB4 || format == ColorFormat::PVRTC_RGBA4 ||
@@ -119,53 +115,39 @@ inline bool IsCompressedFormat(const ColorFormat format)
 	}
 	return false;
 }
-inline uint BitsPerPixel(const ColorFormat format)
+constexpr inline uint BitsPerPixel(const ColorFormat format)
 {
 	switch (format)
 	{
-	case ColorFormat::R8:
-		return 8;
+	case ColorFormat::R8: return 8;
 	case ColorFormat::R5G6B5:
 	case ColorFormat::R5G5B5A1:
 	case ColorFormat::B5G6R5:
 	case ColorFormat::B5G5R5A1:
 	case ColorFormat::R16:
 	case ColorFormat::R16F:
-	case ColorFormat::DEPTH16:
-		return 16;
+	case ColorFormat::DEPTH16: return 16;
 	case ColorFormat::R8G8B8:
 	case ColorFormat::B8G8R8:
-	case ColorFormat::DEPTH24:
-		return 24;
+	case ColorFormat::DEPTH24: return 24;
 	case ColorFormat::R8G8B8A8:
 	case ColorFormat::B8G8R8A8:
 	case ColorFormat::RG16F:
 	case ColorFormat::R32F:
 	case ColorFormat::DEPTH32F:
-	case ColorFormat::DEPTH24_STENCIL8:
-		return 32;
-	case ColorFormat::RGB16F:
-		return 48;
+	case ColorFormat::DEPTH24_STENCIL8: return 32;
+	case ColorFormat::RGB16F: return 48;
 	case ColorFormat::RGBA16F:
-	case ColorFormat::RG32F:
-		return 64;
-	case ColorFormat::RGB32F:
-		return 96;
-	case ColorFormat::RGBA32F:
-		return 128;
-	case ColorFormat::DXT1:
-		return 4;
+	case ColorFormat::RG32F: return 64;
+	case ColorFormat::RGB32F: return 96;
+	case ColorFormat::RGBA32F: return 128;
+	case ColorFormat::DXT1: return 4;
 	case ColorFormat::DXT3:
-	case ColorFormat::DXT5:
-		return 8;
+	case ColorFormat::DXT5: return 8;
 	case ColorFormat::ETC_RGB4:
-	case ColorFormat::ETC2_RGB4:
-		return 4;
-	case ColorFormat::ETC2_RGBA8:
-		return 8;
-	default:
-		AssertEx(false, "Cannot find color format:%d", format);
-		return 0;
+	case ColorFormat::ETC2_RGB4: return 4;
+	case ColorFormat::ETC2_RGBA8: return 8;
+	default:return 0;
 	}
 }
 inline uint BytesRowPitch(const ColorFormat format, int width)
@@ -234,7 +216,7 @@ inline uint TotalBytes(const ColorFormat format, int width, int height)
 		return row_pitch * height;
 	}
 }
-inline const char* GetImageFormatname(const ColorFormat format)
+constexpr inline const char* GetImageFormatName(const ColorFormat format)
 {
 	switch (format)
 	{
@@ -282,13 +264,11 @@ inline const char* GetImageFormatname(const ColorFormat format)
 	case ColorFormat::ASTC_RGBA_8x8:return "ASTC_RGBA_8x8";
 	case ColorFormat::ASTC_RGBA_10x10:return "ASTC_RGBA_10x10";
 	case ColorFormat::ASTC_RGBA_12x12:return "ASTC_RGBA_12x12";
-	default:
-		AssertEx(false, "Unknow color format:%d", format);
-		return "Unknow format";
+	default: return "Unknow format";
 	}
 }
 // Converts a 32bit (RGBA8) color to a 16bit R5G5B5A1 color
-inline ushort RGBA8toR5G5B5A1(uint color)
+constexpr inline ushort RGBA8toR5G5B5A1(uint color)
 {
 	return (ushort)((color & 0x80000000) >> 16 |
 		(color & 0x00F80000) >> 9 |
@@ -297,13 +277,13 @@ inline ushort RGBA8toR5G5B5A1(uint color)
 }
 
 // Converts a 32bit (RGBA8) color to a 16bit R5G6B5 color
-inline ushort RGBA8toR5G6B5(uint color)
+constexpr inline ushort RGBA8toR5G6B5(uint color)
 {
 	return (ushort)((color & 0x00F80000) >> 8 |
 		(color & 0x0000FC00) >> 5 |
 		(color & 0x000000F8) >> 3);
 }
-inline uint RGBA8toRGB8(uint color)
+constexpr inline uint RGBA8toRGB8(uint color)
 {
 	return (color & 0x00FF0000) |
 		(color & 0x0000FF00) |
@@ -311,7 +291,7 @@ inline uint RGBA8toRGB8(uint color)
 }
 
 // Convert RGBA8 Color from R5G5B5A1 color
-inline uint R5G5B5A1toRGBA8(ushort color)
+constexpr inline uint R5G5B5A1toRGBA8(ushort color)
 {
 	return (((-((int)color & 0x00008000) >> (int)31) & 0xFF000000) |
 		((color & 0x00007C00) << 9) | ((color & 0x00007000) << 4) |
@@ -321,7 +301,7 @@ inline uint R5G5B5A1toRGBA8(ushort color)
 }
 
 // Returns RGBA8 Color from R5G6B5 color
-inline uint R5G6B5toRGBA8(ushort color)
+constexpr inline uint R5G6B5toRGBA8(ushort color)
 {
 	return 0xFF000000 |
 		((color & 0xF800) << 8) |
@@ -330,19 +310,19 @@ inline uint R5G6B5toRGBA8(ushort color)
 }
 
 // Returns R5G5B5A1 Color from R5G6B5 color
-inline ushort R5G6B5toR5G5B5A1(ushort color)
+constexpr inline ushort R5G6B5toR5G5B5A1(ushort color)
 {
 	return 0x8000 | (((color & 0xFFC0) >> 1) | (color & 0x1F));
 }
 
 // Returns R5G6B5 Color from R5G5B5A1 color
-inline ushort R5G5B5A1toR5G6B5(ushort color)
+constexpr inline ushort R5G5B5A1toR5G6B5(ushort color)
 {
 	return (((color & 0x7FE0) << 1) | (color & 0x1F));
 }
 
 // Pixel = dest * ( 1 - SourceAlpha ) + source * SourceAlpha
-inline uint PixelBlend32(const uint c2, const uint c1)
+constexpr inline uint PixelBlend32(const uint c2, const uint c1)
 {
 	// alpha test
 	uint alpha = c1 & 0xFF000000;
@@ -386,7 +366,7 @@ inline uint PixelBlend32(const uint c2, const uint c1)
 
 /********************************************************************/
 // 格式转换
-class ENGINE_DLL ColorConverter Final : public object
+class ENGINE_DLL ColorConverter final : public object
 {
 	DISALLOW_CONSTRUCTOR_COPY_ASSIGN(ColorConverter);
 	BEGIN_REFECTION_TYPE(ColorConverter)

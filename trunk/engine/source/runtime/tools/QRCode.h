@@ -10,7 +10,7 @@
 
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-class ENGINE_DLL QRCode Final
+class ENGINE_DLL QRCode final
 {
 	DISALLOW_CONSTRUCTOR_COPY_ASSIGN(QRCode);
 public:

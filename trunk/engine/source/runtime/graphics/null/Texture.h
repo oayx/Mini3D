@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2009/11/21
@@ -21,18 +21,18 @@ class ENGINE_DLL Texture : public Resource
 	friend class RenderContent;
 	DISALLOW_CONSTRUCTOR_COPY_ASSIGN(Texture);
 	BEGIN_DERIVED_REFECTION_TYPE(Texture, Resource)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 protected:
 	Texture(const TextureDesc& desc);
-public:
 	~Texture()
 	{
 		if (_imageData)
 		{
-			DeleteArray(_imageData); _imageData = nullptr;
+			Memory::DeleteArray(_imageData); _imageData = nullptr;
 		}
 	}
+
 public:
 	static Texture* Create(const TextureDesc& desc);
 	static Texture* Create(const String &file);
@@ -97,7 +97,7 @@ protected:
 	uint			_rowPitch = 0;
 
 private:
-	static Texture*	_whiteTexture;
-	static Texture*	_blackTexture;
+	inline static Texture* _whiteTexture = nullptr;
+	inline static Texture* _blackTexture = nullptr;
 };//Texture
 DC_END_NAMESPACE

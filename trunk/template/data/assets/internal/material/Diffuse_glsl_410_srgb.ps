@@ -1,0 +1,100 @@
+#version 410
+
+struct Light
+{
+    vec3 Dir;
+    int Type;
+    vec3 Color;
+    vec3 Attenuation;
+    float Range;
+    vec3 Position;
+    float SpotAngle;
+};
+
+struct type_CameraBuffer
+{
+    mat4 MATRIX_V;
+    mat4 MATRIX_P;
+    mat4 MATRIX_VP;
+    mat4 MATRIX_I_VP;
+    vec3 _WorldSpaceCameraPos;
+    vec3 _WorldSpaceCameraDir;
+    vec4 _ProjectionParams;
+    vec4 _ScreenParams;
+    vec4 _ZBufferParams;
+};
+
+uniform type_CameraBuffer CameraBuffer;
+
+struct type_LightBuffer
+{
+    int _LightCount;
+    vec3 _LightDir0;
+    vec3 _LightColor0;
+    Light _Light[8];
+};
+
+uniform type_LightBuffer LightBuffer;
+
+struct type_CommbonRarelyBuffer
+{
+    vec3 _LIGHTMODEL_AMBIENT;
+    int _FogMode;
+    vec4 _FogColor;
+    float _FogStart;
+    float _FogEnd;
+    float _FogDensity;
+};
+
+uniform type_CommbonRarelyBuffer CommbonRarelyBuffer;
+
+struct type_CustomBuffer
+{
+    vec4 _MainTex_ST;
+    float _SpecularPower;
+};
+
+uniform type_CustomBuffer CustomBuffer;
+
+uniform sampler2D _MainTex;
+
+layout(location = 0) in vec2 var_TEXCOORD0;
+layout(location = 1) in vec3 var_TEXCOORD1;
+layout(location = 2) in vec3 var_TEXCOORD2;
+layout(location = 3) in vec3 var_TEXCOORD3;
+layout(location = 4) in float var_TEXCOORD4;
+layout(location = 0) out vec4 out_var_SV_Target;
+
+void main()
+{
+    vec4 _77 = texture(_MainTex, var_TEXCOORD0);
+    float _145;
+    if (CommbonRarelyBuffer._FogMode == 1)
+    {
+        _145 = clamp((CommbonRarelyBuffer._FogEnd - var_TEXCOORD4) / (CommbonRarelyBuffer._FogEnd - CommbonRarelyBuffer._FogStart), 0.0, 1.0);
+    }
+    else
+    {
+        float _144;
+        if (CommbonRarelyBuffer._FogMode == 2)
+        {
+            _144 = exp(-(CommbonRarelyBuffer._FogDensity * var_TEXCOORD4));
+        }
+        else
+        {
+            float _143;
+            if (CommbonRarelyBuffer._FogMode == 3)
+            {
+                _143 = exp((((-CommbonRarelyBuffer._FogDensity) * CommbonRarelyBuffer._FogDensity) * var_TEXCOORD4) * var_TEXCOORD4);
+            }
+            else
+            {
+                _143 = 1.0;
+            }
+            _144 = _143;
+        }
+        _145 = _144;
+    }
+    out_var_SV_Target = vec4(max((pow(max(mix(CommbonRarelyBuffer._FogColor.xyz, vec4(((CommbonRarelyBuffer._LIGHTMODEL_AMBIENT + (LightBuffer._Light[0].Color * vec3((dot(var_TEXCOORD2, var_TEXCOORD3) * 0.5) + 0.5))) + vec3(pow(max(0.0, dot(normalize(normalize(CameraBuffer._WorldSpaceCameraPos - var_TEXCOORD1) + var_TEXCOORD3), var_TEXCOORD2)), exp2((CustomBuffer._SpecularPower * 10.0) + 1.0)))) * _77.xyz, 1.0).xyz, vec3(_145)).xyz, vec3(0.0)), vec3(0.4166666567325592041015625)) * 1.05499994754791259765625) - vec3(0.054999999701976776123046875), vec3(0.0)), 1.0);
+}
+

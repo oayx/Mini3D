@@ -1,4 +1,4 @@
-#include "Quadtree.h"
+﻿#include "Quadtree.h"
 #include "runtime/scene/Camera.h"
 #include "runtime/scene/SceneManager.h"
 #include "runtime/scene/LayerMask.h"
@@ -20,7 +20,7 @@ Quadtree::Quadtree(Quadtree *tree)
 	}
 }
 Quadtree::Quadtree(const Aabb& aabb)
-	: _parentTree(nullptr), _box(aabb)
+	: _box(aabb), _parentTree(nullptr)
 {
 	for (int i = 0; i < 2; i++)
 	{
@@ -127,15 +127,15 @@ void Quadtree::RemoveAllObjects()
 	}
 
 	_nodes.Clear();
-	m_iNumNode = 0;
+	_numNode = 0;
 }
-void Quadtree::FindVisibleObjects(Camera *camera, bool found_visible)
+void Quadtree::FindVisibleObjects(Camera *camera, bool foundVisible)
 {
 	if (camera == nullptr || this->NumOfNode() == 0)
 		return;
 
 	FrustumVisible v = FrustumVisible::None;
-	if (found_visible)
+	if (foundVisible)
 	{
 		v = FrustumVisible::Full;
 	}
@@ -180,8 +180,8 @@ void Quadtree::FindVisibleObjects(Camera *camera, bool found_visible)
 
 			if ((uint)vis > 0)
 			{
-				uint obj_mask = LayerMask::GetMask(node->GetLayer());
-				if ((obj_mask & camera->GetCullMask()) != 0)
+				uint objMask = LayerMask::GetMask(node->GetLayer());
+				if ((objMask & camera->GetCullMask()) != 0)
 				{
 					Renderer* renderable = node->GetComponent<Renderer>();
 					if (renderable != nullptr)camera->AddRenderable(renderable);
@@ -238,17 +238,17 @@ void Quadtree::FindObjects(List<GameObject*>& list, const Ray& ray)
 	if (this->NumOfNode() == 0)
 		return;
 
-	bool is_intersect = false;
+	bool isIntersect = false;
 	if (_parentTree == nullptr)
 	{//根
-		is_intersect = true;
+		isIntersect = true;
 	}
 	else
 	{
-		is_intersect = ray.Intersects(_box).first;
+		isIntersect = ray.Intersects(_box).first;
 	}
 
-	if (is_intersect)
+	if (isIntersect)
 	{
 		for (const auto& node : _nodes)
 		{
@@ -322,8 +322,8 @@ bool Quadtree::Container(const Aabb &box) const
 void Quadtree::GetChildIndex(const Aabb &box, int *x, int *y) const
 {
 	Vector3 center = _box.GetMaximum().MidPoint(_box.GetMinimum());
-	Vector3 center_box = box.GetMaximum().MidPoint(box.GetMinimum());
-	if (center_box.x > center.x)
+	Vector3 centerBox = box.GetMaximum().MidPoint(box.GetMinimum());
+	if (centerBox.x > center.x)
 	{
 		*x = 1;
 	}
@@ -332,7 +332,7 @@ void Quadtree::GetChildIndex(const Aabb &box, int *x, int *y) const
 		*x = 0;
 	}
 
-	if (center_box.y > center.y)
+	if (centerBox.y > center.y)
 	{
 		*y = 1;
 	}
@@ -343,7 +343,7 @@ void Quadtree::GetChildIndex(const Aabb &box, int *x, int *y) const
 }
 void Quadtree::Ref()
 {
-	m_iNumNode++;
+	_numNode++;
 	if (_parentTree != nullptr)
 	{
 		_parentTree->Ref();
@@ -351,7 +351,7 @@ void Quadtree::Ref()
 }
 void Quadtree::Unref()
 {
-	m_iNumNode--;
+	_numNode--;
 	if (_parentTree != nullptr)
 	{
 		_parentTree->Unref();

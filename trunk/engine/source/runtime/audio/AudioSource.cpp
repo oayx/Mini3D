@@ -1,4 +1,4 @@
- #include "AudioSource.h"
+﻿ #include "AudioSource.h"
 #include "AudioClip.h"
 #include "runtime/resources/AssetsManager.h"
 #include "runtime/Application.h"
@@ -20,88 +20,88 @@ class AudioSourcePrivate : public object
 	DEFAULT_CREATE(AudioSourcePrivate);
 	FRIEND_CONSTRUCT_DESTRUCT(AudioSourcePrivate);
 public:
-	ALuint m_source = 0;
-	bool m_loop = false;
-	float m_volume = 1;
-	bool m_paused = false;
+	ALuint _source = 0;
+	bool _loop = false;
+	float _volume = 1;
+	bool _paused = false;
 
 	AudioSourcePrivate()
 	{
-		alGenSources(1, &m_source);
+		alGenSources(1, &_source);
 
-		this->SetLoop(m_loop);
-		this->SetVolume(m_volume);
+		this->SetLoop(_loop);
+		this->SetVolume(_volume);
 		this->SetPitch(1);
 		this->SetPosition(Vector3(0, 0, 0));
 		this->SetDirection(Vector3(0, 0, 1));
 		this->SetVelocity(Vector3(0, 0, 0));
 
 		//alDistanceModel(AL_INVERSE_DISTANCE_CLAMPED);
-		//alSourcef(m_source, AL_ROLLOFF_FACTOR, 1.0);
-		//alSourcef(m_source, AL_REFERENCE_DISTANCE, 5);
-		//alSourcef(m_source, AL_MAX_DISTANCE, 10);
+		//alSourcef(_source, AL_ROLLOFF_FACTOR, 1.0);
+		//alSourcef(_source, AL_REFERENCE_DISTANCE, 5);
+		//alSourcef(_source, AL_MAX_DISTANCE, 10);
 	}
 	~AudioSourcePrivate()
 	{
 		this->Stop();
 		this->ClearBuffers();
 
-		alDeleteSources(1, &m_source);
+		alDeleteSources(1, &_source);
 	}
 	void ClearBuffers()
 	{
-		alSourcei(m_source, AL_BUFFER, 0);
+		alSourcei(_source, AL_BUFFER, 0);
 	}
 	void SourceBuffer(ALuint buffer)
 	{
-		alSourcei(m_source, AL_BUFFER, buffer);
+		alSourcei(_source, AL_BUFFER, buffer);
 	}
 	void SetLoop(bool loop)
 	{
-		alSourcei(m_source, AL_LOOPING, loop ? AL_TRUE : AL_FALSE);
+		alSourcei(_source, AL_LOOPING, loop ? AL_TRUE : AL_FALSE);
 	}
 	void SetPosition(const Vector3& pos)
 	{
-		alSourcefv(m_source, AL_POSITION, (const ALfloat*)&pos);
+		alSourcefv(_source, AL_POSITION, (const ALfloat*)&pos);
 	}
 	void SetVelocity(const Vector3& velocity)
 	{
-		alSourcefv(m_source, AL_VELOCITY, (const ALfloat*)&velocity);
+		alSourcefv(_source, AL_VELOCITY, (const ALfloat*)&velocity);
 	}
 	void SetDirection(const Vector3& dir)
 	{
-		alSourcefv(m_source, AL_DIRECTION, (const ALfloat*)&dir);
+		alSourcefv(_source, AL_DIRECTION, (const ALfloat*)&dir);
 	}
 	void SetPitch(float pitch)
 	{
-		alSourcef(m_source, AL_PITCH, pitch);
+		alSourcef(_source, AL_PITCH, pitch);
 	}
 	void SetVolume(float volume)
 	{
-		alSourcef(m_source, AL_GAIN, volume);
+		alSourcef(_source, AL_GAIN, volume);
 	}
 	void Play()
 	{
-		m_paused = false;
-		alSourcePlay(m_source);
+		_paused = false;
+		alSourcePlay(_source);
 	}
 	void Pause()
 	{
 		if (this->GetState() == AudioSource::State::Playing)
 		{
-			m_paused = true;
-			alSourcePause(m_source);
+			_paused = true;
+			alSourcePause(_source);
 		}
 	}
 	void Stop()
 	{
-		m_paused = false;
-		alSourceStop(m_source);
+		_paused = false;
+		alSourceStop(_source);
 	}
 	AudioSource::State GetState() const
 	{
 		ALint state = 0;
-		alGetSourcei(m_source, AL_SOURCE_STATE, &state);
+		alGetSourcei(_source, AL_SOURCE_STATE, &state);
 
 		switch (state)
 		{
@@ -129,11 +129,11 @@ AudioSource::~AudioSource()
 	SAFE_DELETE(_private);
 	SAFE_RELEASE(_clip);
 }
-Object* AudioSource::Clone(Object* new_obj)
+Object* AudioSource::Clone(Object* newObj)
 {
-	base::Clone(new_obj);
-	AudioSource* obj = dynamic_cast<AudioSource*>(new_obj);
-	if (!obj)return new_obj;
+	base::Clone(newObj);
+	AudioSource* obj = dynamic_cast<AudioSource*>(newObj);
+	if (!obj)return newObj;
 
 	obj->SetClip(_clip);
 	obj->SetLoop(_isLoop);
@@ -158,7 +158,7 @@ void AudioSource::SetClip(AudioClip* clip)
 		else
 		{
 			_private->SetLoop(false);
-			if (_private->m_loop)
+			if (_private->_loop)
 			{
 				_clip->SetStreamLoop(true);
 			}
@@ -167,7 +167,7 @@ void AudioSource::SetClip(AudioClip* clip)
 }
 void AudioSource::SetLoop(bool loop)
 {
-	_private->m_loop = loop;
+	_private->_loop = loop;
 	if (_clip && _clip->IsStream())
 	{
 		_clip->SetStreamLoop(loop);
@@ -179,7 +179,7 @@ void AudioSource::SetLoop(bool loop)
 }
 void AudioSource::SetVolume(float volume)
 {
-	_private->m_volume = volume;
+	_private->_volume = volume;
 	if (_clip && _clip->IsStream())
 	{
 	}
@@ -275,8 +275,8 @@ void AudioSource::OnDrawEditor()
 	{
 		ImGuiEx::Label("File");
 
-		const char* sz_name = _clip ? _clip->GetResName().c_str() : "Add Clip";
-		ImGui::Button(sz_name, ImVec2(ImGui::GetContentRegionAvail().x - ImGui::CalcTextSize(ICON_FA_LINK).x - 5, 0));
+		const char* szName = _clip ? _clip->GetResName().c_str() : "Add Clip";
+		ImGui::Button(szName, ImVec2(ImGui::GetContentRegionAvail().x - ImGui::CalcTextSize(ICON_FA_LINK).x - 5, 0));
 		if (ImGui::IsItemClicked(0) && !_clip->GetResName().IsEmpty())
 		{
 			EMain_Project::SetSelectFile(_clip->GetResFile());
@@ -285,10 +285,10 @@ void AudioSource::OnDrawEditor()
 		{
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ProjectAsset"))
 			{
-				const String& file_path = EditorCursor::GetDragFile();
-				if (Resource::GetResourceType(file_path) == ResourceType::AudioClip)
+				const String& filePath = EditorCursor::GetDragFile();
+				if (Resource::GetResourceType(filePath) == ResourceType::AudioClip)
 				{
-					_clip = AudioClip::Create(file_path);
+					_clip = AudioClip::Create(filePath);
 				}
 				EditorCursor::EndDrag();
 			}

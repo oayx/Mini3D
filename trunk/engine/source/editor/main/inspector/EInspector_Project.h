@@ -16,6 +16,7 @@ class EInspector_Project_Base;
 class EInspector_Project : public EInspector_Base
 {
 	friend class EMain_Inspector;
+	FRIEND_CONSTRUCT_DESTRUCT(EInspector_Project);
 	EInspector_Project();
 	~EInspector_Project();
 

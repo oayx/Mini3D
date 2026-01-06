@@ -1,10 +1,13 @@
-#include "QRCode.h"
+﻿#include "QRCode.h"
+#if DC_PLATFORM_WIN32
 #include "external/qrencode/qrencode.h"
+#endif
 
 DC_BEGIN_NAMESPACE
 /********************************************************************/
 unsigned char* QRCode::Generate(const String& content, int version, int* ref_width, int* ref_data_bytes)
 {
+#if DC_PLATFORM_WIN32
 	QRcode* qrcode = QRcode_encodeString(content.c_str(), version, QR_ECLEVEL_H, QR_MODE_8, 1);
 	if (qrcode)
 	{
@@ -49,15 +52,18 @@ unsigned char* QRCode::Generate(const String& content, int version, int* ref_wid
 		Debuger::Error("QRCodeGenerate::Get QRcode_encodeString error");
 		return nullptr;
 	}
+#else
+	return nullptr;
+#endif
 }
 bool QRCode::SaveToPicture(const String& content, int version, const String& path)
 {
+#if DC_PLATFORM_WIN32
 	int width = 0, data_bytes = 0;
 	unsigned char*  rgb_data = Generate(content, version, &width, &data_bytes);
 	if (rgb_data == nullptr)return false;
 	bool result = false;
 
-#if DC_PLATFORM_WIN32
 	FILE* file = nullptr;
 	// Output the bmp file
 	if (file = fopen(path.c_str(), "wb"))
@@ -92,9 +98,11 @@ bool QRCode::SaveToPicture(const String& content, int version, const String& pat
 	{
 		Debuger::Error("QRCodeGenerate::SaveToPicture Unable to open file:%s", path.c_str());
 	}
-#endif
 
 	Memory::Free(rgb_data);
 	return result;
+#else
+	return false;
+#endif
 }
 DC_END_NAMESPACE

@@ -1,4 +1,4 @@
-#include "DX9Program.h"
+﻿#include "DX9Program.h"
 #include "DX9Device.h"
 #include "DX9Caps.h"
 #include "DX9RenderContent.h"
@@ -36,7 +36,7 @@ bool DX9CompileShaderFromMemory(const String& code, const VecString& defines, co
 #if defined(DC_COLORSPACE_LINEAR)
 	shader_defineds.Add("COLORSPACE_LINEAR");
 #endif
-	std::unique_ptr<D3DXMACRO[]> d3d_defines(DBG_NEW D3DXMACRO[shader_defineds.Size() + 1]);
+	std::unique_ptr<D3DXMACRO[]> d3d_defines(NEW D3DXMACRO[shader_defineds.Size() + 1]);
 	for (int i = 0; i < shader_defineds.Size(); ++i)
 	{
 		d3d_defines[i].Name = shader_defineds[i].c_str();
@@ -65,8 +65,8 @@ bool DX9CompileShaderFromMemory(const String& code, const VecString& defines, co
 IMPL_DERIVED_REFECTION_TYPE(DX9Program, CGProgram);
 DX9Program::~DX9Program()
 {
-	SAFE_RELEASE(m_pVertexShader);
-	SAFE_RELEASE(m_pPixelShader);
+	SAFE_RELEASE(_pVertexShader);
+	SAFE_RELEASE(_pPixelShader);
 	for (int i = 0; i < (int)ShaderType::Max; ++i)
 	{
 		SAFE_RELEASE(_constantTable[i]);
@@ -77,37 +77,37 @@ bool DX9Program::LoadFromFile(const String& file)
 	ShaderDesc info;
 	info.ShaderFile[int(ShaderType::Vertex)] = file;
 	info.ShaderFile[int(ShaderType::Pixel)] = file;
-	return LoadFromFile(info);
+	return LoadFromDesc(info);
 }
-bool DX9Program::LoadFromFile(const ShaderDesc& shader_info)
+bool DX9Program::LoadFromDesc(const ShaderDesc& shaderInfo)
 {
-	base::LoadFromFile(shader_info);
+	base::LoadFromDesc(shaderInfo);
 
 	bool result = true;
 	const String& shader_version = Application::GetGraphics()->GetShaderVersion();
 	for (int i = 0; i < int(ShaderType::Max); ++i)
 	{
-		if (shader_info.ShaderFile[i].IsEmpty())continue;
+		if (shaderInfo.ShaderFile[i].IsEmpty())continue;
 
 		ShaderType shader_type = ShaderType(i);
 		if (shader_type != ShaderType::Vertex && shader_type != ShaderType::Pixel)continue;
 
-		String enter_point = shader_info.Enter[i];
+		String enter_point = shaderInfo.Enter[i];
 		if (enter_point.IsEmpty())enter_point = ShaderEnterEnum[i];
-		String target = shader_info.Target[i];
+		String target = shaderInfo.Target[i];
 		if (target.IsEmpty())target = DXGetShaderTarget(shader_type, shader_version);
-		String file_path = Resource::GetFullDataPath(shader_info.ShaderFile[i]);
+		String filePath = Resource::GetFullDataPath(shaderInfo.ShaderFile[i]);
 
 		ID3DXBuffer* codeBuffer = NULL;
-		if (!DX9CompileShaderFromFile(file_path, shader_info.ShaderDefines, enter_point, target, _constantTable[i], codeBuffer))
+		if (!DX9CompileShaderFromFile(filePath, shaderInfo.ShaderDefines, enter_point, target, _constantTable[i], codeBuffer))
 			break;
 		switch (shader_type)
 		{
 		case ShaderType::Vertex:
-			DX9HR(GetDX9Device()->GetDevice()->CreateVertexShader((DWORD*)codeBuffer->GetBufferPointer(), &m_pVertexShader));
+			DX9HR(GetDX9Device()->GetDevice()->CreateVertexShader((DWORD*)codeBuffer->GetBufferPointer(), &_pVertexShader));
 			break;
 		case ShaderType::Pixel:
-			DX9HR(GetDX9Device()->GetDevice()->CreatePixelShader((DWORD*)codeBuffer->GetBufferPointer(), &m_pPixelShader));
+			DX9HR(GetDX9Device()->GetDevice()->CreatePixelShader((DWORD*)codeBuffer->GetBufferPointer(), &_pPixelShader));
 			break;
 		}
 		SAFE_RELEASE(codeBuffer);
@@ -137,10 +137,10 @@ bool DX9Program::LoadFromMemory(const String& name, const VecString& codes, cons
 		switch (shader_type)
 		{
 		case ShaderType::Vertex:
-			DX9HR(GetDX9Device()->GetDevice()->CreateVertexShader((DWORD*)codeBuffer->GetBufferPointer(), &m_pVertexShader));
+			DX9HR(GetDX9Device()->GetDevice()->CreateVertexShader((DWORD*)codeBuffer->GetBufferPointer(), &_pVertexShader));
 			break;
 		case ShaderType::Pixel:
-			DX9HR(GetDX9Device()->GetDevice()->CreatePixelShader((DWORD*)codeBuffer->GetBufferPointer(), &m_pPixelShader));
+			DX9HR(GetDX9Device()->GetDevice()->CreatePixelShader((DWORD*)codeBuffer->GetBufferPointer(), &_pPixelShader));
 			break;
 		}
 		SAFE_RELEASE(codeBuffer);
@@ -154,8 +154,8 @@ void DX9Program::PreRender()
 }
 void DX9Program::PostRender()
 {
-	DX9HR(GetDX9Device()->GetDevice()->SetVertexShader(m_pVertexShader));
-	DX9HR(GetDX9Device()->GetDevice()->SetPixelShader(m_pPixelShader));
+	DX9HR(GetDX9Device()->GetDevice()->SetVertexShader(_pVertexShader));
+	DX9HR(GetDX9Device()->GetDevice()->SetPixelShader(_pPixelShader));
 }
 bool DX9Program::SetVariable(const String& name, const Matrix4& mat)
 {
@@ -314,12 +314,12 @@ bool DX9Program::SetVariable(const String& name, const ShaderLight& light, int i
 	const sShaderReflectVariable* cb_var = GetCBVariable(name);
 	if (cb_var == nullptr)return false;
 
-	String shader_name = name + "[" + String::ToString(index) + "]";
+	String shaderName = name + "[" + String::ToString(index) + "]";
 	for (uint type = (uint)ShaderType::Vertex; type < (uint)ShaderType::Max; ++type)
 	{
 		if (cb_var->stage & ShaderStageEnum[type] && _constantTable[type])
 		{
-			D3DXHANDLE hndl = _constantTable[type]->GetConstantByName(NULL, shader_name.c_str());
+			D3DXHANDLE hndl = _constantTable[type]->GetConstantByName(NULL, shaderName.c_str());
 			if (hndl)
 			{
 				UINT ucount = 1;

@@ -1,4 +1,4 @@
-#include "UIInputField.h"
+﻿#include "UIInputField.h"
 #include "UIAtlas.h"
 #include "UICanvas.h"
 #include "runtime/input/Input.h"
@@ -13,11 +13,11 @@
 DC_BEGIN_NAMESPACE
 /********************************************************************/
 IMPL_DERIVED_REFECTION_TYPE(UIInputField, UIImage);
-Object* UIInputField::Clone(Object* new_obj)
+Object* UIInputField::Clone(Object* newObj)
 {
-	base::Clone(new_obj);
-	UIInputField* obj = dynamic_cast<UIInputField*>(new_obj);
-	if (!obj)return new_obj;
+	base::Clone(newObj);
+	UIInputField* obj = dynamic_cast<UIInputField*>(newObj);
+	if (!obj)return newObj;
 
 	//lable和carat会作为Gameobject的子对象复制
 
@@ -126,8 +126,8 @@ void UIInputField::Update()
 			Debuger::Error("cannot find root canvas");
 			return;
 		}
-		Vector2 ui_pos;
-		if (!canvas->ScreenToUIPoint(Input::mousePosition, ui_pos) || !this->HitTest((int)ui_pos.x, (int)ui_pos.y))
+		Vector2 uiPos;
+		if (!canvas->ScreenToUIPoint(Input::mousePosition, uiPos) || !this->HitTest((int)uiPos.x, (int)uiPos.y))
 		{
 			this->OnLostFocus();
 		}
@@ -277,8 +277,8 @@ void UIInputField::UpdateCaretPos()
 	if (!label || !caret)return;
 	
 	float caret_x = -label->GetSize().width * 0.5f + label->GetContentRealSize().width;
-	const Vector3& local_caret_pos = caret->GetTransform()->GetLocalPosition();
-	caret->GetTransform()->SetLocalPosition(Vector3(caret_x, local_caret_pos.y, local_caret_pos.z));
+	const Vector3& localCaretPos = caret->GetTransform()->GetLocalPosition();
+	caret->GetTransform()->SetLocalPosition(Vector3(caret_x, localCaretPos.y, localCaretPos.z));
 }
 void UIInputField::OnFocus()
 {
@@ -294,7 +294,7 @@ void UIInputField::OnFocus()
 	}
 	this->UpdateCaretPos();
 #if DC_PLATFORM_ANDROID
-	java_show_keyboard();
+	android_show_keyboard();
 #endif
 }
 void UIInputField::OnLostFocus()
@@ -308,15 +308,15 @@ void UIInputField::OnLostFocus()
 		this->SetText("");
 	}
 #if DC_PLATFORM_ANDROID
-	java_hide_keyboard();
+	android_hide_keyboard();
 #endif
 }
 void UIInputField::OnDrawEditor()
 {
 	Component::OnDrawEditor();
 
-	ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_DefaultOpen;
-	if(ImGui::TreeNodeEx("Image", base_flags))
+	ImGuiTreeNodeFlags baseFlags = ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_DefaultOpen;
+	if(ImGui::TreeNodeEx("Image", baseFlags))
 	{
 		UIImage::OnDrawEditor_Image();
 		UIImage::OnDrawEditor_Color();
@@ -326,15 +326,15 @@ void UIInputField::OnDrawEditor()
 		ImGui::TreePop();
 	}
 	ImGui::NewLine();
-	if (ImGui::TreeNodeEx("Input Field", base_flags))
+	if (ImGui::TreeNodeEx("Input Field", baseFlags))
 	{
 		{
 			ImGuiEx::Label("Text");
-			char text_buff[1024 * 16] = { 0 };
-			Memory::Copy(text_buff, _unicodes.c_str(), (int)_unicodes.size());
-			if (ImGui::InputText("##Text", text_buff, ARRAY_SIZE(text_buff)))
+			char textBuff[1024 * 16] = { 0 };
+			Memory::Copy(textBuff, _unicodes.c_str(), (int)_unicodes.size());
+			if (ImGui::InputText("##Text", textBuff, ARRAY_SIZE(textBuff)))
 			{
-				SetText(text_buff);
+				SetText(textBuff);
 			}
 		}
 

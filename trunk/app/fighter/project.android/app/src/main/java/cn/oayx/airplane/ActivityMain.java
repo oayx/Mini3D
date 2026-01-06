@@ -6,7 +6,6 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.widget.Toast;
-
 import cn.oayx.engine.ActivityBase;
 
 public class ActivityMain extends ActivityBase {

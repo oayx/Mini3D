@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Date：2009/11/30
@@ -16,7 +16,7 @@ class Light;
 class Texture;
 class TextureUnit;
 /********************************************************************/
-class ENGINE_DLL Material Final : public Resource
+class ENGINE_DLL Material final : public Resource
 {
 	friend class Shader;
 	friend class CGProgram;
@@ -26,12 +26,13 @@ class ENGINE_DLL Material Final : public Resource
 	DECLARE_OBJECT_CLONE;
 	DECLARE_OBJECT_SERIALIZE(Material);
 	BEGIN_DERIVED_REFECTION_TYPE(Material, Resource)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 	Material();
-
 public:
 	~Material();
+
+public:
 	static Material* Create(const String& file);
 	static Material* GetDefault();
 	static void		 ReleaseDefault();
@@ -63,7 +64,7 @@ public:
 	// pass 如果设置小于0，则针对所有pass
 	bool SetCullMode(CullMode cull_mode, int pass = 0);
 	bool SetColorMask(const Vector4& color_maskint, int pass = 0);
-	bool SetDepth(bool enable, bool write_enable = false, StencilCmp fun = StencilCmp::LessEqual, int pass = 0);
+	bool SetDepth(bool enable, bool write_enable = false, StencilCmp fun = StencilCmp::LEqual, int pass = 0);
 
 	bool SetStencilEnable(bool enable, int pass = 0);
 	bool SetStencilCmpFun(StencilCmp fun, int pass = 0);
@@ -74,7 +75,7 @@ public:
 
 	bool SetTextureFile(const String& file, TextureType type = TextureType::D2, TextureFlag flags = TextureFlag::sRGB, int pass = 0, byte layer = 0);
 	bool SetTexture(Texture* value, int pass = 0, byte layer = 0);
-	bool SetTexture(const String& shader_name, Texture* value, int pass = 0, byte layer = 0);
+	bool SetTexture(const String& shaderName, Texture* value, int pass = 0, byte layer = 0);
 	bool SetTextureFilter(TextureFilter type, uint anisotropy = 1, int pass = 0, byte layer = 0);
 	bool SetTextureAddress(TextureAddress mode, const Vector2& scale = Vector2::one, int pass = 0, byte layer = 0);
 	Texture* GetTexture(int pass = 0, byte layer = 0)const;
@@ -119,13 +120,13 @@ private:
 	Shader* _shader = nullptr;
 	Lights	_lightes;					//受影响的灯光
 
-	bool	_castShadow = true;		//是否产生阴影
-	bool	_receiveShadow = false;	//是否接受阴影
+	bool	_castShadow = true;			//是否产生阴影
+	bool	_receiveShadow = false;		//是否接受阴影
 
-	VecShaderVariable _shaderVariables;//变量列表
+	VecShaderVariable _shaderVariables;	//变量列表
 	VecShaderTexture _shaderTextures;	//纹理
 
-	static	Material* _defaultMaterial;
+	inline static Material* _defaultMaterial = nullptr;
 
 private://shader参数
 	Map<String, int>	_shaderIntTable;
@@ -139,7 +140,7 @@ private://shader参数
 };//Material
 
 /********************************************************************/
-class MaterialManager Final : public object
+class MaterialManager final : public object
 {
 	friend class Material;
 	friend class Application;
@@ -160,6 +161,6 @@ public:
 	static void DestroyMaterial();
 
 private:
-	static Materiales _materiales;
+	inline static Materiales _materiales;
 };
 DC_END_NAMESPACE

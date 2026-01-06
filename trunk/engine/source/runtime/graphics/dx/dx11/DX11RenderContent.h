@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2020/2/20
@@ -114,14 +114,14 @@ struct StagingTextureKey
 };
 #pragma pack(pop)
 /********************************************************************/
-class DX11RenderContent Final : public RenderContent
+class DX11RenderContent final : public RenderContent
 {
 	friend class DX11Device;
 	DEFAULT_CREATE(DX11RenderContent);
 	FRIEND_CONSTRUCT_DESTRUCT(DX11RenderContent);
 	DISALLOW_COPY_ASSIGN(DX11RenderContent);
 	BEGIN_DERIVED_REFECTION_TYPE(DX11RenderContent, RenderContent)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 	DX11RenderContent();
 	~DX11RenderContent();
@@ -135,9 +135,9 @@ public:
 	virtual void RenderOnePrimitive(Camera* camera, Pass* pass, Primitive* primitive, RenderMode mode)override;
 	virtual void Present(uint sync)override {}
 
-	virtual void SetViewport(const ViewPortDesc& view_port)override;
+	virtual void SetViewport(const ViewPortDesc& viewPort)override;
 	virtual void SetViewportScissor(const iRect& clip)override;
-	virtual void ClearBackbuffer(void* target_buffer, void* depth_stencil_buffer, ClearFlag flag, const Color& color)override;
+	virtual void ClearBackbuffer(void* targetBuffer, void* depthStencilBuffer, ClearFlag flag, const Color& color)override;
 
 	virtual void Resize(const WindowResizeDesc& desc)override;
 
@@ -149,7 +149,7 @@ private:
 	void SetRasterizerState(Camera* camera, Pass* pass);
 	void SetBlendState(Pass* pass);
 	void SetDepthStencilTest(Pass* pass);
-	void SetSubPrimitiveState(const SubPrimitive* sub_prim, Pass* pass);
+	void SetSubPrimitiveState(const SubPrimitive* subPrim, Pass* pass);
 	void SetVertexDeclaration(CGProgram* shader, HardwareVertexBuffer* vertex_buffer);
 
 private:

@@ -24,7 +24,7 @@ bool Image::LoadFromASTCFile(const String& path, bool mipmap)
 		Debuger::Error("Cannot read file:%s", path.c_str());
 		return false;
 	}
-	astc_header* header = (astc_header*)stream.data();
+	astc_header* header = (astc_header*)stream.Buffer();
 	uint32_t magicval = header->magic[0] + 256 * (uint32_t)(header->magic[1]) + 65536 * (uint32_t)(header->magic[2]) + 16777216 * (uint32_t)(header->magic[3]);
 	if (magicval != MAGIC_FILE_CONSTANT)
 	{
@@ -56,7 +56,7 @@ bool Image::LoadFromASTCFile(const String& path, bool mipmap)
 	}
 	int xblocks = (width + xdim - 1) / xdim;
 	int yblocks = (height + ydim - 1) / ydim;
-	int zblocks = (zsize + zdim - 1) / zdim;
+	//int zblocks = (zsize + zdim - 1) / zdim;
 
 	uint row_pitch = xblocks * 16;
 	uint dataLen = row_pitch * yblocks;
@@ -79,9 +79,9 @@ bool Image::LoadFromASTCFile(const String& path, bool mipmap)
 	}
 
 	this->Clear();
-	ImageMipData* mip_data = DBG_NEW ImageMipData(row_pitch, _size.width, _size.height, dataLen);
+	ImageMipData* mip_data = Memory::New<ImageMipData>(row_pitch, _size.width, _size.height, dataLen);
 	_imageData.Add(mip_data);
-	::memcpy(mip_data->Data, stream.data() + sizeof(astc_header), dataLen);
+	::memcpy(mip_data->Data, stream.Buffer() + sizeof(astc_header), dataLen);
 
 	return true;
 }

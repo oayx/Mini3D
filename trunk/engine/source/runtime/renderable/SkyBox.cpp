@@ -1,4 +1,4 @@
-#include "SkyBox.h"
+﻿#include "SkyBox.h"
 #include "runtime/graphics/Material.h"
 #include "runtime/graphics/null/Texture.h" 
 #include "runtime/scene/Camera.h"
@@ -111,9 +111,9 @@ SkyBox::~SkyBox()
 }
 void SkyBox::Render(Camera* camera)
 {
-	Matrix4 mat_view = camera->GetViewMatrix();
-	mat_view.Translate(Vector3::zero);//去掉相机位移
-	_primitive->GetMaterial()->SetMatrix("MATRIX_SKYBOX", mat_view * _matProj);
+	Matrix4 matView = camera->GetViewMatrix();
+	matView.Translate(Vector3::zero);//去掉相机位移
+	_primitive->GetMaterial()->SetMatrix("MATRIX_SKYBOX", matView * _matProj);
 
 	Application::GetGraphics()->GetRenderContent()->RenderOnePrimitive(camera, _primitive->GetMaterial(), _primitive, RenderMode::Normal);
 }

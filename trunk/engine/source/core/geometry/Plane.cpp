@@ -4,7 +4,7 @@
 DC_BEGIN_NAMESPACE
 /********************************************************************/
 IMPL_REFECTION_TYPE(Plane);
-Plane::Side Plane::GetSide (const Vector3& point) const
+Plane::Side Plane::GetSide (const Vector3& point) const noexcept
 {
 	float distance = GetDistance(point);
 
@@ -16,7 +16,7 @@ Plane::Side Plane::GetSide (const Vector3& point) const
 
 	return Plane::NO_SIDE;
 }
-Plane::Side Plane::GetSide(const Aabb &aabb)const
+Plane::Side Plane::GetSide(const Aabb &aabb)const noexcept
 {
 	Vector3 kCenterVec = aabb.GetCenter();
 	Vector3 kHalfSizeVec = aabb.GetHalfSize();
@@ -34,7 +34,7 @@ Plane::Side Plane::GetSide(const Aabb &aabb)const
 	}
 	return Plane::NO_SIDE;
 }
-bool Plane::IsBoxNegative(const Vector3* pCorners) const
+bool Plane::IsBoxNegative(const Vector3* pCorners) const noexcept
 {
 	if (GetSide(pCorners[0]) == Plane::NEGATIVE_SIDE &&
 		GetSide(pCorners[1]) == Plane::NEGATIVE_SIDE &&

@@ -17,7 +17,7 @@ class SerializeRead : public SerializeBase
 	FRIEND_CONSTRUCT_DESTRUCT(SerializeRead);
 	DISALLOW_COPY_ASSIGN(SerializeRead);
 	BEGIN_DERIVED_REFECTION_TYPE(SerializeRead, SerializeBase)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 public:
 	SerializeRead(const String& file);
@@ -27,12 +27,12 @@ public:
 
 	virtual bool IsRead()const override{ return true; }
 
-	inline bool Push(const char* node_name)
+	inline bool Push(const char* nodeName)
 	{
 		if (!_isOpen || !_currNode)return false;
 
 		_nodeStack.Push(_currNode);
-		_currNode = _currNode->FirstChildElement(node_name);
+		_currNode = _currNode->FirstChildElement(nodeName);
 		if (!_currNode)
 		{
 			_nodeStack.Pop(_currNode);
@@ -40,15 +40,15 @@ public:
 		}
 		return true;
 	}
-	inline bool Push(const char* node_name, int index)
+	inline bool Push(const char* nodeName, int index)
 	{
 		if (!_isOpen || !_currNode)return false;
 
 		_nodeStack.Push(_currNode);
-		_currNode = _currNode->FirstChildElement(node_name);
+		_currNode = _currNode->FirstChildElement(nodeName);
 		while (index > 0 && _currNode)
 		{
-			_currNode = _currNode->NextSiblingElement(node_name);
+			_currNode = _currNode->NextSiblingElement(nodeName);
 			--index;
 		}
 		if (!_currNode)
@@ -157,7 +157,7 @@ private:
 template<>
 inline void SerializeRead::TransferBasicData<bool>(bool& data, void* name)
 {
-	data = Bool::isTrue(_currNode->GetText());
+	data = Bool::IsTrue(_currNode->GetText());
 }
 template<>
 inline void SerializeRead::TransferBasicData<char>(char& data, void* name)

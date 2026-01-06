@@ -1,4 +1,4 @@
-/*****************************************************************************************************/
+﻿/*****************************************************************************************************/
 // @author hannibal
 // @date   2021/06/18
 // @brief  构造析构
@@ -10,7 +10,7 @@
 
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-class ConstructDestruct Final
+class ConstructDestruct final
 {
 public:
 	template<typename T>
@@ -49,6 +49,14 @@ public:
 	static typename std::enable_if<std::is_trivially_destructible<T>::value>::type DestructItem(T* dst)
 	{
 	}
+
+	//删除不带析构函数的对象
+	//NOTE:不需要提供非POT的DestructItems，如果执行，就报编译错误
+	template<typename T>
+	static typename std::enable_if<std::is_trivially_destructible<T>::value>::type DestructItems(T* dst)
+	{
+	}
+
 	template<typename T>
 	static typename std::enable_if<!std::is_trivially_destructible<T>::value>::type DestructItems(T* dst, int count)
 	{
@@ -60,11 +68,6 @@ public:
 	}
 	template<typename T>
 	static typename std::enable_if<std::is_trivially_destructible<T>::value>::type DestructItems(T* dst, int count)
-	{
-	}
-	//删除不带析构函数的对象
-	template<typename T>
-	static typename std::enable_if<std::is_trivially_destructible<T>::value>::type DestructItems(T* dst)
 	{
 	}
 };

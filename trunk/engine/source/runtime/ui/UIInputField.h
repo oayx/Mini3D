@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Date：2020/8/29
@@ -11,7 +11,7 @@
 
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-class ENGINE_DLL UIInputField Final : public UIImage
+class ENGINE_DLL UIInputField final : public UIImage
 {
 	friend class UICanvas;
 	friend class GameObject;
@@ -22,7 +22,7 @@ class ENGINE_DLL UIInputField Final : public UIImage
 	BEGIN_DERIVED_REFECTION_TYPE(UIInputField, UIImage)
 		CTORS(DEFAULT_CTOR(UIInputField))
 		ADD_EDITOR_COMPONENT("UI/InputField")
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 protected:
 	virtual void Awake()override;

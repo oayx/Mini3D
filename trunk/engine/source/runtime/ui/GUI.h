@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Date：2020/8/19
@@ -11,7 +11,7 @@
 
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-class GUIContext Final : public object
+class GUIContext final : public object
 {
 	friend class Application;
 	friend class EditorAppliction;
@@ -37,13 +37,13 @@ private:
 	static void CreateTexture();
 
 private:
-	static Primitives _primitives;
-	static Texture* _texture;
+	inline static Primitives _primitives;
+	inline static Texture* _texture = nullptr;
 };
 
 /********************************************************************/
 //贴图缓存
-class GUITextureCache Final
+class GUITextureCache final
 {
 	friend class GUIContext;
 
@@ -53,6 +53,6 @@ public:
 	static Texture* Get(const String& file);
 
 private:
-	static Map<String, Texture*> _textures;
+	inline static Map<String, Texture*> _textures;
 };
 DC_END_NAMESPACE

@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2020/9/12
@@ -15,7 +15,7 @@ class EditorMainMenu : public Object
 	friend class EditorAppliction;
 	DISALLOW_CONSTRUCTOR_COPY_ASSIGN(EditorMainMenu);
 	BEGIN_DERIVED_REFECTION_TYPE(EditorMainMenu, Object)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 private:
 	static void Render();

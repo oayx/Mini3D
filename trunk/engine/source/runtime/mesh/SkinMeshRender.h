@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Date：2020/12/13
@@ -12,7 +12,7 @@ DC_BEGIN_NAMESPACE
 class Camera;
 class Animation;
 /********************************************************************/
-class ENGINE_DLL SkinMeshRender Final : public MeshRender
+class ENGINE_DLL SkinMeshRender final : public MeshRender
 {
 	friend class GameObject;
 	FRIEND_CONSTRUCT_DESTRUCT(SkinMeshRender);
@@ -20,7 +20,7 @@ class ENGINE_DLL SkinMeshRender Final : public MeshRender
 	BEGIN_DERIVED_REFECTION_TYPE(SkinMeshRender, MeshRender)
 		CTORS(DEFAULT_CTOR(SkinMeshRender))
 		ADD_EDITOR_COMPONENT("Mesh/SkinMeshRender")
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 protected:
 	~SkinMeshRender();

@@ -321,7 +321,7 @@ public:
 	int a;
 	StdLayoutA sla;
 };
-class StdLayoutE : public StdLayoutA, public StdLayoutC {
+class StdLayoutE : public StdLayoutC {
 };
 class StdLayoutF {
 public:

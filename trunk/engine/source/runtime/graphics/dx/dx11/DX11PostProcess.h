@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2020/6/16
@@ -12,15 +12,15 @@
 DC_BEGIN_NAMESPACE
 /********************************************************************/
 // 最后显示到屏幕
-class DX11FinalProcess Final : public FinalProcess
+class DX11FinalProcess final : public FinalProcess
 {
 	friend class DX11Device;
 	DEFAULT_CREATE(DX11FinalProcess);
 	FRIEND_CONSTRUCT_DESTRUCT(DX11FinalProcess);
+	DISALLOW_COPY_ASSIGN(DX11FinalProcess);
 	BEGIN_DERIVED_REFECTION_TYPE(DX11FinalProcess, FinalProcess)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
-private:
 	DX11FinalProcess();
 	~DX11FinalProcess();
 

@@ -1,0 +1,12 @@
+#version 410
+
+uniform sampler2D _CameraDepthTexture;
+
+layout(location = 0) in vec2 var_TEXCOORD0;
+layout(location = 0) out vec4 out_var_SV_Target;
+
+void main()
+{
+    out_var_SV_Target = vec4(texture(_CameraDepthTexture, var_TEXCOORD0).xyz, 1.0);
+}
+

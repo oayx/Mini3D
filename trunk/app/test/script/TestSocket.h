@@ -43,7 +43,7 @@ public:
 private:
 	void TestTCPClient()
 	{
-		tcp_connect_socket = DBG_NEW TCPConnecter();
+		tcp_connect_socket = Memory::New<TCPConnecter>();
 		tcp_connect_socket->OnConnected([] {Debuger::Log("socket connected"); });
 		tcp_connect_socket->ConnectAsync("127.0.0.1", 7003);
 		uint timer_id = Timer::AddLoop(1, [this]
@@ -64,12 +64,12 @@ private:
 	}
 	void TestTCPServer()
 	{
-		tcp_accepter_socket = DBG_NEW TCPAccepter();
+		tcp_accepter_socket = Memory::New<TCPAccepter>();
 		tcp_accepter_socket->Start("127.0.0.1", 7003);
 	}
 	void TestUDPSend()
 	{
-		udp_send_socket = DBG_NEW UDPSend("255.255.255.255", 7003);
+		udp_send_socket = Memory::New<UDPSend>("255.255.255.255", 7003);
 		uint timer_id = Timer::AddLoop(1, [this]
 			{
 				char buf[] = "12345";
@@ -80,7 +80,7 @@ private:
 	}
 	void TestUDPRecv()
 	{
-		udp_recv_socket = DBG_NEW UDPRecv();
+		udp_recv_socket = Memory::New<UDPRecv>();
 		udp_recv_socket->Start("255.255.255.255", 7003, true);
 		udp_recv_socket->OnReceive([](char*by, int len)
 			{

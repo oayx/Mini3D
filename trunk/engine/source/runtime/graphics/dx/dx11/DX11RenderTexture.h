@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2010/4/15
@@ -13,20 +13,19 @@ DC_BEGIN_NAMESPACE
 /********************************************************************/
 // ClassName：DX11RenderTexture
 // Description：渲染到纹理
-class DX11RenderTexture Final : public RenderTexture
+class DX11RenderTexture final : public RenderTexture
 {
 	friend class DX11Device;
 	DEFAULT_CREATE(DX11RenderTexture);
 	FRIEND_CONSTRUCT_DESTRUCT(DX11RenderTexture);
-	DISALLOW_CONSTRUCTOR_COPY_ASSIGN(DX11RenderTexture);
+	DISALLOW_COPY_ASSIGN(DX11RenderTexture);
 	BEGIN_DERIVED_REFECTION_TYPE(DX11RenderTexture, RenderTexture)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
-protected:
 	DX11RenderTexture(const TextureDesc& desc);
+	~DX11RenderTexture();
 
 public:
-	~DX11RenderTexture();
 	virtual void  PreRender()override;
 	virtual void  BeginFrame(RenderFrameDesc& desc)override;
 	virtual void  PostRender()override;

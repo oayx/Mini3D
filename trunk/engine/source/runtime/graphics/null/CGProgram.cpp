@@ -1,4 +1,4 @@
-#include "CGProgram.h"
+﻿#include "CGProgram.h"
 #include "Texture.h"
 #include "RenderTexture.h"
 #include "runtime/graphics/Pass.h"
@@ -20,7 +20,7 @@ CGProgram* CGProgram::Create(const ShaderDesc& info)
 {
 	CGProgram* shader = Application::GetGraphics()->CreateShader();
 	if (shader == nullptr)return nullptr;
-	if (shader->LoadFromFile(info))
+	if (shader->LoadFromDesc(info))
 	{
 		shader->AutoRelease();
 		for (const auto& file : info.ShaderFile)
@@ -42,6 +42,7 @@ CGProgram* CGProgram::Create(const ShaderDesc& info)
 CGProgram* CGProgram::CreateFromMemory(const String& name, const VecString& codes, const VecString& defines)
 {
 	CGProgram* shader = Application::GetGraphics()->CreateShader();
+	if (shader == nullptr)return nullptr;
 	if (shader->LoadFromMemory(name, codes, defines))
 	{
 		shader->AutoRelease();
@@ -54,7 +55,7 @@ CGProgram* CGProgram::CreateFromMemory(const String& name, const VecString& code
 		return nullptr;
 	}
 }
-bool CGProgram::LoadFromFile(const ShaderDesc& info)
+bool CGProgram::LoadFromDesc(const ShaderDesc& info)
 {
 	_reflectVertexSemantic = info.SRVertexSemantic;
 	_reflectCBuffers = info.SRBuffers;
@@ -65,7 +66,7 @@ bool CGProgram::LoadFromFile(const ShaderDesc& info)
 }
 void CGProgram::Render(Camera* camera, Pass* pass, const Matrix4& obj_mat)
 {
-	DC_PROFILE_FUNCTION();
+	DC_PROFILE_FUNCTION;
 	SetInternalTable(camera, pass, obj_mat);
 	SetExtendTable(pass);
 	SetMaterialTable(pass);
@@ -94,17 +95,17 @@ bool CGProgram::GetShaderTextureInfo(const String& name, sShaderReflectTexture& 
 }
 void CGProgram::SetInternalTable(Camera* camera, Pass* pass, const Matrix4& obj_mat)
 {
-	DC_PROFILE_FUNCTION();
+	DC_PROFILE_FUNCTION;
 	Matrix4 mat;
-	Matrix4 mat_world = obj_mat;
-	Matrix4 mat_view = Matrix4::identity;
-	Matrix4 mat_proj = Matrix4::identity;
+	Matrix4 matWorld = obj_mat;
+	Matrix4 matView = Matrix4::identity;
+	Matrix4 matProj = Matrix4::identity;
 	Vector3 eye_pos = Vector3::zero;
 	Vector3 eye_dir = Vector3::forward;
 	if (camera != nullptr)
 	{
-		mat_view = camera->GetViewMatrix();
-		mat_proj = camera->GetProjMatrix();
+		matView = camera->GetViewMatrix();
+		matProj = camera->GetProjMatrix();
 		eye_pos = camera->GetTransform()->GetPosition();
 		eye_dir = camera->GetTransform()->GetForward();
 		
@@ -120,26 +121,26 @@ void CGProgram::SetInternalTable(Camera* camera, Pass* pass, const Matrix4& obj_
 		Vector4 _ZBufferParams(x, y, z, w);
 		SetVariable("_ZBufferParams", _ScreenParams.ptr(), 4);
 	}
-	SetVariable("MATRIX_V", mat_view);//当前观察矩阵，用于将顶点/方向矢量从世界空间变换到观察空间
-	SetVariable("MATRIX_P", mat_proj);//当前投影矩阵，用于将顶点/方向矢量从观察空间变换到裁剪空间
+	SetVariable("MATRIX_V", matView);//当前观察矩阵，用于将顶点/方向矢量从世界空间变换到观察空间
+	SetVariable("MATRIX_P", matProj);//当前投影矩阵，用于将顶点/方向矢量从观察空间变换到裁剪空间
 
-	mat = mat_world * mat_view * mat_proj;
+	mat = matWorld * matView * matProj;
 	SetVariable("MATRIX_MVP", mat);//当前模型*观察*投影矩阵，用于将模型顶点/方向矢量从模型空间转换到裁剪空间
 
-	mat = mat_world * mat_view;
+	mat = matWorld * matView;
 	SetVariable("MATRIX_MV", mat);//当前模型*观察矩阵，用于将模型顶点/方向矢量从模型空间转换到观察空间
 	SetVariable("MATRIX_T_MV", mat.Transpose());//转置矩阵
 	
-	mat = mat_world.InverseTranspose();
+	mat = matWorld.InverseTranspose();
 	SetVariable("MATRIX_IT_M", mat); //逆转置矩阵，可将法线矢量从模型空间转换到世界空间
-	mat = mat * mat_view;
+	mat = mat * matView;
 	SetVariable("MATRIX_IT_MV", mat);//逆转置矩阵，可将法线矢量从模型空间转换到观察空间(之所以法线不能直接使用MATRIX_MV进行变换，是因为法线是向量，具有方向，在进行空间变换的时候，如果发生非等比缩放，方向会发生偏移)
 	
-	mat = mat_view * mat_proj;
+	mat = matView * matProj;
 	SetVariable("MATRIX_VP", mat);//当前观察*投影矩阵，用于将顶点/方向矢量从世界空间变换到裁剪空间
 	SetVariable("MATRIX_I_VP", mat.Inverse());
 
-	mat = mat_world;
+	mat = matWorld;
 	SetVariable("MATRIX_M", mat);//当前模型的矩阵，用于将模型顶点/方向矢量从模型空间转换到世界空间
 	SetVariable("MATRIX_I_M", mat.Inverse());//世界空间->模型空间
 	SetVariable("MATRIX_T_M", mat.Transpose());
@@ -183,8 +184,8 @@ void CGProgram::SetInternalTable(Camera* camera, Pass* pass, const Matrix4& obj_
 	if (shader->EnableLight())
 	{
 		const List<Light*>& lightes = material->GetLightes();
-		int light_count = lightes.Size();
-		SetVariable("_LightCount", &light_count, 1);
+		int lightCount = lightes.Size();
+		SetVariable("_LightCount", &lightCount, 1);
 		for (int i = 0; i < MAX_DIRECTION_LIGHT + MAX_POINT_LIGHT + MAX_SPOT_LIGHT; ++i)
 		{
 			Light* light = nullptr;
@@ -254,8 +255,8 @@ void CGProgram::SetInternalTable(Camera* camera, Pass* pass, const Matrix4& obj_
 			RenderTexture* render_texture = light->GetShadowMap() == nullptr ? nullptr : light->GetShadowMap()->GetTexture();
 			if (camera && render_texture && material->IsReceiveShadow())
 			{
-				int shadow_type = (int)light->GetValidShadowType();
-				SetVariable("_ShadowType", &shadow_type, 1);
+				//int shadow_type = (int)light->GetValidShadowType();
+				//SetVariable("_ShadowType", &shadow_type, 1);
 
 				Transform* light_transform = light->GetTransform();
 				sShaderReflectTexture reflect_texture;
@@ -267,15 +268,14 @@ void CGProgram::SetInternalTable(Camera* camera, Pass* pass, const Matrix4& obj_
 				if (light->mType == LightType::Direction)
 				{
 					Aabb aabb = camera->GetRenderableBoundingBox();
-					const Vector3& camera_position = camera->GetTransform()->GetPosition();
-					mat_light_view = Matrix4::LookTo(Vector3(camera_position.x, aabb.GetMaximum().y + 100.0f, camera_position.z), light_transform->GetForward(), Vector3::up);
+					/*const Vector3& camera_position = camera->GetTransform()->GetPosition();*/
+					const Vector3& light_pos = light_transform->GetPosition();
+					mat_light_view = Matrix4::LookTo(light_pos, light_transform->GetForward(), Vector3::up);
 					aabb = aabb * mat_light_view;
 					float minX = aabb.GetMinimum().x;
 					float maxX = aabb.GetMaximum().x;
 					float minY = aabb.GetMinimum().y;
 					float maxY = aabb.GetMaximum().y;
-					float minZ = aabb.GetMinimum().z;
-					float maxZ = aabb.GetMaximum().z;
 					float w = maxX - minX, h = maxY - minY;
 					float size = Math::Max<float>(w, h);
 					size = Math::Clamp(size, 30.0f, QualitySettings::GetShadowDistance());//加上偏移是防止阴影在边缘时拉长
@@ -284,9 +284,9 @@ void CGProgram::SetInternalTable(Camera* camera, Pass* pass, const Matrix4& obj_
 				else
 				{
 					mat_light_view = Matrix4::LookTo(light_transform->GetPosition(), light_transform->GetForward(), Vector3::up);
-					mat_light_proj = mat_proj;
+					mat_light_proj = matProj;
 				}
-				mat = mat_world * mat_light_view * mat_light_proj;
+				mat = matWorld * mat_light_view * mat_light_proj;
 				SetVariable("MATRIX_MVP_LIGHT", mat);
 				SetVariable("_Strength", light->GetShadowStrength());
 				SetVariable("_Bias", light->GetShadowBias());
@@ -297,17 +297,17 @@ void CGProgram::SetInternalTable(Camera* camera, Pass* pass, const Matrix4& obj_
 	//Fog
 	if(scene && scene->GetFog().enable)
 	{ 
-		const FogDesc& fog_desc = scene->GetFog();
-		SetVariable("_FogMode", int(fog_desc.mode) + 1);
-		SetVariable("_FogColor", fog_desc.color.p, 4);
-		if (fog_desc.mode == FogMode::Linear)
+		const FogDesc& fogDesc = scene->GetFog();
+		SetVariable("_FogMode", int(fogDesc.mode) + 1);
+		SetVariable("_FogColor", fogDesc.color.p, 4);
+		if (fogDesc.mode == FogMode::Linear)
 		{
-			SetVariable("_FogStart", fog_desc.start);
-			SetVariable("_FogEnd", fog_desc.end);
+			SetVariable("_FogStart", fogDesc.start);
+			SetVariable("_FogEnd", fogDesc.end);
 		}
 		else
 		{
-			SetVariable("_FogDensity", fog_desc.density);
+			SetVariable("_FogDensity", fogDesc.density);
 		}
 	}
 	else
@@ -360,7 +360,7 @@ void CGProgram::SetInternalTable(Camera* camera, Pass* pass, const Matrix4& obj_
 }
 void CGProgram::SetExtendTable(Pass* pass)
 {
-	DC_PROFILE_FUNCTION();
+	DC_PROFILE_FUNCTION;
 	if (pass == nullptr)return;
 	int count = pass->GetMaterial()->GetVariableCount();
 	for (int i = 0; i < count; ++i)
@@ -416,7 +416,7 @@ void CGProgram::SetExtendTable(Pass* pass)
 }
 void CGProgram::SetMaterialTable(Pass* pass)
 {
-	DC_PROFILE_FUNCTION();
+	DC_PROFILE_FUNCTION;
 	if (pass == nullptr)return;
 	Material* material = pass->GetMaterial();
 	for (const auto& it : material->_shaderIntTable)

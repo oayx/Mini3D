@@ -1,4 +1,4 @@
-#include "SimpleBlurEffect.h"
+﻿#include "SimpleBlurEffect.h"
 #include "runtime/input/Input.h"
 #include "runtime/graphics/Material.h"
 #include "runtime/graphics/Pass.h"
@@ -17,11 +17,11 @@ SimpleBlurEffect::~SimpleBlurEffect()
 {
 	SAFE_RELEASE(_material);
 }
-Object* SimpleBlurEffect::Clone(Object* new_obj)
+Object* SimpleBlurEffect::Clone(Object* newObj)
 {
-	base::Clone(new_obj);
-	SimpleBlurEffect* obj = dynamic_cast<SimpleBlurEffect*>(new_obj);
-	if (!obj)return new_obj;
+	base::Clone(newObj);
+	SimpleBlurEffect* obj = dynamic_cast<SimpleBlurEffect*>(newObj);
+	if (!obj)return newObj;
 
 	obj->_blurRadius = _blurRadius;
 

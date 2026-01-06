@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2020/2/12
@@ -11,12 +11,12 @@
 DC_BEGIN_NAMESPACE
 /********************************************************************/
 // 鼠标输入
-class ENGINE_DLL MouseInput Final : public Object
+class ENGINE_DLL MouseInput final : public Object
 {
 	friend class Input;
 	DISALLOW_CONSTRUCTOR_COPY_ASSIGN(MouseInput);
 	BEGIN_DERIVED_REFECTION_TYPE(MouseInput, Object)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 public://消息处理
 	static bool HandleLBtnDown(float x_pos, float y_pos);
@@ -40,19 +40,19 @@ public:
 	static bool GetMouseButtonUp(MouseBtnID button);
 	static bool GetMouseDClick(MouseBtnID button);
 
-	static bool IsMouseMove() { return m_isMouseMove; }
-	static Vector2 GetScrollDelta() { return m_mouseScrollDelta; }
+	static bool IsMouseMove() { return _isMouseMove; }
+	static Vector2 GetScrollDelta() { return _mouseScrollDelta; }
 
 private:
 	static void Initialize();
 	static void Reset();
 
 private:
-	static bool m_isMouseMove;
-	static Vector2 m_mouseScrollDelta;
-	static bool m_mapMouseBtnDown[int(MouseBtnID::Max)];
-	static bool m_mapMouseBtnUp[int(MouseBtnID::Max)];
-	static bool m_mapMouseBtnPress[int(MouseBtnID::Max)];
-	static bool m_mapMouseDClick[int(MouseBtnID::Max)];
+	inline static bool _isMouseMove = false;
+	inline static Vector2 _mouseScrollDelta = Vector2::zero;
+	inline static bool _mapMouseBtnDown[int(MouseBtnID::Max)] = { false };
+	inline static bool _mapMouseBtnUp[int(MouseBtnID::Max)] = { false };
+	inline static bool _mapMouseBtnPress[int(MouseBtnID::Max)] = { false };
+	inline static bool _mapMouseDClick[int(MouseBtnID::Max)] = { false };
 };//MouseInput
 DC_END_NAMESPACE

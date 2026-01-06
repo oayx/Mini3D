@@ -1,4 +1,4 @@
-#include "UIAtlas.h"
+﻿#include "UIAtlas.h"
 #include "runtime/graphics/null/Texture.h"
 #include "runtime/resources/AssetsManager.h"
 #include "external/json/nlohmann/json.hpp"
@@ -6,7 +6,6 @@
 DC_BEGIN_NAMESPACE
 /********************************************************************/
 IMPL_REFECTION_TYPE(UIAtlasManager);
-UIAtlasManager::Atlases UIAtlasManager::_atlases;
 void UIAtlasManager::Destroy()
 {
 	for (auto obj : _atlases)
@@ -125,8 +124,8 @@ UIAtlas::~UIAtlas()
 }
 bool UIAtlas::Parse(const String& file)
 {
-	String file_path = Resource::GetFullDataPath(file);
-	if (!File::Exist(file_path))
+	String filePath = Resource::GetFullDataPath(file);
+	if (!File::Exist(filePath))
 	{
 		Debuger::Error("cannot find file:%s", file.c_str());
 		return false;
@@ -136,7 +135,7 @@ bool UIAtlas::Parse(const String& file)
 	bool result = true;
 	do 
 	{
-		String content = File::ReadAllText(file_path);
+		String content = File::ReadAllText(filePath);
 		nlohmann::json json = nlohmann::json::parse(content.c_str());
 		if (json.is_null())
 		{
@@ -148,9 +147,9 @@ bool UIAtlas::Parse(const String& file)
 		{
 			result = false; break;
 		}
-		String image_name = meta["image"].get<std::string>();
-		int image_width = meta["size"]["w"].get<int>();
-		int image_height = meta["size"]["h"].get<int>();
+		String imageName = meta["image"].get<std::string>();
+		int imageWidth = meta["size"]["w"].get<int>();
+		int imageHeight = meta["size"]["h"].get<int>();
 
 		auto frames = json["frames"];
 		if (frames.is_null())
@@ -160,12 +159,12 @@ bool UIAtlas::Parse(const String& file)
 		for (auto frame_it = frames.begin(); frame_it != frames.end(); ++frame_it)
 		{
 			auto frame_node = *frame_it;
-			std::string frame_name = "";
+			std::string frameName = "";
 			if (frames.is_array())//数组
-				frame_name = frame_node["filename"];
+				frameName = frame_node["filename"];
 			else//字典
-				frame_name = frame_it.key();
-			if (frame_name.empty())continue;
+				frameName = frame_it.key();
+			if (frameName.empty())continue;
 			auto frame = frame_node["frame"];
 			if (frame.is_null())
 			{
@@ -175,20 +174,20 @@ bool UIAtlas::Parse(const String& file)
 			float y = frame["y"].get<float>();
 			float w = frame["w"].get<float>();
 			float h = frame["h"].get<float>();
-			bool rotated = frame_node["rotated"].get<bool>();
-			bool trimmed = frame_node["trimmed"].get<bool>();
+			//bool rotated = frame_node["rotated"].get<bool>();
+			//bool trimmed = frame_node["trimmed"].get<bool>();
 
-			UIAtlasInfo info = { frame_name, Rect(x, y, w, h), Rect(x / image_width, y / image_height, w / image_width, h / image_height) };
-			AssertEx(_atlasInfoes.Add(frame_name, info), "");
+			UIAtlasInfo info = { frameName, Rect(x, y, w, h), Rect(x / imageWidth, y / imageHeight, w / imageWidth, h / imageHeight) };
+			AssertEx(_atlasInfoes.Add(frameName, info), "");
 		}
 
 		//create texture
 		if (result)
 		{
 			String path = Path::GetDirectoryName(file);
-			_texture = Texture::Create(path + "/" + image_name);
+			_texture = Texture::Create(path + "/" + imageName);
 			_texture->Retain();
-			_texture->SetInstanceName(path + "/" + image_name);
+			_texture->SetInstanceName(path + "/" + imageName);
 		}
 	} while (false);
 

@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2009/12/14
@@ -13,60 +13,70 @@
 DC_BEGIN_NAMESPACE
 /********************************************************************/
 #pragma pack(push,4)
-class ENGINE_DLL Color Final : public object
+class ENGINE_DLL Color final : public object
 {
 	BEGIN_REFECTION_TYPE(Color)
 	END_FINAL_REFECTION_TYPE;
 	
 public:
-	Color(): r(0), g(0), b(0), a(0)
+	constexpr Color(): r(0), g(0), b(0), a(0)
 	{
 	}
-	Color(float fr, float fg, float fb, float fa = 1.0f): r(fr), g(fg), b(fb), a(fa)
+	constexpr Color(float fr, float fg, float fb, float fa = 1.0f): r(fr), g(fg), b(fb), a(fa)
 	{
 	}
-	Color(uint v)
+	constexpr Color(uint v)
+		: r(((v >> 16) & 0xff) / 255.0f),g(((v >> 8) & 0xff) / 255.0f),b(((v) & 0xff) / 255.0f), a(((v >> 24) & 0xff) / 255.0f)
 	{
-		a = ((v >> 24) & 0xff) / 255.0f;
-		r = ((v >> 16) & 0xff) / 255.0f;
-		g = ((v >> 8) & 0xff) / 255.0f;
-		b = ((v) & 0xff) / 255.0f;
 	}
-	Color(const Vector4& vec)
+	constexpr Color(const Vector4& vec)
+		: r(vec.x), g(vec.y), b(vec.z), a(vec.w)
 	{
-		r = vec.x; g = vec.y; b = vec.z; a = vec.w;
 	}
-	Color(const Color& color)
+	constexpr Color(const Color& other)
+		: r(other.r), g(other.g), b(other.b), a(other.a)
 	{
-		r = color.r; g = color.g; b = color.b; a = color.a;
+	}
+	constexpr Color(Color&& other)noexcept
+		: r(other.r), g(other.g), b(other.b), a(other.a)
+	{
 	}
 	Color(const String& str)
 	{
 		Vector<float> vec = str.Split<float>(',');
-		if (vec.Size() == 4)
-		{
-			r = vec[0]; g = vec[1]; b = vec[2]; a = vec[3];
-		}
+		MyAssert(vec.Size() == 4);
+		r = vec[0]; g = vec[1]; b = vec[2]; a = vec[3];
 	}
 	Color& operator=(const Vector4& vec)
 	{
 		r = vec.x; g = vec.y; b = vec.z; a = vec.w;
 		return *this;
 	}
-	Color& operator=(const Color& color)
+	Color& operator=(const Color& other)
 	{
-		r = color.r; g = color.g; b = color.b; a = color.a;
+		if (this != &other)
+		{
+			r = other.r; g = other.g; b = other.b; a = other.a;
+		}
 		return *this;
 	}
-	bool operator ==(const Color& c) const
+	Color& operator=(Color&& other)noexcept
+	{
+		if (this != &other)
+		{
+			r = other.r; g = other.g; b = other.b; a = other.a;
+		}
+		return *this;
+	}
+	constexpr bool operator ==(const Color& c) const
 	{
 		return Math::FloatEqual(r, c.r) && Math::FloatEqual(g, c.g) && Math::FloatEqual(b, c.b) && Math::FloatEqual(a, c.a);
 	}
-	bool operator !=(const Color& c) const
+	constexpr bool operator !=(const Color& c) const
 	{
 		return !(*this == c);
 	}
-	Color operator *(const Color& c) const
+	constexpr Color operator *(const Color& c) const
 	{
 		return Color(r * c.r, g * c.g, b * c.b, a * c.a);
 	}
@@ -78,11 +88,11 @@ public:
 		a *= c.a;
 		return *this;
 	}
-	Color operator *(float v) const
+	constexpr Color operator *(float v) const
 	{
 		return Color(r * v, g * v, b * v, a * v);
 	}
-	Color operator /(float v) const
+	constexpr Color operator /(float v) const
 	{
 		return *this * (1 / v);
 	}
@@ -100,24 +110,24 @@ public:
 		r = fr; g = fg; b = fb; a = fa;
 	}
 
-	byte GetAlpha() const 
+	constexpr byte GetAlpha() const
 	{ 
 		return (a >= 1.0f ? 0xff : a <= 0.0f ? 0x00 : byte(a * 255));
 	}
-	byte GetRed()	const 
+	constexpr byte GetRed()	const
 	{ 
 		return (r >= 1.0f ? 0xff : r <= 0.0f ? 0x00 : byte(r * 255));
 	}
-	byte GetGreen() const 
+	constexpr byte GetGreen() const
 	{ 
 		return (g >= 1.0f ? 0xff : g <= 0.0f ? 0x00 : byte(g * 255));
 	}
-	byte GetBlue()	const 
+	constexpr byte GetBlue()	const
 	{ 
 		return (b >= 1.0f ? 0xff : b <= 0.0f ? 0x00 : byte(b * 255)); 
 	}
 	//DX9默认使用BGRA颜色模式，OpenGL+OpenGLES+D3D11是RGBA
-	uint ToVertexColor()
+	constexpr uint ToVertexColor()
 	{
 #if defined(DC_GRAPHICS_API_DX9)
 		return (uint(a * 255) << 24) | (uint(r * 255) << 16) | (uint(g * 255) << 8) | uint(b * 255);
@@ -126,7 +136,7 @@ public:
 #endif
 	}
 
-	String ToString()const { char arr[128] = { 0 }; Sprintf(arr, "%f, %f, %f, %f", r, g, b, a); return String(arr); }
+	String ToString()const { char arr[128] = { 0 }; Snprintf(arr, sizeof(arr), "%f, %f, %f, %f", r, g, b, a); return String(arr); }
 
 	float* ptr()
 	{
@@ -162,4 +172,5 @@ public:
 	};
 };//Color
 #pragma pack(pop)
+static_assert(sizeof(Color) == 4 * sizeof(float), "invalid bytes");
 DC_END_NAMESPACE

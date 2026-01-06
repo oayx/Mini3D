@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Date：2020/12/8
@@ -16,12 +16,12 @@ class Camera;
 class Scenetree : public Object
 {
 	BEGIN_DERIVED_REFECTION_TYPE(Scenetree, Object)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 public:
 	virtual void AddObject(GameObject *node, int depth = 0) = 0;
 	virtual void RemoveAllObjects() = 0;
-	virtual void FindVisibleObjects(Camera *camera, bool found_visible) = 0;
+	virtual void FindVisibleObjects(Camera *camera, bool foundVisible) = 0;
 	virtual void FindObjects(List<GameObject*>& list, const Ray& ray) = 0;
 };
 ENGINE_FUN_DLL void CreateSceneTree(SceneTreeType type);

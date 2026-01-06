@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2009/11/30
@@ -13,14 +13,14 @@ DC_BEGIN_NAMESPACE
 class Pass;
 class Texture;
 /********************************************************************/
-class TextureUnit Final : public Object
+class TextureUnit final : public Object
 {
 	friend class Pass;
 	DEFAULT_CREATE(TextureUnit);
 	FRIEND_CONSTRUCT_DESTRUCT(TextureUnit);
 	DISALLOW_COPY_ASSIGN(TextureUnit);
 	BEGIN_DERIVED_REFECTION_TYPE(TextureUnit, Object)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 private:
 	TextureUnit(TextureType type, const String& name);
@@ -29,7 +29,7 @@ private:
 
 public:
 	Texture*		GetTexture();
-	void			SetTexture(const String& shader_name, Texture* tex);
+	void			SetTexture(const String& shaderName, Texture* tex);
 	void			SetTexture(const String& file, TextureType type, TextureFlag flags);
 	void			SetTexture(const ShaderTexture& info);
 	bool			IsSRGB()const { return _flags & TextureFlag::sRGB; }

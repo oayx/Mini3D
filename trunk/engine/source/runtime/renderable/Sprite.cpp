@@ -1,4 +1,4 @@
-#include "Sprite.h"
+﻿#include "Sprite.h"
 #include "runtime/graphics/null/Texture.h"
 #include "runtime/graphics/Material.h"
 #include "runtime/graphics/Pass.h" 
@@ -35,11 +35,11 @@ void Sprite::Update()
 		this->UploadData();
 	}
 }
-Object* Sprite::Clone(Object* new_obj)
+Object* Sprite::Clone(Object* newObj)
 {
-	base::Clone(new_obj);
-	Sprite* obj = dynamic_cast<Sprite*>(new_obj);
-	if (!obj)return new_obj;
+	base::Clone(newObj);
+	Sprite* obj = dynamic_cast<Sprite*>(newObj);
+	if (!obj)return newObj;
 
 	obj->SetColor(_color);
 
@@ -94,10 +94,10 @@ void Sprite::OnDrawEditor()
 		{
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ProjectAsset"))
 			{
-				const String& file_path = EditorCursor::GetDragFile();
-				if (Resource::GetResourceType(file_path) == ResourceType::Texture)
+				const String& filePath = EditorCursor::GetDragFile();
+				if (Resource::GetResourceType(filePath) == ResourceType::Texture)
 				{
-					SetTexture(Texture::Create(file_path));
+					SetTexture(Texture::Create(filePath));
 				}
 				EditorCursor::EndDrag();
 			}

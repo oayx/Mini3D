@@ -987,7 +987,7 @@ _D3DXMATRIXA16::_D3DXMATRIXA16( FLOAT _11, FLOAT _12, FLOAT _13, FLOAT _14,
 #endif
 
 D3DXINLINE void* 
-_D3DXMATRIXA16::operator new( size_t s )
+_D3DXMATRIXA16::operator new( size_t s )throw()
 {
     if (s > (SIZE_MAX-16))
 	return NULL;
@@ -1002,7 +1002,7 @@ _D3DXMATRIXA16::operator new( size_t s )
 }
 
 D3DXINLINE void* 
-_D3DXMATRIXA16::operator new[]( size_t s )
+_D3DXMATRIXA16::operator new[]( size_t s )throw()
 {
     if (s > (SIZE_MAX-16))
 	return NULL;

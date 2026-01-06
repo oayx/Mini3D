@@ -1,4 +1,5 @@
-﻿
+﻿message("当前CMakeLists目录: ${CMAKE_CURRENT_SOURCE_DIR}")
+
 include_directories(
 	source/external/openal/include
 	source/external/openal/OpenAL32/Include
@@ -37,25 +38,30 @@ set(OPENAL_COMMON_SRC
     source/external/openal/OpenAL32/alThunk.c
 )
 if(WINDOWS)
-set(ENGINE_EXTERNAL_OPENAL_SRC
+    set(ENGINE_EXTERNAL_OPENAL_SRC
 	${OPENAL_COMMON_SRC}
     source/external/openal/Alc/backends/xaudio2.cpp
-)
+    )
 elseif(LINUX)
-set(ENGINE_EXTERNAL_OPENAL_SRC
+    set(ENGINE_EXTERNAL_OPENAL_SRC
 	${OPENAL_COMMON_SRC}
 
-)
+    )
 elseif(ANDROID)
-set(ENGINE_EXTERNAL_OPENAL_SRC
+    set(ENGINE_EXTERNAL_OPENAL_SRC
 	${OPENAL_COMMON_SRC}
     source/external/openal/Alc/backends/opensl.c
-)
-elseif(MACOSX OR APPLE)
-set(ENGINE_EXTERNAL_OPENAL_SRC
+    )
+elseif(APPLE)
+    set(ENGINE_EXTERNAL_OPENAL_SRC
 	${OPENAL_COMMON_SRC}
 
-)
+    )
+elseif(WASM)
+    set(ENGINE_EXTERNAL_OPENAL_SRC
+	${OPENAL_COMMON_SRC}
+
+    )
 else()
 	message( FATAL_ERROR "Unsupported architecture, openal" )
 endif()

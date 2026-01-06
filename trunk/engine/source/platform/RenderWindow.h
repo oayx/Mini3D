@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Date：2009/12/8
@@ -18,7 +18,7 @@ class RenderWindow : public Object
 	FRIEND_CONSTRUCT_DESTRUCT(RenderWindow);
 	DISALLOW_COPY_ASSIGN(RenderWindow);
 	BEGIN_DERIVED_REFECTION_TYPE(RenderWindow, Object)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 protected:
 	RenderWindow() = default;
@@ -39,10 +39,10 @@ public:
 	const	int GetTop()const { return (int)_position.y; }
 	const	int GetWidth()const { return (int)_winSize.width; }
 	const	int GetHeight()const { return (int)_winSize.height; }
-	bool	IsFullscreen()const { return m_fullscreen; }
-	int		GetFPS()const { return m_fps; }
+	bool	IsFullscreen()const { return _fullscreen; }
+	int		GetFPS()const { return _fps; }
 	int		GetAntiAlias()const { return _antiAlias; }
-	uint	GetSync()const { return m_sync; }
+	uint	GetSync()const { return _sync; }
 	TargetDisplay GetTargetDisplay()const { return _targetDisplay; }
 
 protected:
@@ -52,14 +52,14 @@ protected:
 	String	_winName = "";
 	Vector2 _position;
 	Size	_winSize;
-	bool	m_fullscreen = false;
-	bool	m_mouseClip = true;
+	bool	_fullscreen = false;
+	bool	_mouseClip = true;
 
-	int		m_fps = 60;
+	int		_fps = 60;
 	int		_antiAlias = 4;
-	uint	m_sync = 0;
+	uint	_sync = 0;
 
-	bool	m_isPaused = false;
+	bool	_isPaused = false;
 
 	TargetDisplay _targetDisplay = TargetDisplay::Display1;
 };

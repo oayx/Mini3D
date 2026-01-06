@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Description：
@@ -10,17 +10,17 @@
 
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-class GLSwapChain Final : public SwapChain
+class GLSwapChain final : public SwapChain
 {
 	friend class GLDevice;
 	DEFAULT_CREATE(GLSwapChain);
 	FRIEND_CONSTRUCT_DESTRUCT(GLSwapChain);
 	DISALLOW_COPY_ASSIGN(GLSwapChain);
 	BEGIN_DERIVED_REFECTION_TYPE(GLSwapChain, SwapChain)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
-	GLSwapChain();
-	~GLSwapChain();
+	GLSwapChain() = default;
+	~GLSwapChain() = default;
 
 public:
 	virtual bool CreateSwapChain(RenderWindow* window)override;

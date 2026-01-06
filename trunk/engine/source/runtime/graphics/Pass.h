@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2009/11/30
@@ -10,6 +10,7 @@
 #include "TextureUnit.h"
 #include "runtime/scene/SceneUtils.h"
 #include "external/tinyxml2/tinyxml2.h"
+#include "external/shaderlab/ShaderParser.h"
 
 DC_BEGIN_NAMESPACE
 class CGProgram;
@@ -17,7 +18,7 @@ class Shader;
 class Material;
 class PassSerialize;
 /********************************************************************/
-class ENGINE_DLL Pass Final : public Object
+class ENGINE_DLL Pass final : public Object
 {
 	friend class Shader;
 	typedef Vector<TextureUnit*> VecTextureUnit;
@@ -25,13 +26,13 @@ class ENGINE_DLL Pass Final : public Object
 	FRIEND_CONSTRUCT_DESTRUCT(Pass);
 	DISALLOW_COPY_ASSIGN(Pass);
 	BEGIN_DERIVED_REFECTION_TYPE(Pass, Object)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 private:
 	Pass(Shader* shader, int pass);
 	~Pass();
 
-	void			Serialize(const PassSerialize& serialize);
+	void			SerializeFromInfo(const PassSerialize& serialize);
 
 public:
 	Shader*			GetShader()const { return _shader; }
@@ -41,8 +42,8 @@ public:
 	byte			GetTexUnitCount()const{ return (byte)_textureUnits.Size(); }
 
 	bool			SetTexture(Texture* tex);
-	bool			SetTexture(const String& shader_name, Texture* tex);
-	bool			SetTexture(byte layer, const String& shader_name, Texture* tex);
+	bool			SetTexture(const String& shaderName, Texture* tex);
+	bool			SetTexture(byte layer, const String& shaderName, Texture* tex);
 	bool			SetTexture(const ShaderTexture& info);//pass里面只要名称相同就设置
 	bool			SetTextureFile(const String& file, TextureType type = TextureType::D2, TextureFlag flags = TextureFlag::sRGB);
 	bool			SetTextureFile(byte layer, const String& file, TextureType type = TextureType::D2, TextureFlag flags = TextureFlag::sRGB);
@@ -66,7 +67,7 @@ public:
 	//深度缓冲与深度测试(如果不开启深度测试，则深度不能更新到深度缓冲区)
 	bool			DepthEnable = true;
 	bool			DepthWriteEnable = true;
-	StencilCmp		DepthCmpFun = StencilCmp::LessEqual;
+	StencilCmp		DepthCmpFun = StencilCmp::LEqual;
 
 	//模板缓冲区，执行方式
 	//if(StencilFunc((Value & StencilReadMask),  (StencilRef & StencilReadMask)))
@@ -108,7 +109,8 @@ private:
 class PassSerialize
 {
 public:
-	void			Serialize(const String& file, tinyxml2::XMLElement* root_node);
+	void			Serialize(const String& file, tinyxml2::XMLElement* rootNode);
+	void			Serialize(const String& file, const std::shared_ptr<shaderlab::ASTPassNode>& rootNode);
 
 public:
 	String			LightMode = "ForwardBase";
@@ -119,7 +121,7 @@ public:
 	//深度缓冲与深度测试
 	bool			DepthEnable = true;						//是否启用深度测试
 	bool			DepthWriteEnable = true;				//是否更新深度缓冲区
-	StencilCmp		DepthCmpFun = StencilCmp::LessEqual;	//深度比较函数
+	StencilCmp		DepthCmpFun = StencilCmp::LEqual;		//深度比较函数
 
 	//模板缓冲区
 	bool			StencilEnable = false;					//是否开启模板测试
@@ -138,6 +140,7 @@ public:
 	AlphaBlend		DstBlend = AlphaBlend::OneMinusSrcAlpha;
 	AlphaBlend		SrcAlphaSource = AlphaBlend::One;		//SrcAlpha来源
 	AlphaBlend		DstAlphaSource = AlphaBlend::Zero;		//DstAlpha来源
+	AlphaBlendOp	BlendOp = AlphaBlendOp::Add;			//混合操作
 
 	//alpha测试
 	bool			AlphaTestEnable = false;				//Alpha测试

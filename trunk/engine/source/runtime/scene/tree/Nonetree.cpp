@@ -1,4 +1,4 @@
-#include "Nonetree.h"
+﻿#include "Nonetree.h"
 #include "runtime/scene/Camera.h"
 #include "runtime/scene/SceneManager.h"
 #include "runtime/scene/LayerMask.h"
@@ -16,15 +16,15 @@ void Nonetree::RemoveAllObjects()
 {
 	_nodes.Clear();
 }
-void Nonetree::FindVisibleObjects(Camera *camera, bool found_visible)
+void Nonetree::FindVisibleObjects(Camera *camera, bool foundVisible)
 {
 	if (camera == nullptr)
 		return;
 
 	for (const auto& node : _nodes)
 	{
-		uint obj_mask = LayerMask::GetMask(node->GetLayer());
-		if ((obj_mask & camera->GetCullMask()) != 0)
+		uint objMask = LayerMask::GetMask(node->GetLayer());
+		if ((objMask & camera->GetCullMask()) != 0)
 		{
 			Renderer* renderable = node->GetComponent<Renderer>();
 			if (!renderable)continue;

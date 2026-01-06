@@ -32,7 +32,7 @@ class ENGINE_DLL Camera : public Component
 	BEGIN_DERIVED_REFECTION_TYPE(Camera, Component)
 		CTORS(DEFAULT_CTOR(Camera))
 		ADD_EDITOR_COMPONENT("Camera")
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 protected:
 	explicit Camera();
@@ -49,15 +49,15 @@ public:
 	const Matrix4&	GetProjMatrix();
 	const Matrix4&	GetViewProjMatrix();
 
-	float			GetFov()const { return m_fFov; }
-	void  			SetFov(float fov) { m_fFov = fov; _dirtyProjMatrix = true; }
-	float 			GetAspect()const { return m_fAspect; }
-	void  			SetAspect(float aspect) { m_fAspect = aspect; _dirtyProjMatrix = true; }
-	float 			GetZNear()const { return m_fZNear; }
-	void  			SetZNear(float z_near) { m_fZNear = z_near; _dirtyProjMatrix = true; }
-	float 			GetZFar()const { return m_fZFar; }
-	void  			SetZFar(float z_far) { m_fZFar = z_far; _dirtyProjMatrix = true; }
-	void  			SetFieldOfView(float degree) { AssertEx(degree >= 1 && degree <= 179, "%d", degree); m_fFov = degree * Math::Deg2Rad; _dirtyProjMatrix = true; }//1-179度
+	float			GetFov()const { return _fFov; }
+	void  			SetFov(float fov) { _fFov = fov; _dirtyProjMatrix = true; }
+	float 			GetAspect()const { return _fAspect; }
+	void  			SetAspect(float aspect) { _fAspect = aspect; _dirtyProjMatrix = true; }
+	float 			GetZNear()const { return _fZNear; }
+	void  			SetZNear(float z_near) { _fZNear = z_near; _dirtyProjMatrix = true; }
+	float 			GetZFar()const { return _fZFar; }
+	void  			SetZFar(float z_far) { _fZFar = z_far; _dirtyProjMatrix = true; }
+	void  			SetFieldOfView(float degree) { AssertEx(degree >= 1 && degree <= 179, "%d", degree); _fFov = degree * Math::Deg2Rad; _dirtyProjMatrix = true; }//1-179度
 
 	void  			SetOrthographic(bool b) { _isOrthographic = b; _dirtyProjMatrix = true; }
 	bool  			IsOrthographic()const { return _isOrthographic; }
@@ -103,8 +103,8 @@ public://渲染+视口
 	void			SetViewport(float x, float y, float w, float h, float min_z, float max_z);//范围为[0,1]
 	ViewPortDesc	GetViewPort()const;
 
-	void			SetDepth(int depth){ m_nDepth = depth; }//深度
-	int				GetDepth()const{ return m_nDepth; }
+	void			SetDepth(int depth){ _nDepth = depth; }//深度
+	int				GetDepth()const{ return _nDepth; }
 
 	void			SetCullMask(uint mask) { _cullMask = mask; }
 	uint			GetCullMask()const { return _cullMask; }
@@ -152,17 +152,17 @@ public://移动+旋转
 	void 			Rotate(float x_degree, float y_degree);
 
 protected://变换
-	Matrix4			m_matView = Matrix4::identity;
-	Matrix4			m_matProj = Matrix4::identity;
-	Matrix4			m_matViewProj = Matrix4::identity;
+	Matrix4			_matView = Matrix4::identity;
+	Matrix4			_matProj = Matrix4::identity;
+	Matrix4			_matViewProj = Matrix4::identity;
 
 	Aabb			_renderableBoundingBox;	//可渲染对象最大包围盒
 
 protected://投影相关
-	float			m_fFov = Math::PI / 4.0f;
-	float			m_fAspect = 1;
-	float			m_fZNear = 0.1f;
-	float			m_fZFar = 1000.0f;
+	float			_fFov = Math::PI / 4.0f;
+	float			_fAspect = 1;
+	float			_fZNear = 0.1f;
+	float			_fZFar = 1000.0f;
 
 	bool			_isOrthographic = false;	//是否正交投影
 	Size			_orthographicSize;
@@ -181,7 +181,7 @@ protected://清除背景缓存+视口
 
 	Frustum*		_frustum = nullptr;
 	ViewPortDesc	_viewPort;					//宽度和高度为1表示全部占满
-	int				m_nDepth = 0;				//控制相机渲染先后
+	int				_nDepth = 0;				//控制相机渲染先后
 	uint			_cullMask = LayerMask::Everything;
 
 protected:
@@ -192,8 +192,8 @@ protected:
 	TextureDesc		_renderTextureDesc;
 
 	bool			_enableHDR = false;
-	RenderTexture*	_hDRRenderTexture = nullptr;
-	Material*		_hDRMaterial = nullptr;
+	RenderTexture*	_hdrRenderTexture = nullptr;
+	Material*		_hdrMaterial = nullptr;
 
 	bool			_enableMSAA = false;
 

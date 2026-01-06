@@ -23,7 +23,7 @@ RBTree<T>::~RBTree()
 }
 
 template <class T>
-void RBTree<T>::PreOrder(RBTNode<T>* tree) const
+void RBTree<T>::PreOrder(RBTNode<T>* tree) const noexcept
 {
 	if (tree != NULL)
 	{
@@ -33,13 +33,13 @@ void RBTree<T>::PreOrder(RBTNode<T>* tree) const
 	}
 }
 template <class T>
-void RBTree<T>::PreOrder()
+void RBTree<T>::PreOrder() noexcept
 {
 	PreOrder(_rootNode);
 }
 
 template <class T>
-void RBTree<T>::InOrder(RBTNode<T>* tree) const
+void RBTree<T>::InOrder(RBTNode<T>* tree) const noexcept
 {
 	if (tree != NULL)
 	{
@@ -49,13 +49,13 @@ void RBTree<T>::InOrder(RBTNode<T>* tree) const
 	}
 }
 template <class T>
-void RBTree<T>::InOrder()
+void RBTree<T>::InOrder() noexcept
 {
 	InOrder(_rootNode);
 }
 
 template <class T>
-void RBTree<T>::PostOrder(RBTNode<T>* tree) const
+void RBTree<T>::PostOrder(RBTNode<T>* tree) const noexcept
 {
 	if (tree != NULL)
 	{
@@ -65,13 +65,13 @@ void RBTree<T>::PostOrder(RBTNode<T>* tree) const
 	}
 }
 template <class T>
-void RBTree<T>::PostOrder()
+void RBTree<T>::PostOrder() noexcept
 {
 	PostOrder(_rootNode);
 }
 
 template <class T>
-RBTNode<T>* RBTree<T>::Search(RBTNode<T>* x, T key) const
+RBTNode<T>* RBTree<T>::Search(RBTNode<T>* x, T key) const noexcept
 {
 	if (x == NULL || x->key == key)
 		return x;
@@ -82,7 +82,7 @@ RBTNode<T>* RBTree<T>::Search(RBTNode<T>* x, T key) const
 		return Search(x->right, key);
 }
 template <class T>
-RBTNode<T>* RBTree<T>::Search(T key)
+RBTNode<T>* RBTree<T>::Search(T key) noexcept
 {
 	Search(_rootNode, key);
 }
@@ -91,7 +91,7 @@ RBTNode<T>* RBTree<T>::Search(T key)
  * (非递归实现)查找"红黑树x"中键值为key的节点
  */
 template <class T>
-RBTNode<T>* RBTree<T>::IterativeSearch(RBTNode<T>* x, T key) const
+RBTNode<T>* RBTree<T>::IterativeSearch(RBTNode<T>* x, T key) const noexcept
 {
 	while ((x != NULL) && (x->key != key))
 	{
@@ -104,13 +104,13 @@ RBTNode<T>* RBTree<T>::IterativeSearch(RBTNode<T>* x, T key) const
 	return x;
 }
 template <class T>
-RBTNode<T>* RBTree<T>::IterativeSearch(T key)
+RBTNode<T>* RBTree<T>::IterativeSearch(T key) noexcept
 {
 	IterativeSearch(_rootNode, key);
 }
 
 template <class T>
-RBTNode<T>* RBTree<T>::Minimum(RBTNode<T>* tree)
+RBTNode<T>* RBTree<T>::Minimum(RBTNode<T>* tree) noexcept
 {
 	if (tree == NULL)
 		return NULL;
@@ -120,7 +120,7 @@ RBTNode<T>* RBTree<T>::Minimum(RBTNode<T>* tree)
 	return tree;
 }
 template <class T>
-T RBTree<T>::Minimum()
+T RBTree<T>::Minimum() noexcept
 {
 	RBTNode<T> *p = Minimum(_rootNode);
 	if (p != NULL)
@@ -130,7 +130,7 @@ T RBTree<T>::Minimum()
 }
 
 template <class T>
-RBTNode<T>* RBTree<T>::Maximum(RBTNode<T>* tree)
+RBTNode<T>* RBTree<T>::Maximum(RBTNode<T>* tree) noexcept
 {
 	if (tree == NULL)
 		return NULL;
@@ -140,7 +140,7 @@ RBTNode<T>* RBTree<T>::Maximum(RBTNode<T>* tree)
 	return tree;
 }
 template <class T>
-T RBTree<T>::Maximum()
+T RBTree<T>::Maximum() noexcept
 {
 	RBTNode<T> *p = Maximum(_rootNode);
 	if (p != NULL)
@@ -150,7 +150,7 @@ T RBTree<T>::Maximum()
 }
 
 template <class T>
-RBTNode<T>* RBTree<T>::Successor(RBTNode<T> *x)
+RBTNode<T>* RBTree<T>::Successor(RBTNode<T> *x) noexcept
 {
 	// 如果x存在右孩子，则"x的后继结点"为 "以其右孩子为根的子树的最小结点"。
 	if (x->right != NULL)
@@ -170,7 +170,7 @@ RBTNode<T>* RBTree<T>::Successor(RBTNode<T> *x)
 }
 
 template <class T>
-RBTNode<T>* RBTree<T>::Predecessor(RBTNode<T> *x)
+RBTNode<T>* RBTree<T>::Predecessor(RBTNode<T> *x) noexcept
 {
 	// 如果x存在左孩子，则"x的前驱结点"为 "以其左孩子为根的子树的最大结点"。
 	if (x->left != NULL)
@@ -204,7 +204,7 @@ RBTNode<T>* RBTree<T>::Predecessor(RBTNode<T> *x)
  *
  */
 template <class T>
-void RBTree<T>::LeftRotate(RBTNode<T>* &root, RBTNode<T>* x)
+void RBTree<T>::LeftRotate(RBTNode<T>* &root, RBTNode<T>* x) noexcept
 {
 	// 设置x的右孩子为y
 	RBTNode<T> *y = x->right;
@@ -250,7 +250,7 @@ void RBTree<T>::LeftRotate(RBTNode<T>* &root, RBTNode<T>* x)
  *
  */
 template <class T>
-void RBTree<T>::RightRotate(RBTNode<T>* &root, RBTNode<T>* y)
+void RBTree<T>::RightRotate(RBTNode<T>* &root, RBTNode<T>* y) noexcept
 {
 	// 设置x是当前节点的左孩子。
 	RBTNode<T> *x = y->left;
@@ -294,7 +294,7 @@ void RBTree<T>::RightRotate(RBTNode<T>* &root, RBTNode<T>* y)
  *     node 插入的结点        // 对应《算法导论》中的z
  */
 template <class T>
-void RBTree<T>::InsertFixUp(RBTNode<T>* &root, RBTNode<T>* node)
+void RBTree<T>::InsertFixUp(RBTNode<T>* &root, RBTNode<T>* node) noexcept
 {
 	RBTNode<T> *parent, *gparent;
 
@@ -378,7 +378,7 @@ void RBTree<T>::InsertFixUp(RBTNode<T>* &root, RBTNode<T>* node)
  *     node 插入的结点        // 对应《算法导论》中的node
  */
 template <class T>
-void RBTree<T>::Insert(RBTNode<T>* &root, RBTNode<T>* node)
+void RBTree<T>::Insert(RBTNode<T>* &root, RBTNode<T>* node) noexcept
 {
 	RBTNode<T> *y = NULL;
 	RBTNode<T> *x = root;
@@ -419,7 +419,7 @@ void RBTree<T>::Insert(RBTNode<T>* &root, RBTNode<T>* node)
  *     key 插入结点的键值
  */
 template <class T>
-void RBTree<T>::Insert(T key)
+void RBTree<T>::Insert(T key) noexcept
 {
 	RBTNode<T> *z = NULL;
 
@@ -441,7 +441,7 @@ void RBTree<T>::Insert(T key)
  *     node 待修正的节点
  */
 template <class T>
-void RBTree<T>::RemoveFixUp(RBTNode<T>* &root, RBTNode<T> *node, RBTNode<T> *parent)
+void RBTree<T>::RemoveFixUp(RBTNode<T>* &root, RBTNode<T> *node, RBTNode<T> *parent) noexcept
 {
 	RBTNode<T> *other;
 
@@ -536,7 +536,7 @@ void RBTree<T>::RemoveFixUp(RBTNode<T>* &root, RBTNode<T> *node, RBTNode<T> *par
  *     node 删除的结点
  */
 template <class T>
-void RBTree<T>::Remove(RBTNode<T>* &root, RBTNode<T> *node)
+void RBTree<T>::Remove(RBTNode<T>* &root, RBTNode<T> *node) noexcept
 {
 	RBTNode<T> *child, *parent;
 	RBTColor color;
@@ -635,7 +635,7 @@ void RBTree<T>::Remove(RBTNode<T>* &root, RBTNode<T> *node)
  *     tree 红黑树的根结点
  */
 template <class T>
-void RBTree<T>::Remove(T key)
+void RBTree<T>::Remove(T key) noexcept
 {
 	RBTNode<T> *node;
 
@@ -645,7 +645,7 @@ void RBTree<T>::Remove(T key)
 }
 
 template <class T>
-void RBTree<T>::Destroy(RBTNode<T>* &tree)
+void RBTree<T>::Destroy(RBTNode<T>* &tree) noexcept
 {
 	if (tree == NULL)
 		return;
@@ -668,7 +668,7 @@ void RBTree<T>::Destroy(RBTNode<T>* &tree)
  *                1，表示该节点是它的父结点的右孩子。
  */
 template <class T>
-void RBTree<T>::Print(RBTNode<T>* tree, T key, int direction)
+void RBTree<T>::Print(RBTNode<T>* tree, T key, int direction) noexcept
 {
 	if (tree != NULL)
 	{
@@ -683,7 +683,7 @@ void RBTree<T>::Print(RBTNode<T>* tree, T key, int direction)
 }
 
 template <class T>
-void RBTree<T>::Print()
+void RBTree<T>::Print() noexcept
 {
 	if (_rootNode != NULL)
 		Print(_rootNode, _rootNode->key, 0);

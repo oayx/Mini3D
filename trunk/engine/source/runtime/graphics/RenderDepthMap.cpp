@@ -1,4 +1,4 @@
-#include "RenderDepthMap.h"
+﻿#include "RenderDepthMap.h"
 #include "Material.h"
 #include "runtime/graphics/null/CGProgram.h"
 #include "runtime/graphics/null/RenderTexture.h"
@@ -29,8 +29,8 @@ RenderDepthMap::~RenderDepthMap()
 void RenderDepthMap::PreRender()
 {
 	RenderFrameDesc desc;
-	desc.clear_flag = ClearFlag::SolidColor;
-	desc.clear_color = Color::White;//这里一定要用1去填充，表示最远处
+	desc.clearFlag = ClearFlag::SolidColor;
+	desc.clearColor = Color::White;//这里一定要用1去填充，表示最远处
 	_renderTexture->PreRender();
 	_renderTexture->BeginFrame(desc);
 }
@@ -49,7 +49,7 @@ void RenderDepthMap::RenderOneObject(Camera* camera, Renderer *renderable)
 		return;
 
 	//获得shadow材质
-	Material* curr_material = nullptr;
+	Material* currMaterial = nullptr;
 	Material* material = renderable->GetMaterial();//TODO:只获得第一个材质
 	for (int i = 0; i < material->GetPassCount(); ++i)
 	{
@@ -57,14 +57,14 @@ void RenderDepthMap::RenderOneObject(Camera* camera, Renderer *renderable)
 		if ((pass->LightMode.Equals("Depth", true) && _depthTextureMode == DepthTextureMode::Depth)
 			|| (pass->LightMode.Equals("DepthNormal", true) && (_depthTextureMode & DepthTextureMode::Depth && _depthTextureMode & DepthTextureMode::Normals)))
 		{
-			curr_material = material;
+			currMaterial = material;
 			break;
 		}
 	}
-	if (!curr_material)curr_material = _defaultMaterial;
+	if (!currMaterial)currMaterial = _defaultMaterial;
 
 	RenderMode mode = (_depthTextureMode == DepthTextureMode::Depth ? RenderMode::Depth : RenderMode::DepthNormal);
-	Application::GetGraphics()->GetRenderContent()->RenderOneObject(camera, curr_material, renderable, mode);
+	Application::GetGraphics()->GetRenderContent()->RenderOneObject(camera, currMaterial, renderable, mode);
 }
 void RenderDepthMap::CreateMaterial()
 {

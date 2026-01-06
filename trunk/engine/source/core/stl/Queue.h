@@ -16,22 +16,27 @@ class Queue
 	DECLARE_ALLOCATOR;
 public:
 	Queue() { }
+	Queue(const Queue& other) :_queue(other._queue) {}
+	Queue(Queue&& other) :_queue(std::move(other._queue)) {}
 
-	void Clear() { m_queue.clear(); }
-	bool Contains(const V& v) const;
-	bool Dequeue(V& v);
-	void Enqueue(const V& v) { m_queue.push(v); }
-	bool IsEmpty() const { return m_queue.empty(); }
-	const V& Peek()const { return m_queue.top(); }
-	int Size() const { return (int)m_queue.size(); }
+	Queue& operator =(const Queue& other) noexcept { _queue = other._queue; return *this; }
+	Queue& operator =(Queue&& other) noexcept { _queue = std::move(other._queue); return *this; }
+
+	void Clear() noexcept { _queue.clear(); }
+	bool Contains(const V& v) const noexcept;
+	bool Dequeue(V& v) noexcept;
+	void Enqueue(const V& v) noexcept { _queue.push(v); }
+	bool IsEmpty() const noexcept { return _queue.empty(); }
+	const V& Peek()const noexcept { return _queue.top(); }
+	int Size() const noexcept { return (int)_queue.size(); }
 
 private:
-	std::queue<V, std::deque<V, STLAlloc<V>>> m_queue;
+	std::queue<V, std::deque<V, STLAlloc<V>>> _queue;
 };
 template<class V>
-bool Queue<V>::Contains(const V& v) const
+bool Queue<V>::Contains(const V& v) const noexcept
 {
-	for (auto i = m_queue.begin(); i != m_queue.end(); ++i)
+	for (auto i = _queue.begin(); i != _queue.end(); ++i)
 	{
 		if (*i == v)
 		{
@@ -42,11 +47,11 @@ bool Queue<V>::Contains(const V& v) const
 	return false;
 }
 template<class V>
-bool Queue<V>::Dequeue(V& v)
+bool Queue<V>::Dequeue(V& v) noexcept
 {
-	if (m_queue.empty())return false;
-	v = m_queue.front();
-	m_queue.pop();
+	if (_queue.empty())return false;
+	v = _queue.front();
+	_queue.pop();
 	return true;
 }
 DC_END_NAMESPACE

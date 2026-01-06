@@ -1,14 +1,14 @@
-#include "File.h" 
+﻿#include "File.h" 
 #include "Path.h"
 #include "Directory.h"
 #include "core/Debuger.h"
 #include "core/stream/DataStream.h"
 #include "platform/PlatformDefine.h"
-#include <zlib/unzip.h>
-
+#include <external/zlib/unzip.h>
+#include <filesystem>
 #if defined(DC_PLATFORM_WIN32)
 #include <io.h>
-#elif defined(DC_PLATFORM_LINUX) || defined(DC_PLATFORM_ANDROID) || defined(DC_PLATFORM_MAC) || defined(DC_PLATFORM_IOS)
+#else
 #include <stdio.h>
 #include <unistd.h>
 #endif
@@ -31,8 +31,63 @@ FileInfo::FileInfo(const String& fileName, SearchOption op)
 {
 	if (FileType == FileInfoType::Dir)
 	{
-		Directory::GetFiles(_filePath, op, _childrens);
+		Directory::GetFileInfos(_filePath, op, _childrens);
 	}
+}
+FileInfo::FileInfo(const FileInfo& other)
+	: FileName(other.FileName),
+	Extension(other.Extension),
+	FullName(other.FullName),
+	FileType(other.FileType),
+	_filePath(other._filePath),
+	_hasChildrenFolder(other._hasChildrenFolder),
+	_childrens(other._childrens)
+{
+}
+FileInfo::FileInfo(FileInfo&& other)noexcept
+	: FileName(std::move(other.FileName)),
+	Extension(std::move(other.Extension)),
+	FullName(std::move(other.FullName)),
+	FileType(other.FileType),
+	_filePath(std::move(other._filePath)),
+	_hasChildrenFolder(other._hasChildrenFolder),
+	_childrens(std::move(other._childrens))
+{
+	// 清空被移动对象的数据
+	other._hasChildrenFolder = false;
+	other._childrens.Clear();
+}
+FileInfo& FileInfo::operator =(const FileInfo& other)
+{
+	if (this != &other)
+	{
+		FileName = other.FileName;
+		Extension = other.Extension;
+		FullName = other.FullName;
+		FileType = other.FileType;
+		_filePath = other._filePath;
+		_hasChildrenFolder = other._hasChildrenFolder;
+		_childrens = other._childrens;
+	}
+	return *this;
+}
+FileInfo& FileInfo::operator =(FileInfo&& other)noexcept
+{
+	if (this != &other)
+	{
+		FileName = std::move(other.FileName);
+		Extension = std::move(other.Extension);
+		FullName = std::move(other.FullName);
+		FileType = other.FileType;
+		_filePath = std::move(other._filePath);
+		_hasChildrenFolder = other._hasChildrenFolder;
+		_childrens = std::move(other._childrens);
+
+		// 清空被移动对象的数据
+		other._hasChildrenFolder = false;
+		other._childrens.Clear();
+	}
+	return *this;
 }
 bool FileInfo::Exist()const
 {
@@ -42,154 +97,108 @@ bool FileInfo::HasChildren(const String& name)
 {
 	for (int i = 0; i < _childrens.Size(); ++i)
 	{
-		const FileInfo& file_info = _childrens[i];
-		if (file_info.FileName.Equals(name, true))
+		const FileInfo& fileInfo = _childrens[i];
+		if (fileInfo.FileName.Equals(name, true))
 			return true;
 	}
 	return false;
 }
 /********************************************************************/
 IMPL_REFECTION_TYPE(File);
-bool File::Create(const String& full_path)
+bool File::Create(const String& fullPath)
 {
-	DC_PROFILE_FUNCTION();
-	if (File::Exist(full_path))return false;
+	DC_PROFILE_FUNCTION;
+	if (File::Exist(fullPath))return false;
 
-	String path = Path::GetDirectoryName(full_path);
+	String path = Path::GetDirectoryName(fullPath);
 	if (!path.IsEmpty() && !Directory::Exist(path))
 		Directory::Create(path);
 
-	FileDataStream file(full_path, "w");
+	FileDataStream file(fullPath, "w");
 	return file.IsOpen();
 }
-bool File::Delete(const String& full_path)
+bool File::Delete(const String& fullPath)
 {
-	DC_PROFILE_FUNCTION();
-	if (full_path.IsEmpty())return false;
-	if (!File::Exist(full_path))return true;
-
-#if defined(DC_PLATFORM_WIN32)
-	std::wstring w_path = Encoding::Utf8ToWChar(full_path.c_str(), full_path.Size());
-	bool result = ::DeleteFileW(w_path.c_str()) == TRUE;
-#elif defined(DC_PLATFORM_LINUX) || defined(DC_PLATFORM_ANDROID) || defined(DC_PLATFORM_MAC) || defined(DC_PLATFORM_IOS)
-	bool result = ::remove(full_path.c_str()) == 0;
-#else
-	bool result = false;
-#endif
-#if DC_DEBUG
-	if(!result)Debuger::Error("delete file error:%s", full_path.c_str());
-#endif
-	return result;
-}
-bool File::Exist(const String& full_path)
-{
-	DC_PROFILE_FUNCTION();
-	if (full_path.IsEmpty())return false;
-
-#if defined(DC_PLATFORM_WIN32)
-	std::wstring w_path = Encoding::Utf8ToWChar(full_path.c_str(), full_path.Size());
-	return ::GetFileAttributesW(w_path.c_str()) != INVALID_FILE_ATTRIBUTES;
-#elif defined(DC_PLATFORM_LINUX) || defined(DC_PLATFORM_ANDROID) || defined(DC_PLATFORM_MAC) || defined(DC_PLATFORM_IOS)
-	return ::access(full_path.c_str(), F_OK) == 0;
-#else
-	return false;
-#endif
-}
-bool File::Copy(const String& src_path, const String& dst_path)
-{
-	DC_PROFILE_FUNCTION();
-	if (src_path.IsEmpty() || dst_path.IsEmpty())return false;
-
-	String path = Path::GetDirectoryName(dst_path);
-	if (!Directory::Exist(path))
-		Directory::Create(path);
-
-	if (File::Exist(dst_path))
-		File::Delete(dst_path);
-
-#if defined(DC_PLATFORM_WIN32)
-	std::wstring w_src_path = Encoding::Utf8ToWChar(src_path.c_str(), src_path.Size());
-	std::wstring w_dst_path = Encoding::Utf8ToWChar(dst_path.c_str(), dst_path.Size());
-	bool result = ::CopyFileW(w_src_path.c_str(), w_dst_path.c_str(), false) == TRUE;
-#elif defined(DC_PLATFORM_LINUX) || defined(DC_PLATFORM_ANDROID) || defined(DC_PLATFORM_MAC) || defined(DC_PLATFORM_IOS)
-	FILE *in = fopen(src_path.c_str(), "r+");
-	FILE *out = fopen(dst_path.c_str(), "w+");
-	bool result = false;
-	if (in && out)
+	std::error_code ec;
+	std::filesystem::remove(fullPath.c_str());
+	if (ec)
 	{
-		char buff[1024];
-		int len = 0;
-		while (len = fread(buff, 1, sizeof(buff), in))
-		{
-			fwrite(buff, 1, len, out);
-		}
-		fflush(out);
-		result = true;
+#if DC_DEBUG
+		Debuger::Error("delete file:%s -> %s error:%s", fullPath.c_str(), ec.message().c_str());
+#endif
+		return false;
 	}
-	if(in)fclose(in);
-	if(out)fclose(out);
-#else
-	bool result = false;
-#endif
-
-#if DC_DEBUG
-	if (!result)Debuger::Error("copy file error:%s", src_path.c_str());
-#endif
-	return result;
+	return true;
 }
-bool File::Move(const String& src_path, const String& dst_path)
+bool File::Exist(const String& fullPath)
 {
-	DC_PROFILE_FUNCTION();
-	if (src_path.IsEmpty() || dst_path.IsEmpty())return false;
-
-	String path = Path::GetDirectoryName(dst_path);
-	if (!Directory::Exist(path))
-		Directory::Create(path);
-
-	if (File::Exist(dst_path))
-		File::Delete(dst_path);
-
-#if defined(DC_PLATFORM_WIN32)
-	std::wstring w_src_path = Encoding::Utf8ToWChar(src_path.c_str(), src_path.Size());
-	std::wstring w_dst_path = Encoding::Utf8ToWChar(dst_path.c_str(), dst_path.Size());
-	//如果源位置和目标位置都在同一卷上，则将执行原子重命名操作.如果它们位于不同的卷上，那么将执行复制/删除操作
-	bool result = MoveFileW(w_src_path.c_str(), w_dst_path.c_str()) == TRUE;
-#elif defined(DC_PLATFORM_LINUX) || defined(DC_PLATFORM_ANDROID) || defined(DC_PLATFORM_MAC) || defined(DC_PLATFORM_IOS)
-	bool result = ::rename(src_path.c_str(), dst_path.c_str()) == 0;
-#else
-	bool result = false;
-#endif
-
-#if DC_DEBUG
-	if (!result)Debuger::Error("move file error:%s", src_path.c_str());
-#endif
-	return result;
+	DC_PROFILE_FUNCTION;
+	if (fullPath.IsEmpty())return false;
+	return std::filesystem::exists(fullPath.c_str());
 }
-bool File::Rename(const String& src_path, const String& new_name)
+bool File::Copy(const String& srcPath, const String& dstPath)
 {
-	DC_PROFILE_FUNCTION();
-	if (!File::Exist(src_path))
+	DC_PROFILE_FUNCTION;
+	if (!Exist(srcPath))
 		return false;
 
-	String path = Path::GetDirectoryName(src_path);
-	String dst_path = Path::Combine(path, new_name);
-	if (Move(src_path, dst_path))
+	std::error_code ec;
+	std::filesystem::copy_file(srcPath.c_str(), dstPath.c_str(), std::filesystem::copy_options::overwrite_existing, ec);
+	if (ec)
 	{
-		File::Delete(src_path);
-		return true;
+#if DC_DEBUG
+		Debuger::Error("copy file:%s -> %s error:%s", srcPath.c_str(), dstPath.c_str(), ec.message().c_str());
+#endif
+		return false;
 	}
-	return false;
+	return true;
 }
-bool File::AppendAllText(const String& full_path, const String& contents, EncodingType encoding)
+bool File::Move(const String& srcPath, const String& dstPath)
 {
-	DC_PROFILE_FUNCTION();
-	if (full_path.IsEmpty())return false;
+	DC_PROFILE_FUNCTION;
+	if (!Exist(srcPath))
+		return false;
 
-	String path = Path::GetDirectoryName(full_path);
+	std::error_code ec;
+	std::filesystem::rename(srcPath.c_str(), dstPath.c_str(), ec);
+	if (ec)
+	{
+#if DC_DEBUG
+		Debuger::Error("move file:%s -> %s error:%s", srcPath.c_str(), dstPath.c_str(), ec.message().c_str());
+#endif
+		return false;
+	}
+	return true;
+}
+bool File::Rename(const String& srcPath, const String& new_name)
+{
+	DC_PROFILE_FUNCTION;
+	if (!Exist(srcPath))
+		return false;
+
+	std::string dstPath = Path::GetDirectoryName(srcPath) + "/" + new_name;
+
+	std::error_code ec;
+	std::filesystem::rename(srcPath.c_str(), dstPath, ec);
+	if (ec)
+	{
+#if DC_DEBUG
+		Debuger::Error("rename file:%s -> %s error:%s", srcPath.c_str(), dstPath.c_str(), ec.message().c_str());
+#endif
+		return false;
+	}
+	return true;
+}
+bool File::AppendAllText(const String& fullPath, const String& contents, EncodingType encoding)
+{
+	DC_PROFILE_FUNCTION;
+	if (fullPath.IsEmpty())return false;
+
+	String path = Path::GetDirectoryName(fullPath);
 	if (!Directory::Exist(path))
 		Directory::Create(path);
 
-	FileDataStream file(full_path, "a+");
+	FileDataStream file(fullPath, "a+");
 	if (!file.IsOpen())
 	{
 		return false;
@@ -198,100 +207,120 @@ bool File::AppendAllText(const String& full_path, const String& contents, Encodi
 	if (file.Write(const_cast<char*>(content.c_str()), 0, content.Size()) != content.Size())
 	{
 #if DC_DEBUG
-		Debuger::Error("append file error:%s", full_path.c_str());
+		Debuger::Error("append file error:%s", fullPath.c_str());
 #endif
 		return false;
 	}
 
 #if DC_DEBUG
-	Debuger::Log("append file:%s", full_path.c_str());
+	Debuger::Log("append file:%s", fullPath.c_str());
 #endif
 
 	return true;
 }
-bool File::AppendAllText(const String& full_path, const String& contents)
+bool File::AppendAllText(const String& fullPath, const String& contents)
 {
-	return AppendAllText(full_path, contents, EncodingType::Default);
+	return AppendAllText(fullPath, contents, EncodingType::Default);
 }
-bool File::ReadAllBytes(const String& full_path, MemoryDataStream& stream)
+bool File::ReadAllBytes(const String& fullPath, MemoryDataStream& stream)
 {
-	DC_PROFILE_FUNCTION();
-	if (full_path.IsEmpty() || !File::Exist(full_path))
+	DC_PROFILE_FUNCTION;
+	if (fullPath.IsEmpty() || !File::Exist(fullPath))
 		return false;
 
-	FileDataStream file(full_path, "rb+");
+	FileDataStream file(fullPath, "rb+");
 	if (!file.IsOpen())
 	{
 		return false;
 	}
 
 	int size = file.Size();
-	byte* buf = NewArray<byte>(size);
+	byte* buf = Memory::NewArray<byte>(size);
 	if (file.Read(buf, size) != size)
 	{
 #if DC_DEBUG
-		Debuger::Error("read file error:%s", full_path.c_str());
+		Debuger::Error("read file error:%s", fullPath.c_str());
 #endif
-		DeleteArray(buf);
+		Memory::DeleteArray(buf);
 		return false;
 	}
-	stream.Write(buf, 0, size);
-	DeleteArray(buf);
+
+	// 检查并移除UTF-8 BOM
+	bool hasBom = false;
+	if (size >= 3 &&
+		static_cast<unsigned char>(buf[0]) == 0xEF &&
+		static_cast<unsigned char>(buf[1]) == 0xBB &&
+		static_cast<unsigned char>(buf[2]) == 0xBF) {
+		hasBom = true;
+	}
+
+	stream.Write(buf, hasBom ? 3 : 0, hasBom ? size - 3 : size);
+	Memory::DeleteArray(buf);
 	return true;
 }
-String File::ReadAllText(const String& full_path, EncodingType encoding)
+String File::ReadAllText(const String& fullPath, EncodingType encoding)
 {
-	DC_PROFILE_FUNCTION();
-	if (full_path.IsEmpty() || !File::Exist(full_path))
+	DC_PROFILE_FUNCTION;
+	if (fullPath.IsEmpty() || !File::Exist(fullPath))
 	{
 #if DC_DEBUG
-		Debuger::Error("file not exist:%s", full_path.c_str());
+		Debuger::Error("file not exist:%s", fullPath.c_str());
 #endif
 		return "";
 	}
 
-	FileDataStream file(full_path, "rb+");
+	FileDataStream file(fullPath, "rb+");
 	if (!file.IsOpen())
 	{
 		return "";
 	}
 
 	int size = file.Size();
-	char* buf = NewArray<char>(size + 1);
+	char* buf = Memory::NewArray<char>(size + 1);
 	if (file.Read(buf, size) != size)
 	{
 #if DC_DEBUG
-		Debuger::Error("read file error:%s", full_path.c_str());
+		Debuger::Error("read file error:%s", fullPath.c_str());
 #endif
-		DeleteArray(buf);
+		Memory::DeleteArray(buf);
 		return "";
 	}
+
 	buf[size] = '\0';
 
 #if DC_DEBUG
-	//Debuger::Log("read file:%s", full_path.c_str());
+	//Debuger::Log("read file:%s", fullPath.c_str());
 #endif
 
 	//String str = Encoding::Convert(encoding, EncodingType::Default, buf, size);
 	String str = buf;
-	DeleteArray(buf);
+	Memory::DeleteArray(buf);
+
+	// 检查并移除UTF-8 BOM
+	if (str.Size() >= 3 &&
+		static_cast<unsigned char>(str[0]) == 0xEF &&
+		static_cast<unsigned char>(str[1]) == 0xBB &&
+		static_cast<unsigned char>(str[2]) == 0xBF) {
+		str.Remove(0, 3);
+	}
+
 	return str;
 }
-String File::ReadAllText(const String& full_path)
+String File::ReadAllText(const String& fullPath)
 {
-	return ReadAllText(full_path, EncodingType::Default);
+	return ReadAllText(fullPath, EncodingType::Default);
 }
-bool File::WriteAllBytes(const String& full_path, byte* bytes, int count)
+bool File::WriteAllBytes(const String& fullPath, byte* bytes, int count)
 {
-	DC_PROFILE_FUNCTION();
-	if (full_path.IsEmpty())return false;
+	DC_PROFILE_FUNCTION;
+	if (fullPath.IsEmpty())return false;
 
-	String path = Path::GetDirectoryName(full_path);
+	String path = Path::GetDirectoryName(fullPath);
 	if (!Directory::Exist(path))
 		Directory::Create(path);
 
 	if (count < 0)return false;
-	FileDataStream file(full_path, "wb");
+	FileDataStream file(fullPath, "wb");
 	if (!file.IsOpen())
 	{
 		return false;
@@ -299,26 +328,26 @@ bool File::WriteAllBytes(const String& full_path, byte* bytes, int count)
 	if (file.Write(bytes, 0, count) != count)
 	{
 #if DC_DEBUG
-		Debuger::Error("write file error:%s", full_path.c_str());
+		Debuger::Error("write file error:%s", fullPath.c_str());
 #endif
 		return false;
 	}
 	return true;
 }
-bool File::WriteAllText(const String& full_path, const String& contents)
+bool File::WriteAllText(const String& fullPath, const String& contents)
 {
-	return WriteAllText(full_path, contents, EncodingType::Default);
+	return WriteAllText(fullPath, contents, EncodingType::Default);
 }
-bool File::WriteAllText(const String& full_path, const String& contents, EncodingType encoding)
+bool File::WriteAllText(const String& fullPath, const String& contents, EncodingType encoding)
 {
-	DC_PROFILE_FUNCTION();
-	if (full_path.IsEmpty())return false;
+	DC_PROFILE_FUNCTION;
+	if (fullPath.IsEmpty())return false;
 
-	String path = Path::GetDirectoryName(full_path);
+	String path = Path::GetDirectoryName(fullPath);
 	if (!Directory::Exist(path))
 		Directory::Create(path);
 
-	FileDataStream file(full_path, "w+");
+	FileDataStream file(fullPath, "w+");
 	if (!file.IsOpen())
 	{
 		return false;
@@ -328,23 +357,19 @@ bool File::WriteAllText(const String& full_path, const String& contents, Encodin
 	if (file.Write(const_cast<char*>(content.c_str()), 0, content.Size()) != content.Size())
 	{
 #if DC_DEBUG
-		Debuger::Error("write file error:%s", full_path.c_str());
+		Debuger::Error("write file error:%s", fullPath.c_str());
 #endif
 		return false;
 	}
 
-#if DC_DEBUG
-	Debuger::Log("write file:%s", full_path.c_str());
-#endif
-
 	return true;
 }
 
-static bool unzipCurrentFile(unzFile uf, const String& dest_path)
+static bool unzipCurrentFile(unzFile uf, const String& destPath)
 {
 	char szFilePath[512] = {0};
-	unz_file_info64 file_info;
-	if (unzGetCurrentFileInfo64(uf, &file_info, szFilePath, sizeof(szFilePath), NULL, 0, NULL, 0) != UNZ_OK)
+	unz_file_info64 fileInfo;
+	if (unzGetCurrentFileInfo64(uf, &fileInfo, szFilePath, sizeof(szFilePath), NULL, 0, NULL, 0) != UNZ_OK)
 		return false;
 
 	size_t len = strlen(szFilePath);
@@ -353,14 +378,14 @@ static bool unzipCurrentFile(unzFile uf, const String& dest_path)
 		return false;
 	}
 
-	String file_path = dest_path + "/" + Path::ReplaceSplit(szFilePath);
+	String filePath = destPath + "/" + Path::ReplaceSplit(szFilePath);
 	if (szFilePath[len - 1] == '\\' || szFilePath[len - 1] == '/')
 	{
-		Directory::Create(file_path);
+		Directory::Create(filePath);
 		return true;
 	}
 
-	auto file = fopen(file_path.c_str(), "wb");
+	auto file = fopen(filePath.c_str(), "wb");
 	if (file == nullptr)
 	{
 		return false;
@@ -403,19 +428,19 @@ static bool unzipCurrentFile(unzFile uf, const String& dest_path)
 	fclose(file);
 	return true;
 }
-bool File::Unzip(const String& zip_file, const String& dest_path)
+bool File::Unzip(const String& zipFile, const String& destPath)
 {
-	unzFile uf = unzOpen64(zip_file.c_str());
+	unzFile uf = unzOpen64(zipFile.c_str());
 	if (uf == NULL)
 	{
-		Debuger::Error("open zip file error:%s", zip_file.c_str());
+		Debuger::Error("open zip file error:%s", zipFile.c_str());
 		return false;
 	}
 
 	unz_global_info64 gi;
 	if (unzGetGlobalInfo64(uf, &gi) != UNZ_OK)
 	{
-		Debuger::Error("init zip file error:%s", zip_file.c_str());
+		Debuger::Error("init zip file error:%s", zipFile.c_str());
 		unzClose(uf);
 		return false;
 	}
@@ -423,7 +448,7 @@ bool File::Unzip(const String& zip_file, const String& dest_path)
 	bool result = true;
 	for (int i = 0; i < gi.number_entry; ++i)
 	{
-		if (!unzipCurrentFile(uf, dest_path.c_str()))
+		if (!unzipCurrentFile(uf, destPath.c_str()))
 		{
 			unzClose(uf);
 			result = false;
@@ -442,7 +467,7 @@ bool File::Unzip(const String& zip_file, const String& dest_path)
 	unzClose(uf);
 
 	if (!result)
-		Debuger::Error("unzip file error:%s", zip_file.c_str());
+		Debuger::Error("unzip file error:%s", zipFile.c_str());
 	return result;
 }
 DC_END_NAMESPACE

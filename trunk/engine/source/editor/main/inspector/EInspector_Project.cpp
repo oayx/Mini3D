@@ -1,4 +1,4 @@
-#include "EInspector_Project.h"
+﻿#include "EInspector_Project.h"
 #include "EInspector_Project_Font.h"
 #include "EInspector_Project_Material.h"
 #include "EInspector_Project_Mesh.h"
@@ -13,11 +13,11 @@ DC_BEGIN_NAMESPACE
 /********************************************************************/
 EInspector_Project::EInspector_Project()
 {
-	_inspectors[int(ResourceType::Material)] = DBG_NEW EInspector_Project_Material();
-	_inspectors[int(ResourceType::Mesh)] = DBG_NEW EInspector_Project_Mesh();
-	_inspectors[int(ResourceType::Texture)] = DBG_NEW EInspector_Project_Texture();
-	_inspectors[int(ResourceType::Txt)] = DBG_NEW EInspector_Project_Text();
-	_inspectors[int(ResourceType::Font)] = DBG_NEW EInspector_Project_Font();
+	_inspectors[int(ResourceType::Material)] = Memory::New<EInspector_Project_Material>();
+	_inspectors[int(ResourceType::Mesh)] = Memory::New<EInspector_Project_Mesh>();
+	_inspectors[int(ResourceType::Texture)] = Memory::New<EInspector_Project_Texture>();
+	_inspectors[int(ResourceType::Txt)] = Memory::New<EInspector_Project_Text>();
+	_inspectors[int(ResourceType::Font)] = Memory::New<EInspector_Project_Font>();
 }
 EInspector_Project::~EInspector_Project()
 {
@@ -33,7 +33,7 @@ EInspector_Project::~EInspector_Project()
 }
 void EInspector_Project::Render()
 {
-	DC_PROFILE_FUNCTION();
+	DC_PROFILE_FUNCTION;
 	String select_file = EditorAppliction::GetInspectorName();
 	if (select_file.IsEmpty())return;
 

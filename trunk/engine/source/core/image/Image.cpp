@@ -1,4 +1,4 @@
-#include "Image.h"
+﻿#include "Image.h"
 #include "ImageManager.h"
 #include "core/file/File.h"
 #include "core/file/Path.h"
@@ -24,7 +24,7 @@ Image::Image(ColorFormat format, const iSize& size, bool round)
 	}
 	uint row_pitch = BytesRowPitch(_format, _size.width);
 	uint bytes = TotalBytes(_format, _size.width, _size.height);
-	ImageMipData* mip_data = DBG_NEW ImageMipData(row_pitch, _size.width, _size.height, bytes);
+	ImageMipData* mip_data = Memory::New<ImageMipData>(row_pitch, _size.width, _size.height, bytes);
 	_imageData.Add(mip_data);
 }
 Image::~Image()
@@ -37,13 +37,13 @@ Image* Image::Create(ColorFormat format, const iSize& size)
 }
 Image* Image::Create(ColorFormat format, const iSize& size, bool round)
 {
-	Image* image = DBG_NEW Image(format, size, round);
+	Image* image = Memory::New<Image>(format, size, round);
 	image->AutoRelease();
 	return image;
 }
 Image* Image::Create(const String& file, bool mipmap)
 {
-	DC_PROFILE_FUNCTION();
+	DC_PROFILE_FUNCTION;
 
 	Image* image = ImageManager::GetImage(file);
 	if (image)
@@ -53,7 +53,7 @@ Image* Image::Create(const String& file, bool mipmap)
 		return image;
 	}
 	
-	image = DBG_NEW Image();
+	image = Memory::New<Image>();
 	if (image->LoadFromFile(Resource::GetFullDataPath(file), mipmap, false))
 	{
 		image->_file = file;
@@ -66,7 +66,7 @@ Image* Image::Create(const String& file, bool mipmap)
 }
 Image* Image::CreateEditor(const String& file)
 {
-	DC_PROFILE_FUNCTION();
+	DC_PROFILE_FUNCTION;
 
 	Image* image = ImageManager::GetImage(file);
 	if (image)
@@ -74,7 +74,7 @@ Image* Image::CreateEditor(const String& file)
 		return image;
 	}
 
-	image = DBG_NEW Image();
+	image = Memory::New<Image>();
 	if (image->LoadFromFile(Resource::GetFullSavePath(file), false, true))
 	{
 		image->_file = file;
@@ -93,20 +93,20 @@ ImageType Image::GetImageType(const String& file)
 	{//可能传进来的已经是扩展名
 		ext = Path::GetFileName(file);
 	}
-	if (ext == "png")return ImageType::PNG;
-	else if (ext == "jpg" || ext == "jpeg")return ImageType::JPEG;
-	else if (ext == "tga")return ImageType::TGA;
-	else if (ext == "bmp")return ImageType::BMP;
-	else if (ext == "gif")return ImageType::GIF;
-	else if (ext == "hdr")return ImageType::HDR;
-	else if (ext == "raw")return ImageType::RAW;
-	else if (ext == "cube")return ImageType::CUBE;
-	else if (ext == "dds")return ImageType::DDS;
-	else if (ext == "pkm")return ImageType::PKM;
-	else if (ext == "astc")return ImageType::ASTC;
+	if (ext == ".png")return ImageType::PNG;
+	else if (ext == ".jpg" || ext == "jpeg")return ImageType::JPEG;
+	else if (ext == ".tga")return ImageType::TGA;
+	else if (ext == ".bmp")return ImageType::BMP;
+	else if (ext == ".gif")return ImageType::GIF;
+	else if (ext == ".hdr")return ImageType::HDR;
+	else if (ext == ".raw")return ImageType::RAW;
+	else if (ext == ".cube")return ImageType::CUBE;
+	else if (ext == ".dds")return ImageType::DDS;
+	else if (ext == ".pkm")return ImageType::PKM;
+	else if (ext == ".astc")return ImageType::ASTC;
 	else return ImageType::Undefined;
 }
-Object* Image::Clone(Object* new_obj)
+Object* Image::Clone(Object* newObj)
 {
 	Image* image = Image::Create(_format, _size);
 	image->Fill(this->Data(), GetSize());
@@ -150,7 +150,7 @@ bool Image::LoadFromFile(const String& file, bool mipmap, bool no_compress)
 	if (!result)
 	{
 		result = this->LoadFromSTBFile(file, type);
-		if(mipmap)this->GenerateMipMap(0);
+		if(mipmap && result)this->GenerateMipMap(0);
 	}
 	return result;
 }
@@ -164,8 +164,8 @@ bool Image::LoadFromCubeFile(const String& file, bool mipmap)
 
 	uint w = stream.Read<uint>();
 	uint h = stream.Read<uint>();
-	byte* by_rgb = NewArray<byte>(w * h * 3);
-	byte* by_rgba = NewArray<byte>(w * h * 4);
+	byte* by_rgb = Memory::NewArray<byte>(w * h * 3);
+	byte* by_rgba = Memory::NewArray<byte>(w * h * 4);
 
 	this->Clear();
 	_format = ColorFormat::R8G8B8A8;
@@ -173,10 +173,10 @@ bool Image::LoadFromCubeFile(const String& file, bool mipmap)
 	_isCube = true;
 	for (int i = 0; i < 6; ++i)
 	{
-		byte flag = stream.Read<byte>();
+		/*byte flag = */stream.Read<byte>();
 		uint offset = stream.Read<uint>();
 		stream.Read(by_rgb, offset);
-		//文件保存的是bgr格式，需要转换成rgb格式
+		//TODO:文件保存的是bgr格式，需要转换成rgb格式
 		for (uint i = 0; i < offset; i += 3)
 		{
 			byte t = by_rgb[i];
@@ -192,12 +192,12 @@ bool Image::LoadFromCubeFile(const String& file, bool mipmap)
 #endif
 		uint row_pitch = w * 4;
 		uint size = row_pitch * h;
-		ImageMipData* mip_data = DBG_NEW ImageMipData(row_pitch, w, h, size);
+		ImageMipData* mip_data = Memory::New<ImageMipData>(row_pitch, w, h, size);
 		_imageData.Add(mip_data);
 		::memcpy(mip_data->Data, by_rgba, size);
 	}
-	DeleteArray(by_rgb);
-	DeleteArray(by_rgba);
+	Memory::DeleteArray(by_rgb);
+	Memory::DeleteArray(by_rgba);
 
 	return true;
 }
@@ -217,7 +217,7 @@ bool Image::GenerateMipMap(int levels)
 		width = Math::Max<int>(width / 2, 1);
 		height = Math::Max<int>(height / 2, 1);
 
-		ImageMipData* mip_data_lv = DBG_NEW ImageMipData(BytesRowPitch(_format, width), width, height, TotalBytes(_format, width, height));
+		ImageMipData* mip_data_lv = Memory::New<ImageMipData>(BytesRowPitch(_format, width), width, height, TotalBytes(_format, width, height));
 		_imageData.Add(mip_data_lv);
 
 		// 改变图片尺寸
@@ -263,21 +263,32 @@ bool Image::SaveToFile(const String& file)
 	String path = Resource::GetFullSavePath(file);
 	switch (type)
 	{
+	case ImageType::BMP:
+	case ImageType::JPEG:
+	case ImageType::TGA:
+	case ImageType::PNG:
+	case ImageType::HDR:
+		return SaveToSTBFile(path, type);
 	case ImageType::DDS:
 		return SaveToDDSFile(path);
 	case ImageType::PKM:
 		return SaveToETCFile(path);
+	case ImageType::ASTC:
+		return SaveToASTCFile(path);
+	case ImageType::RAW://TODO
+		return false;
 	default:
-		return SaveToSTBFile(path, type);
+		return false;
 	}
 	return false;
 }
-void Image::SetPixel(uint x, uint y, const Color &color, bool blend)
+bool Image::SetPixel(uint x, uint y, const Color &color, bool blend)
 {
 	AssertEx(!_isStatic, "");
 	if (x >= _size.width || y >= _size.height)
-		return;
+		return false;
 
+	bool ret = true;
 	ImageMipData* mip_data = this->GetMipData(0);
 	switch(_format)
 	{
@@ -306,13 +317,15 @@ void Image::SetPixel(uint x, uint y, const Color &color, bool blend)
 			uint* dest = (uint*) (mip_data->Data + ( y * mip_data->RowPitch) + ( x << 2 ));
 			*dest = blend ? PixelBlend32 ( *dest, (uint)color ) : (uint)color;
 		} break;
-#ifndef DC_DEBUG
 		default:
+		{
+#ifndef DC_DEBUG
 			Debuger::Error("Image::SetPixel - error format:%d", (int)_format);
-			break;
 #endif
+			ret = false;
+		}break;
 	}
-	this->Unlock();
+	return ret;
 }
 Color Image::GetPixel(uint x, uint y) const
 {
@@ -357,17 +370,19 @@ bool Image::Resize(uint width, uint height)
 	if (_imageData.Size() != 1)return false;
 	if (IsCompressedFormat(_format))return false;
 
-	ImageMipData* src_data = GetMipData(0);
-	ImageMipData* dst_data = DBG_NEW ImageMipData(BytesRowPitch(_format, width), width, height, TotalBytes(_format, width, height));
-	
-	stbir_resize(src_data->Data, src_data->Width, src_data->Height, 0, dst_data->Data, width, height, 0, STBIR_TYPE_UINT8, 4, STBIR_ALPHA_CHANNEL_NONE, 0,
+	ImageMipData* srcData = GetMipData(0);
+	if (!srcData)return false;
+	ImageMipData* dstData = Memory::New<ImageMipData>(BytesRowPitch(_format, width), width, height, TotalBytes(_format, width, height));
+	if (!dstData)return false;
+
+	::stbir_resize(srcData->Data, srcData->Width, srcData->Height, 0, dstData->Data, width, height, 0, STBIR_TYPE_UINT8, 4, STBIR_ALPHA_CHANNEL_NONE, 0,
 		STBIR_EDGE_CLAMP, STBIR_EDGE_CLAMP,
 		STBIR_FILTER_BOX, STBIR_FILTER_BOX,
 		STBIR_COLORSPACE_LINEAR, nullptr);
 
 	this->Clear();
 	_size = iSize(width, height);
-	_imageData.Add(dst_data);
+	_imageData.Add(dstData);
 	return true;
 }
 void Image::Fill(const Color &color)
@@ -418,7 +433,7 @@ void Image::UpDownTransfer()
 {
 	ImageMipData* mip_data = this->GetMipData(0);
 	byte* data = mip_data->Data;
-	byte* new_data = NewArray<byte>(_size.height * mip_data->RowPitch);
+	byte* new_data = Memory::NewArray<byte>(_size.height * mip_data->RowPitch);
 	{
 		::memcpy(new_data, data, mip_data->Size);//保证_data指针不变
 		for (int row = (int)_size.height - 1; row >= 0; --row)
@@ -426,7 +441,7 @@ void Image::UpDownTransfer()
 			::memcpy(data, new_data + mip_data->RowPitch * row, mip_data->RowPitch);
 		}
 	}
-	DeleteArray(new_data);
+	Memory::DeleteArray(new_data);
 }
 void Image::Clear()
 {

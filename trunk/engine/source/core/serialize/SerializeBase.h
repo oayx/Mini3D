@@ -59,7 +59,7 @@ public:
 		if (*name >= 'a' && *name <= 'z')
 		{
 			int len = ::strlen(name);
-			Assert(len + 1 < 1024);
+			Debuger::Assert(len + 1 < 1024);
 			::strncpy(_tempChar, name, len);
 			_tempChar[len] = '\0';
 			_tempChar[0] = ::toupper(_tempChar[0]);

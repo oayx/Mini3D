@@ -1,4 +1,4 @@
-#include "AnimationBlender.h"
+﻿#include "AnimationBlender.h"
 #include "Animation.h"
 #include "AnimationState.h"
 
@@ -32,15 +32,15 @@ void AnimationBlender::Update(float dt)
 		this->Blender(_animation->_oldState, _animation->_currentState, factor);
 	}
 }
-void AnimationBlender::Blender(AnimationState* src_state, AnimationState* dst_state, float factor)
+void AnimationBlender::Blender(AnimationState* srcState, AnimationState* dstState, float factor)
 {
-	const BoneKeyFrames& src_keyframe = src_state->_boneKeyframes;
-	BoneKeyFrames& dst_keyframe = dst_state->_boneKeyframes;
-	for (int i = 0; i < src_keyframe.Size() && i < dst_keyframe.Size(); ++i)
+	const BoneKeyFrames& srcKeyframe = srcState->_boneKeyframes;
+	BoneKeyFrames& dst_keyframe = dstState->_boneKeyframes;
+	for (int i = 0; i < srcKeyframe.Size() && i < dst_keyframe.Size(); ++i)
 	{
-		dst_keyframe[i].Position = Vector3::Lerp(src_keyframe[i].Position, dst_keyframe[i].Position, factor);
-		dst_keyframe[i].Scale = Vector3::Lerp(src_keyframe[i].Scale, dst_keyframe[i].Scale, factor);
-		dst_keyframe[i].Rotate = Quaternion::Lerp(src_keyframe[i].Rotate, dst_keyframe[i].Rotate, factor);
+		dst_keyframe[i].Position = Vector3::Lerp(srcKeyframe[i].Position, dst_keyframe[i].Position, factor);
+		dst_keyframe[i].Scale = Vector3::Lerp(srcKeyframe[i].Scale, dst_keyframe[i].Scale, factor);
+		dst_keyframe[i].Rotate = Quaternion::Lerp(srcKeyframe[i].Rotate, dst_keyframe[i].Rotate, factor);
 	}
 }
 DC_END_NAMESPACE

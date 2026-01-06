@@ -1,10 +1,9 @@
-#include "ThreadScheduler.h"
+﻿#include "ThreadScheduler.h"
  
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-ThreadScheduler::Actions* ThreadScheduler::_appendList = DBG_NEW ThreadScheduler::Actions();
-ThreadScheduler::Actions* ThreadScheduler::_runList = DBG_NEW ThreadScheduler::Actions();
-std::mutex ThreadScheduler::GlobalMutex;
+ThreadScheduler::Actions* ThreadScheduler::_appendList = Memory::New<ThreadScheduler::Actions>();
+ThreadScheduler::Actions* ThreadScheduler::_runList = Memory::New<ThreadScheduler::Actions>();
 IMPL_REFECTION_TYPE(ThreadScheduler);
 void ThreadScheduler::Destroy()
 {
@@ -13,7 +12,7 @@ void ThreadScheduler::Destroy()
 }
 void ThreadScheduler::PushAction(const Action& action)
 {
-	thread_lock(GlobalMutex);
+	LOCK(GlobalMutex);
 	_appendList->Add(action);
 }
 void ThreadScheduler::Update()
@@ -22,7 +21,7 @@ void ThreadScheduler::Update()
 	if (runList->Size() > 0)
 	{
 		{
-			thread_lock(GlobalMutex);
+			LOCK(GlobalMutex);
 			_appendList = _runList;
 			_runList = runList;
 		}

@@ -19,14 +19,8 @@ out vec2 varying_TEXCOORD0;
 
 void main()
 {
-    vec4 _38 = in_var_BLENDINDICES;
-    vec4 _37 = in_var_BLENDWEIGHT;
-    uint _42 = uint(0);
-    uint _52 = uint(1);
-    uint _63 = uint(2);
-    uint _74 = uint(3);
-    vec4 _87 = (((((in_var_POSITION * CustomBuffer.BoneMatrixArray[uint(_38[_42])]) * _37[_42]) + ((in_var_POSITION * CustomBuffer.BoneMatrixArray[uint(_38[_52])]) * _37[_52])) + ((in_var_POSITION * CustomBuffer.BoneMatrixArray[uint(_38[_63])]) * _37[_63])) + ((in_var_POSITION * CustomBuffer.BoneMatrixArray[uint(_38[_74])]) * _37[_74])) * CustomBuffer.LIGHT_MATRIX_MVP;
-    gl_Position = _87;
-    varying_TEXCOORD0 = _87.zw;
+    vec4 _69 = (((((in_var_POSITION * CustomBuffer.BoneMatrixArray[int(in_var_BLENDINDICES.x)]) * in_var_BLENDWEIGHT.x) + ((in_var_POSITION * CustomBuffer.BoneMatrixArray[int(in_var_BLENDINDICES.y)]) * in_var_BLENDWEIGHT.y)) + ((in_var_POSITION * CustomBuffer.BoneMatrixArray[int(in_var_BLENDINDICES.z)]) * in_var_BLENDWEIGHT.z)) + ((in_var_POSITION * CustomBuffer.BoneMatrixArray[int(in_var_BLENDINDICES.w)]) * in_var_BLENDWEIGHT.w)) * CustomBuffer.LIGHT_MATRIX_MVP;
+    gl_Position = _69;
+    varying_TEXCOORD0 = _69.zw;
 }
 

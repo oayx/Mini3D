@@ -1,0 +1,76 @@
+{"frames": {
+
+"Background.png":
+{
+	"frame": {"x":33,"y":72,"w":29,"h":29},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":1,"y":1,"w":29,"h":29},
+	"sourceSize": {"w":31,"h":31}
+},
+"Check.png":
+{
+	"frame": {"x":33,"y":41,"w":29,"h":29},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":1,"y":1,"w":29,"h":29},
+	"sourceSize": {"w":31,"h":31}
+},
+"Checkmark.png":
+{
+	"frame": {"x":2,"y":103,"w":23,"h":19},
+	"rotated": true,
+	"trimmed": true,
+	"spriteSourceSize": {"x":5,"y":7,"w":23,"h":19},
+	"sourceSize": {"w":31,"h":31}
+},
+"DropdownArrow.png":
+{
+	"frame": {"x":23,"y":103,"w":20,"h":12},
+	"rotated": true,
+	"trimmed": true,
+	"spriteSourceSize": {"x":22,"y":27,"w":20,"h":12},
+	"sourceSize": {"w":64,"h":64}
+},
+"InputFieldBackground.png":
+{
+	"frame": {"x":2,"y":72,"w":29,"h":29},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":1,"y":1,"w":29,"h":29},
+	"sourceSize": {"w":31,"h":31}
+},
+"Knob.png":
+{
+	"frame": {"x":2,"y":2,"w":37,"h":37},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":1,"y":1,"w":37,"h":37},
+	"sourceSize": {"w":39,"h":39}
+},
+"UIMask.png":
+{
+	"frame": {"x":41,"y":2,"w":24,"h":24},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":4,"y":4,"w":24,"h":24},
+	"sourceSize": {"w":32,"h":32}
+},
+"UISprite.png":
+{
+	"frame": {"x":2,"y":41,"w":29,"h":29},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":1,"y":1,"w":29,"h":29},
+	"sourceSize": {"w":31,"h":31}
+}},
+"meta": {
+	"app": "http://www.texturepacker.com",
+	"version": "1.0",
+	"image": "ui.png",
+	"format": "RGBA8888",
+	"size": {"w":128,"h":128},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:0d4f672573be0fe22b12d1148eef1df1$"
+}
+}

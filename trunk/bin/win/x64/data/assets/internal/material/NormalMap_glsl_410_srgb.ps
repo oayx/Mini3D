@@ -1,0 +1,50 @@
+#version 410
+
+struct Light
+{
+    vec3 Dir;
+    int Type;
+    vec3 Color;
+    vec3 Attenuation;
+    float Range;
+    vec3 Position;
+    float SpotAngle;
+};
+
+struct type_LightBuffer
+{
+    int _LightCount;
+    vec3 _LightDir0;
+    vec3 _LightColor0;
+    Light _Light[8];
+};
+
+uniform type_LightBuffer LightBuffer;
+
+struct type_CommbonRarelyBuffer
+{
+    vec3 _LIGHTMODEL_AMBIENT;
+    int _FogMode;
+    vec4 _FogColor;
+    float _FogStart;
+    float _FogEnd;
+    float _FogDensity;
+};
+
+uniform type_CommbonRarelyBuffer CommbonRarelyBuffer;
+
+uniform sampler2D _MainTex;
+uniform sampler2D _NormalTexture;
+
+layout(location = 0) in vec2 var_TEXCOORD0;
+layout(location = 1) in vec3 var_TEXCOORD1;
+layout(location = 2) in float var_TEXCOORD2;
+layout(location = 0) out vec4 out_var_SV_Target;
+
+void main()
+{
+    vec4 _59 = texture(_MainTex, var_TEXCOORD0);
+    float _79 = _59.w;
+    out_var_SV_Target = vec4(max((pow(max(vec4((CommbonRarelyBuffer._LIGHTMODEL_AMBIENT + (LightBuffer._LightColor0 * vec3((dot((texture(_NormalTexture, var_TEXCOORD0).xyz * 2.0) - vec3(1.0), var_TEXCOORD1) * 0.5) + 0.5))) * _59.xyz, _79).xyz, vec3(0.0)), vec3(0.4166666567325592041015625)) * 1.05499994754791259765625) - vec3(0.054999999701976776123046875), vec3(0.0)), _79);
+}
+

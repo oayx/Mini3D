@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Date：2021/1/18
@@ -12,20 +12,20 @@
 
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-class ENGINE_DLL UDPRecv Final : public Socket
+class ENGINE_DLL UDPRecv final : public Socket
 {
 	typedef std::function<void(char*, int)> ReceiveCallback;
 	DEFAULT_CREATE(UDPRecv);
 	FRIEND_CONSTRUCT_DESTRUCT(UDPRecv);
 	DISALLOW_COPY_ASSIGN(UDPRecv);
 	BEGIN_DERIVED_REFECTION_TYPE(UDPRecv, Socket)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 public:
-	UDPRecv() {}
-	~UDPRecv() {}
+	UDPRecv() = default;
+	~UDPRecv() = default;
 
-	bool Start(const String& host_name, int port, bool reuse_addr = false);
+	bool Start(const String& hostName, int port, bool reuse_addr = false);
 	void OnReceive(ReceiveCallback callback) { _receiveCallback = callback; }
 
 	virtual void Close()override { base::Close(); }

@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Date：2009年11月21日
@@ -11,17 +11,16 @@
 
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-class DX9Texture Final : public Texture
+class DX9Texture final : public Texture
 {
 	friend class DX9Device;
 	DEFAULT_CREATE(DX9Texture);
 	FRIEND_CONSTRUCT_DESTRUCT(DX9Texture);
 	DISALLOW_CONSTRUCTOR_COPY_ASSIGN(DX9Texture);
 	BEGIN_DERIVED_REFECTION_TYPE(DX9Texture, Texture)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 	DX9Texture(const TextureDesc& desc);
-public:
 	~DX9Texture();
 
 public:

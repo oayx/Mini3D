@@ -28,14 +28,14 @@ uniform type_CustomBuffer CustomBuffer;
 
 layout(location = 0) in vec4 in_var_POSITION;
 layout(location = 1) in vec4 in_var_COLOR0;
-layout(location = 0) out vec4 out_var_TEXCOORD0;
-layout(location = 1) out float out_var_TEXCOORD1;
+layout(location = 0) out vec4 var_TEXCOORD0;
+layout(location = 1) out float var_TEXCOORD1;
 
 void main()
 {
     vec4 _30 = in_var_POSITION * TransformBuffer.MATRIX_MVP;
     gl_Position = _30;
-    out_var_TEXCOORD0 = in_var_COLOR0 * CustomBuffer._Color;
-    out_var_TEXCOORD1 = _30.z;
+    var_TEXCOORD0 = in_var_COLOR0 * CustomBuffer._Color;
+    var_TEXCOORD1 = _30.z;
 }
 

@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************************************/
 // @author hannibal
 // @date   2020/09/11
@@ -13,7 +13,7 @@ DC_BEGIN_NAMESPACE
 class Collider2d;
 /********************************************************************/
 //Box2D 已被调谐使用米，千克和秒来作单位。这个值用于设置游戏世界单位与Box2D单位转换
-static float PTM_RATIO = 1.0f;
+inline static float PTM_RATIO = 1.0f;
 
 inline b2Vec2 Tob2Vec2(const Vector2& vec) { return b2Vec2(vec.x, vec.y); }
 inline Vector2 Fromb2Vec2(const b2Vec2& vec) { return Vector2(vec.x, vec.y); }

@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Date：2020/12/8
@@ -12,7 +12,7 @@ DC_BEGIN_NAMESPACE
 class Camera;
 /********************************************************************/
 // 四叉树
-class Quadtree Final : public Scenetree
+class Quadtree final : public Scenetree
 {
 	friend class SceneManager;
 	typedef List<GameObject*> ListNodes;
@@ -20,7 +20,7 @@ class Quadtree Final : public Scenetree
 	FRIEND_CONSTRUCT_DESTRUCT(Quadtree);
 	DISALLOW_COPY_ASSIGN(Quadtree);
 	BEGIN_DERIVED_REFECTION_TYPE(Quadtree, Scenetree)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 public:
 	Quadtree(Quadtree *tree);
@@ -29,7 +29,7 @@ public:
 
 	virtual void AddObject(GameObject *node, int depth = 0)override;
 	virtual void RemoveAllObjects()override;
-	virtual void FindVisibleObjects(Camera *camera, bool found_visible)override;
+	virtual void FindVisibleObjects(Camera *camera, bool foundVisible)override;
 	virtual void FindObjects(List<GameObject*>& list, const Ray& ray)override;
 
 private:
@@ -38,7 +38,7 @@ private:
 	// 删除节点
 	void RemoveNode(GameObject *node);
 
-	int  NumOfNode()const { return m_iNumNode; };
+	int  NumOfNode()const { return _numNode; };
 
 	// 是否是两倍大小
 	bool Container(const Aabb &box)const;
@@ -50,7 +50,7 @@ private:
 	void Unref();
 
 private:
-	int			m_iNumNode = 0;
+	int			_numNode = 0;
 	ListNodes	_nodes;				//这棵树当前节点关联的节点列表
 
 	Aabb		_box;

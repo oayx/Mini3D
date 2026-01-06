@@ -1,15 +1,14 @@
-#pragma once
+﻿#pragma once
 
 /********************************************************************/
 #if defined(__clang__)
 	#define DLL_EXPORT __attribute__ ((__visibility__ ("default")))
 	#define DLL_IMPORT
-	#define THREADLOCAL __thread
 	//#define STDCALL __attribute__((stdcall))
 	//#define CDECL __attribute__((cdecl))
 	#define RESTRICT __restrict__
 	#define INLINE inline
-	#define FORCE_INLINE inline
+	#define FORCE_INLINE inline __attribute__((always_inline))
 	#define FORCE_NOINLINE __attribute__((noinline))
 	#define NO_RETURN __attribute__((noreturn))
 	#define PACK_BEGIN()
@@ -24,15 +23,19 @@
 	#pragma clang diagnostic ignored "-Waddress-of-packed-member"
 	#pragma clang diagnostic ignored "-Wnull-dereference"
 	#pragma clang diagnostic ignored "-Winvalid-noreturn"
+	#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+	#pragma clang diagnostic ignored "-Winconsistent-missing-override"
+	#pragma clang diagnostic ignored "-Wunused-function"
+	#pragma clang diagnostic ignored "-Wmissing-braces"
+	#pragma clang diagnostic ignored "-Wdllexport-explicit-instantiation-decl"
 #elif defined(__GNUC__)
 	#define DLL_EXPORT __attribute__ ((__visibility__ ("default")))
 	#define DLL_IMPORT
-	#define THREADLOCAL __thread
 	//#define STDCALL __attribute__((stdcall))
 	//#define CDECL __attribute__((cdecl))
 	#define RESTRICT __restrict__
 	#define INLINE inline
-	#define FORCE_INLINE inline
+	#define FORCE_INLINE inline __attribute__((always_inline))
 	#define FORCE_NOINLINE __attribute__((noinline))
 	#define NO_RETURN __attribute__((noreturn))
 	#define PACK_BEGIN()
@@ -48,7 +51,6 @@
 
 	#define DLL_EXPORT __declspec(dllexport)
 	#define DLL_IMPORT __declspec(dllimport)
-	#define THREADLOCAL __declspec(thread)
 	//#define STDCALL __stdcall								//win32 API采用的是_stdcall调用，函数参数按照从右到左的顺序入栈，被调用的函数在返回前清理传送参数的栈，函数参数个数固定
 	//#define CDECL __cdecl									//C/C++的缺省调用方式，函数参数按照从右到左的顺序入栈，并且由调用函数者把参数弹出栈以清理堆栈
 	#define RESTRICT __restrict
@@ -65,8 +67,6 @@
 #else
 	#pragma error "Unknown compiler."
 #endif
-
-#define Final final
 
 /********************************************************************/
 //命名空间	
@@ -161,4 +161,43 @@ c是char类型，按1字节对齐。
 #pragma pack(push,4)	这是将当前对齐方式压栈，然后设置对齐方式为4字节
 #pragma pack(pop)		最后pop是恢复保存的对齐值。
 再就是设置的对齐值和数据本身的对齐值是取最小值最终对齐的，结构体的整体大小也是取结构中的最大大小的成员和设置对齐值中的较小的一个生效！
+*/
+
+/*判断使用的C++版本
+你想在 C++ 代码里判断当前编译标准是 C++17 还是 C++20，可以用预定义宏 __cplusplus。
+这个宏的值随标准不同而变化：
+
+C++98/03：199711L
+C++11：201103L
+C++14：201402L
+C++17：201703L
+C++20：202002L
+示例代码
+cpp
+#include <iostream>
+
+int main() {
+#if __cplusplus == 202002L
+	std::cout << "C++20" << std::endl;
+#elif __cplusplus == 201703L
+	std::cout << "C++17" << std::endl;
+#else
+	std::cout << "Other C++ standard: " << __cplusplus << std::endl;
+#endif
+	return 0;
+}
+
+说明
+用 #if 或 #elif 对 __cplusplus 的值进行判断即可。
+你也可以用大于号（比如 #if __cplusplus >= 202002L），这样兼容未来标准。
+注意事项
+某些编译器（尤其是 MSVC）可能默认没有正确设置 __cplusplus，可以加上 /Zc:__cplusplus 编译选项确保其正确。
+建议用 Clang 或 GCC 时都能正确识别。
+
+如果你想用代码内开关某些特性，也可以：
+#if __cplusplus >= 202002L
+	// C++20代码
+#else
+	// C++17或更早代码
+#endif
 */

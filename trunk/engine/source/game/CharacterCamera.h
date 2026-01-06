@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2021/9/6
@@ -10,7 +10,7 @@
 
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-class ENGINE_DLL ThirdFollowCamera Final : public Component
+class ENGINE_DLL ThirdFollowCamera final : public Component
 {
 	friend class GameObject;
 	FRIEND_CONSTRUCT_DESTRUCT(ThirdFollowCamera);
@@ -18,7 +18,7 @@ class ENGINE_DLL ThirdFollowCamera Final : public Component
 	BEGIN_DERIVED_REFECTION_TYPE(ThirdFollowCamera, Component)
 		CTORS(DEFAULT_CTOR(ThirdFollowCamera))
 		//ADD_EDITOR_COMPONENT("Component/ThirdFollowCamera")
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 	ThirdFollowCamera() = default;
 
@@ -31,7 +31,7 @@ private:
 	Vector3 _cameraLookatOffset = Vector3::zero;
 };
 /********************************************************************/
-class ENGINE_DLL ThirdFreeCamera Final : public Component
+class ENGINE_DLL ThirdFreeCamera final : public Component
 {
 	friend class GameObject;
 	FRIEND_CONSTRUCT_DESTRUCT(ThirdFreeCamera);
@@ -39,7 +39,7 @@ class ENGINE_DLL ThirdFreeCamera Final : public Component
 	BEGIN_DERIVED_REFECTION_TYPE(ThirdFreeCamera, Component)
 		CTORS(DEFAULT_CTOR(ThirdFreeCamera))
 		ADD_EDITOR_COMPONENT("Component/ThirdFreeCamera")
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 	ThirdFreeCamera() = default;
 

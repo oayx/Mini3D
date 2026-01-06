@@ -1,4 +1,4 @@
- #pragma once
+﻿ #pragma once
 
 #include "TestBase.h"
 #include <array>
@@ -168,12 +168,12 @@ public:
 			label1->SetVerticalOverflow(UIVerticalWrapMode::Overflow);
 			//UITextOutline* outline = obj2->AddComponent<UITextOutline>();
 			//outline->color = Color(0, 0, 1, 0.5f);
-			//outline->distance_x = 1;
-			//outline->distance_y = 1;
+			//outline->distanceX = 1;
+			//outline->distanceY = 1;
 			//UITextShadow* outline = obj2->AddComponent<UITextShadow>();
 			//outline->color = Color(0, 0, 1, 0.5f);
-			//outline->distance_x = 1;
-			//outline->distance_y = -1;
+			//outline->distanceX = 1;
+			//outline->distanceY = -1;
 		}
 	}
 	void TestInputField()

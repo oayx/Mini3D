@@ -1,4 +1,6 @@
-﻿set(BULLET_COMMON_SRC
+﻿message("当前CMakeLists目录: ${CMAKE_CURRENT_SOURCE_DIR}")
+
+set(BULLET_COMMON_SRC
   source/external/bullet/BulletCollision/BroadphaseCollision/btAxisSweep3.cpp
   source/external/bullet/BulletCollision/BroadphaseCollision/btBroadphaseProxy.cpp
   source/external/bullet/BulletCollision/BroadphaseCollision/btCollisionAlgorithm.cpp
@@ -158,21 +160,11 @@ if(WINDOWS)
 	set(ENGINE_EXTERNAL_BULLET_SRC
 	${BULLET_COMMON_SRC}
     source/external/bullet/BulletMultiThreaded/Win32ThreadSupport.cpp
-)
-elseif(LINUX)
-	set(ENGINE_EXTERNAL_BULLET_SRC
-	${BULLET_COMMON_SRC}
-)
-elseif(ANDROID)
-	set(ENGINE_EXTERNAL_BULLET_SRC
-	${BULLET_COMMON_SRC}
-)
-elseif(MACOSX OR APPLE)
-	set(ENGINE_EXTERNAL_BULLET_SRC
-	${BULLET_COMMON_SRC}
-)
+	)
 else()
-	message( FATAL_ERROR "Unsupported architecture, bullet" )
+	set(ENGINE_EXTERNAL_BULLET_SRC
+	${BULLET_COMMON_SRC}
+	)
 endif()
 
 set(external_bullet "source/external/bullet/*")

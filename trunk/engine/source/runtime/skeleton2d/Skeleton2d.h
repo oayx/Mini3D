@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Date：2020/9/23
@@ -12,7 +12,7 @@
 DC_BEGIN_NAMESPACE
 class Camera;
 /********************************************************************/
-class ENGINE_DLL Skeleton2d Final : public Renderer
+class ENGINE_DLL Skeleton2d final : public Renderer
 {
 	friend class GameObject;
 	FRIEND_CONSTRUCT_DESTRUCT(Skeleton2d);
@@ -20,7 +20,7 @@ class ENGINE_DLL Skeleton2d Final : public Renderer
 	BEGIN_DERIVED_REFECTION_TYPE(Skeleton2d, Renderer)
 		CTORS(DEFAULT_CTOR(Skeleton2d))
 		ADD_EDITOR_COMPONENT("Spine")
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 protected:
 	Skeleton2d();

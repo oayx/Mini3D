@@ -10,7 +10,7 @@
 
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-class RayCastClosestCallback Final : public b2RayCastCallback
+class RayCastClosestCallback final : public b2RayCastCallback
 {
 	DISALLOW_CONSTRUCTOR_COPY_ASSIGN(RayCastClosestCallback);
 public:
@@ -27,7 +27,7 @@ public:
 	uint _layerMask = 0;
 };
 
-class RayCastAnyCallback Final : public b2RayCastCallback
+class RayCastAnyCallback final : public b2RayCastCallback
 {
 	DISALLOW_CONSTRUCTOR_COPY_ASSIGN(RayCastAnyCallback);
 public:
@@ -44,7 +44,7 @@ public:
 	uint _layerMask = 0;
 };
 
-class RayCastMultipleCallback Final : public b2RayCastCallback
+class RayCastMultipleCallback final : public b2RayCastCallback
 {
 	DISALLOW_CONSTRUCTOR_COPY_ASSIGN(RayCastMultipleCallback);
 public:

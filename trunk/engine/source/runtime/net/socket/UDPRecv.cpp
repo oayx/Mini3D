@@ -1,9 +1,9 @@
-#include "UDPRecv.h"
+﻿#include "UDPRecv.h"
 #include "runtime/thread/Thread.h"
 #include "runtime/thread/ThreadScheduler.h"
 #if defined(DC_PLATFORM_WIN32)
 #include <ws2tcpip.h>
-#elif defined(DC_PLATFORM_LINUX) || defined(DC_PLATFORM_ANDROID) || defined(DC_PLATFORM_MAC) || defined(DC_PLATFORM_IOS)
+#else
 #include <sys/socket.h>
 #include <netdb.h>
 #include <sys/select.h>
@@ -15,9 +15,9 @@
 DC_BEGIN_NAMESPACE
 /********************************************************************/
 IMPL_DERIVED_REFECTION_TYPE(UDPRecv, Socket);
-bool UDPRecv::Start(const String& host_name, int port, bool reuse_addr)
+bool UDPRecv::Start(const String& hostName, int port, bool reuse_addr)
 {
-	_hostName = host_name;
+	_hostName = hostName;
 	_port = port;
 
 	//create
@@ -31,15 +31,15 @@ bool UDPRecv::Start(const String& host_name, int port, bool reuse_addr)
 
 	//bind
 	struct sockaddr_in addrIn;
-	addrIn.sin_addr.s_addr = ::htonl(INADDR_ANY);
-	addrIn.sin_port = ::htons(port);
+	addrIn.sin_addr.s_addr = htonl(INADDR_ANY);
+	addrIn.sin_port = htons(port);
 	err = base::Bind(&addrIn);
 
 	//recv
-	Task task_accept;
-	task_accept.pools = false;
-	task_accept.job = CALLBACK_0(UDPRecv::HandleRecv, this);
-	Thread::Start(task_accept);
+	Task taskAccept;
+	taskAccept.pools = false;
+	taskAccept.job = CALLBACK_0(UDPRecv::HandleRecv, this);
+	Thread::Start(taskAccept);
 
 	_isClose = false;
 	Debuger::Log("UDPRecv Start");
@@ -53,7 +53,7 @@ void* UDPRecv::HandleRecv()
 		int len = base::RecvFrom(_hostName.c_str(), _port, _recvBuffer, sizeof(_recvBuffer));
 		if (len > 0)
 		{
-			thread_lock(ThreadScheduler::GlobalMutex);
+			LOCK(ThreadScheduler::GlobalMutex);
 			if (_receiveCallback != nullptr)_receiveCallback(_recvBuffer, len);
 		}
 	}

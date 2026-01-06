@@ -1,14 +1,14 @@
-#include "Material.h"
+﻿#include "Material.h"
 #include "Pass.h"
 #include "Shader.h"
 #include "TextureUnit.h"
 #include "RenderDefine.h"
 #include "null/Texture.h"
 #include "external/tinyxml2/tinyxml2.h"
+#include "external/shaderlab/ShaderParser.h"
 
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-Material* Material::_defaultMaterial = nullptr;
 IMPL_DERIVED_REFECTION_TYPE(Material, Resource);
 Material::Material()
 	: base(ResourceType::Material)
@@ -25,7 +25,7 @@ Material* Material::Create(const String& file)
 	//material = MaterialManager::GetMaterial(file);
 	if (!material)
 	{
-		material = DBG_NEW Material();
+		material = Memory::New<Material>();
 		material->AutoRelease();
 		material->Load(file);
 		//MaterialManager::AddMaterial(file, material);
@@ -45,11 +45,11 @@ void Material::ReleaseDefault()
 {
 	SAFE_RELEASE(_defaultMaterial);
 }
-Object* Material::Clone(Object* new_obj)
+Object* Material::Clone(Object* newObj)
 {
-	base::Clone(new_obj);
-	Material* obj = dynamic_cast<Material*>(new_obj);
-	if (!obj)return new_obj;
+	base::Clone(newObj);
+	Material* obj = dynamic_cast<Material*>(newObj);
+	if (!obj)return newObj;
 
 	obj->Load(_resFile);
 	obj->SetCastShadow(_castShadow);
@@ -96,14 +96,14 @@ void Material::SetLightes(const Lights& lightes)
 }
 void Material::Serialize()
 {
-	String full_path = Resource::GetFullDataPath(_resFile);
-	SerializeRead transfer(full_path);
+	String fullPath = Resource::GetFullDataPath(_resFile);
+	SerializeRead transfer(fullPath);
 	this->Transfer(transfer);
 }
 void Material::Deserialize()
 {
-	String full_path = Resource::GetFullDataPath(_resFile);
-	SerializeWrite transfer(full_path);
+	String fullPath = Resource::GetFullDataPath(_resFile);
+	SerializeWrite transfer(fullPath);
 	this->Transfer(transfer);
 }
 bool Material::SetCullMode(CullMode cull_mode, int pass)
@@ -321,7 +321,7 @@ bool Material::SetTexture(Texture* value, int pass, byte layer)
 {
 	return SetTexture("_MainTex", value, pass, layer);
 }
-bool Material::SetTexture(const String& shader_name, Texture* value, int pass, byte layer)
+bool Material::SetTexture(const String& shaderName, Texture* value, int pass, byte layer)
 {
 	CHECK_RETURN_PTR_FALSE(_shader);
 	if (pass < 0)
@@ -329,14 +329,14 @@ bool Material::SetTexture(const String& shader_name, Texture* value, int pass, b
 		for (int i = 0; i < _shader->GetPassCount(); ++i)
 		{
 			Pass* p = _shader->GetPass(i);
-			p->SetTexture(layer, shader_name, value);
+			p->SetTexture(layer, shaderName, value);
 		}
 	}
 	else
 	{
 		Pass* p = _shader->GetPass(pass);
 		CHECK_RETURN_PTR_FALSE(p);
-		p->SetTexture(layer, shader_name, value);
+		p->SetTexture(layer, shaderName, value);
 	}
 	return true;
 }
@@ -562,7 +562,6 @@ void Material::Transfer(TransferFunction& transfer, void* ptr)
 }
 /********************************************************************/
 IMPL_REFECTION_TYPE(MaterialManager);
-MaterialManager::Materiales MaterialManager::_materiales;
 void MaterialManager::Destroy()
 {
 	DestroyMaterial();

@@ -4,10 +4,6 @@
 DC_BEGIN_NAMESPACE
 /********************************************************************/
 IMPL_DERIVED_REFECTION_TYPE(KeyboardInput, Object);
-bool KeyboardInput::_mapKeyDown[int(KeyCode::Max)];
-bool KeyboardInput::_mapKeyUp[int(KeyCode::Max)];
-bool KeyboardInput::_mapKeyPress[int(KeyCode::Max)];
-List<ushort> KeyboardInput::_characters;
 bool KeyboardInput::HandleKeyDown(WORD w)
 {
 	//Debuger::Log("keycode:%d", w);

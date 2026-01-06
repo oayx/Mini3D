@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Description：显卡信息
@@ -17,7 +17,7 @@ DC_BEGIN_NAMESPACE
 class GPUAdapterInfo : public Object
 {
 	BEGIN_DERIVED_REFECTION_TYPE(GPUAdapterInfo, Object)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 protected:
 	uint _index = INVALID_INDEX;
@@ -80,24 +80,24 @@ public:
 class GPUAdapter : public Object
 {
 	BEGIN_DERIVED_REFECTION_TYPE(GPUAdapter, Object)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 public:
 	GPUAdapter() = default;
 	~GPUAdapter()
 	{
-		for (auto adapter : _gPUAdapters)
+		for (auto adapter : _gpuAdapters)
 		{
 			SAFE_DELETE(adapter);
 		}
-		_gPUAdapters.Clear();
+		_gpuAdapters.Clear();
 	}
 
 public:
 	virtual GPUAdapterInfo* SelectAdapters(void* instance) = 0;
 	GPUAdapterInfo* GetCurrAdapter()const
 	{
-		for (const auto& adapter : _gPUAdapters)
+		for (const auto& adapter : _gpuAdapters)
 		{
 			if (adapter->IsSelect())return adapter;
 		}
@@ -105,6 +105,6 @@ public:
 	}
 	
 protected:
-	Vector<GPUAdapterInfo*> _gPUAdapters;	//显卡列表
+	Vector<GPUAdapterInfo*> _gpuAdapters;	//显卡列表
 };
 DC_END_NAMESPACE

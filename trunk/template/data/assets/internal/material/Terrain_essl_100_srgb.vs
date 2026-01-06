@@ -58,7 +58,6 @@ struct type_CustomBuffer
     vec4 _ShadowMap_TexelSize;
     float _Strength;
     float _Bias;
-    int _ShadowType;
 };
 
 uniform type_CustomBuffer CustomBuffer;
@@ -81,7 +80,7 @@ void main()
     vec3 _74 = normalize(in_var_TANGENT.xyz);
     vec3 _82 = (in_var_POSITION * TransformBuffer.MATRIX_M).xyz;
     vec3 _102;
-    for (int SPIRV_Cross_Dummy313 = 0; SPIRV_Cross_Dummy313 < 1; SPIRV_Cross_Dummy313++)
+    for (int SPIRV_Cross_Dummy307 = 0; SPIRV_Cross_Dummy307 < 1; SPIRV_Cross_Dummy307++)
     {
         if (LightBuffer._Light[0].Type == 0)
         {

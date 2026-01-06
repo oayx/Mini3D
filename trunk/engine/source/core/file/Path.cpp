@@ -1,7 +1,8 @@
-#include "Path.h"
+﻿#include "Path.h"
 #include "core/Debuger.h"
 #include "core/Encoding.h"
 #include "platform/PlatformDefine.h"
+#include <filesystem>
  
 DC_BEGIN_NAMESPACE
 /********************************************************************/
@@ -10,39 +11,22 @@ bool Path::SetCurrentProcessDirectory(const String& path)
 {
 	if (path.IsEmpty())
 		return false;
-	bool ret = false;
-#if defined(DC_PLATFORM_WIN32)
-	std::wstring w_path = Encoding::Utf8ToWChar(path.c_str(), path.Size());
-	ret = ::SetCurrentDirectoryW(w_path.c_str()) != false;
-#elif defined(DC_PLATFORM_LINUX) || defined(DC_PLATFORM_ANDROID) || defined(DC_PLATFORM_MAC) || defined(DC_PLATFORM_IOS)
-	ret = chdir(path.c_str()) == 0;
-#endif
 
+	std::error_code ec; // 用于处理错误
+	std::filesystem::current_path(path.c_str(), ec);
+	if (ec) 
+	{
 #if DC_DEBUG
-	if (!ret)Debuger::Error("Path::SetCurrentDirectory - failed:%s", path.c_str());
+		Debuger::Error("set current process directory:%s, error:%s", path.c_str(), ec.message().c_str());
 #endif
-	return ret;
+		return false;
+	}
+	return true;
 }
 String Path::GetCurrentProcessDirectory()
 {
-	bool ret = false;
-	char path[MAX_FILE_PATH] = { 0 };
-#if defined(DC_PLATFORM_WIN32)
-	wchar_t w_path[MAX_FILE_PATH] = { 0 };
-	ret = ::GetCurrentDirectoryW(sizeof(w_path), w_path) != false;
-	if (ret)Encoding::WCharToUtf8(w_path, path, sizeof(path));
-#elif defined(DC_PLATFORM_LINUX) || defined(DC_PLATFORM_ANDROID) || defined(DC_PLATFORM_MAC) || defined(DC_PLATFORM_IOS)
-	ret = getcwd(path, sizeof(path)) != NULL;
-#endif
-
-#if DC_DEBUG
-	if (!ret)Debuger::Error("Path::GetCurrentDirectory - failed");
-#endif
-
-	if (ret)
-		return String(path);
-	else
-		return "";
+	std::filesystem::path currentPath = std::filesystem::current_path();
+	return currentPath.string();
 }
 String Path::Combine(const String& path1, const String& path2) 
 { 
@@ -57,79 +41,67 @@ String Path::Combine(const String& path1, const String& path2)
 String Path::GetDirectoryName(const String& path)
 {
 	if (path.IsEmpty())return "";
-	String str_path = ReplaceSplit(path);
-
-	int index = str_path.LastIndexOf("/");
-	if (index <= 0)return "";
-	return str_path.Substring(0, index);
+	std::filesystem::path temp = path.c_str();
+	return temp.parent_path().string();
 }
 String Path::GetFolderName(const String& path)
 {
 	if (path.IsEmpty())return "";
-	String str_path = ReplaceSplit(path);
+	String strPath = ReplaceSplit(path);
 
-	int index = str_path.LastIndexOf("/");
+	int index = strPath.LastIndexOf("/");
 	if (index <= 0)return "";
-	str_path = str_path.Substring(0, index);
+	strPath = strPath.Substring(0, index);
 
-	index = str_path.LastIndexOf("/");
-	if (index <= 0)return str_path;
-	return str_path.Substring(index+1);
+	index = strPath.LastIndexOf("/");
+	if (index <= 0)return strPath;
+	return strPath.Substring(index + 1);
 }
 String Path::GetExtension(const String& path)
 {
 	if (path.IsEmpty())return "";
-	String str_path = ReplaceSplit(path);
-
-	int index = str_path.LastIndexOf(".");
-	if (index < 0 || index == path.Size() - 1)return "";
-	int index_ = str_path.LastIndexOf("/");
-	if (index_ >= 0 && index_ > index)return "";
-	return str_path.Substring(index+1);
+	std::filesystem::path temp = path.c_str();
+	return temp.extension().string();
 }
 String Path::ReplaceExtension(const String& path, const String& new_ext)
 {
 	if (path.IsEmpty())return "";
-
-	String file_name = GetFileNameWithoutExtension(path);
-	return file_name + "." + new_ext;
+	std::filesystem::path temp = path.c_str();
+	temp.replace_extension(new_ext.c_str());
+	return temp.string();
 }
 String Path::GetFileName(const String& path)
 {
 	if (path.IsEmpty())return "";
-	String str_path = ReplaceSplit(path);
-
-	int index = str_path.LastIndexOf("/");
-	if (index < 0)return path;
-	else if (index == path.Size() - 1)return "";
-	return str_path.Substring(index + 1);
+	std::filesystem::path temp = path.c_str();
+	return temp.filename().string();
 }
 String Path::GetFileNameWithoutExtension(const String& path)
 {
-	String file_name = GetFileName(path);
-	if (file_name.IsEmpty())return "";
-
-	int index = file_name.LastIndexOf(".");
-	if (index < 0)return file_name;
-	return file_name.Substring(0, index);
+	if (path.IsEmpty())return "";
+	std::filesystem::path temp = path.c_str();
+	return temp.filename().stem().string();
 }
 String Path::GetFullDataPath(const String& path)
 {
 	if (path.IsEmpty())return "";
-	String str_path = ReplaceSplit(path);
-
-	return str_path;
+	return ReplaceSplit(path);
 }
 String Path::GetPathRoot(const String& path)
 {
+	std::filesystem::path temp = path.c_str();
+	return temp.filename().root_name().string();
+}
+String Path::GetAbsolutePath(const String& path)
+{
 	if (path.IsEmpty())return "";
-	String str_path = ReplaceSplit(path);
-	if (str_path.IndexOf('/') >= 0)
-	{
-		String root_path = str_path.Substring(0, str_path.IndexOf('/'));
-		return root_path;
-	}
-	return "";
+	std::filesystem::path absolutePath = std::filesystem::absolute(path.c_str());
+	return absolutePath.string();
+}
+String Path::GetRelativePath(const String& file, const String& path)
+{
+	std::filesystem::path releative_path = std::filesystem::relative(file.c_str(), path.c_str());
+	return releative_path.string();
 }
 bool Path::HasExtension(const String& path)
 {

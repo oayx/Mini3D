@@ -1,4 +1,4 @@
-#include "RenderContent.h"
+﻿#include "RenderContent.h"
 #include "RenderTexture.h"
 #include "SwapChain.h"
 #include "GraphicsDevice.h"
@@ -31,6 +31,7 @@ void RenderContent::PostRender()
 }	
 void RenderContent::RenderOneObject(Camera* camera, Material* material, Renderer *renderable, RenderMode mode)
 {
+	DC_PROFILE_FUNCTION;
 	for (int i = 0; i < renderable->GetPrimitiveCount(); ++i)
 	{
 		Primitive* primitive = renderable->GetPrimitive(i);
@@ -39,6 +40,7 @@ void RenderContent::RenderOneObject(Camera* camera, Material* material, Renderer
 }
 void RenderContent::RenderOneObject(Camera* camera, Vector<Material*> materials, Renderer *renderable, RenderMode mode)
 {
+	DC_PROFILE_FUNCTION;
 	for (int i = 0; i < renderable->GetPrimitiveCount(); ++i)
 	{
 		Material* material = i >= materials.Size() ? materials[0] : materials[i];
@@ -48,6 +50,7 @@ void RenderContent::RenderOneObject(Camera* camera, Vector<Material*> materials,
 }
 void RenderContent::RenderOneObject(Camera* camera, Pass* pass, Renderer *renderable, RenderMode mode)
 {
+	DC_PROFILE_FUNCTION;
 	for (int i = 0; i < renderable->GetPrimitiveCount(); ++i)
 	{
 		Primitive* primitive = renderable->GetPrimitive(i);

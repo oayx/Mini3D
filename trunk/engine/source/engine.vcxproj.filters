@@ -214,6 +214,33 @@
     <Filter Include="editor\tools\shader">
       <UniqueIdentifier>{21578ea7-9c0c-41bf-a106-c61c31a4c7d9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="platform\wasm\window">
+      <UniqueIdentifier>{ea91f82c-4770-4059-8dc8-6333d1819c22}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="platform\mac">
+      <UniqueIdentifier>{7c494d1c-6239-4c5a-b441-833a6db4a4e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="platform\mac\window">
+      <UniqueIdentifier>{c7d3fa80-9564-4f2e-bb2c-eb4244c72903}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="platform\ios">
+      <UniqueIdentifier>{7b06dda3-164f-4569-b780-e6db20abfcb0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="platform\ios\window">
+      <UniqueIdentifier>{ef1eb63d-c063-41b2-8655-2ab78fedec5c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="runtime\graphics\dx\dx12">
+      <UniqueIdentifier>{3ffab7fd-73fd-4fa5-a166-381887d1b998}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="runtime\graphics\vulkan">
+      <UniqueIdentifier>{6da74b3f-f677-4d65-948a-ee0676271c41}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="runtime\graphics\metal">
+      <UniqueIdentifier>{650a7946-f744-437d-8a9f-94b5fbd8cfec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="platform\common\posix">
+      <UniqueIdentifier>{69d0e0eb-3c04-4281-8385-c033121605fd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Runtime\Input\Input.cpp">
@@ -336,7 +363,7 @@
     <ClCompile Include="runtime\renderable\Gizmos.cpp">
       <Filter>runtime\renderable</Filter>
     </ClCompile>
-    <ClCompile Include="platform\android\native_android.cpp">
+    <ClCompile Include="platform\android\AndroidNativeEngine.cpp">
       <Filter>platform\android</Filter>
     </ClCompile>
     <ClCompile Include="runtime\ui\UIButton.cpp">
@@ -451,9 +478,6 @@
       <Filter>core\geometry</Filter>
     </ClCompile>
     <ClCompile Include="core\geometry\Ray.cpp">
-      <Filter>core\geometry</Filter>
-    </ClCompile>
-    <ClCompile Include="core\geometry\Triangle.cpp">
       <Filter>core\geometry</Filter>
     </ClCompile>
     <ClCompile Include="core\file\Directory.cpp">
@@ -786,11 +810,8 @@
     <ClCompile Include="runtime\renderable\TrailRender.cpp">
       <Filter>runtime\renderable</Filter>
     </ClCompile>
-    <ClCompile Include="core\memory\Memory.cpp">
+    <ClCompile Include="core\memory\MemoryOperator.h">
       <Filter>core\memory</Filter>
-    </ClCompile>
-    <ClCompile Include="core\reflection\Type.cpp">
-      <Filter>core\reflection</Filter>
     </ClCompile>
     <ClCompile Include="runtime\graphics\dx\dx11\DX11Caps.cpp">
       <Filter>runtime\graphics\dx\dx11</Filter>
@@ -897,9 +918,6 @@
     <ClCompile Include="editor\main\inspector\EInspector_ProjectSettings_Layers.cpp">
       <Filter>editor\main\inspector</Filter>
     </ClCompile>
-    <ClCompile Include="core\Atomic.cpp">
-      <Filter>core</Filter>
-    </ClCompile>
     <ClCompile Include="runtime\scene\TagManager.cpp">
       <Filter>runtime\scene</Filter>
     </ClCompile>
@@ -1005,14 +1023,125 @@
     <ClCompile Include="runtime\postprocess\FXAAEffect.cpp">
       <Filter>runtime\postprocess</Filter>
     </ClCompile>
-    <ClCompile Include="runtime\graphics\dx\dx11\DX11Define.cpp">
-      <Filter>runtime\graphics\dx\dx11</Filter>
-    </ClCompile>
     <ClCompile Include="runtime\graphics\dx\dx11\DX11ShaderReflect.cpp">
       <Filter>runtime\graphics\dx\dx11</Filter>
     </ClCompile>
     <ClCompile Include="editor\tools\shader\CompileShader.cpp">
       <Filter>editor\tools\shader</Filter>
+    </ClCompile>
+    <ClCompile Include="platform\android\AndroidNativeAssets.cpp">
+      <Filter>platform\android</Filter>
+    </ClCompile>
+    <ClCompile Include="platform\android\AndroidNativeCallJava.cpp">
+      <Filter>platform\android</Filter>
+    </ClCompile>
+    <ClCompile Include="platform\android\AndroidNativeInteraction.cpp">
+      <Filter>platform\android</Filter>
+    </ClCompile>
+    <ClCompile Include="platform\wasm\WASMPlatform.cpp">
+      <Filter>platform\wasm</Filter>
+    </ClCompile>
+    <ClCompile Include="platform\wasm\window\WASMGLRenderWindow.cpp">
+      <Filter>platform\wasm\window</Filter>
+    </ClCompile>
+    <ClCompile Include="platform\mac\MacPlatform.cpp">
+      <Filter>platform\mac</Filter>
+    </ClCompile>
+    <ClCompile Include="platform\mac\window\MacGLRenderWindow.cpp">
+      <Filter>platform\mac\window</Filter>
+    </ClCompile>
+    <ClCompile Include="platform\ios\iOSPlatform.cpp">
+      <Filter>platform\ios</Filter>
+    </ClCompile>
+    <ClCompile Include="platform\ios\window\iOSGLRenderWindow.cpp">
+      <Filter>platform\ios\window</Filter>
+    </ClCompile>
+    <ClCompile Include="core\reflection\Type.cpp">
+      <Filter>core\reflection</Filter>
+    </ClCompile>
+    <ClCompile Include="runtime\graphics\dx\dx12\DX12Caps.cpp">
+      <Filter>runtime\graphics\dx\dx12</Filter>
+    </ClCompile>
+    <ClCompile Include="runtime\graphics\dx\dx12\DX12Device.cpp">
+      <Filter>runtime\graphics\dx\dx12</Filter>
+    </ClCompile>
+    <ClCompile Include="runtime\graphics\dx\dx12\DX12HardwareIndexBuffer.cpp">
+      <Filter>runtime\graphics\dx\dx12</Filter>
+    </ClCompile>
+    <ClCompile Include="runtime\graphics\dx\dx12\DX12HardwareVertexBuffer.cpp">
+      <Filter>runtime\graphics\dx\dx12</Filter>
+    </ClCompile>
+    <ClCompile Include="runtime\graphics\dx\dx12\DX12PostProcess.cpp">
+      <Filter>runtime\graphics\dx\dx12</Filter>
+    </ClCompile>
+    <ClCompile Include="runtime\graphics\dx\dx12\DX12Program.cpp">
+      <Filter>runtime\graphics\dx\dx12</Filter>
+    </ClCompile>
+    <ClCompile Include="runtime\graphics\dx\dx12\DX12RenderContent.cpp">
+      <Filter>runtime\graphics\dx\dx12</Filter>
+    </ClCompile>
+    <ClCompile Include="runtime\graphics\dx\dx12\DX12RenderTexture.cpp">
+      <Filter>runtime\graphics\dx\dx12</Filter>
+    </ClCompile>
+    <ClCompile Include="runtime\graphics\dx\dx12\DX12SwapChain.cpp">
+      <Filter>runtime\graphics\dx\dx12</Filter>
+    </ClCompile>
+    <ClCompile Include="runtime\graphics\dx\dx12\DX12TempCommand.cpp">
+      <Filter>runtime\graphics\dx\dx12</Filter>
+    </ClCompile>
+    <ClCompile Include="runtime\graphics\dx\dx12\DX12Texture.cpp">
+      <Filter>runtime\graphics\dx\dx12</Filter>
+    </ClCompile>
+    <ClCompile Include="runtime\graphics\dx\dx12\DX12ShaderReflect.cpp">
+      <Filter>runtime\graphics\dx\dx12</Filter>
+    </ClCompile>
+    <ClCompile Include="runtime\graphics\dx\DX10Define.cpp">
+      <Filter>runtime\graphics\dx</Filter>
+    </ClCompile>
+    <ClCompile Include="runtime\graphics\vulkan\VKGPUAdapter.cpp">
+      <Filter>runtime\graphics\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="runtime\graphics\vulkan\VKHardwareIndexBuffer.cpp">
+      <Filter>runtime\graphics\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="runtime\graphics\vulkan\VKHardwareVertexBuffer.cpp">
+      <Filter>runtime\graphics\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="runtime\graphics\vulkan\VKPostProcess.cpp">
+      <Filter>runtime\graphics\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="runtime\graphics\vulkan\VKProgram.cpp">
+      <Filter>runtime\graphics\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="runtime\graphics\vulkan\VKRenderContent.cpp">
+      <Filter>runtime\graphics\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="runtime\graphics\vulkan\VKRenderTexture.cpp">
+      <Filter>runtime\graphics\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="runtime\graphics\vulkan\VKSwapChain.cpp">
+      <Filter>runtime\graphics\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="runtime\graphics\vulkan\VKTempCommand.cpp">
+      <Filter>runtime\graphics\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="runtime\graphics\vulkan\VKTexture.cpp">
+      <Filter>runtime\graphics\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="runtime\graphics\vulkan\VKCaps.cpp">
+      <Filter>runtime\graphics\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="runtime\graphics\vulkan\VKDefine.cpp">
+      <Filter>runtime\graphics\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="runtime\graphics\vulkan\VKDevice.cpp">
+      <Filter>runtime\graphics\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="platform\windows\window\Win32VKRenderWindow.cpp">
+      <Filter>platform\windows\window</Filter>
+    </ClCompile>
+    <ClCompile Include="platform\wasm\WASMNative.cpp">
+      <Filter>platform\wasm</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1698,7 +1827,6 @@
     <ClInclude Include="core\Reference.h">
       <Filter>core</Filter>
     </ClInclude>
-    <ClInclude Include="BaseMain.h" />
     <ClInclude Include="runtime\CommandLine.h">
       <Filter>runtime</Filter>
     </ClInclude>
@@ -1852,9 +1980,6 @@
     <ClInclude Include="editor\main\inspector\EInspector_ProjectSettings_Layers.h">
       <Filter>editor\main\inspector</Filter>
     </ClInclude>
-    <ClInclude Include="core\Atomic.h">
-      <Filter>core</Filter>
-    </ClInclude>
     <ClInclude Include="runtime\scene\TagManager.h">
       <Filter>runtime\scene</Filter>
     </ClInclude>
@@ -1984,6 +2109,138 @@
     <ClInclude Include="editor\tools\shader\CompileShaderDefine.h">
       <Filter>editor\tools\shader</Filter>
     </ClInclude>
+    <ClInclude Include="runtime\graphics\ShaderlabUtils.h">
+      <Filter>runtime\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="platform\android\AndroidNative.h">
+      <Filter>platform\android</Filter>
+    </ClInclude>
+    <ClInclude Include="platform\wasm\WASMPlatformDefine.h">
+      <Filter>platform\wasm</Filter>
+    </ClInclude>
+    <ClInclude Include="platform\wasm\WASMPlatform.h">
+      <Filter>platform\wasm</Filter>
+    </ClInclude>
+    <ClInclude Include="platform\wasm\window\WASMGLRenderWindow.h">
+      <Filter>platform\wasm\window</Filter>
+    </ClInclude>
+    <ClInclude Include="platform\mac\MacPlatform.h">
+      <Filter>platform\mac</Filter>
+    </ClInclude>
+    <ClInclude Include="platform\mac\MacPlatformDefine.h">
+      <Filter>platform\mac</Filter>
+    </ClInclude>
+    <ClInclude Include="platform\mac\window\MacGLRenderWindow.h">
+      <Filter>platform\mac\window</Filter>
+    </ClInclude>
+    <ClInclude Include="platform\ios\iOSPlatform.h">
+      <Filter>platform\ios</Filter>
+    </ClInclude>
+    <ClInclude Include="platform\ios\iOSPlatformDefine.h">
+      <Filter>platform\ios</Filter>
+    </ClInclude>
+    <ClInclude Include="platform\ios\window\iOSGLRenderWindow.h">
+      <Filter>platform\ios\window</Filter>
+    </ClInclude>
+    <ClInclude Include="core\reflection\Meta.h">
+      <Filter>core\reflection</Filter>
+    </ClInclude>
+    <ClInclude Include="core\memory\MemoryTrace.h">
+      <Filter>core\memory</Filter>
+    </ClInclude>
+    <ClInclude Include="runtime\graphics\dx\dx12\d3dx12.h">
+      <Filter>runtime\graphics\dx\dx12</Filter>
+    </ClInclude>
+    <ClInclude Include="runtime\graphics\dx\dx12\DX12Caps.h">
+      <Filter>runtime\graphics\dx\dx12</Filter>
+    </ClInclude>
+    <ClInclude Include="runtime\graphics\dx\dx12\DX12Define.h">
+      <Filter>runtime\graphics\dx\dx12</Filter>
+    </ClInclude>
+    <ClInclude Include="runtime\graphics\dx\dx12\DX12Device.h">
+      <Filter>runtime\graphics\dx\dx12</Filter>
+    </ClInclude>
+    <ClInclude Include="runtime\graphics\dx\dx12\DX12HardwareIndexBuffer.h">
+      <Filter>runtime\graphics\dx\dx12</Filter>
+    </ClInclude>
+    <ClInclude Include="runtime\graphics\dx\dx12\DX12HardwareVertexBuffer.h">
+      <Filter>runtime\graphics\dx\dx12</Filter>
+    </ClInclude>
+    <ClInclude Include="runtime\graphics\dx\dx12\DX12PostProcess.h">
+      <Filter>runtime\graphics\dx\dx12</Filter>
+    </ClInclude>
+    <ClInclude Include="runtime\graphics\dx\dx12\DX12Program.h">
+      <Filter>runtime\graphics\dx\dx12</Filter>
+    </ClInclude>
+    <ClInclude Include="runtime\graphics\dx\dx12\DX12RenderContent.h">
+      <Filter>runtime\graphics\dx\dx12</Filter>
+    </ClInclude>
+    <ClInclude Include="runtime\graphics\dx\dx12\DX12RenderTexture.h">
+      <Filter>runtime\graphics\dx\dx12</Filter>
+    </ClInclude>
+    <ClInclude Include="runtime\graphics\dx\dx12\DX12SwapChain.h">
+      <Filter>runtime\graphics\dx\dx12</Filter>
+    </ClInclude>
+    <ClInclude Include="runtime\graphics\dx\dx12\DX12TempCommand.h">
+      <Filter>runtime\graphics\dx\dx12</Filter>
+    </ClInclude>
+    <ClInclude Include="runtime\graphics\dx\dx12\DX12Texture.h">
+      <Filter>runtime\graphics\dx\dx12</Filter>
+    </ClInclude>
+    <ClInclude Include="runtime\graphics\dx\dx12\DX12ShaderReflect.h">
+      <Filter>runtime\graphics\dx\dx12</Filter>
+    </ClInclude>
+    <ClInclude Include="runtime\graphics\dx\DX10Define.h">
+      <Filter>runtime\graphics\dx</Filter>
+    </ClInclude>
+    <ClInclude Include="runtime\graphics\vulkan\VKDevice.h">
+      <Filter>runtime\graphics\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="runtime\graphics\vulkan\VKGPUAdapter.h">
+      <Filter>runtime\graphics\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="runtime\graphics\vulkan\VKHardwareIndexBuffer.h">
+      <Filter>runtime\graphics\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="runtime\graphics\vulkan\VKHardwareVertexBuffer.h">
+      <Filter>runtime\graphics\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="runtime\graphics\vulkan\VKPostProcess.h">
+      <Filter>runtime\graphics\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="runtime\graphics\vulkan\VKProgram.h">
+      <Filter>runtime\graphics\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="runtime\graphics\vulkan\VKRenderContent.h">
+      <Filter>runtime\graphics\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="runtime\graphics\vulkan\VKRenderTexture.h">
+      <Filter>runtime\graphics\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="runtime\graphics\vulkan\VKSwapChain.h">
+      <Filter>runtime\graphics\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="runtime\graphics\vulkan\VKTempCommand.h">
+      <Filter>runtime\graphics\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="runtime\graphics\vulkan\VKTexture.h">
+      <Filter>runtime\graphics\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="runtime\graphics\vulkan\VKCaps.h">
+      <Filter>runtime\graphics\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="runtime\graphics\vulkan\VKDefine.h">
+      <Filter>runtime\graphics\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="platform\windows\window\Win32VKRenderWindow.h">
+      <Filter>platform\windows\window</Filter>
+    </ClInclude>
+    <ClInclude Include="platform\wasm\WASMNative.h">
+      <Filter>platform\wasm</Filter>
+    </ClInclude>
+    <ClInclude Include="platform\BaseMain.h">
+      <Filter>platform</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Platform\Android\CMakeLists.txt">
@@ -2010,16 +2267,19 @@
     <Text Include="game\CMakeLists.txt">
       <Filter>game</Filter>
     </Text>
+    <Text Include="platform\mac\CMakeLists.txt">
+      <Filter>platform\mac</Filter>
+    </Text>
+    <Text Include="platform\ios\CMakeLists.txt">
+      <Filter>platform\ios</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
-    <None Include="runtime\component\Component.inl">
-      <Filter>runtime\component</Filter>
-    </None>
-    <None Include="core\String.inl">
-      <Filter>core</Filter>
-    </None>
     <None Include="core\stl\RBTree.inl">
       <Filter>core\stl</Filter>
+    </None>
+    <None Include="runtime\component\Component.inl">
+      <Filter>runtime\component</Filter>
     </None>
   </ItemGroup>
 </Project>

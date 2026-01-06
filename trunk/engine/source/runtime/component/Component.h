@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2020/7/30
@@ -70,7 +70,7 @@ class ENGINE_DLL Component : public Object
 	DECLARE_OBJECT_CLONE;
 	DECLARE_OBJECT_SERIALIZE(Component);
 	BEGIN_DERIVED_REFECTION_TYPE(Component, Object)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 protected:
 	Component() {}

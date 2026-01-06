@@ -1,4 +1,4 @@
-#include "Matrix4.h"
+﻿#include "Matrix4.h"
 #include "Matrix3.h"
  
 DC_BEGIN_NAMESPACE
@@ -19,126 +19,42 @@ const Matrix4 Matrix4::identity
 	0,0,0,1
 	);
 
-Matrix4::Matrix4() 
+Matrix4::Matrix4(const Matrix3& mat)
 {
-	memset(p, 0, sizeof(p)); 
-	m[0][0] = 1;
-	m[1][1] = 1;
-	m[2][2] = 1;
-	m[3][3] = 1;
+	m[0][0] = mat[0][0]; m[0][1] = mat[0][1]; m[0][2] = mat[0][2]; m[0][3] = 0;
+	m[1][0] = mat[1][0]; m[1][1] = mat[1][1]; m[1][2] = mat[1][2]; m[1][3] = 0;
+	m[2][0] = mat[2][0]; m[2][1] = mat[2][1]; m[2][2] = mat[2][2]; m[2][3] = 0;
+	m[3][0] = 0; m[3][1] = 0; m[3][2] = 0; m[3][3] = 1;
 }
-Matrix4::Matrix4(const float* arr, int size)
+Matrix4 &Matrix4::operator = (const Matrix4& other) noexcept
 {
-	AssertEx(size == 16, "");
-	::memcpy(p, arr, 16 * sizeof(float));
-}
-Matrix4::Matrix4(
-	float m00, float m01, float m02, float m03,
-	float m10, float m11, float m12, float m13,
-	float m20, float m21, float m22, float m23,
-	float m30, float m31, float m32, float m33)
-{
-	m[0][0] = m00;
-	m[0][1] = m01;
-	m[0][2] = m02;
-	m[0][3] = m03;
-	m[1][0] = m10;
-	m[1][1] = m11;
-	m[1][2] = m12;
-	m[1][3] = m13;
-	m[2][0] = m20;
-	m[2][1] = m21;
-	m[2][2] = m22;
-	m[2][3] = m23;
-	m[3][0] = m30;
-	m[3][1] = m31;
-	m[3][2] = m32;
-	m[3][3] = m33;
-}
-Matrix4::Matrix4(const Matrix4 &mat)
-{
-	m[0][0] = mat[0][0];
-	m[0][1] = mat[0][1];
-	m[0][2] = mat[0][2];
-	m[0][3] = mat[0][3];
-	m[1][0] = mat[1][0];
-	m[1][1] = mat[1][1];
-	m[1][2] = mat[1][2];
-	m[1][3] = mat[1][3];
-	m[2][0] = mat[2][0];
-	m[2][1] = mat[2][1];
-	m[2][2] = mat[2][2];
-	m[2][3] = mat[2][3];
-	m[3][0] = mat[3][0];
-	m[3][1] = mat[3][1];
-	m[3][2] = mat[3][2];
-	m[3][3] = mat[3][3];
-}
-Matrix4::Matrix4(const Matrix3 &mat)
-{
-	m[0][0] = mat[0][0];
-	m[0][1] = mat[0][1];
-	m[0][2] = mat[0][2];
-	m[0][3] = 0;
-	m[1][0] = mat[1][0];
-	m[1][1] = mat[1][1];
-	m[1][2] = mat[1][2];
-	m[1][3] = 0;
-	m[2][0] = mat[2][0];
-	m[2][1] = mat[2][1];
-	m[2][2] = mat[2][2];
-	m[2][3] = 0;
-	m[3][0] = 0;
-	m[3][1] = 0;
-	m[3][2] = 0;
-	m[3][3] = 1;
-}
-Matrix4::Matrix4(const Vector3& position, const Quaternion& rotation, const Vector3& scale)
-{
-	Recompose(position, rotation, scale);
-}
-void Matrix4::operator = (const Matrix3& mat3)
-{
-	m[0][0] = mat3.m[0][0]; m[0][1] = mat3.m[0][1]; m[0][2] = mat3.m[0][2];
-	m[1][0] = mat3.m[1][0]; m[1][1] = mat3.m[1][1]; m[1][2] = mat3.m[1][2];
-	m[2][0] = mat3.m[2][0]; m[2][1] = mat3.m[2][1]; m[2][2] = mat3.m[2][2];
-}
-Matrix4 &Matrix4::operator = (const Matrix4& mat3)
-{
-	if (this != &mat3)
+	if (this != &other)
 	{
-		m[0][0] = mat3.m[0][0]; m[0][1] = mat3.m[0][1]; m[0][2] = mat3.m[0][2]; m[0][3] = mat3.m[0][3];
-		m[1][0] = mat3.m[1][0]; m[1][1] = mat3.m[1][1]; m[1][2] = mat3.m[1][2]; m[1][3] = mat3.m[1][3];
-		m[2][0] = mat3.m[2][0]; m[2][1] = mat3.m[2][1]; m[2][2] = mat3.m[2][2]; m[2][3] = mat3.m[2][3];
-		m[3][0] = mat3.m[3][0]; m[3][1] = mat3.m[3][1]; m[3][2] = mat3.m[3][2]; m[3][3] = mat3.m[3][3];
+		m[0][0] = other.m[0][0]; m[0][1] = other.m[0][1]; m[0][2] = other.m[0][2]; m[0][3] = other.m[0][3];
+		m[1][0] = other.m[1][0]; m[1][1] = other.m[1][1]; m[1][2] = other.m[1][2]; m[1][3] = other.m[1][3];
+		m[2][0] = other.m[2][0]; m[2][1] = other.m[2][1]; m[2][2] = other.m[2][2]; m[2][3] = other.m[2][3];
+		m[3][0] = other.m[3][0]; m[3][1] = other.m[3][1]; m[3][2] = other.m[3][2]; m[3][3] = other.m[3][3];
 	}
 	return *this;
 }
-Matrix4 Matrix4::operator -()const
+Matrix4& Matrix4::operator = (Matrix4&& other) noexcept
 {
-	return Matrix4(
-		-m[0][0],
-		-m[0][1],
-		-m[0][2],
-		-m[0][3],
-
-		-m[1][0],
-		-m[1][1],
-		-m[1][2],
-		-m[1][3],
-
-		-m[2][0],
-		-m[2][1],
-		-m[2][2],
-		-m[2][3],
-
-		-m[3][0],
-		-m[3][1],
-		-m[3][2],
-		-m[3][3]
-	);
+	if (this != &other)
+	{
+		m[0][0] = other.m[0][0]; m[0][1] = other.m[0][1]; m[0][2] = other.m[0][2]; m[0][3] = other.m[0][3];
+		m[1][0] = other.m[1][0]; m[1][1] = other.m[1][1]; m[1][2] = other.m[1][2]; m[1][3] = other.m[1][3];
+		m[2][0] = other.m[2][0]; m[2][1] = other.m[2][1]; m[2][2] = other.m[2][2]; m[2][3] = other.m[2][3];
+		m[3][0] = other.m[3][0]; m[3][1] = other.m[3][1]; m[3][2] = other.m[3][2]; m[3][3] = other.m[3][3];
+	}
+	return *this;
 }
-Matrix4& Matrix4::operator *(float f)
+void Matrix4::operator = (const Matrix3& other) noexcept
+{
+	m[0][0] = other.m[0][0]; m[0][1] = other.m[0][1]; m[0][2] = other.m[0][2];
+	m[1][0] = other.m[1][0]; m[1][1] = other.m[1][1]; m[1][2] = other.m[1][2];
+	m[2][0] = other.m[2][0]; m[2][1] = other.m[2][1]; m[2][2] = other.m[2][2];
+}
+Matrix4& Matrix4::operator *(float f) noexcept
 {
 	m[0][0] *= f;
 	m[0][1] *= f;
@@ -161,7 +77,7 @@ Matrix4& Matrix4::operator *(float f)
 	m[3][3] *= f;
 	return *this;
 }
-Matrix4 Matrix4::operator *(const Matrix4 &mat)const
+Matrix4 Matrix4::operator *(const Matrix4 &mat)const noexcept
 {
 	Matrix4 mat_out;
 	mat_out.m[0][0] = m[0][0] * mat.m[0][0] + m[0][1] * mat.m[1][0] + m[0][2] * mat.m[2][0] + m[0][3] * mat.m[3][0];
@@ -185,7 +101,7 @@ Matrix4 Matrix4::operator *(const Matrix4 &mat)const
 	mat_out.m[3][3] = m[3][0] * mat.m[0][3] + m[3][1] * mat.m[1][3] + m[3][2] * mat.m[2][3] + m[3][3] * mat.m[3][3];
 	return mat_out;
 }
-Matrix4 Matrix4::operator + (const Matrix4 &mat) const
+Matrix4 Matrix4::operator + (const Matrix4 &mat) const noexcept
 {
 	return Matrix4(
 		m[0][0] + mat.m[0][0],
@@ -209,7 +125,7 @@ Matrix4 Matrix4::operator + (const Matrix4 &mat) const
 		m[3][3] + mat.m[3][3]
 	);
 }
-Matrix4 Matrix4::operator - (const Matrix4 &mat)const
+Matrix4 Matrix4::operator - (const Matrix4 &mat)const noexcept
 {
 	return Matrix4(
 		m[0][0] - mat.m[0][0],
@@ -233,29 +149,7 @@ Matrix4 Matrix4::operator - (const Matrix4 &mat)const
 		m[3][3] - mat.m[3][3]
 	);
 }
-bool Matrix4::operator == (const Matrix4& mat) const
-{
-	if (
-		m[0][0] != mat.m[0][0] || m[0][1] != mat.m[0][1] || m[0][2] != mat.m[0][2] || m[0][3] != mat.m[0][3] ||
-		m[1][0] != mat.m[1][0] || m[1][1] != mat.m[1][1] || m[1][2] != mat.m[1][2] || m[1][3] != mat.m[1][3] ||
-		m[2][0] != mat.m[2][0] || m[2][1] != mat.m[2][1] || m[2][2] != mat.m[2][2] || m[2][3] != mat.m[2][3] ||
-		m[3][0] != mat.m[3][0] || m[3][1] != mat.m[3][1] || m[3][2] != mat.m[3][2] || m[3][3] != mat.m[3][3])
-	{
-		return false;
-	}
-
-	return true;
-}
-bool Matrix4::operator != (Matrix4& mat) const
-{
-	if (*this == mat)
-	{
-		return true;
-	}
-
-	return false;
-}
-Matrix4 Matrix4::Inverse()const
+Matrix4 Matrix4::Inverse()const noexcept
 {
 	float m00 = m[0][0], m01 = m[0][1], m02 = m[0][2], m03 = m[0][3];
 	float m10 = m[1][0], m11 = m[1][1], m12 = m[1][2], m13 = m[1][3];
@@ -317,7 +211,7 @@ Matrix4 Matrix4::Inverse()const
 		d30, d31, d32, d33
 		);
 }
-Matrix4 Matrix4::Transpose()const
+Matrix4 Matrix4::Transpose()const noexcept
 {
 	Matrix4 mat_out;
 	mat_out._11 = _11;
@@ -338,7 +232,7 @@ Matrix4 Matrix4::Transpose()const
 	mat_out._44 = _44;
 	return mat_out;
 }
-Matrix4 Matrix4::InverseTranspose()const
+Matrix4 Matrix4::InverseTranspose()const noexcept
 {
 	Matrix4 mat = *this;
 	mat._41 = mat._42 = mat._43 = 0.0f;
@@ -347,7 +241,7 @@ Matrix4 Matrix4::InverseTranspose()const
 	mat = mat.Transpose();
 	return mat;
 }
-Vector3 Matrix4::TransformVector(const Vector3& vec) const
+Vector3 Matrix4::TransformVector(const Vector3& vec) const noexcept
 {
 	return Vector3(
 		(vec.x * _11 + vec.y * _21 + vec.z * _31),
@@ -355,7 +249,7 @@ Vector3 Matrix4::TransformVector(const Vector3& vec) const
 		(vec.x * _13 + vec.y * _23 + vec.z * _33)
 	);
 }
-Vector3 Matrix4::TransformPoint(const Vector3& vec) const
+Vector3 Matrix4::TransformPoint(const Vector3& vec) const noexcept
 {
 	float w = 1.0f / (vec.x * _14 + vec.y * _24 + vec.z * _34 + _44);
 	return Vector3(
@@ -364,7 +258,7 @@ Vector3 Matrix4::TransformPoint(const Vector3& vec) const
 		(vec.x * _13 + vec.y * _23 + vec.z * _33 + _43) * w
 	);
 }
-void Matrix4::Decompose(Vector3& translation, Quaternion& rotation, Vector3& scale)
+void Matrix4::Decompose(Vector3& translation, Quaternion& rotation, Vector3& scale) noexcept
 {
 	Vector3 xaxis(m[0][0], m[0][1], m[0][2]);
 	scale[0] = xaxis.Lenght();
@@ -384,7 +278,7 @@ void Matrix4::Decompose(Vector3& translation, Quaternion& rotation, Vector3& sca
 	translation = GetTranslate();
 }
 
-void Matrix4::Recompose(const Vector3& position, const Quaternion& rotation, const Vector3& scale)
+void Matrix4::Recompose(const Vector3& position, const Quaternion& rotation, const Vector3& scale) noexcept
 {
 	//执行顺序：缩放->旋转->平移
 	Matrix4 mat_s = Matrix4::FromScale(scale);
@@ -392,18 +286,18 @@ void Matrix4::Recompose(const Vector3& position, const Quaternion& rotation, con
 	Matrix4 mat_t = Matrix4::FromTranslate(position);
 	*this = mat_s * mat_r * mat_t;
 }
-Quaternion Matrix4::GetRotate()const
+Quaternion Matrix4::GetRotate()const noexcept
 {
 	Matrix3 mat3(*this);
 	return mat3.ToRotate();
 }
-Matrix4 Matrix4::FromTranslate(const Vector3& position)
+Matrix4 Matrix4::FromTranslate(const Vector3& position) noexcept
 {
 	Matrix4 mat;
 	mat.Translate(position);
 	return mat;
 }
-Matrix4 Matrix4::FromRotate(const Quaternion& rotation)
+Matrix4 Matrix4::FromRotate(const Quaternion& rotation) noexcept
 {
 	Matrix3 mat3(rotation);
 	Matrix4 mat4 = mat3;
@@ -427,7 +321,7 @@ M = [0      0     1 0] x [0 -lr z0 0] x [0     0    1 0] x [0 lr z0  0] x [0    
 [0      0     0 1]   [0 0   0  1]   [0     0    0 1]   [0 0  0   1]   [0      0      0 1]
 其中lr为轴向量在xoy面的投影长	，lr = sqrt(x0^2 + y0^2)。
 */
-Matrix4 Matrix4::FromRotate(const Vector3 &axis, float degree)
+Matrix4 Matrix4::FromRotate(const Vector3 &axis, float degree) noexcept
 {
 	Matrix4 m;
 	float angle = Math::Deg2Rad * degree;
@@ -438,18 +332,18 @@ Matrix4 Matrix4::FromRotate(const Vector3 &axis, float degree)
 	m[2][0] = v.x * v.z * one_sub_cost + v.y * sint;	m[2][1] = v.y * v.z * one_sub_cost - v.x * sint;	m[2][2] = v.z * v.z * one_sub_cost + cost;
 	return m;
 }
-Matrix4 Matrix4::FromScale(const Vector3& scale)
+Matrix4 Matrix4::FromScale(const Vector3& scale) noexcept
 {
 	Matrix4 mat;
 	mat.Scale(scale);
 	return mat;
 }
-Matrix4 Matrix4::LookAt(const Vector3 &pos, const Vector3 &at, const Vector3 &up)
+Matrix4 Matrix4::LookAt(const Vector3 &pos, const Vector3 &at, const Vector3 &up) noexcept
 {
 	Vector3 dir(at - pos);
 	return LookTo(pos, dir, up);
 }
-Matrix4 Matrix4::LookTo(const Vector3 &pos, const Vector3 &dir, const Vector3 &up)
+Matrix4 Matrix4::LookTo(const Vector3 &pos, const Vector3 &dir, const Vector3 &up) noexcept
 {
 	Vector3 xAxis;
 	Vector3 zAxis = dir.Normalize();
@@ -473,7 +367,7 @@ Matrix4 Matrix4::LookTo(const Vector3 &pos, const Vector3 &dir, const Vector3 &u
 	return mat;
 }
 //统一NDC空间下 z值到[-1,1]
-Matrix4 Matrix4::Perspective(float fov, float aspect, float zNear, float zFar)
+Matrix4 Matrix4::Perspective(float fov, float aspect, float zNear, float zFar) noexcept
 {
 	float h = (1.0f / tanf(fov * 0.5f));
 	float w = h / aspect;
@@ -487,9 +381,14 @@ Matrix4 Matrix4::Perspective(float fov, float aspect, float zNear, float zFar)
 	mat._34 = 1.0f;
 	mat._43 = b;
 	mat._44 = 0.0f;
+#if defined(DC_GRAPHICS_API_VULKAN)
+	//Vulkan Y轴朝下，这里修改成Y轴朝上
+	mat.Set(3, 1, -mat.Get(3, 1));
+	mat.Set(1, 1, -mat.Get(1, 1));
+#endif
 	return mat;
 }
-Matrix4 Matrix4::Ortho(float w, float h, float zNear, float zFar)
+Matrix4 Matrix4::Ortho(float w, float h, float zNear, float zFar) noexcept
 {
 	Matrix4 mat;
 	mat.Identity();
@@ -499,6 +398,11 @@ Matrix4 Matrix4::Ortho(float w, float h, float zNear, float zFar)
 	mat._34 = 0.0f;
 	mat._43 = zNear / (zNear - zFar);
 	mat._44 = 1.0f;
+#if defined(DC_GRAPHICS_API_VULKAN)
+	//Vulkan Y轴朝下，这里修改成Y轴朝上
+	mat.Set(3, 1, -mat.Get(3, 1));
+	mat.Set(1, 1, -mat.Get(1, 1));
+#endif
 	return mat;
 }
 DC_END_NAMESPACE

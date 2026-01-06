@@ -1,4 +1,4 @@
-#include "UILabel.h"
+﻿#include "UILabel.h"
 #include "UIAtlas.h"
 #include "runtime/component/Component.inl"
 #include "runtime/graphics/Material.h"
@@ -22,11 +22,11 @@ UILabel::UILabel()
 UILabel::~UILabel()
 {
 }
-Object* UILabel::Clone(Object* new_obj)
+Object* UILabel::Clone(Object* newObj)
 {
-	base::Clone(new_obj);
-	UILabel* obj = dynamic_cast<UILabel*>(new_obj);
-	if (!obj)return new_obj;
+	base::Clone(newObj);
+	UILabel* obj = dynamic_cast<UILabel*>(newObj);
+	if (!obj)return newObj;
 
 	obj->SetText(_utf8Text);
 	obj->SetAlignment(_alignment);
@@ -40,8 +40,9 @@ Object* UILabel::Clone(Object* new_obj)
 
 	return obj;
 }
-bool UILabel::FillMesh(VariablePrimitive* primitive, Material* material, int& vxt_offset, int& idx_offset)
+bool UILabel::FillMesh(VariablePrimitive* primitive, Material* material, int& vxtOffset, int& idxOffset)
 {
+	DC_PROFILE_FUNCTION;
 	if (_utf8Text.IsEmpty())
 	{
 		_contentRealSize.Set(0.0f, 0.0f);
@@ -65,63 +66,63 @@ bool UILabel::FillMesh(VariablePrimitive* primitive, Material* material, int& vx
 	texcoords.Reserve(vertexs.Size() + chs.Size() * 4 * per_vertex);
 	indices.Reserve(vertexs.Size() + chs.Size() * 6 * per_vertex);
 
-	uint start_vertex_count = (uint)vertexs.Size();
+	uint startVertexCount = (uint)vertexs.Size();
 	bool bold = (_fontStyle & UIFontStyle::Bold);
 	bool italic = (_fontStyle & UIFontStyle::Italic);
 	material->SetTexture(FontAtlasManager::GetTexture(_font, _fontSize, bold, italic));
 
-	float cursor_x = 0, cursor_y = 0;//当前写入位置
-	float max_line_width = 0, max_line_height = _fontSize;//单行最大高度
-	float total_width = 0, total_height = 0;//已经有的高度，用于计算高度上是否超出
+	float cursorX = 0, cursorY = 0;//当前写入位置
+	float maxLineWidth = 0, max_line_height = _fontSize;//单行最大高度
+	float totalWidth = 0, totalHeight = 0;//已经有的高度，用于计算高度上是否超出
 
-	float max_height = 0, max_advance = 0;
-	int last_line_index = 0;//最后一行的索引，用于计算最后一行的左右对齐
-	float last_line_width = 0;
-	Size content_size = GetSize();
+	float maxHeight = 0, maxAdvance = 0;
+	int lastLineIndex = 0;//最后一行的索引，用于计算最后一行的左右对齐
+	float lastLineWidth = 0;
+	Size contentSize = GetSize();
 	for (int i = 0; i < chs.Size(); ++i)
 	{
 		char32_t ch = chs[i];
 		if (ch == u'\n')
 		{//换行
-			cursor_x = 0;
-			cursor_y = cursor_y - (max_line_height + _lineSpace);
-			total_height += (max_line_height + _lineSpace);
-			max_line_width = 0;
-			last_line_index = i;
-			last_line_width = 0;
+			cursorX = 0;
+			cursorY = cursorY - (max_line_height + _lineSpace);
+			totalHeight += (max_line_height + _lineSpace);
+			maxLineWidth = 0;
+			lastLineIndex = i;
+			lastLineWidth = 0;
 			continue;
 		}
-		FontAtlasInfo atlas_info;
-		FontAtlasManager::GetFont(_font, ch, _fontSize, bold, italic, atlas_info);
-		float font_w = atlas_info.rect.width, font_h = atlas_info.rect.height;
+		FontAtlasInfo atlasInfo;
+		FontAtlasManager::GetFont(_font, ch, _fontSize, bold, italic, atlasInfo);
+		float font_w = atlasInfo.rect.width, font_h = atlasInfo.rect.height;
 		bool is_overflow = false;
-		max_height = Math::Max<float>(max_height, font_h);
-		max_advance = Math::Max<float>(max_advance, font_h - atlas_info.bearing_y);
+		maxHeight = Math::Max<float>(maxHeight, font_h);
+		maxAdvance = Math::Max<float>(maxAdvance, font_h - atlasInfo.bearing_y);
 
 		//cal position
 		if (_horizontalOverflow == UIHorizontalWrapMode::Wrap)
 		{
-			if (cursor_x + atlas_info.advance_x > content_size.width)
+			if (cursorX + atlasInfo.advance_x > contentSize.width)
 			{
-				if (total_height + 2 * max_line_height + _lineSpace < content_size.height)
+				if (totalHeight + 2 * max_line_height + _lineSpace < contentSize.height)
 				{//可以换行
-					cursor_x = 0;
-					cursor_y = cursor_y - (max_line_height + _lineSpace);
-					total_height += (max_line_height + _lineSpace);
-					max_line_width = 0;
-					last_line_index = i;
-					last_line_width = 0;
+					cursorX = 0;
+					cursorY = cursorY - (max_line_height + _lineSpace);
+					totalHeight += (max_line_height + _lineSpace);
+					maxLineWidth = 0;
+					lastLineIndex = i;
+					lastLineWidth = 0;
 				}
 				else
 				{
 					if (_verticalOverflow == UIVerticalWrapMode::Overflow)
 					{//可以换行
-						cursor_x = 0;
-						cursor_y = cursor_y - (max_line_height + _lineSpace);
-						total_height += (max_line_height + _lineSpace);
-						max_line_width = 0;
-						last_line_index = i;
-						last_line_width = 0;
+						cursorX = 0;
+						cursorY = cursorY - (max_line_height + _lineSpace);
+						totalHeight += (max_line_height + _lineSpace);
+						maxLineWidth = 0;
+						lastLineIndex = i;
+						lastLineWidth = 0;
 					}
 					else
 					{
@@ -137,25 +138,25 @@ bool UILabel::FillMesh(VariablePrimitive* primitive, Material* material, int& vx
 		}
 
 		//position
-		float x0 = cursor_x + atlas_info.bearing_x;
-		float y0 = cursor_y + atlas_info.bearing_y - _fontSize * 0.85f;
-		float x1 = cursor_x + atlas_info.bearing_x + font_w;
-		float y1 = cursor_y + atlas_info.bearing_y - _fontSize * 0.85f - font_h;
+		float x0 = cursorX + atlasInfo.bearing_x;
+		float y0 = cursorY + atlasInfo.bearing_y - _fontSize * 0.85f;
+		float x1 = cursorX + atlasInfo.bearing_x + font_w;
+		float y1 = cursorY + atlasInfo.bearing_y - _fontSize * 0.85f - font_h;
 
 		//uv
-		const Rect& uv_rect = atlas_info.uv_rect;
-		Vector2 uv1 = { uv_rect.x,uv_rect.y };
-		Vector2 uv2 = { uv_rect.x + uv_rect.width,uv_rect.y };
-		Vector2 uv3 = { uv_rect.x + uv_rect.width,uv_rect.y + uv_rect.height };
-		Vector2 uv4 = { uv_rect.x,uv_rect.y + uv_rect.height };
+		const Rect& uvRect = atlasInfo.uvRect;
+		Vector2 uv1 = { uvRect.x,uvRect.y };
+		Vector2 uv2 = { uvRect.x + uvRect.width,uvRect.y };
+		Vector2 uv3 = { uvRect.x + uvRect.width,uvRect.y + uvRect.height };
+		Vector2 uv4 = { uvRect.x,uvRect.y + uvRect.height };
 
 		if (outline && outline->IsEnable())
 		{//描边
 			Vector3 offsets[4];
-			offsets[0] = Vector3(-outline->distance_x,  outline->distance_y, 0.0f);
-			offsets[1] = Vector3( outline->distance_x,  outline->distance_y, 0.0f);
-			offsets[2] = Vector3( outline->distance_x, -outline->distance_y, 0.0f);
-			offsets[3] = Vector3(-outline->distance_x, -outline->distance_y, 0.0f);
+			offsets[0] = Vector3(-outline->distanceX,  outline->distanceY, 0.0f);
+			offsets[1] = Vector3( outline->distanceX,  outline->distanceY, 0.0f);
+			offsets[2] = Vector3( outline->distanceX, -outline->distanceY, 0.0f);
+			offsets[3] = Vector3(-outline->distanceX, -outline->distanceY, 0.0f);
 
 			for (int j = 0; j < 4; ++j)
 			{
@@ -166,7 +167,6 @@ bool UILabel::FillMesh(VariablePrimitive* primitive, Material* material, int& vx
 				vertexs.Add(Vector3(x0, y1, 0) + offsets[j]);
 
 				//uv
-				const Rect& uv_rect = atlas_info.uv_rect;
 				texcoords.Add(uv1);
 				texcoords.Add(uv2);
 				texcoords.Add(uv3);
@@ -179,21 +179,21 @@ bool UILabel::FillMesh(VariablePrimitive* primitive, Material* material, int& vx
 				colors.Add(outline->color);
 
 				//index
-				indices.Add(vxt_offset + 0);
-				indices.Add(vxt_offset + 1);
-				indices.Add(vxt_offset + 2);
-				indices.Add(vxt_offset + 0);
-				indices.Add(vxt_offset + 2);
-				indices.Add(vxt_offset + 3);
+				indices.Add(vxtOffset + 0);
+				indices.Add(vxtOffset + 1);
+				indices.Add(vxtOffset + 2);
+				indices.Add(vxtOffset + 0);
+				indices.Add(vxtOffset + 2);
+				indices.Add(vxtOffset + 3);
 
 				//submesh
-				vxt_offset += 4;
-				idx_offset += 6;
+				vxtOffset += 4;
+				idxOffset += 6;
 			}
 		}
 		if (shadow && shadow->IsEnable())
 		{//阴影
-			Vector3 offset = Vector3(shadow->distance_x, shadow->distance_y, 0);
+			Vector3 offset = Vector3(shadow->distanceX, shadow->distanceY, 0);
 
 			//position
 			vertexs.Add(Vector3(x0, y0, 0.0f) + offset);
@@ -202,7 +202,6 @@ bool UILabel::FillMesh(VariablePrimitive* primitive, Material* material, int& vx
 			vertexs.Add(Vector3(x0, y1, 0.0f) + offset);
 
 			//uv
-			const Rect& uv_rect = atlas_info.uv_rect;
 			texcoords.Add(uv1);
 			texcoords.Add(uv2);
 			texcoords.Add(uv3);
@@ -215,16 +214,16 @@ bool UILabel::FillMesh(VariablePrimitive* primitive, Material* material, int& vx
 			colors.Add(shadow->color);
 
 			//index
-			indices.Add(vxt_offset + 0);
-			indices.Add(vxt_offset + 1);
-			indices.Add(vxt_offset + 2);
-			indices.Add(vxt_offset + 0);
-			indices.Add(vxt_offset + 2);
-			indices.Add(vxt_offset + 3);
+			indices.Add(vxtOffset + 0);
+			indices.Add(vxtOffset + 1);
+			indices.Add(vxtOffset + 2);
+			indices.Add(vxtOffset + 0);
+			indices.Add(vxtOffset + 2);
+			indices.Add(vxtOffset + 3);
 
 			//submesh
-			vxt_offset += 4;
-			idx_offset += 6;
+			vxtOffset += 4;
+			idxOffset += 6;
 		}
 		{//本身
 			vertexs.Add(Vector3(x0, y0, 0));
@@ -245,77 +244,77 @@ bool UILabel::FillMesh(VariablePrimitive* primitive, Material* material, int& vx
 			colors.Add(this->GetColor());
 
 			//index
-			indices.Add(vxt_offset + 0);
-			indices.Add(vxt_offset + 1);
-			indices.Add(vxt_offset + 2);
-			indices.Add(vxt_offset + 0);
-			indices.Add(vxt_offset + 2);
-			indices.Add(vxt_offset + 3);
+			indices.Add(vxtOffset + 0);
+			indices.Add(vxtOffset + 1);
+			indices.Add(vxtOffset + 2);
+			indices.Add(vxtOffset + 0);
+			indices.Add(vxtOffset + 2);
+			indices.Add(vxtOffset + 3);
 
 			//submesh
-			vxt_offset += 4;
-			idx_offset += 6;
+			vxtOffset += 4;
+			idxOffset += 6;
 		}
-		cursor_x += atlas_info.advance_x + _wordSpace;
-		max_line_width += atlas_info.advance_x;
-		last_line_width += atlas_info.advance_x;
-		total_width = Math::Max<float>(total_width, max_line_width);
+		cursorX += atlasInfo.advance_x + _wordSpace;
+		maxLineWidth += atlasInfo.advance_x;
+		lastLineWidth += atlasInfo.advance_x;
+		totalWidth = Math::Max<float>(totalWidth, maxLineWidth);
 	}
-	total_height += max_line_height;
-	_contentRealSize.Set(total_width, total_height);
+	totalHeight += max_line_height;
+	_contentRealSize.Set(totalWidth, totalHeight);
 
 	//变换
 	float alignment_x = 0, alignment_y = 0;
 	switch (_alignment)
 	{
 	case UITextAnchor::UpperLeft:
-		alignment_x = -content_size.width * 0.5f;
-		alignment_y = content_size.height * 0.5f;
+		alignment_x = -contentSize.width * 0.5f;
+		alignment_y = contentSize.height * 0.5f;
 		break;
 	case UITextAnchor::UpperCenter:
-		alignment_x = -content_size.width * 0.5f + (content_size.width - total_width)*0.5f;
-		alignment_y = content_size.height * 0.5f;
+		alignment_x = -contentSize.width * 0.5f + (contentSize.width - totalWidth)*0.5f;
+		alignment_y = contentSize.height * 0.5f;
 		break;
 	case UITextAnchor::UpperRight:
-		alignment_x = -content_size.width * 0.5f + (content_size.width - total_width);
-		alignment_y = content_size.height * 0.5f;
+		alignment_x = -contentSize.width * 0.5f + (contentSize.width - totalWidth);
+		alignment_y = contentSize.height * 0.5f;
 		break;
 	case UITextAnchor::MiddleLeft:
-		alignment_x = -content_size.width * 0.5f;
-		alignment_y = total_height * 0.5f;
+		alignment_x = -contentSize.width * 0.5f;
+		alignment_y = totalHeight * 0.5f;
 		break;
 	case UITextAnchor::MiddleCenter:
-		alignment_x = -content_size.width * 0.5f + (content_size.width - total_width)*0.5f;
-		alignment_y = total_height * 0.5f;
+		alignment_x = -contentSize.width * 0.5f + (contentSize.width - totalWidth)*0.5f;
+		alignment_y = totalHeight * 0.5f;
 		break;
 	case UITextAnchor::MiddleRight:
-		alignment_x = -content_size.width * 0.5f + (content_size.width - total_width);
-		alignment_y = total_height * 0.5f;
+		alignment_x = -contentSize.width * 0.5f + (contentSize.width - totalWidth);
+		alignment_y = totalHeight * 0.5f;
 		break;
 	case UITextAnchor::LowerLeft:
-		alignment_x = -content_size.width * 0.5f;
-		alignment_y = -content_size.height * 0.5f + total_height;
+		alignment_x = -contentSize.width * 0.5f;
+		alignment_y = -contentSize.height * 0.5f + totalHeight;
 		break;
 	case UITextAnchor::LowerCenter:
-		alignment_x = -content_size.width * 0.5f + (content_size.width - total_width)*0.5f;
-		alignment_y = -content_size.height * 0.5f + total_height;
+		alignment_x = -contentSize.width * 0.5f + (contentSize.width - totalWidth)*0.5f;
+		alignment_y = -contentSize.height * 0.5f + totalHeight;
 		break;
 	case UITextAnchor::LowerRight:
-		alignment_x = -content_size.width * 0.5f + (content_size.width - total_width);
-		alignment_y = -content_size.height * 0.5f + total_height;
+		alignment_x = -contentSize.width * 0.5f + (contentSize.width - totalWidth);
+		alignment_y = -contentSize.height * 0.5f + totalHeight;
 		break;
 	}
 
-	Vector3 alignment_pos = Vector3(alignment_x, alignment_y, 0);
-	const Matrix4& mat_world = this->GetTransform()->GetLocalToWorldMatrix();
-	for (uint i = start_vertex_count; i < vertexs.Size(); ++i)
+	Vector3 alignmentPos = Vector3(alignment_x, alignment_y, 0);
+	const Matrix4& matWorld = this->GetTransform()->GetLocalToWorldMatrix();
+	for (uint i = startVertexCount; i < vertexs.Size(); ++i)
 	{
 		Vector3 pos = vertexs[i];
-		vertexs[i] = mat_world.TransformPoint(pos + alignment_pos);
+		vertexs[i] = matWorld.TransformPoint(pos + alignmentPos);
 	}
 
 	//针对最后一行对齐(需要有多行)
-	if (last_line_index != 0 && last_line_index < chs.Size() && _horizontalOverflow != UIHorizontalWrapMode::Overflow)
+	if (lastLineIndex != 0 && lastLineIndex < chs.Size() && _horizontalOverflow != UIHorizontalWrapMode::Overflow)
 	{
 		alignment_x = 0;
 		switch (_alignment)
@@ -328,23 +327,23 @@ bool UILabel::FillMesh(VariablePrimitive* primitive, Material* material, int& vx
 		case UITextAnchor::UpperCenter:
 		case UITextAnchor::MiddleCenter:
 		case UITextAnchor::LowerCenter:
-			alignment_x = (total_width - last_line_width)*0.5f;
+			alignment_x = (totalWidth - lastLineWidth)*0.5f;
 			break;
 		case UITextAnchor::UpperRight:
 		case UITextAnchor::MiddleRight:
 		case UITextAnchor::LowerRight:
-			alignment_x = total_width - last_line_width;
+			alignment_x = totalWidth - lastLineWidth;
 			break;
 		}
-		alignment_pos = Vector3(alignment_x, 0, 0);
-		alignment_pos = mat_world.TransformPoint(alignment_pos);
+		alignmentPos = Vector3(alignment_x, 0, 0);
+		alignmentPos = matWorld.TransformPoint(alignmentPos);
 		int per_vertex_size = 4;
 		if (outline && outline->IsEnable())per_vertex_size += 4 * 4;
 		if (shadow && shadow->IsEnable())per_vertex_size += 4;
-		for (uint i = start_vertex_count + last_line_index * per_vertex_size; i < vertexs.Size(); ++i)
+		for (uint i = startVertexCount + lastLineIndex * per_vertex_size; i < vertexs.Size(); ++i)
 		{
 			Vector3 pos = vertexs[i];
-			vertexs[i] = pos + alignment_pos;
+			vertexs[i] = pos + alignmentPos;
 		}
 	}
 	primitive->AddVertexRange(vertexs);
@@ -365,51 +364,51 @@ void UILabel::OnDrawEditor()
 	base::OnDrawEditor();
 	{
 		ImGui::TextUnformatted("Text");
-		char text_buff[1024 * 16] = { 0 };
-		Memory::Copy(text_buff, _utf8Text.c_str(), _utf8Text.Size());
-		if (ImGui::InputTextMultiline("##Text", text_buff, ARRAY_SIZE(text_buff), ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 3)))
+		char textBuff[1024 * 16] = { 0 };
+		Memory::Copy(textBuff, _utf8Text.c_str(), _utf8Text.Size());
+		if (ImGui::InputTextMultiline("##Text", textBuff, ARRAY_SIZE(textBuff), ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 3)))
 		{
-			SetText(text_buff);
+			SetText(textBuff);
 		}
 	}
 	{
 		ImGui::TextUnformatted("Character");
 		{
-			int select_index = -1;
-			VecString font_names;
-			const Vector<AssetMeta*>& font_files = AssetsManager::GetAssetGroup(ResourceType::Font);
-			for(int i = 0; i < font_files.Size(); ++i)
+			int selectIndex = -1;
+			VecString fontNames;
+			const Vector<AssetMeta*>& fontFiles = AssetsManager::GetAssetGroup(ResourceType::Font);
+			for(int i = 0; i < fontFiles.Size(); ++i)
 			{
-				FontMeta* meta = dynamic_cast<FontMeta*>(font_files[i]);
+				FontMeta* meta = dynamic_cast<FontMeta*>(fontFiles[i]);
 				if (meta)
 				{
-					font_names.Add(meta->GetFontName());
+					fontNames.Add(meta->GetFontName());
 					if (meta->GetFontName().Equals(_font, true))
-						select_index = i;
+						selectIndex = i;
 				}
 			}
 
 			ImGuiEx::Label("    Font");
-			if (ECommonComponent::ShowDropDown("FontType", font_names, select_index))
+			if (ECommonComponent::ShowDropDown("FontType", fontNames, selectIndex))
 			{
-				SetFont(font_names[select_index]);
+				SetFont(fontNames[selectIndex]);
 			}
 		}
 		{
 			ImGuiEx::Label("    Font Style");
 			const char* values[] = { "Normal", "Bold", "Italic", "Bold And Italic" };
-			int select_index = (int)_fontStyle;
-			if (ImGui::Combo("##Font Style", &select_index, values, ARRAY_SIZE(values)))
+			int selectIndex = (int)_fontStyle;
+			if (ImGui::Combo("##Font Style", &selectIndex, values, ARRAY_SIZE(values)))
 			{
-				SetFontStyle((UIFontStyle)select_index);
+				SetFontStyle((UIFontStyle)selectIndex);
 			}
 		}
 		{
 			ImGuiEx::Label("    Font Size");
-			int font_size = _fontSize;
-			if (ImGui::DragInt("##Font Size", &font_size, 0.1f, 0, MAX_FONT_SIZE))
+			int fontSize = _fontSize;
+			if (ImGui::DragInt("##Font Size", &fontSize, 0.1f, 0, MAX_FONT_SIZE))
 			{
-				SetFontSize((ushort)font_size);
+				SetFontSize((ushort)fontSize);
 			}
 		}
 		{
@@ -513,19 +512,19 @@ void UILabel::OnDrawEditor()
 		{
 			ImGuiEx::Label("    Horizontal Overflow");
 			const char* values[] = { "Wrap", "Overflow" };
-			int select_index = (int)_horizontalOverflow;
-			if (ImGui::Combo("##HorizontalOverflow", &select_index, values, ARRAY_SIZE(values)))
+			int selectIndex = (int)_horizontalOverflow;
+			if (ImGui::Combo("##HorizontalOverflow", &selectIndex, values, ARRAY_SIZE(values)))
 			{
-				SetHorizontalOverflow((UIHorizontalWrapMode)select_index);
+				SetHorizontalOverflow((UIHorizontalWrapMode)selectIndex);
 			}
 		}
 		{
 			ImGuiEx::Label("    Vertical Overflow");
 			const char* values[] = { "Truncate", "Overflow" };
-			int select_index = (int)_verticalOverflow;
-			if (ImGui::Combo("##VerticalOverflow", &select_index, values, ARRAY_SIZE(values)))
+			int selectIndex = (int)_verticalOverflow;
+			if (ImGui::Combo("##VerticalOverflow", &selectIndex, values, ARRAY_SIZE(values)))
 			{
-				SetVerticalOverflow((UIVerticalWrapMode)select_index);
+				SetVerticalOverflow((UIVerticalWrapMode)selectIndex);
 			}
 		}
 	}
@@ -566,14 +565,14 @@ void UILabel::Transfer(TransferFunction& transfer, void* ptr)
 }
 /********************************************************************/
 IMPL_DERIVED_REFECTION_TYPE(UITextShadow, Component);
-Object* UITextShadow::Clone(Object* new_obj)
+Object* UITextShadow::Clone(Object* newObj)
 {
-	base::Clone(new_obj);
-	UITextShadow* obj = dynamic_cast<UITextShadow*>(new_obj);
-	if (!obj)return new_obj;
+	base::Clone(newObj);
+	UITextShadow* obj = dynamic_cast<UITextShadow*>(newObj);
+	if (!obj)return newObj;
 
 	obj->SetColor(color);
-	obj->SetDistance(distance_x, distance_y);
+	obj->SetDistance(distanceX, distanceY);
 
 	return obj;
 }
@@ -609,29 +608,29 @@ void UITextShadow::OnDrawEditor()
 
 	ImGuiEx::Label("Effect Distance");
 	const float width = ImGui::GetContentRegionAvail().x;
-	const float char_width = ImGui::GetFontSize() + 2.0f;
+	const float charWidth = ImGui::GetFontSize() + 2.0f;
 
-	ImGui::SetNextItemWidth(char_width);
+	ImGui::SetNextItemWidth(charWidth);
 	ImGui::Text("X  ");
 
 	float min_v = MIN_float;
 	float max_v = MAX_float;
 	ImGui::SameLine();
-	ImGui::SetNextItemWidth(width * 0.5f - char_width);
-	if (ImGui::DragScalar("##X", ImGuiDataType_Float, &distance_x, 0.01f, &min_v, &max_v, "%.2f"))
+	ImGui::SetNextItemWidth(width * 0.5f - charWidth);
+	if (ImGui::DragScalar("##X", ImGuiDataType_Float, &distanceX, 0.01f, &min_v, &max_v, "%.2f"))
 	{
-		SetDistance(distance_x, distance_y);
+		SetDistance(distanceX, distanceY);
 	}
 
 	ImGui::SameLine();
-	ImGui::SetNextItemWidth(char_width);
+	ImGui::SetNextItemWidth(charWidth);
 	ImGui::TextUnformatted("Y");
 
 	ImGui::SameLine();
-	ImGui::SetNextItemWidth(width * 0.5f - char_width);
-	if (ImGui::DragScalar("##Y", ImGuiDataType_Float, &distance_y, 0.01f, &min_v, &max_v, "%.2f"))
+	ImGui::SetNextItemWidth(width * 0.5f - charWidth);
+	if (ImGui::DragScalar("##Y", ImGuiDataType_Float, &distanceY, 0.01f, &min_v, &max_v, "%.2f"))
 	{
-		SetDistance(distance_x, distance_y);
+		SetDistance(distanceX, distanceY);
 	}
 }
 INSTANTIATE_TEMPLATE_TRANSFER_WITH_DECL(UITextShadow);
@@ -641,19 +640,19 @@ void UITextShadow::Transfer(TransferFunction& transfer, void* ptr)
 	base::Transfer(transfer, ptr);
 
 	TRANSFER_SIMPLE(color);
-	TRANSFER_SIMPLE(distance_x);
-	TRANSFER_SIMPLE(distance_y);
+	TRANSFER_SIMPLE(distanceX);
+	TRANSFER_SIMPLE(distanceY);
 }
 /********************************************************************/
 IMPL_DERIVED_REFECTION_TYPE(UITextOutline, Component);
-Object* UITextOutline::Clone(Object* new_obj)
+Object* UITextOutline::Clone(Object* newObj)
 {
-	base::Clone(new_obj);
-	UITextOutline* obj = dynamic_cast<UITextOutline*>(new_obj);
-	if (!obj)return new_obj;
+	base::Clone(newObj);
+	UITextOutline* obj = dynamic_cast<UITextOutline*>(newObj);
+	if (!obj)return newObj;
 
 	obj->SetColor(color);
-	obj->SetDistance(distance_x, distance_y);
+	obj->SetDistance(distanceX, distanceY);
 
 	return obj;
 }
@@ -689,29 +688,29 @@ void UITextOutline::OnDrawEditor()
 
 	ImGuiEx::Label("Effect Distance");
 	const float width = ImGui::GetContentRegionAvail().x;
-	const float char_width = ImGui::GetFontSize() + 2.0f;
+	const float charWidth = ImGui::GetFontSize() + 2.0f;
 
-	ImGui::SetNextItemWidth(char_width);
+	ImGui::SetNextItemWidth(charWidth);
 	ImGui::Text("X  ");
 
 	float min_v = MIN_float;
 	float max_v = MAX_float;
 	ImGui::SameLine();
-	ImGui::SetNextItemWidth(width * 0.5f - char_width);
-	if (ImGui::DragScalar("##X", ImGuiDataType_Float, &distance_x, 0.01f, &min_v, &max_v, "%.2f"))
+	ImGui::SetNextItemWidth(width * 0.5f - charWidth);
+	if (ImGui::DragScalar("##X", ImGuiDataType_Float, &distanceX, 0.01f, &min_v, &max_v, "%.2f"))
 	{
-		SetDistance(distance_x, distance_y);
+		SetDistance(distanceX, distanceY);
 	}
 
 	ImGui::SameLine();
-	ImGui::SetNextItemWidth(char_width);
+	ImGui::SetNextItemWidth(charWidth);
 	ImGui::TextUnformatted("Y");
 
 	ImGui::SameLine();
-	ImGui::SetNextItemWidth(width * 0.5f - char_width);
-	if (ImGui::DragScalar("##Y", ImGuiDataType_Float, &distance_y, 0.01f, &min_v, &max_v, "%.2f"))
+	ImGui::SetNextItemWidth(width * 0.5f - charWidth);
+	if (ImGui::DragScalar("##Y", ImGuiDataType_Float, &distanceY, 0.01f, &min_v, &max_v, "%.2f"))
 	{
-		SetDistance(distance_x, distance_y);
+		SetDistance(distanceX, distanceY);
 	}
 }
 INSTANTIATE_TEMPLATE_TRANSFER_WITH_DECL(UITextOutline);
@@ -721,7 +720,7 @@ void UITextOutline::Transfer(TransferFunction& transfer, void* ptr)
 	base::Transfer(transfer, ptr);
 
 	TRANSFER_SIMPLE(color);
-	TRANSFER_SIMPLE(distance_x);
-	TRANSFER_SIMPLE(distance_y);
+	TRANSFER_SIMPLE(distanceX);
+	TRANSFER_SIMPLE(distanceY);
 }
 DC_END_NAMESPACE

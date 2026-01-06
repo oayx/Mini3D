@@ -1,4 +1,4 @@
-#include "PlatformBase.h"
+﻿#include "PlatformBase.h"
 #include "platform/PlatformDefine.h"
  
 DC_BEGIN_NAMESPACE
@@ -15,7 +15,7 @@ bool PlatformBase::Is64BitPlatform()
 PlatformType PlatformBase::GetPlatformType()
 {
 #if defined(DC_PLATFORM_WIN32)
-	return PlatformType::Win32;
+	return PlatformType::Windows;
 #elif defined(DC_PLATFORM_LINUX)
 	return PlatformType::Linux;
 #elif defined(DC_PLATFORM_ANDROID)
@@ -24,6 +24,8 @@ PlatformType PlatformBase::GetPlatformType()
 	return PlatformType::Mac;
 #elif defined(DC_PLATFORM_IOS)
 	return PlatformType::iOS;
+#elif defined(DC_PLATFORM_WASM)
+	return PlatformType::WASM;
 #else
 	#error "Unknown PlatformType"
 #endif
@@ -34,39 +36,45 @@ RendererAPI PlatformBase::GetRendererAPI()
 	return RendererAPI::DirectX9;
 #elif defined(DC_GRAPHICS_API_DX11)
 	return RendererAPI::DirectX11;
+#elif defined(DC_GRAPHICS_API_DX12)
+	return RendererAPI::DirectX12;
 #elif defined(DC_GRAPHICS_API_OPENGL)
 	return RendererAPI::OpenGL;
 #elif defined(DC_GRAPHICS_API_OPENGLES3)
 	return RendererAPI::OpenGLES;
+#elif defined(DC_GRAPHICS_API_VULKAN)
+	return RendererAPI::Vulkan;
 #elif defined(DC_GRAPHICS_API_METAL)
 	return RendererAPI::Metal;
+#elif defined(DC_PLATFORM_WASM)
+	return PlatformType::OpenGLES;
 #else
 	#error "Unknown RendererAPI"
 #endif
 }
-void PlatformBase::AdjustWindowRect(int& left, int& top, int& width, int& height, int screen_width, int screen_height, bool full_screen)
+void PlatformBase::AdjustWindowRect(int& left, int& top, int& width, int& height, int screenWidth, int screenHeight, bool fullScreen)
 {
 	//限定窗口大小不超过屏幕尺寸
-	if (!full_screen)
+	if (!fullScreen)
 	{
-		if (width > screen_width || width <= 0) width = screen_width;
-		if (height > screen_height || height <= 0) height = screen_height;
+		if (width > screenWidth || width <= 0) width = screenWidth;
+		if (height > screenHeight || height <= 0) height = screenHeight;
 	}
 	else
 	{
-		width = screen_width;
-		height = screen_height;
+		width = screenWidth;
+		height = screenHeight;
 	}
 
 	//某个方向的位置为负数则使窗口剧中
-	if (full_screen)
+	if (fullScreen)
 	{
 		left = top = 0;
 	}
 	else
 	{
-		if (left < 0)left = (screen_width - width) / 2;
-		if (top < 0)top = (screen_height - height) / 2;
+		if (left < 0)left = (screenWidth - width) / 2;
+		if (top < 0)top = (screenHeight - height) / 2;
 	}
 }
 DC_END_NAMESPACE

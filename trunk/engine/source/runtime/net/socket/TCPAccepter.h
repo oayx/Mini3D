@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Date：2021/1/18
@@ -11,7 +11,7 @@
 DC_BEGIN_NAMESPACE
 class TCPChannel;
 /********************************************************************/
-class ENGINE_DLL TCPAccepter Final : public Socket
+class ENGINE_DLL TCPAccepter final : public Socket
 {
 	typedef Map<int64, TCPChannel*> Channels;
 	typedef std::function<void(int64)> AcceptCallback;
@@ -23,13 +23,13 @@ class ENGINE_DLL TCPAccepter Final : public Socket
 	FRIEND_CONSTRUCT_DESTRUCT(TCPAccepter);
 	DISALLOW_COPY_ASSIGN(TCPAccepter);
 	BEGIN_DERIVED_REFECTION_TYPE(TCPAccepter, Socket)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 public:
-	TCPAccepter();
-	~TCPAccepter();
+	TCPAccepter() = default;
+	~TCPAccepter() = default;
 
-	bool Start(const String& host_name, int port, int backlog = 10);	
+	bool Start(const String& hostName, int port, int backlog = 10);	
 
 	void CloseClient(int64 socket);//外部主动关闭
 	TCPChannel* GetClient(int64 socket);

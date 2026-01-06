@@ -1,4 +1,4 @@
-#include "RectTransform.h"
+﻿#include "RectTransform.h"
 #include "runtime/component/Component.inl"
 #include "runtime/component/GameObject.h"
 #include "runtime/scene/LayerMask.h"
@@ -71,12 +71,12 @@ void RectTransform::UpdateTransform(const Vector3& offset)
 		base::UpdateTransform(anchor_position);
 	}
 }
-Object* RectTransform::Clone(Object* new_obj)
+Object* RectTransform::Clone(Object* newObj)
 {
-	base::Clone(new_obj);
+	base::Clone(newObj);
 
-	RectTransform* obj = dynamic_cast<RectTransform*>(new_obj);
-	if (!obj)return new_obj;
+	RectTransform* obj = dynamic_cast<RectTransform*>(newObj);
+	if (!obj)return newObj;
 
 	obj->SetSize(_originalSize.width, _originalSize.height);
 	obj->SetAlige(_alige);
@@ -174,7 +174,7 @@ void RectTransform::OnDrawEditor()
 	float fullWidth = ImGui::GetContentRegionAvail().x;
 	float itemWidth = fullWidth * 0.65f;
 
-	const ImVec2 start_pos = ImVec2(ImGui::GetCursorScreenPos().x + fullWidth - itemWidth, ImGui::GetCursorScreenPos().y);
+	const ImVec2 startPos = ImVec2(ImGui::GetCursorScreenPos().x + fullWidth - itemWidth, ImGui::GetCursorScreenPos().y);
 	const float width = itemWidth;
 	const float reset_width = ImGui::CalcTextSize(ICON_FA_TRASH_ALT).x + 5.0f;
 
@@ -204,20 +204,19 @@ void RectTransform::OnDrawEditor()
 			Vector3 pos = GetLocalPosition() + GetParentArchor();
 			SetAlige(AligeType::RightTop);
 			UpdateTransform();
-			Vector3 anchor_position = GetParentArchor();
 			SetLocalPosition(pos - GetParentArchor());
 		}
 
 		ImGui::SameLine();
-		ImGui::SetCursorScreenPos(ImVec2(start_pos.x, ImGui::GetCursorScreenPos().y));
+		ImGui::SetCursorScreenPos(ImVec2(startPos.x, ImGui::GetCursorScreenPos().y));
 		ImGui::TextUnformatted(_stretchMode == StretchMode::Horizontal || _stretchMode == StretchMode::All ? "Left" : "Pos X");
 
 		ImGui::SameLine();
-		ImGui::SetCursorScreenPos(ImVec2(start_pos.x + (width - reset_width) * 0.33f, ImGui::GetCursorScreenPos().y));
+		ImGui::SetCursorScreenPos(ImVec2(startPos.x + (width - reset_width) * 0.33f, ImGui::GetCursorScreenPos().y));
 		ImGui::TextUnformatted(_stretchMode == StretchMode::Vertical || _stretchMode == StretchMode::All ? "Top" : "Pos Y");
 
 		ImGui::SameLine();
-		ImGui::SetCursorScreenPos(ImVec2(start_pos.x + (width - reset_width) * 0.66f, ImGui::GetCursorScreenPos().y));
+		ImGui::SetCursorScreenPos(ImVec2(startPos.x + (width - reset_width) * 0.66f, ImGui::GetCursorScreenPos().y));
 		ImGui::TextUnformatted("Pos Z");
 	}
 	{
@@ -227,7 +226,6 @@ void RectTransform::OnDrawEditor()
 			Vector3 pos = GetLocalPosition() + GetParentArchor();
 			SetAlige(AligeType::Left);
 			UpdateTransform();
-			Vector3 anchor_position = GetParentArchor();
 			SetLocalPosition(pos - GetParentArchor());
 		}
 		ImGui::SameLine();
@@ -237,7 +235,6 @@ void RectTransform::OnDrawEditor()
 			Vector3 pos = GetLocalPosition() + GetParentArchor();
 			SetAlige(AligeType::Middle);
 			UpdateTransform();
-			Vector3 anchor_position = GetParentArchor();
 			SetLocalPosition(pos - GetParentArchor());
 		}
 		ImGui::SameLine();
@@ -247,12 +244,11 @@ void RectTransform::OnDrawEditor()
 			Vector3 pos = GetLocalPosition() + GetParentArchor();
 			SetAlige(AligeType::Right);
 			UpdateTransform();
-			Vector3 anchor_position = GetParentArchor();
 			SetLocalPosition(pos - GetParentArchor());
 		}
 
 		ImGui::SameLine();
-		ImGui::SetCursorScreenPos(ImVec2(start_pos.x, ImGui::GetCursorScreenPos().y));
+		ImGui::SetCursorScreenPos(ImVec2(startPos.x, ImGui::GetCursorScreenPos().y));
 		ImGui::SetNextItemWidth(width - reset_width);
 		Vector3 pos = this->GetLocalPosition();
 		if (_stretchMode == StretchMode::Horizontal || _stretchMode == StretchMode::All)pos = Vector3(_stretchValue.x, pos.y, pos.z);
@@ -291,7 +287,6 @@ void RectTransform::OnDrawEditor()
 			Vector3 pos = GetLocalPosition() + GetParentArchor();
 			SetAlige(AligeType::LeftBottom);
 			UpdateTransform();
-			Vector3 anchor_position = GetParentArchor();
 			SetLocalPosition(pos - GetParentArchor());
 		}
 		ImGui::SameLine();
@@ -301,7 +296,6 @@ void RectTransform::OnDrawEditor()
 			Vector3 pos = GetLocalPosition() + GetParentArchor();
 			SetAlige(AligeType::Bottom);
 			UpdateTransform();
-			Vector3 anchor_position = GetParentArchor();
 			SetLocalPosition(pos - GetParentArchor());
 		}
 		ImGui::SameLine();
@@ -311,16 +305,15 @@ void RectTransform::OnDrawEditor()
 			Vector3 pos = GetLocalPosition() + GetParentArchor();
 			SetAlige(AligeType::RightBottom);
 			UpdateTransform();
-			Vector3 anchor_position = GetParentArchor();
 			SetLocalPosition(pos - GetParentArchor());
 		}
 
 		ImGui::SameLine();
-		ImGui::SetCursorScreenPos(ImVec2(start_pos.x, ImGui::GetCursorScreenPos().y));
+		ImGui::SetCursorScreenPos(ImVec2(startPos.x, ImGui::GetCursorScreenPos().y));
 		ImGui::TextUnformatted(_stretchMode == StretchMode::Horizontal || _stretchMode == StretchMode::All ? "Right" : "Width");
 
 		ImGui::SameLine();
-		ImGui::SetCursorScreenPos(ImVec2(start_pos.x + (width - reset_width) * 0.33f, ImGui::GetCursorScreenPos().y));
+		ImGui::SetCursorScreenPos(ImVec2(startPos.x + (width - reset_width) * 0.33f, ImGui::GetCursorScreenPos().y));
 		ImGui::TextUnformatted(_stretchMode == StretchMode::Vertical || _stretchMode == StretchMode::All ? "Bottom" : "Height");
 	}
 	{
@@ -421,7 +414,7 @@ void RectTransform::OnDrawEditor()
 		}
 
 		ImGui::SameLine();
-		ImGui::SetCursorScreenPos(ImVec2(start_pos.x, ImGui::GetCursorScreenPos().y));
+		ImGui::SetCursorScreenPos(ImVec2(startPos.x, ImGui::GetCursorScreenPos().y));
 		ImGui::SetNextItemWidth((width - reset_width) * 0.66f);
 		Size size = _originalSize;
 		if (_stretchMode == StretchMode::Horizontal || _stretchMode == StretchMode::All)size = Size(_stretchValue.y, size.height);

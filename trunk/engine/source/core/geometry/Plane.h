@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2009/11/13
@@ -11,11 +11,12 @@
 DC_BEGIN_NAMESPACE
 class Aabb;
 /********************************************************************/
-class ENGINE_DLL Plane Final : public object
+#pragma pack(push,4)
+class ENGINE_DLL Plane final : public object
 {
 	BEGIN_REFECTION_TYPE(Plane)
 	END_FINAL_REFECTION_TYPE;
-	
+
 public:
 	enum Side
 	{
@@ -25,33 +26,33 @@ public:
 	};
 
 public:
-	Plane() { }
-	Plane(const Plane & plane) { normal = plane.normal; d = plane.d; }
-	Plane(const Vector3& normal, float d) { this->normal = normal; this->d = -d; }
-	Plane(const Vector3& normal, const Vector3& point) { this->normal = normal; this->d = -normal.Dot(point); }
+	constexpr Plane() { }
+	constexpr Plane(const Plane & plane) : normal(plane.normal), d(plane.d){}
+	constexpr Plane(const Vector3& normal, float d) : normal(normal), d(-d) {}
+	constexpr Plane(const Vector3& normal, const Vector3& point) : normal(normal), d(-normal.Dot(point)) {}
 	Plane (const Vector3& point0, const Vector3& point1, const Vector3& point2);
 
 public:
-	void SetPlane(const Vector3& normal, float d) { this->normal = normal; this->d = -d; }
-	void SetPlane(const Vector3& point0, const Vector3& point1, const Vector3& point2);
+	void SetPlane(const Vector3& normal, float d) noexcept { this->normal = normal; this->d = -d; }
+	void SetPlane(const Vector3& point0, const Vector3& point1, const Vector3& point2) noexcept;
 	//点在平面那一边
-	Side GetSide(const Vector3& point) const;
-	Side GetSide(const Aabb &aabb)const;
+	Side GetSide(const Vector3& point) const noexcept;
+	Side GetSide(const Aabb &aabb)const noexcept;
 	//包围盒在平面那一边，可决定平面是否可见
-	bool IsBoxNegative(const Vector3* pCorners) const;
+	bool IsBoxNegative(const Vector3* pCorners) const noexcept;
 	//距离,沿(法线)正方向为正
-	float GetDistance(const Vector3& point) const { return normal.Dot(point) + d; }
+	constexpr float GetDistance(const Vector3& point) const noexcept { return normal.Dot(point) + d; }
 	//两个平面平行
-	bool IsParallel(const Plane& plane) { return normal.Cross(plane.normal).IsZero(); }
+	constexpr bool IsParallel(const Plane& plane) noexcept { return normal.Cross(plane.normal).IsZero(); }
 	//点到平面的投影，也就是最近点:Q' = Q + (d - Q.n).n 
-	Vector3 GetlatestPoint(const Vector3 &vec) { return (vec + normal * (-d - vec.Dot(normal))); }
+	constexpr Vector3 GetlatestPoint(const Vector3 &vec) noexcept { return (vec + normal * (-d - vec.Dot(normal))); }
 	//点到平面的距离，有正负之分
-	float GetlatestPointDistance(const Vector3 &vec) { return (d + vec.Dot(normal)); }
+	constexpr float GetlatestPointDistance(const Vector3 &vec) noexcept { return (d + vec.Dot(normal)); }
 
-	String ToString()const
+	String ToString()const noexcept
 	{
 		char arr[128] = { 0 };
-		Sprintf(arr, "d:%f, normal:%f, %f, %f", d, normal.x, normal.y, normal.z);
+		Snprintf(arr, sizeof(arr), "d:%f, normal:%f, %f, %f", d, normal.x, normal.y, normal.z);
 		return String(arr);
 	}
 
@@ -70,6 +71,10 @@ public:
 	*/
 	float d = 0.0f;
 };//Plane
+#pragma pack(pop)
+#if defined(_MSC_VER)
+static_assert(sizeof(Plane) == sizeof(Vector3) + sizeof(float), "invalid bytes");
+#endif
 
 inline Plane::Plane (const Vector3& point0, const Vector3& point1, const Vector3& point2)
 {
@@ -79,7 +84,7 @@ inline Plane::Plane (const Vector3& point0, const Vector3& point1, const Vector3
 	normal.Normalize();
 	d = -normal.Dot(point0);
 }
-inline void Plane::SetPlane(const Vector3& point0, const Vector3& point1, const Vector3& point2)
+inline void Plane::SetPlane(const Vector3& point0, const Vector3& point1, const Vector3& point2) noexcept
 {
 	Vector3 edge1 = point1 - point0;
 	Vector3 edge2 = point2 - point0;
@@ -87,5 +92,4 @@ inline void Plane::SetPlane(const Vector3& point0, const Vector3& point1, const 
 	normal.Normalize();
 	d = -normal.Dot(point0);
 }
-//static_assert(sizeof(Plane) == sizeof(Vector3) + sizeof(float), "invalid bytes");
 DC_END_NAMESPACE

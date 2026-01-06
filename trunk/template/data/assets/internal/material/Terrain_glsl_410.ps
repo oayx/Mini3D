@@ -1,0 +1,95 @@
+#version 410
+
+struct Light
+{
+    vec3 Dir;
+    int Type;
+    vec3 Color;
+    vec3 Attenuation;
+    float Range;
+    vec3 Position;
+    float SpotAngle;
+};
+
+struct type_LightBuffer
+{
+    int _LightCount;
+    vec3 _LightDir0;
+    vec3 _LightColor0;
+    Light _Light[8];
+};
+
+uniform type_LightBuffer LightBuffer;
+
+struct type_CommbonRarelyBuffer
+{
+    vec3 _LIGHTMODEL_AMBIENT;
+    int _FogMode;
+    vec4 _FogColor;
+    float _FogStart;
+    float _FogEnd;
+    float _FogDensity;
+};
+
+uniform type_CommbonRarelyBuffer CommbonRarelyBuffer;
+
+struct type_CustomBuffer
+{
+    mat4 MATRIX_MVP_LIGHT;
+    vec4 _MainTex_ST;
+    float _SpecularPower;
+    vec4 _ShadowMap_TexelSize;
+    float _Strength;
+    float _Bias;
+};
+
+uniform type_CustomBuffer CustomBuffer;
+
+uniform sampler2D _MainTex;
+uniform sampler2D _NormalTexture;
+
+layout(location = 0) in vec2 var_TEXCOORD0;
+layout(location = 1) in mat3 var_TEXCOORD1;
+layout(location = 4) in vec3 var_TEXCOORD4;
+layout(location = 5) in vec3 var_TEXCOORD5;
+layout(location = 6) in vec4 var_TEXCOORD6;
+layout(location = 7) in float var_TEXCOORD7;
+layout(location = 0) out vec4 out_var_SV_Target;
+
+void main()
+{
+    vec4 _74 = texture(_MainTex, var_TEXCOORD0);
+    vec4 _78 = texture(_NormalTexture, var_TEXCOORD0);
+    vec3 _83 = normalize(var_TEXCOORD1 * ((_78.xyz * 2.0) - vec3(1.0)));
+    vec4 _111 = vec4(((CommbonRarelyBuffer._LIGHTMODEL_AMBIENT + (LightBuffer._LightColor0 * vec3(max(0.0, dot(_83, var_TEXCOORD5))))) + vec3(pow(max(0.0, dot(normalize(var_TEXCOORD4 + var_TEXCOORD5), _83)), exp2((CustomBuffer._SpecularPower * 10.0) + 1.0)))) * _74.xyz, _74.w);
+    float _149;
+    if (CommbonRarelyBuffer._FogMode == 1)
+    {
+        _149 = clamp((CommbonRarelyBuffer._FogEnd - var_TEXCOORD7) / (CommbonRarelyBuffer._FogEnd - CommbonRarelyBuffer._FogStart), 0.0, 1.0);
+    }
+    else
+    {
+        float _148;
+        if (CommbonRarelyBuffer._FogMode == 2)
+        {
+            _148 = exp(-(CommbonRarelyBuffer._FogDensity * var_TEXCOORD7));
+        }
+        else
+        {
+            float _147;
+            if (CommbonRarelyBuffer._FogMode == 3)
+            {
+                _147 = exp((((-CommbonRarelyBuffer._FogDensity) * CommbonRarelyBuffer._FogDensity) * var_TEXCOORD7) * var_TEXCOORD7);
+            }
+            else
+            {
+                _147 = 1.0;
+            }
+            _148 = _147;
+        }
+        _149 = _148;
+    }
+    vec3 _155 = mix(CommbonRarelyBuffer._FogColor.xyz, (_111.xyz * 1.0).xyz, vec3(_149));
+    out_var_SV_Target = vec4(_155.x, _155.y, _155.z, _111.w);
+}
+

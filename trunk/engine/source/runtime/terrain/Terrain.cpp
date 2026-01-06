@@ -1,4 +1,4 @@
-#include "Terrain.h"
+﻿#include "Terrain.h"
 #include "core/image/Image.h"
 #include "runtime/graphics/Material.h"
 #include "runtime/graphics/null/Texture.h" 
@@ -18,11 +18,11 @@ bool Terrain::CanRemove()
 {
 	return !GetGameObject()->GetComponent<TerrainCollider>();
 }
-Object* Terrain::Clone(Object* new_obj)
+Object* Terrain::Clone(Object* newObj)
 {
-	base::Clone(new_obj);
-	Terrain* obj = dynamic_cast<Terrain*>(new_obj);
-	if (!obj)return new_obj;
+	base::Clone(newObj);
+	Terrain* obj = dynamic_cast<Terrain*>(newObj);
+	if (!obj)return newObj;
 
 	obj->SetHeightMap(_heightMapFile, _heightLimit, _smoothIterator, _smoothRange);
 
@@ -56,57 +56,57 @@ void Terrain::SetHeight(int row, int col, float height)
 int	Terrain::GetRow(float z)
 {
 	float scale = GetTransform()->GetScale().z;
-	float half_height = (float)_tileRows / 2.0f * scale;
-	int row = int(half_height - z - 0.5f * scale);
+	float halfHeight = (float)_tileRows / 2.0f * scale;
+	int row = int(halfHeight - z - 0.5f * scale);
 	return row;
 }
 int	Terrain::GetCol(float x)
 {
 	float scale = GetTransform()->GetScale().x;
-	float half_width = (float)_tileCols / 2.0f * scale;
-	int col = int(half_width + x - 0.5f * scale);
+	float halfWidth = (float)_tileCols / 2.0f * scale;
+	int col = int(halfWidth + x - 0.5f * scale);
 	return col;
 }
 float Terrain::GetPositionX(int col)
 {
 	float scale = GetTransform()->GetScale().x;
-	float half_width = (float)_tileCols / 2.0f;
-	float x = float(col) - half_width + 0.5f;
+	float halfWidth = (float)_tileCols / 2.0f;
+	float x = float(col) - halfWidth + 0.5f;
 	return x * scale;
 }
 float Terrain::GetPositionZ(int row)
 {
 	float scale = GetTransform()->GetScale().z;
-	float half_height = (float)_tileRows / 2.0f;
-	float z = half_height - float(row) - 0.5f;
+	float halfHeight = (float)_tileRows / 2.0f;
+	float z = halfHeight - float(row) - 0.5f;
 	return z * scale;
 }
 float Terrain::GetHeight(float x, float z)
 {
-	float scale = GetTransform()->GetScale().y;
-
 	int row = GetRow(z), col = GetCol(x);
 	float height1 = GetHeight(row, col);		//左上
 	float height2 = GetHeight(row, col + 1);	//右上
 	float height3 = GetHeight(row + 1, col + 1);//右下
 	float height4 = GetHeight(row + 1, col);	//左下
 
-	float position_x = GetPositionX(col);
-	float position_z = GetPositionZ(row);
-	float u = (x - position_x) / (GetPositionX(col + 1) - position_x);
-	float v = (z - position_z) / (GetPositionZ(col + 1) - position_z);
+	float positionX = GetPositionX(col);
+	float positionY = GetPositionZ(row);
+	float u = (x - positionX) / (GetPositionX(col + 1) - positionX);
+	float v = (z - positionY) / (GetPositionZ(col + 1) - positionY);
 
 	float height = (1.0f - u)*(1.0f - v)*height1 + u * (1.0f - v)*height2 + u * v * height3 + (1.0f - u)*v*height4;
 	return height;
 }
 void Terrain::Build()
 {
+	DC_PROFILE_FUNCTION;
 	LoadHeightMap();
 	SmoothHeight();
 	BuildTile();
 }
 void Terrain::LoadHeightMap()
 {
+	DC_PROFILE_FUNCTION;
 	this->Clear();
 
 	if (_heightMapFile.IsEmpty())
@@ -125,15 +125,15 @@ void Terrain::LoadHeightMap()
 			_tileRows = _tileRows = 0;
 			return;
 		}
-		bool is_valid_size = (Math::IsPOT2(_tileRows) && Math::IsPOT2(_tileCols)) || (Math::IsPOT2(_tileRows - 1) && Math::IsPOT2(_tileCols - 1));
-		if (!is_valid_size)
+		bool isValidSize = (Math::IsPOT2(_tileRows) && Math::IsPOT2(_tileCols)) || (Math::IsPOT2(_tileRows - 1) && Math::IsPOT2(_tileCols - 1));
+		if (!isValidSize)
 		{
 			Debuger::Error("The heightmap size must pod");
 			_tileRows = _tileRows = 0;
 			return;
 		}
 
-		_heightData = NewArray<float>(_tileRows * _tileCols);
+		_heightData = Memory::NewArray<float>(_tileRows * _tileCols);
 		memset(_heightData, 0, sizeof(float) * _tileRows * _tileCols);
 
 		//读取高度数据
@@ -149,6 +149,7 @@ void Terrain::LoadHeightMap()
 }
 void Terrain::SmoothHeight()
 {
+	DC_PROFILE_FUNCTION;
 	if (!_heightData)return;
 	if (_smoothIterator > 0 && _smoothRange > 0)
 	{
@@ -158,7 +159,7 @@ void Terrain::SmoothHeight()
 			{
 				for (int col = 0; col < _tileCols; ++col)
 				{
-					float total_height = 0;
+					float totalHeight = 0;
 					int smooth_count = 0;
 					for (int i = row - _smoothRange; i <= row + _smoothRange; ++i)
 					{
@@ -168,11 +169,11 @@ void Terrain::SmoothHeight()
 							{
 								continue;
 							}
-							total_height += _heightData[i * _tileCols + j];
+							totalHeight += _heightData[i * _tileCols + j];
 							smooth_count++;
 						}
 					}
-					SetHeight(row, col, total_height / smooth_count);
+					SetHeight(row, col, totalHeight / smooth_count);
 				}
 			}
 		}
@@ -180,30 +181,29 @@ void Terrain::SmoothHeight()
 }
 void Terrain::BuildTile()
 {
+	DC_PROFILE_FUNCTION;
 	this->ClearData();
 
 	if (_tileCols < 2 || _tileRows < 2 || !_heightData)
 		return;
 
-	int buff_size = (_tileRows) * (_tileCols);
+	int buffSize = (_tileRows) * (_tileCols);
 	Vector3v vertexs; Vector3v normals; Vector3v tangents; Vector2v texcoords;
-	vertexs.Reserve(buff_size); normals.Reserve(buff_size); texcoords.Reserve(buff_size);
+	vertexs.Reserve(buffSize); normals.Reserve(buffSize); texcoords.Reserve(buffSize);
 
 	//顶点信息
 	{
-		float half_width = (float)_tileCols / 2.0f;		//一半大小
-		float half_height = (float)_tileRows / 2.0f;
+		float halfWidth = (float)_tileCols / 2.0f;		//一半大小
+		float halfHeight = (float)_tileRows / 2.0f;
 		Vector3 vec3; Vector2 vec2;
 		for (int row = 0; row < _tileRows; ++row)
 		{
 			for (int col = 0; col < _tileCols; ++col)
 			{
-				float height = GetHeight(row, col);
-
 				//顶点数据
-				vec3.x = (float)col - half_width + 0.5f;
+				vec3.x = (float)col - halfWidth + 0.5f;
 				vec3.y = GetHeight(row, col);
-				vec3.z = half_height - (float)row - 0.5f;
+				vec3.z = halfHeight - (float)row - 0.5f;
 				vertexs.Add(vec3);
 
 				//法线后面再计算
@@ -225,7 +225,7 @@ void Terrain::BuildTile()
 
 	//索引信息
 	{
-		uint* indexs = NewArray<uint>((_tileRows - 1) * (_tileCols - 1) *  6);
+		uint* indexs = Memory::NewArray<uint>((_tileRows - 1) * (_tileCols - 1) *  6);
 		int iPerEdgeVerCount = _tileCols;
 		int q = 0; int index = 0;
 		for (ushort j = 0; j < _tileCols - 1; j += 1)
@@ -265,7 +265,7 @@ void Terrain::BuildTile()
 		}
 		base::SetIndices((_tileRows - 1) * (_tileCols - 1) * 6, indexs);
 		base::SetNormals(std::move(normals));
-		DeleteArray(indexs);
+		Memory::DeleteArray(indexs);
 	}
 	this->UploadData();
 }
@@ -275,15 +275,15 @@ void Terrain::Clear()
 	_maxHeight = MIN_float;
 	if (_heightData)
 	{
-		DeleteArray(_heightData);
+		Memory::DeleteArray(_heightData);
 		_heightData = nullptr;
 	}
 }
 void Terrain::OnDrawEditor()
 {
 
-	ImGuiTreeNodeFlags tree_flags = ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_DefaultOpen;
-	if (ImGui::TreeNodeEx("Terrain Data", tree_flags))
+	ImGuiTreeNodeFlags treeFlags = ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_DefaultOpen;
+	if (ImGui::TreeNodeEx("Terrain Data", treeFlags))
 	{
 		{
 			ImGuiEx::Label("Width");
@@ -296,10 +296,10 @@ void Terrain::OnDrawEditor()
 			ImGui::NewLine();
 			{
 				ImGuiEx::Label("Height Limit");
-				float min_value = 0.01f;
-				float max_value = MAX_float;
+				float minValue = 0.01f;
+				float maxValue = MAX_float;
 				float scale = _heightLimit;
-				if (ImGui::DragScalar("##HeightLimit", ImGuiDataType_Float, &scale, 0.01f, &min_value, &max_value, "%.2f"))
+				if (ImGui::DragScalar("##HeightLimit", ImGuiDataType_Float, &scale, 0.01f, &minValue, &maxValue, "%.2f"))
 				{
 					if (scale != _heightLimit)
 					{

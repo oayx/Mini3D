@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Description：
@@ -15,14 +15,14 @@ DC_BEGIN_NAMESPACE
 class Material;
 class CGProgram;
 /********************************************************************/
-class ENGINE_DLL Shader Final : public Resource
+class ENGINE_DLL Shader final : public Resource
 {
 	friend class Material;
 	typedef Vector<Pass*> Passes;
 	FRIEND_CONSTRUCT_DESTRUCT(Shader);
 	DISALLOW_COPY_ASSIGN(Shader);
 	BEGIN_DERIVED_REFECTION_TYPE(Shader, Resource)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 	Shader(Material* material);
 	~Shader();
 
@@ -39,8 +39,8 @@ public:
 	void  SetTexture(const ShaderTexture& info);
 
 public:
-	int  GetRenderQueue()const { return m_nRenderQueue; }
-	void SetRenderQueue(int quque) { m_nRenderQueue = quque; }
+	int  GetRenderQueue()const { return _nRenderQueue; }
+	void SetRenderQueue(int quque) { _nRenderQueue = quque; }
 
 	void SetScissorEnable(bool b) { _scissorEnable = b; }
 	bool IsScissorEnable()const { return _scissorEnable; }
@@ -62,8 +62,6 @@ public:
 	const ShaderTexture& GetTexture(int index) { return _shaderTextures[index]; }
 	const VecShaderTexture& GetTextures() { return _shaderTextures; }
 
-	const VecString& GetShaderDefines()const { return _shaderDefines; }
-
 private:
 	bool ParseFromFile(const String& file);
 	virtual bool LoadFromFile(const String& file)override;
@@ -77,7 +75,7 @@ private:
 	bool	_castShadow = true;			//是否产生阴影
 	bool	_receiveShadow = false;		//是否接受阴影
 	String	_renderType = "Opaque";		//渲染类型，可以自定义，默认的有：Background,Opaque,Transparent,Overlay
-	int		m_nRenderQueue = (int)eRenderQueue::Geometry;
+	int		_nRenderQueue = (int)eRenderQueue::Geometry;
 
 	bool	_scissorEnable = false;		//裁剪是否开启
 
@@ -89,7 +87,6 @@ private:
 
 	VecShaderVariable	_shaderVariables;	//变量列表
 	VecShaderTexture	_shaderTextures;	//纹理
-	VecString			_shaderDefines;	//常量
 };
 /********************************************************************/
 class ShaderSerialize : public object
@@ -114,7 +111,6 @@ public:
 
 	VecShaderVariable	ShaderVariables;//变量列表
 	VecShaderTexture	ShaderTextures;	//纹理
-	VecString			ShaderDefines;	//常量
 
 	PassSerializes		mPassSerializes;
 };
@@ -131,6 +127,6 @@ public:
 	static ShaderSerialize* Get(const String& file);
 
 private:
-	static ShaderSerializes _shaderSerializes;
+	inline static ShaderSerializes _shaderSerializes;
 };
 DC_END_NAMESPACE

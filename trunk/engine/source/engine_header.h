@@ -1,10 +1,14 @@
-
+﻿
 /*****************************************************************************************************/
 // @author hannibal
 // @date   2020/02/13
 // @brief  头文件
 /*****************************************************************************************************/
 #pragma once
+
+#include <json/nlohmann/json.hpp>
+#include <utf8cpp/utf8.h>
+#include <tinyxml2/tinyxml2.h>
 
 #include "core/Encoding.h"
 #include "core/Random.h"
@@ -142,8 +146,4 @@
 
 #include "game/CommonComponent.h"
 
-#include <json/nlohmann/json.hpp>
-#include <utf8cpp/utf8.h>
-#include <tinyxml2/tinyxml2.h>
-
-#include "BaseMain.h"
+#include "platform/BaseMain.h"

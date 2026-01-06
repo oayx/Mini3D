@@ -1,4 +1,4 @@
-#include "DX9Texture.h"
+﻿#include "DX9Texture.h"
 #include "DX9Device.h"
 #include "DX9Caps.h"
 #include "core/Utility.h"
@@ -65,7 +65,7 @@ byte* DX9Texture::Lock(TextureLockDesc& lock_desc)
 		if (_imageData == nullptr)
 		{
 			uint size = this->GetBytes();
-			_imageData = NewArray<byte>(size);
+			_imageData = Memory::NewArray<byte>(size);
 			Memory::Clear(_imageData, size);
 		}
 		return _imageData;
@@ -138,7 +138,7 @@ bool DX9Texture::GetData(MemoryDataStream& stream)
 	if (s_bits)
 	{
 		stream.Resize(lock_desc.pitch * _imageHeight);
-		Memory::Copy(stream.data(), s_bits, lock_desc.pitch * _imageHeight);
+		Memory::Copy(stream.Buffer(), s_bits, lock_desc.pitch * _imageHeight);
 	}
 	this->Unlock(lock_desc);
 	return true;
@@ -161,8 +161,8 @@ bool DX9Texture::Copy(Texture* dst)
 }
 void DX9Texture::SaveToFile(const String& name, ImageType type)
 {
-	std::wstring w_path = Encoding::Utf8ToWChar(name.c_str(), name.Size());
-	HRESULT hr = D3DXSaveTextureToFileW(w_path.c_str(), DX9GetImageType(type), _colorTexture, NULL);
+	std::wstring wPath = Encoding::Utf8ToWChar(name.c_str(), name.Size());
+	HRESULT hr = D3DXSaveTextureToFileW(wPath.c_str(), DX9GetImageType(type), _colorTexture, NULL);
 	if (FAILED(hr))
 	{
 		Debuger::Error("DX9Texture::SaveToFile on D3DXSaveTextureToFile 失败(%s)", name.c_str());

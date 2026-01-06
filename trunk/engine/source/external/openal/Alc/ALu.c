@@ -1,4 +1,4 @@
-/**
+﻿/**
  * OpenAL cross platform audio library
  * Copyright (C) 1999-2007 by authors.
  * This library is free software; you can redistribute it and/or
@@ -572,8 +572,8 @@ ALvoid CalcSourceParams(ALsource *ALSource, const ALCcontext *ALContext)
     if(Angle >= InnerAngle && Angle <= OuterAngle)
     {
         ALfloat scale = (Angle-InnerAngle) / (OuterAngle-InnerAngle);
-        ConeVolume = lerp(1.0f, ALSource->flOuterGain, scale);
-        ConeHF = lerp(1.0f, ALSource->OuterGainHF, scale);
+        ConeVolume = al_lerp(1.0f, ALSource->flOuterGain, scale);
+        ConeHF = al_lerp(1.0f, ALSource->OuterGainHF, scale);
     }
     else if(Angle > OuterAngle)
     {
@@ -758,7 +758,7 @@ ALvoid CalcSourceParams(ALsource *ALSource, const ALCcontext *ALContext)
         for(i = 0;i < (ALint)Device->NumChan;i++)
         {
             enum Channel chan = Device->Speaker2Chan[i];
-            ALfloat gain = lerp(AmbientGain, SpeakerGain[chan], DirGain);
+            ALfloat gain = al_lerp(AmbientGain, SpeakerGain[chan], DirGain);
             ALSource->Params.DryGains[0][chan] = DryGain * gain;
         }
     }

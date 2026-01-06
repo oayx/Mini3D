@@ -1,4 +1,4 @@
-#include "AssetsManager.h"
+﻿#include "AssetsManager.h"
 #include "core/Utility.h"
 #include "runtime/graphics/Shader.h"
 #include "runtime/resources/Resources.h"
@@ -8,16 +8,6 @@
 DC_BEGIN_NAMESPACE
 /********************************************************************/
 IMPL_DERIVED_REFECTION_TYPE(AssetsManager, Object);
-EventController	AssetsManager::_eventController;
-AssetMeta* AssetsManager::_internalFile = nullptr;
-Map<String, AssetMeta*>	AssetsManager::_internalGuid2Metas;
-HashMap<uint64, AssetMeta*>	AssetsManager::_internalFile2Metas;
-AssetMeta* AssetsManager::_assetsFile = nullptr;
-Map<String, AssetMeta*> AssetsManager::_guid2Metas;
-HashMap<uint64, AssetMeta*> AssetsManager::_file2Metas;
-ShaderGroup AssetsManager::_shaderGroup;
-HashMap<ResourceType, Vector<AssetMeta*>> AssetsManager::_internalGroup;
-HashMap<ResourceType, Vector<AssetMeta*>> AssetsManager::_assetsGroup;
 void AssetsManager::Initialize()
 {
 	for (int i = 0; i < (int)ResourceType::Max; ++i)
@@ -27,11 +17,11 @@ void AssetsManager::Initialize()
 	}
 
 #if defined(DC_PLATFORM_WIN32) || defined(DC_PLATFORM_LINUX)
-	String full_path = Resource::GetInternalDataPath();
-	Debuger::Log("AssetsManager::Initialize - %s", full_path.c_str());
-	FileInfo file_info(full_path, SearchOption::AllDirectories);
+	String fullPath = Resource::GetInternalDataPath();
+	Debuger::Log("AssetsManager::Initialize - %s", fullPath.c_str());
+	FileInfo fileInfo(fullPath, SearchOption::AllDirectories);
 	_internalFile = AssetMeta::Create(ResourceType::Undefined);
-	RefreshAsset(_internalFile, file_info, full_path, true);
+	RefreshAsset(_internalFile, fileInfo, fullPath, true);
 #endif
 }
 void AssetsManager::Destroy()
@@ -96,8 +86,8 @@ AssetMeta* AssetsManager::GetMetaByFile(const String& file)
 {
 	if (file.IsEmpty())return nullptr;
 
-	String file_path = Path::ReplaceSplit(file);
-	uint64 hash = file_path.GetHash();
+	String filePath = Path::ReplaceSplit(file);
+	uint64 hash = filePath.GetHash();
 	AssetMeta* meta = nullptr;
 	if (_internalFile2Metas.TryGet(hash, &meta))
 		return meta;
@@ -114,22 +104,22 @@ AssetMeta* AssetsManager::GetMetaByPath(const String& path)
 		return _assetsFile;
 
 	int i = 0;
-	AssetMeta* file_info = _assetsFile;
+	AssetMeta* fileInfo = _assetsFile;
 	for (; i < splits.Size(); ++i)
 	{
-		for (int j = 0; j < file_info->GetChildrenCount(); ++j)
+		for (int j = 0; j < fileInfo->GetChildrenCount(); ++j)
 		{
-			AssetMeta* child_file_info = file_info->GetChildren(j);
-			if (child_file_info->IsFolder() && Path::GetFileNameWithoutExtension(child_file_info->GetFileName()) == splits[i])
+			AssetMeta* childFileInfo = fileInfo->GetChildren(j);
+			if (childFileInfo->IsFolder() && Path::GetFileNameWithoutExtension(childFileInfo->GetFileName()) == splits[i])
 			{
-				file_info = child_file_info;
+				fileInfo = childFileInfo;
 				break;
 			}
 		}
 	}
 
 	if (i == splits.Size())
-		return file_info;
+		return fileInfo;
 	else
 		return nullptr;
 }
@@ -156,7 +146,7 @@ bool AssetsManager::RemoveEventListener(const String& type, Object *object, cons
 }
 void AssetsManager::Refresh()
 {
-	DC_PROFILE_FUNCTION();
+	DC_PROFILE_FUNCTION;
 	Debuger::Log("AssetsManager::Refresh:%s", Application::GetAssetsPath().c_str());
 	if (Application::GetAssetsPath().IsEmpty())return;
 
@@ -173,9 +163,9 @@ void AssetsManager::Refresh()
 	_file2Metas.Clear();
 	SAFE_DELETE(_assetsFile);
 
-	FileInfo file_info(Application::GetAssetsPath(), SearchOption::AllDirectories);
+	FileInfo fileInfo(Application::GetAssetsPath(), SearchOption::AllDirectories);
 	_assetsFile = AssetMeta::Create(ResourceType::Undefined);
-	RefreshAsset(_assetsFile, file_info, Application::GetAssetsPath(), false);
+	RefreshAsset(_assetsFile, fileInfo, Application::GetAssetsPath(), false);
 
 	//复制内部数据
 	for (int i = 0; i < (int)ResourceType::Max; ++i)
@@ -198,52 +188,52 @@ void AssetsManager::Refresh()
 		}
 	}
 }
-void AssetsManager::RefreshAsset(AssetMeta* asset_meta, const FileInfo& file_info, const String& assets_root_path, bool is_internal)
+void AssetsManager::RefreshAsset(AssetMeta* assetMeta, const FileInfo& fileInfo, const String& assetsRootPath, bool isInternal)
 {
-	asset_meta->SetFileInfo(file_info, assets_root_path);
-	if (file_info.FileType == FileInfoType::File)
+	assetMeta->SetFileInfo(fileInfo, assetsRootPath);
+	if (fileInfo.FileType == FileInfoType::File)
 	{
 		//meta
-		if (!file_info.Extension.Equals("meta", true))
+		if (!fileInfo.Extension.Equals(".meta", true))
 		{
-			ResourceType resource_type = asset_meta->GetResType();
-			if (resource_type != ResourceType::Undefined)
+			ResourceType resourceType = assetMeta->GetResType();
+			if (resourceType != ResourceType::Undefined)
 			{
-				InitMeta(asset_meta, file_info, assets_root_path, is_internal);
+				InitMeta(assetMeta, fileInfo, assetsRootPath, isInternal);
 
 				//是否隐藏
-				bool is_hidden = asset_meta->IsHideInspector();
+				bool is_hidden = assetMeta->IsHideInspector();
 				//初始化一些特殊资源
-				switch (resource_type)
+				switch (resourceType)
 				{
 				case ResourceType::Shader:
 				{
-					ShaderSerialize* ser = ShaderSerializePools::Get(asset_meta->GetFullPath());
+					ShaderSerialize* ser = ShaderSerializePools::Get(assetMeta->GetFullPath());
 					if (ser)
 					{
 						if (!is_hidden)is_hidden = ser->HideInspector;
-						if (!is_internal && !is_hidden)
+						if (!isInternal && !is_hidden)
 						{
 							String group = ser->GroupInspector;
-							if (group.IsEmpty())group = Path::GetFileNameWithoutExtension(asset_meta->GetFileName());
-							AddShaderGroup(group, _shaderGroup, asset_meta->GetGUID());
+							if (group.IsEmpty())group = Path::GetFileNameWithoutExtension(assetMeta->GetFileName());
+							AddShaderGroup(group, _shaderGroup, assetMeta->GetGUID());
 						}
 					}
 					break;
 				}
 				case ResourceType::Texture:
 				{
-					TextureMeta* texture_meta = dynamic_cast<TextureMeta*>(asset_meta);
+					TextureMeta* texture_meta = dynamic_cast<TextureMeta*>(assetMeta);
 					if (texture_meta->GetTextureGroup() == TextureGroup::SpriteAtlas)
 					{
-						if (is_internal)
-							_internalGroup[ResourceType::SpriteAtlas].Add(asset_meta);
+						if (isInternal)
+							_internalGroup[ResourceType::SpriteAtlas].Add(assetMeta);
 						else
-							_assetsGroup[ResourceType::SpriteAtlas].Add(asset_meta);
+							_assetsGroup[ResourceType::SpriteAtlas].Add(assetMeta);
 					}
 					else
 					{
-						is_hidden = is_internal;//内部纹理不对外使用
+						is_hidden = isInternal;//内部纹理不对外使用
 					}
 					break;
 				}
@@ -251,33 +241,33 @@ void AssetsManager::RefreshAsset(AssetMeta* asset_meta, const FileInfo& file_inf
 				//加入资源分组
 				if (!is_hidden)
 				{
-					if (is_internal)
-						_internalGroup[resource_type].Add(asset_meta);
+					if (isInternal)
+						_internalGroup[resourceType].Add(assetMeta);
 					else
-						_assetsGroup[resource_type].Add(asset_meta);
+						_assetsGroup[resourceType].Add(assetMeta);
 				}
 			}
 		}
 	}
 
-	if (file_info.FileType == FileInfoType::Dir)
+	if (fileInfo.FileType == FileInfoType::Dir)
 	{
-		for (int i = 0; i < asset_meta->GetChildrenCount(); ++i)
+		for (int i = 0; i < assetMeta->GetChildrenCount(); ++i)
 		{
-			RefreshAsset(asset_meta->GetChildren(i), file_info.GetChildren(i), assets_root_path, is_internal);
+			RefreshAsset(assetMeta->GetChildren(i), fileInfo.GetChildren(i), assetsRootPath, isInternal);
 		}
 
 		{//删除无效meta文件(如果只有meta文件，没用对应的原始文件，则删除)
-			for (int i = asset_meta->GetChildrenCount() - 1; i >= 0; --i)
+			for (int i = assetMeta->GetChildrenCount() - 1; i >= 0; --i)
 			{
-				const AssetMeta* child_file_info = asset_meta->GetChildren(i);
-				if (child_file_info->GetExtension().Equals("meta", true))
+				const AssetMeta* childFileInfo = assetMeta->GetChildren(i);
+				if (childFileInfo->GetExtension().Equals(".meta", true))
 				{
 					bool is_valid = false;
-					String asset_file = Path::GetFileNameWithoutExtension(child_file_info->GetFileName());
-					for (int j = 0; j < asset_meta->GetChildrenCount(); ++j)
+					String asset_file = Path::GetFileNameWithoutExtension(childFileInfo->GetFileName());
+					for (int j = 0; j < assetMeta->GetChildrenCount(); ++j)
 					{//遍历目录，查看是否有
-						const AssetMeta* child_child_file_info = asset_meta->GetChildren(j);
+						const AssetMeta* child_child_file_info = assetMeta->GetChildren(j);
 						if (child_child_file_info->GetFileName().Equals(asset_file, true))
 						{
 							is_valid = true;
@@ -286,19 +276,18 @@ void AssetsManager::RefreshAsset(AssetMeta* asset_meta, const FileInfo& file_inf
 					}
 					if (!is_valid)
 					{
-						File::Delete(Path::Combine(assets_root_path, child_file_info->GetFullPath()));
-						asset_meta->DeleteChild(i);
+						File::Delete(Path::Combine(assetsRootPath, childFileInfo->GetFullPath()));
+						assetMeta->DeleteChild(i);
 					}
 				}
 			}
 		}
 	}
 }
-void AssetsManager::InitMeta(AssetMeta* asset_meta, const FileInfo& file_info, const String& assets_root_path, bool is_internal)
+void AssetsManager::InitMeta(AssetMeta* assetMeta, const FileInfo& fileInfo, const String& assetsRootPath, bool isInternal)
 {
-	String meta_relative_path = asset_meta->GetFullPath() + ".meta";
-	String meta_path = Path::Combine(assets_root_path, meta_relative_path);
-	ResourceType resource_type = Resource::GetResourceType(asset_meta->GetFileName());
+	String meta_relative_path = assetMeta->GetFullPath() + ".meta";
+	String meta_path = Path::Combine(assetsRootPath, meta_relative_path);
 	if (!File::Exist(meta_path))
 	{
 		if (Application::IsEditor())
@@ -306,80 +295,80 @@ void AssetsManager::InitMeta(AssetMeta* asset_meta, const FileInfo& file_info, c
 			File::Create(meta_path);
 
 			String guid = Utility::GUID();
-			asset_meta->SetGUID(guid);
-			asset_meta->Deserialize();
+			assetMeta->SetGUID(guid);
+			assetMeta->Deserialize();
 		}
 	}
 	else
 	{
-		asset_meta->Serialize();
+		assetMeta->Serialize();
 	}
-	const String& guid = asset_meta->GetGUID();
-	uint64 file_hash = asset_meta->GetFullPath().GetHash();
+	const String& guid = assetMeta->GetGUID();
+	uint64 file_hash = assetMeta->GetFullPath().GetHash();
 	if (guid.IsEmpty())
 	{
-		Debuger::Error("The file meta is empty:%s", asset_meta->GetFullPath().c_str());
+		Debuger::Error("The file meta is empty:%s", assetMeta->GetFullPath().c_str());
 		//重新生成meta文件
 		if (Application::IsEditor() && File::Delete(meta_path))
 		{
-			return InitMeta(asset_meta, file_info, assets_root_path, is_internal);
+			return InitMeta(assetMeta, fileInfo, assetsRootPath, isInternal);
 		}
 	}
 	else if (_guid2Metas.Contains(guid) || _internalGuid2Metas.Contains(guid))
 	{
-		Debuger::Error("The same guid has exist:%s", asset_meta->GetFullPath().c_str());
+		Debuger::Error("The same guid has exist:%s", assetMeta->GetFullPath().c_str());
 		//重新生成meta文件
 		if (Application::IsEditor() && File::Delete(meta_path))
 		{
-			return InitMeta(asset_meta, file_info, assets_root_path, is_internal);
+			return InitMeta(assetMeta, fileInfo, assetsRootPath, isInternal);
 		}
 	}
 	else
 	{
-		if (is_internal)
+		if (isInternal)
 		{
-			bool result = _internalGuid2Metas.Add(guid, asset_meta);
-			if (!result)Debuger::Error("The same guid has exist:%s", asset_meta->GetFullPath().c_str());
-			result = _internalFile2Metas.Add(file_hash, asset_meta);
-			if (!result)Debuger::Error("The same file has exist:%s", asset_meta->GetFullPath().c_str());
+			bool result = _internalGuid2Metas.Add(guid, assetMeta);
+			if (!result)Debuger::Error("The same guid has exist:%s", assetMeta->GetFullPath().c_str());
+			result = _internalFile2Metas.Add(file_hash, assetMeta);
+			if (!result)Debuger::Error("The same file has exist:%s", assetMeta->GetFullPath().c_str());
 		}
 		else
 		{
-			bool result = _guid2Metas.Add(guid, asset_meta);
-			if (!result)Debuger::Error("The same guid has exist:%s", asset_meta->GetFullPath().c_str());
-			result = _file2Metas.Add(file_hash, asset_meta);
-			if (!result)Debuger::Error("The same file has exist:%s", asset_meta->GetFullPath().c_str());
+			bool result = _guid2Metas.Add(guid, assetMeta);
+			if (!result)Debuger::Error("The same guid has exist:%s", assetMeta->GetFullPath().c_str());
+			result = _file2Metas.Add(file_hash, assetMeta);
+			if (!result)Debuger::Error("The same file has exist:%s", assetMeta->GetFullPath().c_str());
 		}
 	}
 
 	//缓存icon
 	if (Application::IsEditor())
 	{
-		EditorIconCache::CacheIcon(asset_meta);
+		EditorIconCache::CacheIcon(assetMeta);
 	}
 }
-void AssetsManager::AddShaderGroup(String group_path, ShaderGroup& shader_group, const String& meta_guid)
+void AssetsManager::AddShaderGroup(String groupPath, ShaderGroup& shaderGroup, const String& metaGuid)
 {
-	if (group_path.IsEmpty())return;
+	if (groupPath.IsEmpty())return;
 
-	int index = group_path.IndexOf('/');
+	int index = groupPath.IndexOf('/');
 	if (index == -1 || index == 0)
 	{//只是文件
-		shader_group.Files.Add({ group_path, meta_guid});
+		shaderGroup.Files.Add({ groupPath, metaGuid});
 		return;
 	}
 
 	//还有目录
-	String folder = group_path.Substring(0, index);
-	if (!shader_group.Folders.Contains(folder))
+	String folder = groupPath.Substring(0, index);
+	if (!shaderGroup.Folders.Contains(folder))
 	{
 		ShaderGroup group;
-		AddShaderGroup(group_path.Substring(index+1), group, meta_guid);
-		shader_group.Folders.Add(folder, group);
+		AddShaderGroup(groupPath.Substring(index+1), group, metaGuid);
+		shaderGroup.Folders.Add(folder, group);
 	}
 	else
 	{
-		AddShaderGroup(group_path.Substring(index + 1), shader_group.Folders[folder], meta_guid);
+		AddShaderGroup(groupPath.Substring(index + 1), shaderGroup.Folders[folder], metaGuid);
 	}
 }
 DC_END_NAMESPACE

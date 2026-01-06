@@ -24,14 +24,14 @@ enum
 #define ETC_PKM_HEADER_SIZE 16
 #endif
 
-static const char kMagic[]  = { 'P', 'K', 'M', ' ', '1', '0' };
-static const char kMagic2[] = { 'P', 'K', 'M', ' ', '2', '0' };
+static constexpr char kMagic[]  = { 'P', 'K', 'M', ' ', '1', '0' };
+static constexpr char kMagic2[] = { 'P', 'K', 'M', ' ', '2', '0' };
 
-static const uint ETC1_PKM_FORMAT_OFFSET = 6;
-static const uint ETC1_PKM_ENCODED_WIDTH_OFFSET = 8;
-static const uint ETC1_PKM_ENCODED_HEIGHT_OFFSET = 10;
-static const uint ETC1_PKM_WIDTH_OFFSET = 12;
-static const uint ETC1_PKM_HEIGHT_OFFSET = 14;
+static constexpr uint ETC1_PKM_FORMAT_OFFSET = 6;
+static constexpr uint ETC1_PKM_ENCODED_WIDTH_OFFSET = 8;
+static constexpr uint ETC1_PKM_ENCODED_HEIGHT_OFFSET = 10;
+static constexpr uint ETC1_PKM_WIDTH_OFFSET = 12;
+static constexpr uint ETC1_PKM_HEIGHT_OFFSET = 14;
 static uint ReadBEUint16(const byte* pIn) 
 {
 	return (pIn[0] << 8) | pIn[1];
@@ -45,7 +45,7 @@ bool Image::LoadFromETCFile(const String& path, bool mipmap)
 		Debuger::Error("Cannot read file:%s", path.c_str());
 		return false;
 	}
-	const byte* header = stream.data();
+	const byte* header = stream.Buffer();
 	if (::memcmp(header, kMagic, sizeof(kMagic)) != 0 && ::memcmp(header, kMagic2, sizeof(kMagic2)) != 0)
 	{
 		Debuger::Error("Invalid file type:%s", path.c_str());
@@ -74,9 +74,9 @@ bool Image::LoadFromETCFile(const String& path, bool mipmap)
 
 	this->Clear();
 	uint row_pitch = uint(dataLen / height);
-	ImageMipData* mip_data = DBG_NEW ImageMipData(row_pitch, _size.width, _size.height, dataLen);
+	ImageMipData* mip_data = Memory::New<ImageMipData>(row_pitch, _size.width, _size.height, dataLen);
 	_imageData.Add(mip_data);
-	::memcpy(mip_data->Data, stream.data() + ETC_PKM_HEADER_SIZE, dataLen);
+	::memcpy(mip_data->Data, stream.Buffer() + ETC_PKM_HEADER_SIZE, dataLen);
 
 	return true;
 }

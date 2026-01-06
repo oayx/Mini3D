@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -56,9 +56,9 @@ namespace dc.tools.builder
                 {
                     string exe_path = Utils.GetExePath();
                     //拷贝头文件
-                    string src_path = exe_path + "/../../engine/source";
-                    string dst_path = _txt_path.Text + "/engine/source";
-                    bool result = FileUtils.CopyFiles(src_path, dst_path, new List<string> { ".h", ".hpp", ".inl" });
+                    string srcPath = exe_path + "/../../engine/source";
+                    string dstPath = _txt_path.Text + "/engine/source";
+                    bool result = FileUtils.CopyFiles(srcPath, dstPath, new List<string> { ".h", ".hpp", ".inl" });
                     if (!result)
                     {
                         MessageBox.Show("拷贝include失败", "Error", MessageBoxButtons.OK);
@@ -68,9 +68,9 @@ namespace dc.tools.builder
 
                     //拷贝运行时
                     {
-                        src_path = exe_path + "/../../bin/win";
-                        dst_path = _txt_path.Text + "/engine/bin/win";
-                        result = FileUtils.DirectoryCopy(src_path, dst_path);
+                        srcPath = exe_path + "/../../bin/win";
+                        dstPath = _txt_path.Text + "/engine/bin/win";
+                        result = FileUtils.DirectoryCopy(srcPath, dstPath);
                         if (!result)
                         {
                             MessageBox.Show("拷贝bin-win失败", "Error", MessageBoxButtons.OK);
@@ -81,9 +81,9 @@ namespace dc.tools.builder
 
                     //拷贝默认资源
                     {
-                        src_path = exe_path + "/../../bin/assets/internal";
-                        dst_path = _txt_path.Text + "/engine/assets/internal";
-                        result = FileUtils.DirectoryCopy(src_path, dst_path);
+                        srcPath = exe_path + "/../../bin/assets/internal";
+                        dstPath = _txt_path.Text + "/engine/assets/internal";
+                        result = FileUtils.DirectoryCopy(srcPath, dstPath);
                         if (!result)
                         {
                             MessageBox.Show("拷贝resource失败", "Epprror", MessageBoxButtons.OK);
@@ -95,11 +95,11 @@ namespace dc.tools.builder
                     //拷贝到template
                     {
                         //拷贝CopyAsset.exe到template
-                        src_path = exe_path + "/../../bin/tools/CopyAsset.exe";
-                        dst_path = exe_path + "/../../template/project.android/app/CopyAsset.exe";
+                        srcPath = exe_path + "/../../bin/tools/CopyAsset.exe";
+                        dstPath = exe_path + "/../../template/project.android/app/CopyAsset.exe";
                         try
                         {
-                            File.Copy(src_path, dst_path, true);
+                            File.Copy(srcPath, dstPath, true);
                         }
                         catch (System.Exception)
                         {
@@ -109,9 +109,9 @@ namespace dc.tools.builder
                         SetProgress(55);
 
                         //拷贝bin目录下的android目录到template的android项目
-                        src_path = exe_path + "/../../bin/android";
-                        dst_path = exe_path + "/../../template/project.android/app/libs";
-                        result = FileUtils.DirectoryCopy(src_path, dst_path);
+                        srcPath = exe_path + "/../../bin/android";
+                        dstPath = exe_path + "/../../template/project.android/app/libs";
+                        result = FileUtils.DirectoryCopy(srcPath, dstPath);
                         if (!result)
                         {
                             Log.Error("拷贝bin-android失败");
@@ -122,9 +122,9 @@ namespace dc.tools.builder
 
                     //拷贝template到publish目录
                     {
-                        src_path = exe_path + "/../../template";
-                        dst_path = _txt_path.Text + "/project";
-                        result = FileUtils.DirectoryCopy(src_path, dst_path);
+                        srcPath = exe_path + "/../../template";
+                        dstPath = _txt_path.Text + "/project";
+                        result = FileUtils.DirectoryCopy(srcPath, dstPath);
                         if (!result)
                         {
                             MessageBox.Show("拷贝template失败", "Epprror", MessageBoxButtons.OK);

@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Date：2009年11月24日
@@ -12,13 +12,14 @@
 DC_BEGIN_NAMESPACE
 class VideoModeList;
 /********************************************************************/
-class DX9Device Final : public GraphicsDevice
+class DX9Device final : public GraphicsDevice
 {
 	friend class Application;
 	DEFAULT_CREATE(DX9Device);
 	FRIEND_CONSTRUCT_DESTRUCT(DX9Device);
+	DISALLOW_COPY_ASSIGN(DX9Device);
 	BEGIN_DERIVED_REFECTION_TYPE(DX9Device, GraphicsDevice)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 	DX9Device();
 	~DX9Device();
@@ -26,10 +27,13 @@ class DX9Device Final : public GraphicsDevice
 public:
 	virtual bool			CreateDevice(RenderWindow* window)override;
 	virtual bool			CreateSwapChain(RenderWindow* window)override;
-	virtual void			CreateRenderContent()override;
+	virtual void			CreateRenderContent()override;	
+	virtual void			DestroyDevice(RenderWindow* window)override;
+	virtual void			DestroySwapChain(RenderWindow* window)override { base::DestroySwapChain(window); }
+	virtual void			DestroyRenderContent()override { base::DestroyRenderContent(); }
 	virtual void			Resize(const WindowResizeDesc& desc)override;
 
-	virtual CGProgram*			CreateShader()override;
+	virtual CGProgram*		CreateShader()override;
 	virtual Texture*		CreateTexture(const TextureDesc& desc)override;
 	virtual RenderTexture*	CreateRenderTexture(const TextureDesc& desc)override;
 	virtual FinalProcess*	CreateFinalProcess()override;

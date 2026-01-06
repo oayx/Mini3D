@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2020/9/20
@@ -12,13 +12,13 @@ DC_BEGIN_NAMESPACE
 class Mesh;
 class Camera;
 /********************************************************************/
-class ENGINE_DLL Gizmos Final : public Object
+class ENGINE_DLL Gizmos final : public Object
 {
 	friend class Application;
 	typedef Delegate<Camera*> Delegates;
 	DISALLOW_CONSTRUCTOR_COPY_ASSIGN(Gizmos);
 	BEGIN_DERIVED_REFECTION_TYPE(Gizmos, Object)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 private:
 	static void Initialize();
@@ -41,17 +41,17 @@ public:
 	static void DrawPolygon(const Vector3v& vertices);
 	static void DrawLine(const Vector3& start, const Vector3& end);
 
-	static Matrix4  SetMatrix(const Matrix4& mat) { Matrix4 old_mat = m_matrix; m_matrix = mat; return old_mat; }
+	static Matrix4  SetMatrix(const Matrix4& mat) { Matrix4 old_mat = _matrix; _matrix = mat; return old_mat; }
 	static Color	SetColor(const Color& color) { Color old_color = _color; _color = color; return old_color; }
 
 	static void Register(Function<void(Camera*)>& action) { _handles.Bind(action); }
 	static void Unregister(Function<void(Camera*)>& action) { _handles.Unbind(action); }
 
 private:
-	static FixedPrimitive<VertexColorLayout>* _primitive;
+	inline static FixedPrimitive<VertexColorLayout>* _primitive = nullptr;
 
-	static Delegates _handles;
-	static Matrix4	 m_matrix;
-	static Color	 _color;
+	inline static Delegates _handles;
+	inline static Matrix4 _matrix = Matrix4::identity;
+	inline static Color _color = Color::Black;
 };
 DC_END_NAMESPACE

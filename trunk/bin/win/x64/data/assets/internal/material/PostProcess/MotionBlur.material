@@ -1,0 +1,7 @@
+<Material>
+    <Tag>
+        <CastShadow>false</CastShadow>
+        <ReceiveShadow>false</ReceiveShadow>
+    </Tag>
+    <Shader><ShaderFile>internal/material/PostProcess/MotionBlur.shader</ShaderFile></Shader>
+</Material>

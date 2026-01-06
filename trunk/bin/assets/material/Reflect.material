@@ -9,14 +9,14 @@
     <Properties>
         <Propertie>
             <Name>_SpecularPower</Name>
-            <Type>1</Type>
+            <Type>3</Type>
             <Value>0.1</Value>
             <Range>0.000000, 1.000000</Range>
         </Propertie>
         <Propertie>
             <Name>_Reflections</Name>
-            <Type>1</Type>
-            <Value>0.300000</Value>
+            <Type>3</Type>
+            <Value>0.0</Value>
             <Range>0.000000, 1.000000</Range>
         </Propertie>
     </Properties>

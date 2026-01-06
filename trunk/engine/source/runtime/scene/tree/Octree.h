@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Date：2009/12/8
@@ -12,7 +12,7 @@ DC_BEGIN_NAMESPACE
 class Camera;
 /********************************************************************/
 // 八叉树
-class Octree Final : public Scenetree
+class Octree final : public Scenetree
 {
 	friend class SceneManager;
 	typedef List<GameObject*> ListNodes;
@@ -20,7 +20,7 @@ class Octree Final : public Scenetree
 	FRIEND_CONSTRUCT_DESTRUCT(Octree);
 	DISALLOW_COPY_ASSIGN(Octree);
 	BEGIN_DERIVED_REFECTION_TYPE(Octree, Scenetree)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 public:
 	Octree(Octree *octree);
@@ -31,7 +31,7 @@ public:
 	//另外由于FindVisibleObjects判断最顶级Octree用的是Partial，还是会对物体再做一次可视判断，所以不会导致看不到的添加的渲染列表
 	virtual void AddObject(GameObject *node, int depth = 0)override;
 	virtual void RemoveAllObjects()override;
-	virtual void FindVisibleObjects(Camera *camera, bool found_visible)override;
+	virtual void FindVisibleObjects(Camera *camera, bool foundVisible)override;
 	virtual void FindObjects(List<GameObject*>& list, const Ray& ray)override;
 
 private:
@@ -40,7 +40,7 @@ private:
 	// 删除节点
 	void RemoveNode(GameObject *node);
 
-	int  NumOfNode()const { return m_iNumNode; };
+	int  NumOfNode()const { return _numNode; };
 
 	// 完全包括
 	bool Container(const Aabb &box)const;
@@ -52,7 +52,7 @@ private:
 	void Unref();
 
 private:
-	int			m_iNumNode = 0;
+	int			_numNode = 0;
 	ListNodes	_nodes;				//这棵树当前节点关联的节点列表
 
 	Aabb		_box;

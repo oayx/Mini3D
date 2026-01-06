@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************************************/
 // @author hannibal
 // @date   2020/07/30
@@ -38,24 +38,24 @@ struct DateTime
 	String ToString()
 	{
 		char ch[128] = {0};
-		Sprintf(ch, "%d-%d-%d %d:%d:%d", year, month, day, hour, minute, second);
+		Snprintf(ch, sizeof(ch), "%d-%d-%d %d:%d:%d", year, month, day, hour, minute, second);
 		return String(ch);
 	}
 	//格式:yyyy-mm-dd
 	String ToShortDateString()
 	{
 		char ch[128] = { 0 };
-		Sprintf(ch, "%d-%d-%d", year, month, day);
+		Snprintf(ch, sizeof(ch), "%d-%d-%d", year, month, day);
 		return String(ch);
 	}
 };
 
 /********************************************************************/
-class ENGINE_DLL Time Final : public Object
+class ENGINE_DLL Time final : public Object
 {
 	DISALLOW_CONSTRUCTOR_COPY_ASSIGN(Time);
 	BEGIN_DERIVED_REFECTION_TYPE(Time, Object)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 public:
 	static void Initialize();
@@ -69,28 +69,28 @@ public:
 	static int64 GetUTCTimeMS();
 
 	//启动后经过时间，相同帧调用值一样
-	static float GetTime() { return m_time; }
+	static float GetTime() { return _time; }
 	static float GetRealTimeSinceStartup();
-	static float GetDeltaTime() { return m_time_delta * m_time_scale; }
-	static float GetUnscaledDeltaTime() { return m_time_delta; }
+	static float GetDeltaTime() { return _timeDelta * _timeScale; }
+	static float GetUnscaledDeltaTime() { return _timeDelta; }
 	
 
-	static void SetTimeScale(float scale) { m_time_scale = scale; }
-	static float GetTimeScale() { return m_time_scale; }
+	static void SetTimeScale(float scale) { _timeScale = scale; }
+	static float GetTimeScale() { return _timeScale; }
 
-	static int GetFPS() { return m_fps; }
-	static int GetFrameCount() { return m_frame_count; }
+	static int GetFPS() { return _fps; }
+	static int GetFrameCount() { return _frameCount; }
 
 private:
-	static ClockTime m_clock_time;
-	static float m_time_delta;
-	static float m_time_record;
-	static float m_time;
+	inline static ClockTime _clockTime;
+	inline static float _timeDelta = 0;
+	inline static float _timeRecord = -1;
+	inline static float _time = 0;
 	//1：“timeScale不会影响Update和LateUpdate的执行速度”
 	//2：“FixedUpdate是根据时间来的，所以timeScale只会影响FixedUpdate的速度”
-	static float m_time_scale;
-	static int m_frame_count;
-	static int m_frame_record;
-	static int m_fps;
+	inline static float _timeScale = 1.0f;
+	inline static int _frameCount = -1;
+	inline static int _frameRecord = 0;
+	inline static int _fps = 0;
 };
 DC_END_NAMESPACE

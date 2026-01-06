@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************************************/
 // @author hannibal
 // @date   2021/08/3
@@ -11,7 +11,7 @@
 DC_BEGIN_NAMESPACE
 class Image;
 /********************************************************************/
-class ImageManager Final : public object
+class ImageManager final : public object
 {
 	friend class Image;
 	friend class Application;
@@ -28,6 +28,6 @@ public:
 	static void   DestroyImage(const String& file);
 
 private:
-	static Images _images;
+	inline static Images _images;
 };
 DC_END_NAMESPACE

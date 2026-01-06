@@ -1,0 +1,30 @@
+#version 410
+
+struct type_CameraBuffer
+{
+    mat4 MATRIX_V;
+    mat4 MATRIX_P;
+    mat4 MATRIX_VP;
+    mat4 MATRIX_I_VP;
+    vec3 _WorldSpaceCameraPos;
+    vec3 _WorldSpaceCameraDir;
+    vec4 _ProjectionParams;
+    vec4 _ScreenParams;
+    vec4 _ZBufferParams;
+};
+
+uniform type_CameraBuffer CameraBuffer;
+
+uniform sampler2D _MainTex;
+uniform samplerCube _SkyBox;
+
+layout(location = 0) in vec2 var_TEXCOORD0;
+layout(location = 1) in vec3 var_TEXCOORD1;
+layout(location = 2) in vec3 var_TEXCOORD2;
+layout(location = 0) out vec4 out_var_SV_Target;
+
+void main()
+{
+    out_var_SV_Target = mix(texture(_MainTex, var_TEXCOORD0), texture(_SkyBox, reflect(normalize(var_TEXCOORD1 - CameraBuffer._WorldSpaceCameraPos), normalize(var_TEXCOORD2))), vec4(0.5));
+}
+

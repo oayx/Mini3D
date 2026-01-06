@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************************************/
 // @author hannibal
 // @date   2020/05/22
@@ -11,11 +11,11 @@
 
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-class ENGINE_DLL IntervalTime Final : public Object
+class ENGINE_DLL IntervalTime final : public Object
 {
 	DISALLOW_COPY_ASSIGN(IntervalTime);
 	BEGIN_DERIVED_REFECTION_TYPE(IntervalTime, Object)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 public:
 	IntervalTime() {}
@@ -26,33 +26,33 @@ public:
 	/// <param name="start">是否第一帧开始执行</param>
 	void Init(float interval, bool first_frame = false)
 	{
-		m_active = true;
-		m_now_time = 0.0f;
-		m_interval_time = interval;
-		if (first_frame) m_now_time = m_interval_time;
+		_active = true;
+		_now_time = 0.0f;
+		_interval_time = interval;
+		if (first_frame) _now_time = _interval_time;
 	}
 
 	void Reset()
 	{
-		m_now_time = 0.0f;
+		_now_time = 0.0f;
 	}
 
 	bool Update(float elapse_time)
 	{
-		if (!m_active) return false;
-		m_now_time += elapse_time;
-		if (m_now_time >= m_interval_time)
+		if (!_active) return false;
+		_now_time += elapse_time;
+		if (_now_time >= _interval_time)
 		{
-			m_now_time -= m_interval_time;
+			_now_time -= _interval_time;
 			return true;
 		}
 		return false;
 	}
 
 private:
-	bool m_active = false;
-	float m_interval_time = 0.0f;
-	float m_now_time = 0.0f;
+	bool _active = false;
+	float _interval_time = 0.0f;
+	float _now_time = 0.0f;
 };
 
 /********************************************************************/
@@ -61,38 +61,38 @@ class ENGINE_DLL LogicIntervalTime : public Object
 {
 	DISALLOW_COPY_ASSIGN(LogicIntervalTime);
 	BEGIN_DERIVED_REFECTION_TYPE(LogicIntervalTime, Object)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 public:
 	LogicIntervalTime() {}
 
 	void Init(uint interval, bool start = false)
 	{
-		m_active = true;
-		m_interval_frame = interval;
-		if (start) m_now_frame = m_interval_frame;
+		_active = true;
+		_interval_frame = interval;
+		if (start) _now_frame = _interval_frame;
 	}
 
 	void Reset()
 	{
-		m_now_frame = 0;
+		_now_frame = 0;
 	}
 
 	bool Update(uint elapse_frame)
 	{
-		if (!m_active) return false;
-		m_now_frame += elapse_frame;
-		if (m_now_frame >= m_interval_frame)
+		if (!_active) return false;
+		_now_frame += elapse_frame;
+		if (_now_frame >= _interval_frame)
 		{
-			m_now_frame -= m_interval_frame;
+			_now_frame -= _interval_frame;
 			return true;
 		}
 		return false;
 	}
 
 private:
-	bool m_active = false;
-	uint m_interval_frame = 0;
-	uint m_now_frame = 0;
+	bool _active = false;
+	uint _interval_frame = 0;
+	uint _now_frame = 0;
 };
 DC_END_NAMESPACE

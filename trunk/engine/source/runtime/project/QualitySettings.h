@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Date：2021/9/23
@@ -11,7 +11,7 @@
  
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-class ENGINE_DLL QualitySettings Final : public Object
+class ENGINE_DLL QualitySettings final : public Object
 {
 	friend class Application;
 	DISALLOW_CONSTRUCTOR_COPY_ASSIGN(QualitySettings);
@@ -38,14 +38,14 @@ public:
 	static void			SetHDRFormat(ColorFormat format) { _hDRFormat = format; }
 
 private:
-	static MSAAType		_mSAAType;
+	inline static MSAAType		_mSAAType = MSAAType::Disabled;
 
-	static float		_shadowDistance;
-	static ShadowType	_shadowType;
-	static ShadowResolution _shadowResolution;
+	inline static float			_shadowDistance = 200.0f;
+	inline static ShadowType	_shadowType = ShadowType::Soft;
+	inline static ShadowResolution _shadowResolution = ShadowResolution::Medium;
 
-	static bool			_enableHDR;
-	static float		_hDRExposure;	//曝光值
-	static ColorFormat	_hDRFormat;
+	inline static bool			_enableHDR = true;
+	inline static float			_hDRExposure = 0.8f;	//曝光值
+	inline static ColorFormat	_hDRFormat = ColorFormat::RGBA16F;
 };//Light
 DC_END_NAMESPACE

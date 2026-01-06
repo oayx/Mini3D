@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Date：2020/8/19
@@ -16,7 +16,7 @@ class AnimationClip;
 class AnimationState;
 class AnimationBlender;
 /********************************************************************/
-class ENGINE_DLL Animation Final : public Component
+class ENGINE_DLL Animation final : public Component
 {
 	friend class Mesh;
 	friend class GameObject;
@@ -31,7 +31,7 @@ class ENGINE_DLL Animation Final : public Component
 	BEGIN_DERIVED_REFECTION_TYPE(Animation, Component)
 		CTORS(DEFAULT_CTOR(Animation))
 		ADD_EDITOR_COMPONENT("Animation")
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 	Animation();
 	~Animation();
@@ -89,7 +89,7 @@ private:
 	bool			_useUnscaledTime = true;	//是否受DeltaTime影响，默认true
 	float			_speed = 1.0f;				//更新速度
 	String			_defaultName = "";			//默认播放动画
-	String			_meshFile = "";			//模型
+	String			_meshFile = "";				//模型
 
 	Action			_onComplete = nullptr;
 

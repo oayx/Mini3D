@@ -1,26 +1,22 @@
-#include "Texture.h"
+﻿#include "Texture.h"
 #include "runtime/resources/AssetsManager.h"
 #include "runtime/Application.h"
 
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-Texture* Texture::_whiteTexture = nullptr;
-Texture* Texture::_blackTexture = nullptr;
 IMPL_DERIVED_REFECTION_TYPE(Texture, Resource);
 Texture::Texture(const TextureDesc& desc)
-	: base(ResourceType::Texture), _textureType(desc.type), _imageWidth(desc.width), _imageHeight(desc.height), _imageFormat(desc.format)
+	: base(ResourceType::Texture), _textureType(desc.type), _imageFormat(desc.format), _imageWidth(desc.width), _imageHeight(desc.height)
 	, _filterType(desc.filter), _anisotropy(desc.anisotropy), _antiAlias(desc.antiAlias), _addressMode(desc.address), _borderColor(desc.border), _usage(desc.usage), _flags(desc.flags)
 {
 	this->_antiAlias = _antiAlias < 1 ? 1 : _antiAlias;
 	this->_enableMips = _flags & TextureFlag::MipMap;
-	if (_antiAlias > 1)
-	{
-		_enableMips = false;
-	}
+	if (_antiAlias > 1)_enableMips = false;
+	if(_enableMips)_enableMips = Application::GetGraphics()->GetCaps()->hasAutoMipMapGen;
 }
 Texture* Texture::Create(const TextureDesc& desc)
 {
-	DC_PROFILE_FUNCTION();
+	DC_PROFILE_FUNCTION;
 
 	Texture* tex = Application::GetGraphics()->CreateTexture(desc);
 	if (tex != nullptr)
@@ -31,7 +27,7 @@ Texture* Texture::Create(const TextureDesc& desc)
 }
 Texture* Texture::Create(const String &file)
 {
-	DC_PROFILE_FUNCTION();
+	DC_PROFILE_FUNCTION;
 
 	if (file.IsEmpty())return nullptr;
 	TextureDesc desc;
@@ -60,7 +56,7 @@ Texture* Texture::Create(const String &file)
 }
 Texture* Texture::Create2D(const String &file, const TextureDesc& desc)
 {
-	DC_PROFILE_FUNCTION();
+	DC_PROFILE_FUNCTION;
 
 	if (file.IsEmpty())return nullptr;
 	CHECK_RETURN_PTR_NULL(desc.width <= Application::GetGraphics()->GetCaps()->maxTextureSize);
@@ -80,12 +76,12 @@ Texture* Texture::Create2D(const String &file, const TextureDesc& desc)
 }
 Texture* Texture::CreateCube(const String &file, const TextureDesc& desc)
 {
-	DC_PROFILE_FUNCTION();
+	DC_PROFILE_FUNCTION;
 	
 	if (file.IsEmpty())return nullptr;
 	CHECK_RETURN_PTR_NULL(desc.width == desc.height);
 	CHECK_RETURN_PTR_NULL(desc.width <= Application::GetGraphics()->GetCaps()->maxCubeMapSize);
-	String file_path = Resource::GetFullDataPath(file);
+	String filePath = Resource::GetFullDataPath(file);
 	Image* image = Image::Create(file, desc.flags & TextureFlag::MipMap);
 	if (image)
 	{
@@ -95,13 +91,13 @@ Texture* Texture::CreateCube(const String &file, const TextureDesc& desc)
 	}
 	else
 	{
-		Debuger::Error("texture data load error:%s", file_path.c_str());
+		Debuger::Error("texture data load error:%s", filePath.c_str());
 		return nullptr;
 	}
 }
 Texture* Texture::CreateFromMemroy(const byte* data, const TextureDesc& desc)
 {
-	DC_PROFILE_FUNCTION();
+	DC_PROFILE_FUNCTION;
 
 	CHECK_RETURN_PTR_NULL(data);
 
@@ -111,7 +107,7 @@ Texture* Texture::CreateFromMemroy(const byte* data, const TextureDesc& desc)
 }
 Texture* Texture::CreateFromImage(Image* image, const TextureDesc& desc)
 {
-	DC_PROFILE_FUNCTION();
+	DC_PROFILE_FUNCTION;
 
 	CHECK_RETURN_PTR_NULL(image);
 	CHECK_RETURN_PTR_NULL(image->GetWidth() <= Application::GetGraphics()->GetCaps()->maxTextureSize);
@@ -132,7 +128,7 @@ Texture* Texture::GetWhiteTexture()
 {
 	if (_whiteTexture == nullptr)
 	{
-		byte* by = NewArray<byte>(4 * 9);
+		byte* by = Memory::NewArray<byte>(4 * 9);
 		for (int i = 0; i < 9; ++i)
 		{
 			by[i * 4 + 0] = 255;
@@ -147,7 +143,7 @@ Texture* Texture::GetWhiteTexture()
 		_whiteTexture = CreateFromImage(image, desc);
 		_whiteTexture->Retain();//防止自动释放
 		_whiteTexture->SetResName("WhiteTexture");
-		DeleteArray(by);
+		Memory::DeleteArray(by);
 	}
 	return _whiteTexture;
 }
@@ -155,7 +151,7 @@ Texture* Texture::GetBlackTexture()
 {
 	if (_blackTexture == nullptr)
 	{
-		byte* by = NewArray<byte>(4 * 9);
+		byte* by = Memory::NewArray<byte>(4 * 9);
 		for (int i = 0; i < 9; ++i)
 		{
 			by[i * 4 + 0] = 0;
@@ -170,7 +166,7 @@ Texture* Texture::GetBlackTexture()
 		_blackTexture = CreateFromImage(image, desc);
 		_blackTexture->Retain();//防止自动释放
 		_blackTexture->SetResName("BlackTexture");
-		DeleteArray(by);
+		Memory::DeleteArray(by);
 	}
 	return _blackTexture;
 }

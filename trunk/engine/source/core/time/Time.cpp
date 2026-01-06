@@ -1,18 +1,9 @@
-#include "Time.h"
+﻿#include "Time.h"
 #include "platform/PlatformDefine.h"
  
 DC_BEGIN_NAMESPACE
 /********************************************************************/
 IMPL_DERIVED_REFECTION_TYPE(Time, Object);
-ClockTime Time::m_clock_time;
-float Time::m_time_delta = 0;
-float Time::m_time_record = -1;
-float Time::m_time = 0;
-float Time::m_time_scale = 1.0f;
-int Time::m_frame_count = -1;
-int Time::m_frame_record;
-int Time::m_fps;
-
 void Time::Initialize()
 {
 	Update();
@@ -20,30 +11,30 @@ void Time::Initialize()
 void Time::Update()
 {
 	float time = GetRealTimeSinceStartup();
-	m_time_delta = time - m_time;
-	m_time = time;
+	_timeDelta = time - _time;
+	_time = time;
 
-	if (m_time_record < 0)
+	if (_timeRecord < 0)
 	{
-		m_time_record = GetRealTimeSinceStartup();
-		m_frame_record = GetFrameCount();
+		_timeRecord = GetRealTimeSinceStartup();
+		_frameRecord = GetFrameCount();
 	}
 
 	int frame = GetFrameCount();
-	if (time - m_time_record >= 1)
+	if (time - _timeRecord >= 1)
 	{
-		m_fps = frame - m_frame_record;
-		m_time_record = time;
-		m_frame_record = frame;
+		_fps = frame - _frameRecord;
+		_timeRecord = time;
+		_frameRecord = frame;
 	}
 
-	if (m_frame_count < 0)
+	if (_frameCount < 0)
 	{
-		m_frame_count = 0;
+		_frameCount = 0;
 	}
 	else
 	{
-		m_frame_count++;
+		_frameCount++;
 	}
 }
 DateTime Time::GetDate()
@@ -72,20 +63,20 @@ int64 Time::GetTimeMS()
 	int64 t;
 
 #if defined(DC_PLATFORM_WIN32)
-	SYSTEMTIME sys_time;
-	::GetLocalTime(&sys_time);
+	SYSTEMTIME sysTime;
+	::GetLocalTime(&sysTime);
 
 	struct tm tm;
-	tm.tm_sec = sys_time.wSecond;
-	tm.tm_min = sys_time.wMinute;
-	tm.tm_hour = sys_time.wHour;
-	tm.tm_mday = sys_time.wDay;
-	tm.tm_mon = sys_time.wMonth - 1;
-	tm.tm_year = sys_time.wYear - 1900;
+	tm.tm_sec = sysTime.wSecond;
+	tm.tm_min = sysTime.wMinute;
+	tm.tm_hour = sysTime.wHour;
+	tm.tm_mday = sysTime.wDay;
+	tm.tm_mon = sysTime.wMonth - 1;
+	tm.tm_year = sysTime.wYear - 1900;
 	tm.tm_isdst = -1;
 
-	t = mktime(&tm) * (int64)1000 + sys_time.wMilliseconds;
-#elif defined(DC_PLATFORM_LINUX) || defined(DC_PLATFORM_ANDROID) || defined(DC_PLATFORM_MAC) || defined(DC_PLATFORM_IOS)
+	t = mktime(&tm) * (int64)1000 + sysTime.wMilliseconds;
+#else
 	struct timeval tv;
 	gettimeofday(&tv, nullptr);
 	t = tv.tv_sec;
@@ -109,7 +100,7 @@ int64 Time::GetUTCTimeMS()
 
 float Time::GetRealTimeSinceStartup()
 {
-	int64 time = m_clock_time.micro();
+	int64 time = _clockTime.micro();
 	return (float)time / 1000000.0f;
 }
 DC_END_NAMESPACE

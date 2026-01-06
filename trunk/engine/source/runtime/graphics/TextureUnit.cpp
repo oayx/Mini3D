@@ -1,4 +1,4 @@
-#include "TextureUnit.h"
+﻿#include "TextureUnit.h"
 #include "runtime/graphics/null/Texture.h"
 #include "runtime/resources/AssetsManager.h"
  
@@ -6,7 +6,7 @@ DC_BEGIN_NAMESPACE
 /********************************************************************/
 IMPL_DERIVED_REFECTION_TYPE(TextureUnit, Object);
 TextureUnit::TextureUnit(TextureType type, const String& name)
-	: _type(type), Name(name)
+	: Name(name), _type(type)
 {
 }
 TextureUnit::TextureUnit(const String& name, Texture* tex)
@@ -29,12 +29,12 @@ Texture* TextureUnit::GetTexture()
 	}
 	return _texture; 
 }
-void TextureUnit::SetTexture(const String& shader_name, Texture* tex)
+void TextureUnit::SetTexture(const String& shaderName, Texture* tex)
 {
 	if (tex == _texture)return;
 
 	SAFE_RELEASE(_texture);
-	this->Name = shader_name;
+	this->Name = shaderName;
 	this->_texture = tex;
 	if (tex != nullptr)
 	{
@@ -84,7 +84,7 @@ void TextureUnit::SetTexture(const ShaderTexture& info)
 }
 void TextureUnit::LoadTexture()
 {
-	DC_PROFILE_FUNCTION();
+	DC_PROFILE_FUNCTION;
 	SAFE_RELEASE(_texture);
 	if (!this->_file.IsEmpty())
 	{

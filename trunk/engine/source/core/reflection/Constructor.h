@@ -22,6 +22,7 @@ protected:
     Constructor(const Type* type){ this->type = type; }
 
 public:
+	virtual ~Constructor() = default;
     const Type* GetType() const{  return type; }
 	virtual Object* Invoke() const { return nullptr; }
 };
@@ -39,7 +40,7 @@ public:
 
     virtual Object* Invoke() const override
 	{
-        return (Object*)DBG_NEW T();
+        return (Object*)Memory::New<T>();
     }
 };
 DC_END_NAMESPACE

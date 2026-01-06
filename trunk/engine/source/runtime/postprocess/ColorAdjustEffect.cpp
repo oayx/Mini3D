@@ -1,4 +1,4 @@
-#include "ColorAdjustEffect.h"
+﻿#include "ColorAdjustEffect.h"
 #include "runtime/input/Input.h"
 #include "runtime/graphics/Material.h"
 #include "runtime/graphics/Pass.h"
@@ -16,11 +16,11 @@ ColorAdjustEffect::~ColorAdjustEffect()
 {
 	SAFE_RELEASE(_material);
 }
-Object* ColorAdjustEffect::Clone(Object* new_obj)
+Object* ColorAdjustEffect::Clone(Object* newObj)
 {
-	base::Clone(new_obj);
-	ColorAdjustEffect* obj = dynamic_cast<ColorAdjustEffect*>(new_obj);
-	if (!obj)return new_obj;
+	base::Clone(newObj);
+	ColorAdjustEffect* obj = dynamic_cast<ColorAdjustEffect*>(newObj);
+	if (!obj)return newObj;
 
 	obj->_brightness = _brightness;
 	obj->_saturation = _saturation;
@@ -35,13 +35,13 @@ void ColorAdjustEffect::OnRenderImage(RenderTexture* source, RenderTexture* dest
 		TextureDesc desc;
 		desc.width = source->GetWidth(); desc.height = source->GetHeight(); desc.format = source->GetFormat();
 		desc.flags = TextureFlag::COLOR;
-		RenderTexture* tmp_texture = RenderTexture::Alloc(desc);
+		RenderTexture* tmpTexture = RenderTexture::Alloc(desc);
 		_material->SetFloat("_Brightness", _brightness);
 		_material->SetFloat("_Saturation", _saturation);
 		_material->SetFloat("_Contrast", _contrast);
-		Blit(source, tmp_texture, _material);
-		Blit(tmp_texture, dest);
-		RenderTexture::Free(tmp_texture);
+		Blit(source, tmpTexture, _material);
+		Blit(tmpTexture, dest);
+		RenderTexture::Free(tmpTexture);
 	}
 	else
 	{

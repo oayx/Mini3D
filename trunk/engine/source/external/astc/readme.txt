@@ -1,0 +1,1 @@
+github: https://github.com/claurel/astc-encoder/tree/5a66e211852dc14cbab0c630f4a4e0969abf2cf8

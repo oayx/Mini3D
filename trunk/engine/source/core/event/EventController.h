@@ -32,11 +32,11 @@ class ENGINE_DLL EventController : public Object
 		EventHandler2 handler2 = nullptr;
 		EventHandler3 handler3 = nullptr;
 		EventHandler4 handler4 = nullptr;
-		EventItem(Object* obj, const EventHandler& fun) :object(obj), handler(fun), is_notify(false) {}
-		EventItem(Object* obj, const EventHandler1& fun) :object(obj), handler1(fun), is_notify(false) {}
-		EventItem(Object* obj, const EventHandler2& fun) :object(obj), handler2(fun), is_notify(false) {}
-		EventItem(Object* obj, const EventHandler3& fun) :object(obj), handler3(fun), is_notify(false) {}
-		EventItem(Object* obj, const EventHandler4& fun) :object(obj), handler4(fun), is_notify(false) {}
+		EventItem(Object* obj, const EventHandler& fun) :object(obj), is_notify(false), handler(fun) {}
+		EventItem(Object* obj, const EventHandler1& fun) :object(obj), is_notify(false), handler1(fun) {}
+		EventItem(Object* obj, const EventHandler2& fun) :object(obj), is_notify(false), handler2(fun) {}
+		EventItem(Object* obj, const EventHandler3& fun) :object(obj), is_notify(false), handler3(fun) {}
+		EventItem(Object* obj, const EventHandler4& fun) :object(obj), is_notify(false), handler4(fun) {}
 	};
 
 	typedef std::multimap<String, EventItem> map_event_type;
@@ -44,10 +44,10 @@ class ENGINE_DLL EventController : public Object
 	typedef std::pair<map_it, map_it> map_range_type;
 	DISALLOW_COPY_ASSIGN(EventController);
 	BEGIN_DERIVED_REFECTION_TYPE(EventController, Object)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 public:
-	EventController(){ _dispatch_count = 0, _is_dispatching = false; }
+	EventController(){ _dispatchCount = 0, _isDispatching = false; }
 	virtual ~EventController(){}
 
 public:
@@ -73,9 +73,9 @@ private:
 	void TriggerEventImpl(int flag, const String& type, const String& arg1, const String& arg2, const String& arg3, const String& arg4);
 
 private:
-	map_event_type _map_event;		//事件集合
+	map_event_type _mapEventes;		//事件集合
 
-	int	_dispatch_count = 0;		//可以解决循环派发，导致_is_dispatching失效问题
-	bool _is_dispatching = false;	//防止派发事件的时候触发删除，导致迭代器失效
+	int	_dispatchCount = 0;		//可以解决循环派发，导致_isDispatching失效问题
+	bool _isDispatching = false;	//防止派发事件的时候触发删除，导致迭代器失效
 };
 DC_END_NAMESPACE

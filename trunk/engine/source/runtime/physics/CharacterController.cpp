@@ -1,4 +1,4 @@
-#include "CharacterController.h"
+﻿#include "CharacterController.h"
 #include "RigidBody.h"
 #include "Physics.h"
 #include "runtime/component/Component.inl"
@@ -15,22 +15,18 @@ CharacterController::CharacterController()
 }
 CharacterController::~CharacterController()
 {
+	SAFE_DELETE(_shape);
 	if (_ghostObject)
 	{
-		Physics::GetWorld()->removeCollisionObject(_ghostObject);
-		delete _ghostObject;
-		_ghostObject = nullptr;
-	}
-	if (_shape)
-	{
-		delete _shape;
-		_shape = nullptr;
+		if(Physics::GetWorld())
+			Physics::GetWorld()->removeCollisionObject(_ghostObject);
+		SAFE_DELETE(_ghostObject);
 	}
 	if (_characterController)
 	{
-		Physics::GetWorld()->removeCharacter(_characterController);
-		delete _characterController;
-		_characterController = nullptr;
+		if(Physics::GetWorld())
+			Physics::GetWorld()->removeCharacter(_characterController);
+		SAFE_DELETE(_characterController);
 	}
 }
 void CharacterController::Start()
@@ -39,8 +35,8 @@ void CharacterController::Start()
 
 	Transform* transform = GetGameObject()->GetTransform();
 	const Aabb& box = transform->GetUnscaleBoundingBox();
-	Vector3 half_size = box.GetHalfSize();
-	_shape = new btCapsuleShape(half_size.x, half_size.y);
+	Vector3 halfSize = box.GetHalfSize();
+	_shape = new btCapsuleShape(halfSize.x, halfSize.y);
 
 	btTransform bt_transform;//NOTE:不处理旋转
 	bt_transform.setIdentity();
@@ -88,11 +84,11 @@ void CharacterController::Update()
 		//NOTE:不处理旋转
 	}
 }
-Object* CharacterController::Clone(Object* new_obj)
+Object* CharacterController::Clone(Object* newObj)
 {
-	base::Clone(new_obj);
-	CharacterController* obj = dynamic_cast<CharacterController*>(new_obj);
-	if (!obj)return new_obj;
+	base::Clone(newObj);
+	CharacterController* obj = dynamic_cast<CharacterController*>(newObj);
+	if (!obj)return newObj;
 
 	obj->SetStepHeight(_stepHeight);
 

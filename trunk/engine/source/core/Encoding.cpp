@@ -12,20 +12,30 @@ String Encoding::Convert(EncodingType from, EncodingType to, const char *src, in
 {
 	String ret = "";
 	int len = srclen * 4 + 1;
-	char* data = NewArray<char>(len);
+	char* data = Memory::NewArray<char>(len);
 	bool result = Convert(GetEncodingType(from), GetEncodingType(to), src, srclen, data, len);
 	if (result)ret = String(data);
-	DeleteArray(data);
+	Memory::DeleteArray(data);
 	return ret;
 }
 String Encoding::Convert(EncodingType from, EncodingType to, const String& src)
 {
 	String ret = "";
 	int len = src.Size() * 4 + 1;
-	char* data = NewArray<char>(len);
+	char* data = Memory::NewArray<char>(len);
 	bool result = Convert(GetEncodingType(from), GetEncodingType(to), src.c_str(), src.Size(), data, len);
 	if (result)ret = String(data);
-	DeleteArray(data);
+	Memory::DeleteArray(data);
+	return ret;
+}
+String Encoding::Convert(const char* from_charset, const char* to_charset, const String& src)
+{
+	String ret = "";
+	int len = src.Size() * 4 + 1;
+	char* data = Memory::NewArray<char>(len);
+	bool result = Convert((char*)(from_charset), (char*)to_charset, src.c_str(), src.Size(), data, len);
+	if (result)ret = String(data);
+	Memory::DeleteArray(data);
 	return ret;
 }
 int Encoding::GBKToUtf8(const char *src, int srclen, char* save, int savelen)
@@ -36,20 +46,20 @@ String Encoding::GBKToUtf8(const char *src, int srclen)
 {
 	String ret = "";
 	int len = srclen * 4 + 1;
-	char* data = NewArray<char>(len);
+	char* data = Memory::NewArray<char>(len);
 	bool result = Convert((char*)"gbk", (char*)"utf-8", src, srclen, data, len);
 	if (result)ret = String(data);
-	DeleteArray(data);
+	Memory::DeleteArray(data);
 	return ret;
 }
 String Encoding::GBKToUtf8(const String& src)
 {
 	String ret = "";
 	int len = src.Size() * 4 + 1;
-	char* data = NewArray<char>(len);
+	char* data = Memory::NewArray<char>(len);
 	bool result = Convert((char*)"gbk", (char*)"utf-8", src.c_str(), src.Size(), data, len);
 	if (result)ret = String(data);
-	DeleteArray(data);
+	Memory::DeleteArray(data);
 	return ret;
 }
 int Encoding::Utf8ToGBK(const char *src, int srclen, char* save, int savelen)
@@ -60,23 +70,23 @@ String Encoding::Utf8ToGBK(const char *src, int srclen)
 {
 	String ret = "";
 	int len = srclen * 4 + 1;
-	char* data = NewArray<char>(len);
+	char* data = Memory::NewArray<char>(len);
 	bool result = Convert((char*)"utf-8", (char*)"gbk", src, srclen, data, len);
 	if (result)ret = String(data);
-	DeleteArray(data);
+	Memory::DeleteArray(data);
 	return ret;
 }
 String Encoding::Utf8ToGBK(const String& src)
 {
 	String ret = "";
 	int len = src.Size() * 4 + 1;
-	char* data = NewArray<char>(len);
+	char* data = Memory::NewArray<char>(len);
 	bool result = Convert((char*)"utf-8", (char*)"gbk", src.data(), src.Size(), data, len);
 	if (result)ret = data;
-	DeleteArray(data);
+	Memory::DeleteArray(data);
 	return ret;
 }
-bool Encoding::Convert(char *from_charset, char *to_charset, const char *inbuf, size_t inlen, char *outbuf, size_t outlen)
+bool Encoding::Convert(const char *from_charset, const char *to_charset, const char *inbuf, size_t inlen, char *outbuf, size_t outlen)
 {
 	char **pin = (char **)&inbuf;
 	char **pout = &outbuf;

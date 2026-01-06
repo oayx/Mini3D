@@ -1,4 +1,4 @@
-#include "ReflectionProbe.h"
+﻿#include "ReflectionProbe.h"
 #include "Material.h"
 #include "runtime/graphics/null/RenderTexture.h" 
 #include "runtime/input/Input.h"
@@ -82,8 +82,8 @@ void ReflectionProbe::RenderImpl()
 		//渲染
 		RenderFrameDesc desc;
 		desc.face = face;
-		desc.clear_flag = _clearFlag;
-		desc.clear_color = _clearColor;
+		desc.clearFlag = _clearFlag;
+		desc.clearColor = _clearColor;
 		_renderTexture->BeginFrame(desc);
 		_renderQueue->Render(this);
 		_renderTexture->EndFrame();

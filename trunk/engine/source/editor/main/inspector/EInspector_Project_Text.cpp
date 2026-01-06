@@ -1,4 +1,4 @@
-#include "EInspector_Project_Text.h"
+﻿#include "EInspector_Project_Text.h"
 #include "runtime/resources/AssetsManager.h"
 #include "runtime/resources/Resources.h"
 #include "editor/EditorAppliction.h"
@@ -11,7 +11,7 @@ void EInspector_Project_Text::OnEnter()
 }
 void EInspector_Project_Text::Render(AssetMeta* meta)
 {
-	DC_PROFILE_FUNCTION();
+	DC_PROFILE_FUNCTION;
 	base::Render(meta);
 
 	if (!meta)return;

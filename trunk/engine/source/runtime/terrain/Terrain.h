@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Date：2020/12/19
@@ -10,7 +10,7 @@
 
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-class ENGINE_DLL Terrain Final : public Renderer
+class ENGINE_DLL Terrain final : public Renderer
 {
 	friend class GameObject;
 	DECLARE_OBJECT_CLONE;
@@ -20,7 +20,7 @@ class ENGINE_DLL Terrain Final : public Renderer
 	BEGIN_DERIVED_REFECTION_TYPE(Terrain, Renderer)
 		CTORS(DEFAULT_CTOR(Terrain))
 		ADD_EDITOR_COMPONENT("Terrain/Terrain")
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 	Terrain() = default;
 	~Terrain();

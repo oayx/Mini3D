@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2021/9/24
@@ -13,7 +13,7 @@ class btKinematicCharacterController;
 
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-class CharacterController Final : public Component
+class CharacterController final : public Component
 {
 	friend class GameObject;
 	DISALLOW_COPY_ASSIGN(CharacterController);
@@ -23,7 +23,7 @@ class CharacterController Final : public Component
 	BEGIN_DERIVED_REFECTION_TYPE(CharacterController, Component)
 		CTORS(DEFAULT_CTOR(CharacterController))
 		ADD_EDITOR_COMPONENT("Physics/CharacterController")
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 	CharacterController();
 	~CharacterController();

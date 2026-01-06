@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2021/1/5
@@ -12,7 +12,7 @@
 DC_BEGIN_NAMESPACE
 class ParticleSystem;
 /********************************************************************/
-class Particle Final : public Object
+class Particle final : public Object
 {
 	friend class ParticlePools;
 	friend class ParticleSystem;
@@ -23,7 +23,7 @@ class Particle Final : public Object
 	FRIEND_CONSTRUCT_DESTRUCT(Particle);
 	DISALLOW_COPY_ASSIGN(Particle);
 	BEGIN_DERIVED_REFECTION_TYPE(Particle, Object)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 	using base::base;
 
@@ -57,14 +57,14 @@ private:
 
 /********************************************************************/
 //粒子对象池
-class ParticlePools Final : public Object
+class ParticlePools final : public Object
 {
 	friend class Particle;
 	friend class Application;
 	typedef List<Particle*> Particles;
 	DISALLOW_CONSTRUCTOR_COPY_ASSIGN(ParticlePools);
 	BEGIN_DERIVED_REFECTION_TYPE(ParticlePools, Object)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 private:
 	~ParticlePools() {}
@@ -75,6 +75,6 @@ public:
 	static void Despawn(Particle* p);
 
 private:
-	static Particles _particles;
+	inline static Particles _particles;
 };
 DC_END_NAMESPACE

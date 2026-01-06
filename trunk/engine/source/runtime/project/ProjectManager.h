@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Description：项目管理
@@ -9,7 +9,7 @@
 
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-class ENGINE_DLL ProjectManager Final : public object
+class ENGINE_DLL ProjectManager final : public object
 {
 	friend class Application;
 	typedef Vector<Project*> Projectes;
@@ -45,6 +45,6 @@ private:
 	static void Save();
 
 private:
-	static Projectes _projectes;
+	inline static Projectes _projectes;
 };
 DC_END_NAMESPACE

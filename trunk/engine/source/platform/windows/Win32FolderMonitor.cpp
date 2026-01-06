@@ -1,12 +1,8 @@
-#include "Win32FolderMonitor.h"
+﻿#include "Win32FolderMonitor.h"
  
 DC_BEGIN_NAMESPACE
 /********************************************************************/
 IMPL_DERIVED_REFECTION_TYPE(Win32FolderMonitor, Object);
-bool Win32FolderMonitor::_isClose = false;
-std::thread Win32FolderMonitor::_handle;
-std::string Win32FolderMonitor::_watchFolder = "";
-Function<void()> Win32FolderMonitor::_callback;
 bool Win32FolderMonitor::Watch(const std::string& folder, const Function<void()>& callback)
 {
 	if (folder.empty())return false;
@@ -37,8 +33,8 @@ void Win32FolderMonitor::Run()
 		| FILE_NOTIFY_CHANGE_FILE_NAME;
 
 	// 只监视实际的写入
-	std::wstring w_path = Encoding::Utf8ToWChar(_watchFolder);
-	HANDLE hFind = ::FindFirstChangeNotification(w_path.c_str(), TRUE, dwNotificationFlags);
+	std::wstring wPath = Encoding::Utf8ToWChar(_watchFolder);
+	HANDLE hFind = ::FindFirstChangeNotification(wPath.c_str(), TRUE, dwNotificationFlags);
 	if (INVALID_HANDLE_VALUE == hFind)
 	{
 		return;

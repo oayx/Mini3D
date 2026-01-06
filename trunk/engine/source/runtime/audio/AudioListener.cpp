@@ -1,4 +1,4 @@
- 
+﻿ 
 #include "AudioListener.h"
 #include "AudioManager.h"
 
@@ -62,11 +62,11 @@ AudioListener::~AudioListener()
 {
 	SAFE_DELETE(_private);
 }
-Object* AudioListener::Clone(Object* new_obj)
+Object* AudioListener::Clone(Object* newObj)
 {
-	base::Clone(new_obj);
-	AudioListener* obj = dynamic_cast<AudioListener*>(new_obj);
-	if (!obj)return new_obj;
+	base::Clone(newObj);
+	AudioListener* obj = dynamic_cast<AudioListener*>(newObj);
+	if (!obj)return newObj;
 
 	return obj;
 }

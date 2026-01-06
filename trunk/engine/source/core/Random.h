@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************************************/
 // @author hannibal
 // @date   2015/05/28
@@ -10,7 +10,7 @@
 
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-class ENGINE_DLL Random Final : public object
+class ENGINE_DLL Random final : public object
 {
 public:
 	explicit Random(uint seed = 0)
@@ -20,18 +20,18 @@ public:
 
 public:
 	// random number between 0.0 and 1.0
-	float GetFloat0_1()
+	float GetFloat0_1() noexcept
 	{
 		return GetFloatFromInt(Get());
 	}
 
 	// random number between -1.0 and 1.0
-	float GetSignedFloat_1_1()
+	float GetSignedFloat_1_1() noexcept
 	{
 		return GetFloat0_1() * 2.0f - 1.0f;
 	}
 
-	int RandomRange(int min, int max)
+	int RandomRange(int min, int max) noexcept
 	{
 		int dif;
 		if (min < max)
@@ -54,14 +54,14 @@ public:
 		}
 	}
 
-	float RandomRange(float min, float max)
+	float RandomRange(float min, float max) noexcept
 	{
 		float t = GetFloat0_1();
 		t = min * t + (1.0f - t) * max;
 		return t;
 	}
 
-	void SetSeed(uint seed)
+	void SetSeed(uint seed) noexcept
 	{
 		x = seed;
 		y = x * 1812433253U + 1;
@@ -69,10 +69,10 @@ public:
 		w = z * 1812433253U + 1;
 	}
 
-	uint GetSeed() const { return x; }
+	constexpr uint GetSeed() const noexcept { return x; }
 
 private:
-	uint Get()
+	uint Get() noexcept
 	{
 		uint t;
 		t = x ^ (x << 11);
@@ -80,13 +80,13 @@ private:
 		return w = (w ^ (w >> 19)) ^ (t ^ (t >> 8));
 	}
 
-	inline static float GetFloatFromInt(uint value)
+	constexpr inline static float GetFloatFromInt(uint value) noexcept
 	{
 		// take 23 bits of integer, and divide by 2^23-1
 		return float(value & 0x007FFFFF) * (1.0f / 8388607.0f);
 	}
 
-	inline static byte GetByteFromInt(uint value)
+	constexpr inline static byte GetByteFromInt(uint value) noexcept
 	{
 		// take the most significant byte from the 23-bit value
 		return byte(value >> (23 - 8));

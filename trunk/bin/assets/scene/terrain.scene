@@ -1,14 +1,14 @@
 <Root>
     <Lighting>
         <AmbientColor>0.287356, 0.287353, 0.287353, 1.000000</AmbientColor>
-        <SkyboxMaterial>3766671e950823dc963e31d522d70755</SkyboxMaterial>
+        <SkyboxMaterial>2c2d336dbf1804d1e8503de784fc3469</SkyboxMaterial>
         <ReflectionsIntensity>0.5</ReflectionsIntensity>
-        <enable>false</enable>
-        <mode>0</mode>
-        <color>1.000000, 0.999990, 0.999990, 1.000000</color>
-        <start>100</start>
-        <end>300</end>
-        <density>0.0099999998</density>
+        <Enable>false</Enable>
+        <Mode>0</Mode>
+        <Color>1.000000, 1.000000, 1.000000, 1.000000</Color>
+        <Start>0</Start>
+        <End>0</End>
+        <Density>0.0099999998</Density>
         <GameObject>
             <InstanceName>New Scane</InstanceName>
             <Flags>0</Flags>
@@ -56,23 +56,23 @@
                 <Camera>
                     <Enable>true</Enable>
                     <TargetDisplay>0</TargetDisplay>
-                    <fFov>0.78539813</fFov>
-                    <fAspect>1.7777778</fAspect>
-                    <fZNear>0.1</fZNear>
-                    <fZFar>1000</fZFar>
+                    <FFov>0.78539813</FFov>
+                    <FAspect>1.6144578</FAspect>
+                    <FZNear>0.1</FZNear>
+                    <FZFar>1000</FZFar>
                     <IsOrthographic>false</IsOrthographic>
                     <OrthographicSize>5.000000, 5.000000</OrthographicSize>
                     <ClearFlag>15</ClearFlag>
                     <ClearColor>0.500000, 0.500000, 0.500000, 0.000000</ClearColor>
                     <ViewPort>
-                        <x>0</x>
-                        <y>0</y>
-                        <w>1</w>
-                        <h>1</h>
-                        <z_near>0</z_near>
-                        <z_far>1</z_far>
+                        <X>0</X>
+                        <Y>0</Y>
+                        <W>1</W>
+                        <H>1</H>
+                        <Z_near>0</Z_near>
+                        <Z_far>1</Z_far>
                     </ViewPort>
-                    <nDepth>0</nDepth>
+                    <NDepth>0</NDepth>
                     <CullMask>4294967293</CullMask>
                     <EnableHDR>false</EnableHDR>
                     <EnableMSAA>true</EnableMSAA>
@@ -155,16 +155,16 @@
                 </Transform>
                 <Light>
                     <Enable>true</Enable>
-                    <mType>0</mType>
+                    <MType>0</MType>
                     <Diffuse>0.478927, 0.478922, 0.478922, 1.000000</Diffuse>
                     <Range>10</Range>
                     <Attenuation>1.000000, 1.000000, 0.100000</Attenuation>
                     <Intensity>1</Intensity>
                     <SpotAngle>30</SpotAngle>
-                    <CullMask>4294967295</CullMask>
                     <ShadowType>2</ShadowType>
                     <ShadowStrength>0.80000001</ShadowStrength>
                     <ShadowBias>0</ShadowBias>
+                    <CullMask>4294967295</CullMask>
                 </Light>
                 <Childrens/>
             </GameObject>
@@ -485,9 +485,9 @@
                     </Components>
                     <Transform>
                         <Enable>true</Enable>
-                        <LocalPosition>28.461800, 0.000000, -0.000005</LocalPosition>
+                        <LocalPosition>28.448830, 0.000000, 0.462709</LocalPosition>
                         <LocalRotation>-0.707107, 0.000000, 0.000000, 0.707107</LocalRotation>
-                        <LocalScale>5.000000, 4.999947, 0.999993</LocalScale>
+                        <LocalScale>5.000000, 4.999855, 0.999982</LocalScale>
                     </Transform>
                     <ParticleSystem>
                         <Enable>true</Enable>
@@ -709,7 +709,7 @@
                     <Materials>
                         <Material>7a7ce6b86f4366cfbc5547543f16af54</Material>
                     </Materials>
-                    <MeshFile>b39b95d0d6d26fcac217e3ab22110b20</MeshFile>
+                    <MeshFile></MeshFile>
                 </MeshRender>
                 <Childrens/>
             </GameObject>
@@ -735,7 +735,7 @@
                     <Materials>
                         <Material>d6d658e69fa4e965ea9aa4a1c8472416</Material>
                     </Materials>
-                    <MeshFile>37e5365aaeb7a5eda722c72f58009283</MeshFile>
+                    <MeshFile></MeshFile>
                 </MeshRender>
                 <Childrens/>
             </GameObject>
@@ -789,7 +789,7 @@
                     <Materials>
                         <Material>0c2ae94e325ada491d6858d52989ecf1</Material>
                     </Materials>
-                    <MeshFile>36715df3250ae492d75dc46eacff5df9</MeshFile>
+                    <MeshFile></MeshFile>
                 </MeshRender>
                 <SphereCollider>
                     <Enable>true</Enable>

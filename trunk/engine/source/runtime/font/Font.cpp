@@ -1,4 +1,4 @@
- 
+﻿ 
 #include "Font.h"
 #include "FontManager.h"
 #include "core/image/Image.h"
@@ -20,6 +20,7 @@ Font::~Font()
 	if (_font)
 	{
 		FT_Done_Face((FT_Face)_font);
+		_font = nullptr;
 	}
 	for (auto list_glyphs : _glyphs)
 	{
@@ -73,8 +74,8 @@ const GlyphInfo* Font::GetGlyph(char32_t c, ushort size, bool bold, bool italic,
 	FT_Error error = FT_Set_Char_Size(face, face_size << 6, face_size << 6, 0, 0);
 
 	FT_GlyphSlot slot = face->glyph;
-	auto glyph_index = FT_Get_Char_Index(face, c);
-	if (glyph_index == 0)
+	auto glyphIndex = FT_Get_Char_Index(face, c);
+	if (glyphIndex == 0)
 	{
 		Debuger::Warning("FT_Get_Char_Index:%d", c);
 	}
@@ -137,7 +138,7 @@ const GlyphInfo* Font::GetGlyph(char32_t c, ushort size, bool bold, bool italic,
 		}
 	}
 
-	p_glyph->glyph_index = glyph_index;
+	p_glyph->glyphIndex = glyphIndex;
 	p_glyph->width = slot->bitmap.width;
 	p_glyph->height = slot->bitmap.rows;
 	p_glyph->bearing_x = slot->bitmap_left;
@@ -212,12 +213,12 @@ bool Font::HasKerning() const
 	return FT_HAS_KERNING(face);
 }
 
-Vector2 Font::GetKerning(uint previous_glyph_index, uint glyph_index)
+Vector2 Font::GetKerning(uint previousGlyphIndex, uint glyphIndex)
 {
 	FT_Face face = (FT_Face)_font;
 
 	FT_Vector kerning;
-	FT_Get_Kerning(face, previous_glyph_index, glyph_index, FT_KERNING_UNFITTED, &kerning);
+	FT_Get_Kerning(face, previousGlyphIndex, glyphIndex, FT_KERNING_UNFITTED, &kerning);
 
 	return Vector2((float)(kerning.x >> 6), (float)(kerning.x >> 6));
 }

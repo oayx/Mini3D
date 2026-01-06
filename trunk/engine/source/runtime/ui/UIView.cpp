@@ -1,4 +1,4 @@
-#include "UIView.h"
+﻿#include "UIView.h"
 #include "UICanvas.h"
 #include "UIAtlas.h"
 #include "runtime/component/Component.inl"
@@ -29,11 +29,11 @@ UIView::~UIView()
 	}
 	_childrens.Clear();
 }
-Object* UIView::Clone(Object* new_obj)
+Object* UIView::Clone(Object* newObj)
 {
-	base::Clone(new_obj);
-	UIView* obj = dynamic_cast<UIView*>(new_obj);
-	if (!obj)return new_obj;
+	base::Clone(newObj);
+	UIView* obj = dynamic_cast<UIView*>(newObj);
+	if (!obj)return newObj;
 
 	obj->SetColor(_color);
 	obj->SetRaycastTarget(_raycastTarget);
@@ -123,8 +123,8 @@ void UIView::SetParent(UIView* panel)
 }
 UICanvas* UIView::GetCanvas()
 {
-	UICanvas* root_canvas = this->GetComponent<UICanvas>();
-	if (root_canvas == nullptr)
+	UICanvas* rootCanvas = this->GetComponent<UICanvas>();
+	if (rootCanvas == nullptr)
 	{//向上递归
 		Transform* parent = this->GetTransform()->GetParent();
 		while (parent != nullptr)
@@ -132,25 +132,25 @@ UICanvas* UIView::GetCanvas()
 			UICanvas* canvas = parent->GetComponent<UICanvas>();
 			if (canvas != nullptr)
 			{
-				root_canvas = canvas;
+				rootCanvas = canvas;
 				break;
 			}
 			parent = parent->GetParent();
 		}
 	}
-	return root_canvas;
+	return rootCanvas;
 }
 UICanvas* UIView::GetRootCanvas()
 {
-	UICanvas* root_canvas = this->GetComponent<UICanvas>();
+	UICanvas* rootCanvas = this->GetComponent<UICanvas>();
 	Transform* parent = this->GetTransform()->GetParent();
 	while (parent != nullptr)
 	{//向上递归到最顶级
 		UICanvas* canvas = parent->GetComponent<UICanvas>();
-		if (canvas != nullptr) root_canvas = canvas;
+		if (canvas != nullptr) rootCanvas = canvas;
 		parent = parent->GetParent();
 	}
-	return root_canvas;
+	return rootCanvas;
 }
 void UIView::OnMouseDown(const Vector2& pos, MouseBtnID btn)
 {
@@ -158,17 +158,17 @@ void UIView::OnMouseDown(const Vector2& pos, MouseBtnID btn)
 	_isMouseDown[(int)btn] = true;
 	_mouseDownTime[(int)btn] = Time::GetRealTimeSinceStartup();
 
-	UIEventType event_type = UIEventType::LMouseDown;
+	UIEventType eventType = UIEventType::LMouseDown;
 	switch (btn)
 	{
-	case MouseBtnID::Left: event_type = UIEventType::LMouseDown; break;
-	case MouseBtnID::Right: event_type = UIEventType::RMouseDown; break;
-	case MouseBtnID::Mid: event_type = UIEventType::MMouseDown; break;
+	case MouseBtnID::Left: eventType = UIEventType::LMouseDown; break;
+	case MouseBtnID::Right: eventType = UIEventType::RMouseDown; break;
+	case MouseBtnID::Mid: eventType = UIEventType::MMouseDown; break;
 	default: break;
 	}
-	UIEventInfo info = { event_type, this, pos, (int)btn, KeyCode::Null };
-	if(_eventActioin[(int)event_type])
-		_eventActioin[(int)event_type](info);
+	UIEventInfo info = { eventType, this, pos, (int)btn, KeyCode::Null };
+	if(_eventActioin[(int)eventType])
+		_eventActioin[(int)eventType](info);
 
 	this->SetNeedRebuild();
 }
@@ -177,17 +177,17 @@ void UIView::OnMouseUpInside(const Vector2& pos, MouseBtnID btn)
 	//Debuger::Log("OnMouseUpInside:%s", this->GetName().c_str());
 	_isMouseDown[(int)btn] = false;
 
-	UIEventType event_type = UIEventType::LMouseDown;
+	UIEventType eventType = UIEventType::LMouseDown;
 	switch (btn)
 	{
-	case MouseBtnID::Left: event_type = UIEventType::LMouseUpInside; break;
-	case MouseBtnID::Right: event_type = UIEventType::RMouseUpInside; break;
-	case MouseBtnID::Mid: event_type = UIEventType::MMouseUpInside; break;
+	case MouseBtnID::Left: eventType = UIEventType::LMouseUpInside; break;
+	case MouseBtnID::Right: eventType = UIEventType::RMouseUpInside; break;
+	case MouseBtnID::Mid: eventType = UIEventType::MMouseUpInside; break;
 	default: break;
 	}
-	UIEventInfo info = { event_type, this, pos, (int)btn, KeyCode::Null };
-	if (_eventActioin[(int)event_type])
-		_eventActioin[(int)event_type](info);
+	UIEventInfo info = { eventType, this, pos, (int)btn, KeyCode::Null };
+	if (_eventActioin[(int)eventType])
+		_eventActioin[(int)eventType](info);
 
 	this->SetNeedRebuild();
 }
@@ -196,17 +196,17 @@ void UIView::OnMouseUpOutside(const Vector2& pos, MouseBtnID btn)
 	//Debuger::Log("OnMouseUpOutside:%s", this->GetName().c_str());
 	_isMouseDown[(int)btn] = false;
 
-	UIEventType event_type = UIEventType::LMouseDown;
+	UIEventType eventType = UIEventType::LMouseDown;
 	switch (btn)
 	{
-	case MouseBtnID::Left: event_type = UIEventType::LMouseUpOutside; break;
-	case MouseBtnID::Right: event_type = UIEventType::RMouseUpOutside; break;
-	case MouseBtnID::Mid: event_type = UIEventType::MMouseUpOutside; break;
+	case MouseBtnID::Left: eventType = UIEventType::LMouseUpOutside; break;
+	case MouseBtnID::Right: eventType = UIEventType::RMouseUpOutside; break;
+	case MouseBtnID::Mid: eventType = UIEventType::MMouseUpOutside; break;
 	default: break;
 	}
-	UIEventInfo info = { event_type, this, pos, (int)btn, KeyCode::Null };
-	if (_eventActioin[(int)event_type])
-		_eventActioin[(int)event_type](info);
+	UIEventInfo info = { eventType, this, pos, (int)btn, KeyCode::Null };
+	if (_eventActioin[(int)eventType])
+		_eventActioin[(int)eventType](info);
 
 	this->SetNeedRebuild();
 }
@@ -215,17 +215,17 @@ void UIView::OnMouseClick(const Vector2& pos, MouseBtnID btn)
 	//Debuger::Log("OnMouseClick:%s", this->GetName().c_str());
 	_isMouseDown[(int)btn] = false;
 
-	UIEventType event_type = UIEventType::LMouseDown;
+	UIEventType eventType = UIEventType::LMouseDown;
 	switch (btn)
 	{
-	case MouseBtnID::Left: event_type = UIEventType::LMouseClick; break;
-	case MouseBtnID::Right: event_type = UIEventType::RMouseClick; break;
-	case MouseBtnID::Mid: event_type = UIEventType::MMouseClick; break;
+	case MouseBtnID::Left: eventType = UIEventType::LMouseClick; break;
+	case MouseBtnID::Right: eventType = UIEventType::RMouseClick; break;
+	case MouseBtnID::Mid: eventType = UIEventType::MMouseClick; break;
 	default: break;
 	}
-	UIEventInfo info = { event_type, this, pos, (int)btn, KeyCode::Null };
-	if (_eventActioin[(int)event_type])
-		_eventActioin[(int)event_type](info);
+	UIEventInfo info = { eventType, this, pos, (int)btn, KeyCode::Null };
+	if (_eventActioin[(int)eventType])
+		_eventActioin[(int)eventType](info);
 
 	this->SetNeedRebuild();
 }

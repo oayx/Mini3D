@@ -38,8 +38,8 @@ void* DX9HardwareIndexBuffer::Lock(const IndexBufferDesc& desc)
 	//由于需要处理设备丢失，这里不用Lock，而是分配一块内存；设备恢复时直接使用这块内存
 	if (rebuild)
 	{
-		DeleteArray(_bufferData);
-		_bufferData = NewArray<byte>(this->GetBufferCapacity());
+		Memory::DeleteArray(_bufferData);
+		_bufferData = Memory::NewArray<byte>(this->GetBufferCapacity());
 	}
 	return _bufferData;
 }

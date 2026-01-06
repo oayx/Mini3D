@@ -1,4 +1,4 @@
-#include "Skeleton2d.h"
+﻿#include "Skeleton2d.h"
 #include "SkeletonExtension2d.h"
 #include "runtime/graphics/null/Texture.h"
 #include "runtime/graphics/Material.h"
@@ -37,10 +37,10 @@ Skeleton2d::Skeleton2d()
 }
 Skeleton2d::~Skeleton2d()
 {
-	delete(_skeleton);
-	delete(_animationStateData);
-	delete(_animationState);
-	delete(_clipper);
+	SAFE_DELETE(_skeleton);
+	SAFE_DELETE(_animationStateData);
+	SAFE_DELETE(_animationState);
+	SAFE_DELETE(_clipper);
 }
 void Skeleton2d::Awake()
 {
@@ -50,6 +50,7 @@ void Skeleton2d::Awake()
 }
 void Skeleton2d::Update()
 {
+	DC_PROFILE_FUNCTION;
 	base::Update();
 	if (_skeleton == nullptr)
 	{
@@ -73,6 +74,7 @@ void Skeleton2d::OnDrawGizmos(Camera* camera)
 }
 bool Skeleton2d::LoadFromFile(const String& json_file, const String& atlas_file)
 {
+	DC_PROFILE_FUNCTION;
 	delete(_skeleton);
 	delete(_animationStateData);
 	delete(_animationState);
@@ -81,11 +83,11 @@ bool Skeleton2d::LoadFromFile(const String& json_file, const String& atlas_file)
 	spine::Atlas* atlas = new spine::Atlas(atlas_res_file.c_str(), &texture_loader);
 
 	spine::SkeletonJson json(atlas);
-	spine::SkeletonData* skeleton_data = json.readSkeletonDataFile(Resource::GetFullDataPath(json_file).c_str());
+	spine::SkeletonData* skeletonData = json.readSkeletonDataFile(Resource::GetFullDataPath(json_file).c_str());
 
-	_skeleton = new spine::Skeleton(skeleton_data);
+	_skeleton = new spine::Skeleton(skeletonData);
 
-	_animationStateData = new spine::AnimationStateData(skeleton_data);
+	_animationStateData = new spine::AnimationStateData(skeletonData);
 	_animationStateData->setDefaultMix(0.1f);
 	
 	_animationState = new spine::AnimationState(_animationStateData);
@@ -93,6 +95,7 @@ bool Skeleton2d::LoadFromFile(const String& json_file, const String& atlas_file)
 }
 bool Skeleton2d::LoadFromBinary(const String& json_file, const String& atlas_file)
 {
+	DC_PROFILE_FUNCTION;
 	delete(_skeleton);
 	delete(_animationStateData);
 	delete(_animationState);
@@ -101,11 +104,11 @@ bool Skeleton2d::LoadFromBinary(const String& json_file, const String& atlas_fil
 	spine::Atlas* atlas = new spine::Atlas(atlas_res_file.c_str(), &texture_loader);
 
 	spine::SkeletonBinary binary(atlas);
-	spine::SkeletonData* skeleton_data = binary.readSkeletonDataFile(Resource::GetFullDataPath(json_file).c_str());
+	spine::SkeletonData* skeletonData = binary.readSkeletonDataFile(Resource::GetFullDataPath(json_file).c_str());
 
-	_skeleton = new spine::Skeleton(skeleton_data);
+	_skeleton = new spine::Skeleton(skeletonData);
 
-	_animationStateData = new spine::AnimationStateData(skeleton_data);
+	_animationStateData = new spine::AnimationStateData(skeletonData);
 	_animationStateData->setDefaultMix(0.1f);
 
 	_animationState = new spine::AnimationState(_animationStateData);
@@ -186,12 +189,13 @@ bool Skeleton2d::SetSkin(const String& name)
 }
 void Skeleton2d::BuildMesh()
 {
+	DC_PROFILE_FUNCTION;
 	this->ClearData();
 	Material* material = GetMaterial(0);
 
-	int vertex_count = ComputeTotalVertexCount(0, std::numeric_limits<int>::max());
-	int vertex_offset = 0;
-	Vector<float> vertex(vertex_count);
+	int vertexCount = ComputeTotalVertexCount(0, std::numeric_limits<int>::max());
+	int vertexOffset = 0;
+	Vector<float> vertex(vertexCount);
 	TransformWorldVertices(vertex, 0, std::numeric_limits<int>::max());
 
 	for (int i = 0; i < (int)_skeleton->getSlots().size(); ++i)
@@ -205,8 +209,8 @@ void Skeleton2d::BuildMesh()
 
 		if (slot->getAttachment()->getRTTI().isExactly(spine::RegionAttachment::rtti))
 		{
-			int prim_index = GetPrimitiveCount();
-			Primitive* primitive = GetPrimitive(prim_index);
+			int primIndex = GetPrimitiveCount();
+			//Primitive* primitive = GetPrimitive(primIndex);
 
 			spine::RegionAttachment* attachment = static_cast<spine::RegionAttachment*>(slot->getAttachment());
 			spine::AtlasRegion* region = (spine::AtlasRegion*)attachment->getRendererObject();
@@ -218,18 +222,18 @@ void Skeleton2d::BuildMesh()
 			spine::Vector<float>& uvs = attachment->getUVs();
 			for (int j = 0; j < 4; ++j)
 			{
-				AddVertex(Vector3(vertex[vertex_offset + j * 2 + 0], vertex[vertex_offset + j * 2 + 1], 0), prim_index);
-				AddColor(color, prim_index);
-				AddTexcoord1(Vector2(uvs[j * 2 + 0], uvs[j * 2 + 1]), prim_index);
+				AddVertex(Vector3(vertex[vertexOffset + j * 2 + 0], vertex[vertexOffset + j * 2 + 1], 0), primIndex);
+				AddColor(color, primIndex);
+				AddTexcoord1(Vector2(uvs[j * 2 + 0], uvs[j * 2 + 1]), primIndex);
 			}
 
-			SetIndices({ 0,1,2,0,2,3 }, prim_index);
-			vertex_offset += 8;
+			SetIndices({ 0,1,2,0,2,3 }, primIndex);
+			vertexOffset += 8;
 		}
 		else if (slot->getAttachment()->getRTTI().isExactly(spine::MeshAttachment::rtti))
 		{
-			int prim_index = GetPrimitiveCount();
-			Primitive* primitive = GetPrimitive(prim_index);
+			int primIndex = GetPrimitiveCount();
+			//Primitive* primitive = GetPrimitive(primIndex);
 
 			spine::MeshAttachment* attachment = (spine::MeshAttachment*)slot->getAttachment();
 			spine::AtlasRegion* region = (spine::AtlasRegion*)attachment->getRendererObject();
@@ -241,16 +245,16 @@ void Skeleton2d::BuildMesh()
 			spine::Vector<float>& uvs = attachment->getUVs();
 			for (uint j = 0; j < attachment->getWorldVerticesLength() >> 1; j += 1)
 			{
-				AddVertex(Vector3(vertex[vertex_offset + j * 2 + 0], vertex[vertex_offset + j * 2 + 1], 0), prim_index);
-				AddColor(color, prim_index);
-				AddTexcoord1(Vector2(uvs[j * 2 + 0], uvs[j * 2 + 1]), prim_index);
+				AddVertex(Vector3(vertex[vertexOffset + j * 2 + 0], vertex[vertexOffset + j * 2 + 1], 0), primIndex);
+				AddColor(color, primIndex);
+				AddTexcoord1(Vector2(uvs[j * 2 + 0], uvs[j * 2 + 1]), primIndex);
 			}
 
 			for (uint j = 0; j < attachment->getTriangles().size(); ++j)
 			{
-				AddIndex(attachment->getTriangles()[j], prim_index);
+				AddIndex(attachment->getTriangles()[j], primIndex);
 			}
-			vertex_offset += (int)attachment->getWorldVerticesLength();
+			vertexOffset += (int)attachment->getWorldVerticesLength();
 		}
 		else if (slot->getAttachment()->getRTTI().isExactly(spine::ClippingAttachment::rtti))
 		{
@@ -275,7 +279,8 @@ void Skeleton2d::CalBoundingBox()
 		if (!slot->getAttachment()) continue;
 		if (slot->getAttachment()->getRTTI().isExactly(spine::RegionAttachment::rtti))
 		{
-			spine::RegionAttachment* attachment = static_cast<spine::RegionAttachment*>(slot->getAttachment());
+			//TODO
+			//spine::RegionAttachment* attachment = static_cast<spine::RegionAttachment*>(slot->getAttachment());
 		}
 	}
 }
@@ -306,7 +311,7 @@ int Skeleton2d::ComputeTotalVertexCount(int startSlotIndex, int endSlotIndex)
 }
 void Skeleton2d::TransformWorldVertices(Vector<float>& vertex, int startSlotIndex, int endSlotIndex)
 {
-	float* dst_ptr = &vertex[0];
+	float* dstPtr = &vertex[0];
 	for (size_t i = 0; i < _skeleton->getSlots().size(); ++i)
 	{
 		spine::Slot& slot = *_skeleton->getDrawOrder()[i];
@@ -318,14 +323,14 @@ void Skeleton2d::TransformWorldVertices(Vector<float>& vertex, int startSlotInde
 		if (attachment->getRTTI().isExactly(spine::RegionAttachment::rtti)) 
 		{
 			spine::RegionAttachment* const regionAttachment = static_cast<spine::RegionAttachment*>(attachment);
-			regionAttachment->computeWorldVertices(slot.getBone(), dst_ptr, 0, 2);
-			dst_ptr += 8;
+			regionAttachment->computeWorldVertices(slot.getBone(), dstPtr, 0, 2);
+			dstPtr += 8;
 		}
 		else if (attachment->getRTTI().isExactly(spine::MeshAttachment::rtti)) 
 		{
 			spine::MeshAttachment* const mesh = static_cast<spine::MeshAttachment*>(attachment);
-			mesh->computeWorldVertices(slot, 0, mesh->getWorldVerticesLength(), dst_ptr, 0, 2);
-			dst_ptr += mesh->getWorldVerticesLength();
+			mesh->computeWorldVertices(slot, 0, mesh->getWorldVerticesLength(), dstPtr, 0, 2);
+			dstPtr += mesh->getWorldVerticesLength();
 		}
 	}
 }

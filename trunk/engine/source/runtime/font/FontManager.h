@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************************************/
 // @author hannibal
 // @date   2020/08/11
@@ -11,7 +11,7 @@
 DC_BEGIN_NAMESPACE
 class Font;
 /********************************************************************/
-class FontManager Final : public object
+class FontManager final : public object
 {
 	friend class Font;
 	friend class Application;
@@ -33,7 +33,7 @@ public:
 	static void DestroyFont();
 
 private:
-	static String	 _defaultFont;
-	static Fonts	 _fonts;
+	inline static String _defaultFont = "msyh";
+	inline static Fonts	 _fonts;
 };
 DC_END_NAMESPACE

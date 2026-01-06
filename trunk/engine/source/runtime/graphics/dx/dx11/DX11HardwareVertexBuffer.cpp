@@ -1,4 +1,4 @@
-#include "DX11HardwareVertexBuffer.h"
+﻿#include "DX11HardwareVertexBuffer.h"
 #include "DX11Device.h"
 #include "DX11Program.h"
  
@@ -50,21 +50,21 @@ void* DX11HardwareVertexBuffer::Lock(const VertexBufferDesc& desc)
 			AssertEx(false, "error usage:%d", (int)_usage);
 			break;
 		}
-		HR(GetDX11Device()->GetDevice()->CreateBuffer(&sd, nullptr, &_vertexBuffer[desc.stream]));
+		DX_ERROR(GetDX11Device()->GetDevice()->CreateBuffer(&sd, nullptr, &_vertexBuffer[desc.stream]));
 	}
 
 	if (_usage == GPUResourceUsage::Dynamic)
 	{
 		D3D11_MAPPED_SUBRESOURCE res = { };
-		HR(GetDX11Device()->GetContent()->Map(_vertexBuffer[desc.stream], 0, D3D11_MAP_WRITE_DISCARD, 0, &res));
+		DX_ERROR(GetDX11Device()->GetContent()->Map(_vertexBuffer[desc.stream], 0, D3D11_MAP_WRITE_DISCARD, 0, &res));
 		return res.pData;
 	}
 	else
 	{
 		if (!_bufferData[desc.stream] || rebuild)
 		{
-			DeleteArray(_bufferData[desc.stream]);
-			_bufferData[desc.stream] = NewArray<float>(this->GetBufferCapacity(desc.stream));
+			Memory::DeleteArray(_bufferData[desc.stream]);
+			_bufferData[desc.stream] = Memory::NewArray<float>(this->GetBufferCapacity(desc.stream));
 			::memset(_bufferData[desc.stream], 0, this->GetBufferCapacity(desc.stream));
 		}
 		return _bufferData[desc.stream];
@@ -88,7 +88,7 @@ void  DX11HardwareVertexBuffer::Unlock(const VertexBufferDesc& desc)
 }
 void DX11HardwareVertexBuffer::Render(CGProgram* shader)
 {
-	DC_PROFILE_FUNCTION();
+	DC_PROFILE_FUNCTION;
 	uint size[] = { this->GetVertexSize(0), this->GetVertexSize(1) };
 	uint offset[] = { 0, 0 };
 	int count = this->GetInstanceCount() > 0 ? 2 : 1;
@@ -102,6 +102,7 @@ void DX11HardwareVertexBuffer::Render(CGProgram* shader)
 }
 void DX11HardwareVertexBuffer::BuildInputLayout(CGProgram* shader)
 {
+	DC_PROFILE_FUNCTION;
 	SAFE_RELEASE(_inputLayout);
 
 	Vector<D3D11_INPUT_ELEMENT_DESC> element_desc;
@@ -115,7 +116,7 @@ void DX11HardwareVertexBuffer::BuildInputLayout(CGProgram* shader)
 			D3D11_INPUT_ELEMENT_DESC desc;
 			desc.SemanticName = DXGetInputSemantic(element->GetSemantic());
 			desc.SemanticIndex = (UINT)element->GetIndex() + stream;
-			desc.Format = DX11GetVertexType(element->GetType());
+			desc.Format = DX10GetVertexType(element->GetType());
 			desc.InputSlot = (UINT)element->GetStream();
 			desc.AlignedByteOffset = (UINT)element->GetOffset();
 			desc.InputSlotClass = is_instance ? D3D11_INPUT_PER_INSTANCE_DATA : D3D11_INPUT_PER_VERTEX_DATA;

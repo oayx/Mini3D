@@ -1,4 +1,4 @@
-#include "DX11Texture.h"
+﻿#include "DX11Texture.h"
 #include "DX11Device.h" 
 #include "DX11RenderContent.h"
 #include "core/image/Image.h"
@@ -77,19 +77,19 @@ void DX11Texture::CreateTexture()
 	desc.Height = _imageHeight;
 	desc.MipLevels = _enableMips ? 0 : 1;	//0自动生成全部，1只生成最大的一张，其他值生成对应数量的
 	desc.ArraySize = _textureType == TextureType::Cube ? 6 : 1;//可以用于创建纹理数组，这里指定纹理的数目，单个纹理使用1
-	desc.Format = DX11GetTextureFormat(_imageFormat, this->IsSRGB());
+	desc.Format = DX10GetTextureFormat(_imageFormat, this->IsSRGB());
 	desc.SampleDesc.Count = 1;			// MSAA采样数(对于经常作为着色器资源的纹理，通常是不能对其开启MSAA的，应当把Count设为1，Quality设为0)
 	desc.SampleDesc.Quality = 0;		// MSAA质量等级
 	desc.Usage = usage;
 	desc.BindFlags = bind_flags;
 	desc.CPUAccessFlags = cpu_flags;
 	desc.MiscFlags = misc_flags;
-	HR(GetDX11Device()->GetDevice()->CreateTexture2D(&desc, NULL, &_colorTexture));
+	DX_ERROR(GetDX11Device()->GetDevice()->CreateTexture2D(&desc, NULL, &_colorTexture));
 }
 void DX11Texture::CreateTextureView()
 {
 	D3D11_SHADER_RESOURCE_VIEW_DESC view_desc = {};
-	view_desc.Format = DX11GetShaderViewFormat(_imageFormat, this->IsSRGB());
+	view_desc.Format = DX10GetShaderViewFormat(_imageFormat, this->IsSRGB());
 	if (_textureType == TextureType::Cube)
 	{
 		view_desc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURECUBE;
@@ -110,7 +110,7 @@ void DX11Texture::CreateTextureView()
 			view_desc.Texture2D.MipLevels = 1;
 		}
 	}
-	HR(GetDX11Device()->GetDevice()->CreateShaderResourceView(_colorTexture, &view_desc, &_colorTextureView));
+	DX_ERROR(GetDX11Device()->GetDevice()->CreateShaderResourceView(_colorTexture, &view_desc, &_colorTextureView));
 }
 byte* DX11Texture::Lock(TextureLockDesc& lock_desc)
 {
@@ -129,7 +129,7 @@ byte* DX11Texture::Lock(TextureLockDesc& lock_desc)
 			desc.BindFlags = 0;
 			desc.CPUAccessFlags = lock_desc.flags == GPUResourceLock::ReadOnly ? D3D11_CPU_ACCESS_READ : D3D11_CPU_ACCESS_WRITE;
 			desc.MiscFlags = 0;
-			HR(GetDX11Device()->GetDevice()->CreateTexture2D(&desc, NULL, &_stagingTexture));
+			DX_ERROR(GetDX11Device()->GetDevice()->CreateTexture2D(&desc, NULL, &_stagingTexture));
 		}
 		_tempStagingTexture = _stagingTexture;
 	}
@@ -142,7 +142,7 @@ byte* DX11Texture::Lock(TextureLockDesc& lock_desc)
 	if (lock_desc.flags == GPUResourceLock::ReadOnly)map_type = D3D11_MAP_READ;
 
 	D3D11_MAPPED_SUBRESOURCE mapped;
-	HR(GetDX11Device()->GetContent()->Map(_tempStagingTexture, lock_desc.level, map_type, 0, &mapped));
+	DX_ERROR(GetDX11Device()->GetContent()->Map(_tempStagingTexture, lock_desc.level, map_type, 0, &mapped));
 	lock_desc.pitch = mapped.RowPitch;
 	return (byte*)mapped.pData;
 }
@@ -169,7 +169,7 @@ bool DX11Texture::GetData(MemoryDataStream& stream)
 	if (s_bits)
 	{
 		stream.Resize(lock_desc.pitch * _imageHeight);
-		Memory::Copy(stream.data(), s_bits, lock_desc.pitch * _imageHeight);
+		Memory::Copy(stream.Buffer(), s_bits, lock_desc.pitch * _imageHeight);
 	}
 	this->Unlock(lock_desc);
 	return true;
@@ -198,7 +198,7 @@ void DX11Texture::SaveToFile(const String& name, ImageType type)
 	MemoryDataStream stream;
 	if (this->GetData(stream) && image->GetSize() == stream.Size())
 	{
-		image->Fill(stream.data(), stream.Size());
+		image->Fill(stream.Buffer(), stream.Size());
 		image->SaveToFile(name);
 	}
 }

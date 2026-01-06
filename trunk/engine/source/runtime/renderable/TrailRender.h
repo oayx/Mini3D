@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Date：2021/5/24
@@ -12,7 +12,7 @@
 DC_BEGIN_NAMESPACE
 class Camera;
 /********************************************************************/
-class ENGINE_DLL TrailRender Final : public Renderer
+class ENGINE_DLL TrailRender final : public Renderer
 {
 	friend class GameObject;
 	typedef std::deque<Vector3> Positions;
@@ -23,7 +23,7 @@ class ENGINE_DLL TrailRender Final : public Renderer
 	BEGIN_DERIVED_REFECTION_TYPE(TrailRender, Renderer)
 		CTORS(DEFAULT_CTOR(TrailRender))
 		ADD_EDITOR_COMPONENT("Effects/TrailRender")
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 protected:
 	virtual void Awake()override;

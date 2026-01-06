@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2021/8/10
@@ -27,7 +27,7 @@ private://组件
 	void ShowComponent(GameObject* select_obj);
 	//增加组件按钮
 	void ShowAddComponent(GameObject* select_obj);
-	void ShowSearchAddComponent(std::function<void(String)> action, const EComponents& parent_component, const char* filter);
+	void ShowSearchAddComponent(std::function<void(String)> action, const EComponents& parentComponent, const char* filter);
 
 private:
 };

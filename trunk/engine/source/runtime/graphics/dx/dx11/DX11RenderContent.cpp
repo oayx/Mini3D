@@ -1,4 +1,4 @@
-#include "DX11RenderContent.h"
+﻿#include "DX11RenderContent.h"
 #include "DX11Program.h"
 #include "DX11Device.h"
 #include "runtime/graphics/Material.h"
@@ -46,18 +46,16 @@ void DX11RenderContent::Initialize()
 }
 void DX11RenderContent::BeginFrame(RenderFrameDesc& desc)
 {
-	DC_PROFILE_FUNCTION();
-	ID3D11RenderTargetView* rt_view = (ID3D11RenderTargetView*)desc.target_buffer;
-	ID3D11DepthStencilView* ds_view = (ID3D11DepthStencilView*)desc.depth_stencil_buffer;
+	ID3D11RenderTargetView* rt_view = (ID3D11RenderTargetView*)desc.targetBuffer;
+	ID3D11DepthStencilView* ds_view = (ID3D11DepthStencilView*)desc.depthStencilBuffer;
 
 	GetDX11Device()->GetContent()->OMSetRenderTargets(1, &rt_view, ds_view);
-	this->SetViewport(desc.view_port);
-	this->SetViewportScissor(iRect((int)desc.view_port.x, (int)desc.view_port.y, (int)desc.view_port.w, (int)desc.view_port.h));
-	this->ClearBackbuffer(rt_view, ds_view, desc.clear_flag, desc.clear_color);
+	this->SetViewport(desc.viewPort);
+	this->SetViewportScissor(iRect((int)desc.viewPort.x, (int)desc.viewPort.y, (int)desc.viewPort.w, (int)desc.viewPort.h));
+	this->ClearBackbuffer(rt_view, ds_view, desc.clearFlag, desc.clearColor);
 }
 void DX11RenderContent::RenderOnePrimitive(Camera* camera, Pass* pass, Primitive* primitive, RenderMode mode)
 {
-	DC_PROFILE_FUNCTION();
 	//在后台缓冲区绘制图形
 	HardwareVertexBuffer* vertex_buffer = primitive->GetVertexData();
 	if (vertex_buffer == nullptr || vertex_buffer->GetVertexCount() == 0)//如果模型没有顶点数据，则buffer会为null
@@ -129,24 +127,21 @@ void DX11RenderContent::RenderOnePrimitive(Camera* camera, Pass* pass, Primitive
 	SceneManager::AddRenderBatch(1);
 	SceneManager::AddSetPassCall(1);
 }
-void DX11RenderContent::SetViewport(const ViewPortDesc& view_port)
+void DX11RenderContent::SetViewport(const ViewPortDesc& viewPort)
 {
-	DC_PROFILE_FUNCTION();
 	D3D11_VIEWPORT port;
-	port.TopLeftX = view_port.x; port.TopLeftY = view_port.y;
-	port.Width = view_port.w; port.Height = view_port.h;
-	port.MinDepth = view_port.z_near; port.MaxDepth = view_port.z_far;
+	port.TopLeftX = viewPort.x; port.TopLeftY = viewPort.y;
+	port.Width = viewPort.w; port.Height = viewPort.h;
+	port.MinDepth = viewPort.z_near; port.MaxDepth = viewPort.z_far;
 	GetDX11Device()->GetContent()->RSSetViewports(1, &port);
 }
 void DX11RenderContent::SetViewportScissor(const iRect& clip)
 {
-	DC_PROFILE_FUNCTION();
 	CD3D11_RECT rect((LONG)clip.x, (LONG)(clip.y), (LONG)(clip.x + clip.width), (LONG)(clip.y + clip.height));
 	GetDX11Device()->GetContent()->RSSetScissorRects(1, &rect);
 }
-void DX11RenderContent::ClearBackbuffer(void* target_buffer, void* depth_stencil_buffer, ClearFlag flag, const Color& color)
+void DX11RenderContent::ClearBackbuffer(void* targetBuffer, void* depthStencilBuffer, ClearFlag flag, const Color& color)
 {
-	DC_PROFILE_FUNCTION();
 	DWORD clear_flags = 0;
 	bool is_clear_color = false;
 	switch (flag)
@@ -163,10 +158,10 @@ void DX11RenderContent::ClearBackbuffer(void* target_buffer, void* depth_stencil
 		return;
 	}
 	
-	ID3D11RenderTargetView* rt_view = (ID3D11RenderTargetView*)target_buffer;
-	ID3D11DepthStencilView* ds_view = (ID3D11DepthStencilView*)depth_stencil_buffer;
-	if (target_buffer != nullptr && is_clear_color)GetDX11Device()->GetContent()->ClearRenderTargetView(rt_view, color.ptr());
-	if (depth_stencil_buffer != nullptr)GetDX11Device()->GetContent()->ClearDepthStencilView(ds_view, clear_flags, 1.0f, 0);
+	ID3D11RenderTargetView* rt_view = (ID3D11RenderTargetView*)targetBuffer;
+	ID3D11DepthStencilView* ds_view = (ID3D11DepthStencilView*)depthStencilBuffer;
+	if (targetBuffer != nullptr && is_clear_color)GetDX11Device()->GetContent()->ClearRenderTargetView(rt_view, color.ptr());
+	if (depthStencilBuffer != nullptr)GetDX11Device()->GetContent()->ClearDepthStencilView(ds_view, clear_flags, 1.0f, 0);
 }
 void DX11RenderContent::Resize(const WindowResizeDesc& desc)
 {
@@ -174,7 +169,6 @@ void DX11RenderContent::Resize(const WindowResizeDesc& desc)
 }
 ID3D11SamplerState* DX11RenderContent::GetSamplerState(SamplerStateKey state)
 {
-	DC_PROFILE_FUNCTION();
 	auto it = _samplerStates.find(state.u);
 	if (it == _samplerStates.end())
 	{
@@ -190,14 +184,13 @@ ID3D11SamplerState* DX11RenderContent::GetSamplerState(SamplerStateKey state)
 		samp_desc.MaxLOD = D3D11_FLOAT32_MAX;
 
 		ID3D11SamplerState* sampler_state = nullptr;
-		HR(GetDX11Device()->GetDevice()->CreateSamplerState(&samp_desc, &sampler_state));
+		DX_ERROR(GetDX11Device()->GetDevice()->CreateSamplerState(&samp_desc, &sampler_state));
 		it = _samplerStates.insert({ state.u, sampler_state }).first;
 	}
 	return it->second;
 }
 void DX11RenderContent::UpdataRenderState(Camera* camera, Pass* pass)
 {
-	DC_PROFILE_FUNCTION();
 	//光栅化
 	SetRasterizerState(camera, pass);
 
@@ -209,8 +202,6 @@ void DX11RenderContent::UpdataRenderState(Camera* camera, Pass* pass)
 }
 void DX11RenderContent::SetRasterizerState(Camera* camera, Pass* pass)
 {
-	DC_PROFILE_FUNCTION();
-
 	FillMode fill_mode = FillMode::Solid;
 	if (camera)fill_mode = camera->GetFillMode();
 
@@ -229,14 +220,13 @@ void DX11RenderContent::SetRasterizerState(Camera* camera, Pass* pass)
 		desc.FrontCounterClockwise = FALSE;
 		desc.ScissorEnable = state.ScissorEnable;
 		ID3D11RasterizerState* raster = nullptr;
-		HR(GetDX11Device()->GetDevice()->CreateRasterizerState(&desc, &raster));
+		DX_ERROR(GetDX11Device()->GetDevice()->CreateRasterizerState(&desc, &raster));
 		it = _rasterizerStates.insert({ state.u, raster }).first;
 	}
 	GetDX11Device()->GetContent()->RSSetState(it->second);
 }
 void DX11RenderContent::SetBlendState(Pass* pass)
 {
-	DC_PROFILE_FUNCTION();
 	BlendStateKey state = {};
 	state.alpha_to_coverage = pass->AlphaToCoverage;
 	state.enable_alpha = pass->BlendEnable;
@@ -274,7 +264,7 @@ void DX11RenderContent::SetBlendState(Pass* pass)
 		desc.RenderTarget[0].RenderTargetWriteMask = (UINT8)color_mask;
 
 		ID3D11BlendState* blend = nullptr;
-		HR(GetDX11Device()->GetDevice()->CreateBlendState(&desc, &blend));
+		DX_ERROR(GetDX11Device()->GetDevice()->CreateBlendState(&desc, &blend));
 		it = _blendStates.insert({ state.u, blend }).first;
 	}
 	//第三个参数为采样点掩码。D3D11中的多重采样可以支持32个采样点，该参数用来决定”使用 / 丢弃"哪些采样点。
@@ -284,7 +274,6 @@ void DX11RenderContent::SetBlendState(Pass* pass)
 }
 void DX11RenderContent::SetDepthStencilTest(Pass* pass)
 {
-	DC_PROFILE_FUNCTION();
 	DepthStencilStateKey state = {};
 	state.DepthEnable = pass->DepthEnable;
 	state.DepthWriteEnable = pass->DepthWriteEnable;
@@ -324,20 +313,20 @@ void DX11RenderContent::SetDepthStencilTest(Pass* pass)
 		}
 
 		ID3D11DepthStencilState* depth = nullptr;
-		HR(GetDX11Device()->GetDevice()->CreateDepthStencilState(&desc, &depth));
+		DX_ERROR(GetDX11Device()->GetDevice()->CreateDepthStencilState(&desc, &depth));
 		it = _depthStencilStates.insert({ state.u, depth }).first;
 	}
 
 	GetDX11Device()->GetContent()->OMSetDepthStencilState(it->second, pass->StencilRef);
 }
-void DX11RenderContent::SetSubPrimitiveState(const SubPrimitive* sub_prim, Pass* pass)
+void DX11RenderContent::SetSubPrimitiveState(const SubPrimitive* subPrim, Pass* pass)
 {
-	if (!sub_prim->Tex)return;
+	if (!subPrim->Tex)return;
 	CGProgram* shader = pass->GetProgram();
-	shader->SetPassVariable(sub_prim->TexIndex, sub_prim->TexName, sub_prim->Tex);
+	shader->SetPassVariable(subPrim->TexIndex, subPrim->TexName, subPrim->Tex);
 	
 	bool old_alpha_state = pass->BlendEnable;
-	pass->BlendEnable = sub_prim->AlphaEnable;
+	pass->BlendEnable = subPrim->AlphaEnable;
 	SetBlendState(pass);
 	pass->BlendEnable = old_alpha_state;
 }

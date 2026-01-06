@@ -1,4 +1,4 @@
-/**
+﻿/**
  * OpenAL cross platform audio library
  * Copyright (C) 2009 by Chris Robinson.
  * This library is free software; you can redistribute it and/or
@@ -129,7 +129,7 @@ static ALvoid EchoUpdate(ALeffectState *effect, ALCcontext *Context, const ALeff
     for(i = 0;i < Device->NumChan;i++)
     {
         enum Channel chan = Device->Speaker2Chan[i];
-        state->Gain[0][chan] = lerp(ambientGain, speakerGain[chan], dirGain) * gain;
+        state->Gain[0][chan] = al_lerp(ambientGain, speakerGain[chan], dirGain) * gain;
     }
 
     /* Second tap panning */
@@ -139,7 +139,7 @@ static ALvoid EchoUpdate(ALeffectState *effect, ALCcontext *Context, const ALeff
     for(i = 0;i < Device->NumChan;i++)
     {
         enum Channel chan = Device->Speaker2Chan[i];
-        state->Gain[1][chan] = lerp(ambientGain, speakerGain[chan], dirGain) * gain;
+        state->Gain[1][chan] = al_lerp(ambientGain, speakerGain[chan], dirGain) * gain;
     }
 }
 

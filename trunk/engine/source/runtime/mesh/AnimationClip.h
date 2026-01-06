@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Date：2020/8/19
@@ -12,7 +12,7 @@ DC_BEGIN_NAMESPACE
 class Mesh;
 class AnimationNode;
 /********************************************************************/
-class ENGINE_DLL AnimationClip Final : public Object
+class ENGINE_DLL AnimationClip final : public Object
 {
 	friend class Mesh;
 	friend class Animation;
@@ -23,13 +23,13 @@ class ENGINE_DLL AnimationClip Final : public Object
 	FRIEND_CONSTRUCT_DESTRUCT(AnimationClip);
 	DISALLOW_COPY_ASSIGN(AnimationClip);
 	BEGIN_DERIVED_REFECTION_TYPE(AnimationClip, Object)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 	AnimationClip(const String& name);
 	~AnimationClip();
 
 private:
-	void			Update(float time, BoneKeyFrames& bone_keyframes);
+	void			Update(float time, BoneKeyFrames& boneKeyframes);
 
 	AnimationNode*	CreateNode(Mesh* mesh, const String& name);
 	AnimationNode*	GetRootNode()const { return _rootNode; }
@@ -39,7 +39,7 @@ private:
 
 public:
 	const			String& GetName()const { return _name; }
-	void			SetFrames(uint total_frames, uint fps);
+	void			SetFrames(uint totalFrames, uint fps);
 	uint			GetFrames()const { return _totalFrames; }
 	uint			GetFPS()const { return _fps; }
 	float			GetDuration()const { return _duration; }

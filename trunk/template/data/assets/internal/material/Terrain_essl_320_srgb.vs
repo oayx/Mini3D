@@ -58,7 +58,6 @@ struct type_CustomBuffer
     vec4 _ShadowMap_TexelSize;
     float _Strength;
     float _Bias;
-    int _ShadowType;
 };
 
 uniform type_CustomBuffer CustomBuffer;
@@ -67,12 +66,12 @@ layout(location = 0) in vec4 in_var_POSITION;
 layout(location = 1) in vec3 in_var_NORMAL;
 layout(location = 2) in vec4 in_var_TANGENT;
 layout(location = 3) in vec2 in_var_TEXCOORD0;
-layout(location = 0) out vec2 out_var_TEXCOORD0;
-layout(location = 1) out mat3 out_var_TEXCOORD1;
-layout(location = 4) out vec3 out_var_TEXCOORD4;
-layout(location = 5) out vec3 out_var_TEXCOORD5;
-layout(location = 6) out vec4 out_var_TEXCOORD6;
-layout(location = 7) out float out_var_TEXCOORD7;
+layout(location = 0) out vec2 var_TEXCOORD0;
+layout(location = 1) out mat3 var_TEXCOORD1;
+layout(location = 4) out vec3 var_TEXCOORD4;
+layout(location = 5) out vec3 var_TEXCOORD5;
+layout(location = 6) out vec4 var_TEXCOORD6;
+layout(location = 7) out float var_TEXCOORD7;
 
 void main()
 {
@@ -95,11 +94,11 @@ void main()
         }
     } while(false);
     gl_Position = _65;
-    out_var_TEXCOORD0 = (in_var_TEXCOORD0 * CustomBuffer._MainTex_ST.xy) + CustomBuffer._MainTex_ST.zw;
-    out_var_TEXCOORD1 = mat3(_74, cross(_72, _74) * in_var_TANGENT.w, _72);
-    out_var_TEXCOORD4 = normalize(CameraBuffer._WorldSpaceCameraPos - _82);
-    out_var_TEXCOORD5 = _102;
-    out_var_TEXCOORD6 = in_var_POSITION * CustomBuffer.MATRIX_MVP_LIGHT;
-    out_var_TEXCOORD7 = _65.z;
+    var_TEXCOORD0 = (in_var_TEXCOORD0 * CustomBuffer._MainTex_ST.xy) + CustomBuffer._MainTex_ST.zw;
+    var_TEXCOORD1 = mat3(_74, cross(_72, _74) * in_var_TANGENT.w, _72);
+    var_TEXCOORD4 = normalize(CameraBuffer._WorldSpaceCameraPos - _82);
+    var_TEXCOORD5 = _102;
+    var_TEXCOORD6 = in_var_POSITION * CustomBuffer.MATRIX_MVP_LIGHT;
+    var_TEXCOORD7 = _65.z;
 }
 

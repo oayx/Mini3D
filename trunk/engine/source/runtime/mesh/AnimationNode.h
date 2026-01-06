@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Date：2020/8/19
@@ -14,7 +14,7 @@ class Bone;
 class KeyFrame;
 class AnimationClip;
 /********************************************************************/
-class ENGINE_DLL AnimationNode Final : public Object
+class ENGINE_DLL AnimationNode final : public Object
 {
 	friend class Mesh;
 	friend class Animation;
@@ -26,7 +26,7 @@ class ENGINE_DLL AnimationNode Final : public Object
 	FRIEND_CONSTRUCT_DESTRUCT(AnimationNode);
 	DISALLOW_COPY_ASSIGN(AnimationNode);
 	BEGIN_DERIVED_REFECTION_TYPE(AnimationNode, Object)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 	AnimationNode(const String& name);
 	~AnimationNode();
@@ -39,15 +39,15 @@ private:
 	int				GetChildrenCount()const { return _childrens.Size(); }
 	AnimationNode*	GetChildren(int index)const { return _childrens[index]; }
 
-	void			Interpolated(float time, BoneKeyFrames& bone_keyframes);
-	void			InterpolatedTransfrom(float time, BoneKeyFrames& bone_keyframes);
+	void			Interpolated(float time, BoneKeyFrames& boneKeyframes);
+	void			InterpolatedTransfrom(float time, BoneKeyFrames& boneKeyframes);
 
 	void			SetTransfrom(const Matrix4& t) { _transfrom = t; }
 	const Matrix4&	GetTransfrom()const { return _transfrom; }
 	void			SetBone(Bone* bone) { _bone = bone; }
 	Bone*			GetBone()const { return _bone; }
 
-	void			ClipAnimation(Mesh* mesh, AnimationClip* clip, AnimationNode* parent_node, const ClipAnimationDesc& clip_info);
+	void			ClipAnimation(Mesh* mesh, AnimationClip* clip, AnimationNode* parentNode, const ClipAnimationDesc& clipInfo);
 
 private:
 	KeyFrame*		CreateKeyFrame(uint time);

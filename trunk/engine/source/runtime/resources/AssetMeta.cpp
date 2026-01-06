@@ -12,14 +12,14 @@ AssetMeta* AssetMeta::Create(ResourceType type)
 	AssetMeta* meta = nullptr;
 	switch (type)
 	{
-	case ResourceType::Texture:		meta = DBG_NEW TextureMeta(); break;
-	case ResourceType::Material:	meta = DBG_NEW MaterialMeta(); break;
-	case ResourceType::Mesh:		meta = DBG_NEW MeshMeta(); break;
-	case ResourceType::Shader:		meta = DBG_NEW ShaderMeta(); break;
-	case ResourceType::Font:		meta = DBG_NEW FontMeta(); break;
-	case ResourceType::AudioClip:	meta = DBG_NEW AudioMeta(); break;
-	case ResourceType::Video:		meta = DBG_NEW VideoMeta(); break;
-	default: 						meta = DBG_NEW AssetMeta(); meta->_resType = type; break;
+	case ResourceType::Texture:		meta = Memory::New<TextureMeta>(); break;
+	case ResourceType::Material:	meta = Memory::New<MaterialMeta>(); break;
+	case ResourceType::Mesh:		meta = Memory::New<MeshMeta>(); break;
+	case ResourceType::Shader:		meta = Memory::New<ShaderMeta>(); break;
+	case ResourceType::Font:		meta = Memory::New<FontMeta>(); break;
+	case ResourceType::AudioClip:	meta = Memory::New<AudioMeta>(); break;
+	case ResourceType::Video:		meta = Memory::New<VideoMeta>(); break;
+	default: 						meta = Memory::New<AssetMeta>(); meta->_resType = type; break;
 	}
 	return meta;
 }
@@ -31,30 +31,30 @@ AssetMeta::~AssetMeta()
 	}
 	_childrens.Clear(); 
 }
-void AssetMeta::SetFileInfo(const FileInfo& file_info, const String& assets_root_path)
+void AssetMeta::SetFileInfo(const FileInfo& fileInfo, const String& assetsRootPath)
 {
-	_fileName = file_info.FileName;
-	_extension = file_info.Extension;
-	_fullName = file_info.FullName.Substring(assets_root_path.Size() + 1);//转换成assets相对目录
-	_fileType = file_info.FileType;
+	_fileName = fileInfo.FileName;
+	_extension = fileInfo.Extension;
+	_fullName = fileInfo.FullName.Substring(assetsRootPath.Size() + 1);//转换成assets相对目录
+	_fileType = fileInfo.FileType;
 
 	if (_fileType == FileInfoType::Dir)
 	{
 		//子
 		_childrens.Clear();
-		_childrens.Reserve(file_info.GetChildrenCount());
-		for (int i = 0; i < file_info.GetChildrenCount(); ++i)
+		_childrens.Reserve(fileInfo.GetChildrenCount());
+		for (int i = 0; i < fileInfo.GetChildrenCount(); ++i)
 		{
-			const FileInfo& child_file_info = file_info.GetChildren(i);
-			ResourceType resource_type = Resource::GetResourceType(child_file_info.FileName);
-			AssetMeta* meta = AssetMeta::Create(resource_type);
+			const FileInfo& childFileInfo = fileInfo.GetChildren(i);
+			ResourceType resourceType = Resource::GetResourceType(childFileInfo.FileName);
+			AssetMeta* meta = AssetMeta::Create(resourceType);
 			_childrens.Add(meta);
 		}
 
 		//是否有子文件夹
-		for (int i = 0; i < file_info.GetChildrenCount(); ++i)
+		for (int i = 0; i < fileInfo.GetChildrenCount(); ++i)
 		{
-			if (file_info.GetChildren(i).FileType == FileInfoType::Dir)
+			if (fileInfo.GetChildren(i).FileType == FileInfoType::Dir)
 			{
 				_hasChildrenFolder = true;
 				break;
@@ -66,8 +66,8 @@ bool AssetMeta::HasChildren(const String& name)const
 {
 	for (int i = 0; i < _childrens.Size(); ++i)
 	{
-		const AssetMeta* file_info = _childrens[i];
-		if (file_info->_fileName.Equals(name, true))
+		const AssetMeta* fileInfo = _childrens[i];
+		if (fileInfo->_fileName.Equals(name, true))
 			return true;
 	}
 	return false;
@@ -81,8 +81,8 @@ void AssetMeta::Transfer(TransferFunction& transfer, void* ptr)
 }
 void AssetMeta::Serialize()
 {
-	String full_path = Resource::GetFullDataPath(_fullName + ".meta");
-	SerializeRead transfer(full_path);
+	String fullPath = Resource::GetFullDataPath(_fullName + ".meta");
+	SerializeRead transfer(fullPath);
 	switch (_resType)
 	{
 	case ResourceType::Texture:		TRANSFER_CLASS(*(this->As<TextureMeta>())); break;
@@ -97,8 +97,8 @@ void AssetMeta::Serialize()
 }
 void AssetMeta::Deserialize()
 {
-	String full_path = Resource::GetFullDataPath(_fullName + ".meta");
-	SerializeWrite transfer(full_path);
+	String fullPath = Resource::GetFullDataPath(_fullName + ".meta");
+	SerializeWrite transfer(fullPath);
 	switch (_resType)
 	{
 	case ResourceType::Texture:		TRANSFER_CLASS(*(this->As<TextureMeta>())); break;
@@ -121,7 +121,7 @@ void TextureMeta::Transfer(TransferFunction& transfer, void* ptr)
 
 	TRANSFER_ENUM(_textureGroup);
 	TRANSFER_ENUM(_textureType);
-	TRANSFER_SIMPLE(m_sRGB);
+	TRANSFER_SIMPLE(_sRGB);
 	TRANSFER_SIMPLE(_enableReadWrite);
 	TRANSFER_SIMPLE(_generateMipMaps);
 	TRANSFER_ENUM(_addressMode);

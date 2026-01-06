@@ -30,7 +30,7 @@ void GLRenderContent::SetFillMode(FillMode mode)
 }
 void GLRenderContent::SetShadeMode(ShadeMode mode)
 {
-#if GL_SHADE_MODEL
+#if GL_SHADE_MODEL && !defined(DC_PLATFORM_MAC)
 	GL_ERROR(glShadeModel(GL_GetShadeMode(mode)));
 #endif
 }
@@ -48,8 +48,8 @@ void GLRenderContent::PostRender()
 }
 void GLRenderContent::BeginFrame(RenderFrameDesc& desc)
 {
-	this->SetViewport(desc.view_port);
-	ClearBackbuffer(desc.target_buffer, desc.depth_stencil_buffer, desc.clear_flag, desc.clear_color);
+	this->SetViewport(desc.viewPort);
+	ClearBackbuffer(desc.targetBuffer, desc.depthStencilBuffer, desc.clearFlag, desc.clearColor);
 }
 void GLRenderContent::RenderOnePrimitive(Camera* camera, Pass* pass, Primitive* primitive, RenderMode mode)
 {
@@ -89,16 +89,25 @@ void GLRenderContent::RenderOnePrimitive(Camera* camera, Pass* pass, Primitive* 
 				GL_ERROR(glDrawElementsInstanced(prim_type, prim.ElemCount, GL_GetIndexType(index_buffer->GetIndexType()), GL_BUFFER_OFFSET(prim.IdxOffset*index_per_size), vertex_buffer->GetInstanceCount()));
 				SceneManager::AddDrawTriangles(prim_count * vertex_buffer->GetInstanceCount());
 			}
-			else if (GetGLDevice()->GetShaderModel() >= GLShaderModel::SM_32)
+#if !defined(DC_PLATFORM_WASM) && !defined(DC_PLATFORM_IOS)
+			else
 			{
 				GL_ERROR(glDrawElementsBaseVertex(prim_type, prim.ElemCount, GL_GetIndexType(index_buffer->GetIndexType()), GL_BUFFER_OFFSET(prim.IdxOffset*index_per_size), (GLint)prim.VtxOffset));
 				SceneManager::AddDrawTriangles(prim_count);
 			}
+//#else
+//			else
+//			{
+//				GL_ERROR(glDrawElementsBaseVertexEXT(prim_type, prim.ElemCount, GL_GetIndexType(index_buffer->GetIndexType()), GL_BUFFER_OFFSET(prim.IdxOffset * index_per_size), (GLint)prim.VtxOffset));
+//				SceneManager::AddDrawTriangles(prim_count);
+//			}
+#else
 			else
 			{
 				GL_ERROR(glDrawElements(prim_type, prim.ElemCount, GL_GetIndexType(index_buffer->GetIndexType()), GL_BUFFER_OFFSET(prim.IdxOffset*index_per_size)));
 				SceneManager::AddDrawTriangles(prim_count);
 			}
+#endif
 			SceneManager::AddDrawCall(1);
 		}
 	}
@@ -128,11 +137,11 @@ void GLRenderContent::RenderOnePrimitive(Camera* camera, Pass* pass, Primitive* 
 	SceneManager::AddRenderBatch(1);
 	SceneManager::AddSetPassCall(1);
 }
-void GLRenderContent::SetViewport(const ViewPortDesc& view_port)
+void GLRenderContent::SetViewport(const ViewPortDesc& viewPort)
 {
-	GL_ERROR(glViewport((GLint)view_port.x, (GLint)view_port.y, (GLsizei)view_port.w, (GLsizei)view_port.h));
-	GL_ERROR(glDepthRangef(view_port.z_near, view_port.z_far));
-	this->SetViewportScissor(iRect((int)view_port.x, (int)view_port.y, (int)view_port.w, (int)view_port.h));
+	GL_ERROR(glViewport((GLint)viewPort.x, (GLint)viewPort.y, (GLsizei)viewPort.w, (GLsizei)viewPort.h));
+	GL_ERROR(glDepthRangef(viewPort.z_near, viewPort.z_far));
+	this->SetViewportScissor(iRect((int)viewPort.x, (int)viewPort.y, (int)viewPort.w, (int)viewPort.h));
 }
 void GLRenderContent::SetViewportScissor(const iRect& clip)
 {
@@ -143,7 +152,7 @@ void GLRenderContent::SetViewportScissor(const iRect& clip)
 	int h = clip.height;
 	GL_ERROR(glScissor(x, y, w, h));
 }
-void GLRenderContent::ClearBackbuffer(void* target_buffer, void* depth_stencil_buffer, ClearFlag flag, const Color& color)
+void GLRenderContent::ClearBackbuffer(void* targetBuffer, void* depthStencilBuffer, ClearFlag flag, const Color& color)
 {
 	uint clear_flags = 0;
 	switch (flag)
@@ -285,24 +294,23 @@ void GLRenderContent::SetBlendState(Pass* pass)
 {
 	//alpha混合
 	if (pass->BlendEnable)
-		glEnable(GL_BLEND);
+		GL_ERROR(glEnable(GL_BLEND));
 	else
-		glDisable(GL_BLEND);
+		GL_ERROR(glDisable(GL_BLEND));
 	GL_ERROR(glBlendFuncSeparate(GL_GetAlphaBlend(pass->SrcBlend), GL_GetAlphaBlend(pass->DstBlend),GL_GetAlphaBlend(pass->SrcAlphaSource), GL_GetAlphaBlend(pass->DstAlphaSource)));
 	GL_ERROR(glBlendEquation(GL_FUNC_ADD));
 
-	//alpha测试
-#if defined(DC_GRAPHICS_API_OPENGL)
+	//alpha测试，mac平台4.1不支持
+#if defined(DC_GRAPHICS_API_OPENGL) && !defined(DC_PLATFORM_MAC)
 	if (pass->AlphaTestEnable)
-		glEnable(GL_ALPHA_TEST);
+		GL_ERROR(glEnable(GL_ALPHA_TEST));
 	else
-		glDisable(GL_ALPHA_TEST);
+		GL_ERROR(glDisable(GL_ALPHA_TEST));
 	if (pass->AlphaTestEnable)
 	{
-		glAlphaFunc(GL_GetStencilCmp(pass->AlphaTestCmpFun), pass->AlphaTestRef);
+		GL_ERROR(glAlphaFunc(GL_GetStencilCmp(pass->AlphaTestCmpFun), pass->AlphaTestRef));
 	}
 #endif
-	GL_DEBUG_ERROR(glGetError(), "GL_BLEND");
 }
 /*防止深度冲突
 	1.第一个也是最重要的技巧是让物体之间不要离得太近，以至于他们的三角形重叠。通过在物体之间制造一点用户无法察觉到的偏移，可以完全解决深度冲突。在容器和平面的条件下，我们可以把容器像+y方向上略微移动。这微小的改变可能完全不被注意但是可以有效地减少或者完全解决深度冲突。然而这需要人工的干预每个物体，并进行彻底地测试，以确保这个场景的物体之间没有深度冲突。
@@ -323,14 +331,14 @@ void GLRenderContent::SetDepthOffset(Pass* pass)
 		GL_ERROR(glDisable(GL_POLYGON_OFFSET_FILL));
 	}
 }
-void GLRenderContent::SetSubPrimitiveState(const SubPrimitive* sub_prim, Pass* pass)
+void GLRenderContent::SetSubPrimitiveState(const SubPrimitive* subPrim, Pass* pass)
 {
-	if (!sub_prim->Tex)return;
+	if (!subPrim->Tex)return;
 	CGProgram* shader = pass->GetProgram();
-	shader->SetPassVariable(sub_prim->TexIndex, sub_prim->TexName, sub_prim->Tex);
+	shader->SetPassVariable(subPrim->TexIndex, subPrim->TexName, subPrim->Tex);
 
 	bool old_alpha_state = pass->BlendEnable;
-	pass->BlendEnable = sub_prim->AlphaEnable;
+	pass->BlendEnable = subPrim->AlphaEnable;
 	SetBlendState(pass);
 	pass->BlendEnable = old_alpha_state;
 }

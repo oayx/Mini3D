@@ -1,4 +1,4 @@
-#include "EMain_Hierarchy.h"
+﻿#include "EMain_Hierarchy.h"
 #include "runtime/graphics/Material.h"
 #include "runtime/input/Input.h"
 #include "runtime/scene/SceneManager.h"
@@ -11,11 +11,9 @@
 DC_BEGIN_NAMESPACE
 /********************************************************************/
 IMPL_DERIVED_REFECTION_TYPE(EMain_Hierarchy, EWindowBase);
-bool EMain_Hierarchy::IsShow = true;
-bool EMain_Hierarchy::_isFocus = false;
 void EMain_Hierarchy::Render()
 {
-	DC_PROFILE_FUNCTION();
+	DC_PROFILE_FUNCTION;
 	if (!IsShow)return;
 
 	ImGui::SetNextWindowSize(ImVec2(600, 800), ImGuiCond_FirstUseEver);
@@ -63,11 +61,11 @@ void EMain_Hierarchy::ShowScene(Scene* scene, const char* filter)
 	if(open)
 	{
 		bool result = false;
-		Transform* root_node = SceneManager::GetCurrScene()->GetRootObject()->GetTransform();
-		for (int i = 0; i < root_node->GetChildCount(); ++i)
+		Transform* rootNode = SceneManager::GetCurrScene()->GetRootObject()->GetTransform();
+		for (int i = 0; i < rootNode->GetChildCount(); ++i)
 		{
 			ImGui::PushID(i);
-			Transform* node = root_node->GetChild(i);
+			Transform* node = rootNode->GetChild(i);
 			if (filter[0] == '\0')
 			{
 				bool ret = ShowNode(node);
@@ -91,21 +89,21 @@ bool EMain_Hierarchy::ShowNode(Transform* node)
 {
 	bool result = false;
 
-	ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
-	const String& node_name = node->GetInstanceName();
-	ImGuiTreeNodeFlags node_flags = base_flags;
+	ImGuiTreeNodeFlags baseFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
+	const String& nodeName = node->GetInstanceName();
+	ImGuiTreeNodeFlags nodeFlags = baseFlags;
 
 	//选中节点
-	bool is_selected = EditorAppliction::GetInspectorId() == node->GetObjectInstanceId() ? true : false;
-	if (is_selected)node_flags |= ImGuiTreeNodeFlags_Selected;
+	bool isSelected = EditorAppliction::GetInspectorId() == node->GetObjectInstanceId() ? true : false;
+	if (isSelected)nodeFlags |= ImGuiTreeNodeFlags_Selected;
 	//子节点是否有选中，有就展开
-	if (!is_selected)
+	if (!isSelected)
 	{
 		for (int i = 0; i < node->GetChildCount(); ++i)
 		{//子节点是否有选中的
 			ImGui::PushID(i);
-			Transform* child_node = node->GetChild(i);
-			if (EditorAppliction::GetInspectorId() == child_node->GetObjectInstanceId())
+			Transform* childNode = node->GetChild(i);
+			if (EditorAppliction::GetInspectorId() == childNode->GetObjectInstanceId())
 			{
 				ImGui::SetNextItemOpen(1);
 			}
@@ -113,12 +111,12 @@ bool EMain_Hierarchy::ShowNode(Transform* node)
 		}
 	}
 
-	bool is_active = node->GetGameObject()->ActiveInHierarchy();
+	bool isActive = node->GetGameObject()->ActiveInHierarchy();
 	if (node->GetChildCount() > 0)
 	{
-		if (!is_active)ImGui::PushStyleColor(ImGuiCol_Text, INACTIVE_TEXT_COLOR);
-		bool node_open = (ImGui::TreeNodeEx(node_name.c_str(), node_flags));
-		if (!is_active)ImGui::PopStyleColor();
+		if (!isActive)ImGui::PushStyleColor(ImGuiCol_Text, INACTIVE_TEXT_COLOR);
+		bool node_open = (ImGui::TreeNodeEx(nodeName.c_str(), nodeFlags));
+		if (!isActive)ImGui::PopStyleColor();
 		if (ImGui::IsItemClicked())
 		{
 			EditorAppliction::SetInspectorType(InspectorType::Hierarchy, node->GetObjectInstanceId());
@@ -139,8 +137,8 @@ bool EMain_Hierarchy::ShowNode(Transform* node)
 			for (int i = 0; i < node->GetChildCount(); ++i)
 			{//子节点
 				ImGui::PushID(i);
-				Transform* child_node = node->GetChild(i);
-				bool ret = ShowNode(child_node);
+				Transform* childNode = node->GetChild(i);
+				bool ret = ShowNode(childNode);
 				if (!result && ret)result = true;
 				ImGui::PopID();
 			}
@@ -149,11 +147,11 @@ bool EMain_Hierarchy::ShowNode(Transform* node)
 	}
 	else
 	{//叶子
-		node_flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
+		nodeFlags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
 
-		if(!is_active)ImGui::PushStyleColor(ImGuiCol_Text, INACTIVE_TEXT_COLOR);
-		ImGui::TreeNodeEx(node_name.c_str(), node_flags);
-		if (!is_active)ImGui::PopStyleColor();
+		if(!isActive)ImGui::PushStyleColor(ImGuiCol_Text, INACTIVE_TEXT_COLOR);
+		ImGui::TreeNodeEx(nodeName.c_str(), nodeFlags);
+		if (!isActive)ImGui::PopStyleColor();
 		if (ImGui::IsItemClicked())
 		{
 			EditorAppliction::SetInspectorType(InspectorType::Hierarchy, node->GetObjectInstanceId());
@@ -175,14 +173,14 @@ bool EMain_Hierarchy::ShowNode(Transform* node)
 bool EMain_Hierarchy::ShowSearchNode(Transform* node, const char* filter)
 {
 	bool result = false;
-	const String& node_name = node->GetInstanceName();
-	const char* sz_name = node_name.c_str();
+	const String& nodeName = node->GetInstanceName();
+	const char* szName = nodeName.c_str();
 
-	if (String::Stristr(sz_name, filter) != nullptr)
+	if (String::Stristr(szName, filter) != nullptr)
 	{
 		//选中节点
-		bool is_selected = EditorAppliction::GetInspectorId() == node->GetObjectInstanceId() ? true : false;
-		ImGui::Selectable(sz_name, is_selected);
+		bool isSelected = EditorAppliction::GetInspectorId() == node->GetObjectInstanceId() ? true : false;
+		ImGui::Selectable(szName, isSelected);
 
 		if (ImGui::IsItemClicked())
 		{
@@ -202,28 +200,28 @@ bool EMain_Hierarchy::ShowSearchNode(Transform* node, const char* filter)
 	}
 	for (int i = 0; i < node->GetChildCount(); ++i)
 	{//子节点
-		Transform* child_node = node->GetChild(i);
-		bool ret = ShowSearchNode(child_node, filter);
+		Transform* childNode = node->GetChild(i);
+		bool ret = ShowSearchNode(childNode, filter);
 		if (!result && ret)result = true;
 	}
 	return result;
 }
 void EMain_Hierarchy::ShowRightMenu(const String& node)
 {
-	static uint64 copy_object_id = 0;
+	static uint64 copyObjectId = 0;
 	if (ImGui::Selectable("Copy"))
 	{
-		copy_object_id = EditorAppliction::GetInspectorId();
+		copyObjectId = EditorAppliction::GetInspectorId();
 	}
 	if (ImGui::Selectable("Paste"))
 	{
-		if (copy_object_id > 0)
+		if (copyObjectId > 0)
 		{
-			GameObject* obj = SceneManager::GetGameObject(copy_object_id);
+			GameObject* obj = SceneManager::GetGameObject(copyObjectId);
 			if (obj)
 			{
-				GameObject* new_obj = GameObject::Instantiation(obj->GetInstanceName(), obj->GetTransform()->GetParent());
-				obj->Clone(new_obj);
+				GameObject* newObj = GameObject::Instantiation(obj->GetInstanceName(), obj->GetTransform()->GetParent());
+				obj->Clone(newObj);
 			}
 		}
 	}
@@ -256,8 +254,8 @@ void EMain_Hierarchy::CopySelectObject()
 	GameObject* obj = SceneManager::GetGameObject(EditorAppliction::GetInspectorId());
 	if (obj)
 	{
-		GameObject* new_obj = GameObject::Instantiation(obj->GetInstanceName(), obj->GetTransform()->GetParent());
-		obj->Clone(new_obj);
+		GameObject* newObj = GameObject::Instantiation(obj->GetInstanceName(), obj->GetTransform()->GetParent());
+		obj->Clone(newObj);
 	}
 }
 void EMain_Hierarchy::DeleteSelectObject()

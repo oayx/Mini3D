@@ -15,7 +15,7 @@
         </Propertie>
         <Propertie>
             <Name>_Cutoff</Name>
-            <Type>1</Type>
+            <Type>3</Type>
             <Value>0.1</Value>
             <Range>0.000000, 1.000000</Range>
         </Propertie>

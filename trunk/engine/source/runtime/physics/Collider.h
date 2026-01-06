@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2020/9/24
@@ -20,7 +20,7 @@ class ENGINE_DLL Collider : public Component, public btMotionState
 	DECLARE_OBJECT_CLONE;
 	DECLARE_OBJECT_SERIALIZE(Collider);
 	BEGIN_DERIVED_REFECTION_TYPE(Collider, Component)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 protected:
 	Collider();
@@ -75,7 +75,7 @@ protected:
 	short	_groupIndex = 1;
 };
 /********************************************************************/
-class ENGINE_DLL BoxCollider Final : public Collider
+class ENGINE_DLL BoxCollider final : public Collider
 {
 	friend class GameObject;
 	FRIEND_CONSTRUCT_DESTRUCT(BoxCollider);
@@ -84,7 +84,7 @@ class ENGINE_DLL BoxCollider Final : public Collider
 	BEGIN_DERIVED_REFECTION_TYPE(BoxCollider, Collider)
 		CTORS(DEFAULT_CTOR(BoxCollider))
 		ADD_EDITOR_COMPONENT("Physics/BoxCollider")
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 	BoxCollider() { _colliderType = ColliderType::Box; }
 
@@ -96,7 +96,7 @@ public:
 	void SetScale(const Vector3& scale) { _localScale = scale; UpdateScale(); }
 };
 /********************************************************************/
-class ENGINE_DLL SphereCollider Final : public Collider
+class ENGINE_DLL SphereCollider final : public Collider
 {
 	friend class GameObject;
 	FRIEND_CONSTRUCT_DESTRUCT(SphereCollider);
@@ -105,7 +105,7 @@ class ENGINE_DLL SphereCollider Final : public Collider
 	BEGIN_DERIVED_REFECTION_TYPE(SphereCollider, Collider)
 		CTORS(DEFAULT_CTOR(SphereCollider))
 		ADD_EDITOR_COMPONENT("Physics/SphereCollider")
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 	SphereCollider() { _colliderType = ColliderType::Sphere; }
 
@@ -117,7 +117,7 @@ public:
 	void SetScale(float r) { _localScale.Set(r, r, r); UpdateScale();}
 };
 /********************************************************************/
-class ENGINE_DLL CapsuleCollider Final : public Collider
+class ENGINE_DLL CapsuleCollider final : public Collider
 {
 	friend class GameObject;
 	FRIEND_CONSTRUCT_DESTRUCT(CapsuleCollider);
@@ -126,7 +126,7 @@ class ENGINE_DLL CapsuleCollider Final : public Collider
 	BEGIN_DERIVED_REFECTION_TYPE(CapsuleCollider, Collider)
 		CTORS(DEFAULT_CTOR(CapsuleCollider))
 		ADD_EDITOR_COMPONENT("Physics/CapsuleCollider")
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 	CapsuleCollider() { _colliderType = ColliderType::Capsule; }
 
@@ -138,7 +138,7 @@ public:
 	void SetScale(float radius, float height) { _localScale.Set(radius, height, radius); UpdateScale();}
 };
 /********************************************************************/
-class ENGINE_DLL CylinderCollider Final : public Collider
+class ENGINE_DLL CylinderCollider final : public Collider
 {
 	friend class GameObject;
 	FRIEND_CONSTRUCT_DESTRUCT(CylinderCollider);
@@ -147,7 +147,7 @@ class ENGINE_DLL CylinderCollider Final : public Collider
 	BEGIN_DERIVED_REFECTION_TYPE(CylinderCollider, Collider)
 		CTORS(DEFAULT_CTOR(CylinderCollider))
 		ADD_EDITOR_COMPONENT("Physics/CylinderCollider")
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 	CylinderCollider() { _colliderType = ColliderType::Cylinder; }
 
@@ -159,7 +159,7 @@ public:
 	void SetScale(const Vector3& scale) { _localScale = scale; UpdateScale();}
 };
 /********************************************************************/
-class ENGINE_DLL PlaneCollider Final : public Collider
+class ENGINE_DLL PlaneCollider final : public Collider
 {
 	friend class GameObject;
 	FRIEND_CONSTRUCT_DESTRUCT(PlaneCollider);
@@ -168,7 +168,7 @@ class ENGINE_DLL PlaneCollider Final : public Collider
 	BEGIN_DERIVED_REFECTION_TYPE(PlaneCollider, Collider)
 		CTORS(DEFAULT_CTOR(PlaneCollider))
 		ADD_EDITOR_COMPONENT("Physics/PlaneCollider")
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 	PlaneCollider() { _colliderType = ColliderType::Plane; }
 
@@ -177,7 +177,7 @@ protected:
 	virtual btCollisionShape* CreateShape()override;
 };
 /********************************************************************/
-class ENGINE_DLL TerrainCollider Final : public Collider
+class ENGINE_DLL TerrainCollider final : public Collider
 {
 	friend class GameObject;
 	FRIEND_CONSTRUCT_DESTRUCT(TerrainCollider);
@@ -186,7 +186,7 @@ class ENGINE_DLL TerrainCollider Final : public Collider
 	BEGIN_DERIVED_REFECTION_TYPE(TerrainCollider, Collider)
 		CTORS(DEFAULT_CTOR(TerrainCollider))
 		ADD_EDITOR_COMPONENT("Physics/TerrainCollider")
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 	TerrainCollider() { _colliderType = ColliderType::Terrain; }
 
@@ -199,7 +199,7 @@ protected:
 	Vector<float> _heightData;
 };
 /********************************************************************/
-class ENGINE_DLL MeshCollider Final : public Collider
+class ENGINE_DLL MeshCollider final : public Collider
 {
 	friend class GameObject;
 	FRIEND_CONSTRUCT_DESTRUCT(MeshCollider);
@@ -208,10 +208,10 @@ class ENGINE_DLL MeshCollider Final : public Collider
 	BEGIN_DERIVED_REFECTION_TYPE(MeshCollider, Collider)
 		CTORS(DEFAULT_CTOR(MeshCollider))
 		ADD_EDITOR_COMPONENT("Physics/MeshCollider")
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 	MeshCollider() { _colliderType = ColliderType::Mesh; }
-	~MeshCollider() { delete m_btMesh; }
+	~MeshCollider() { delete _btMesh; }
 
 protected:
 	virtual bool CanAdd(GameObject* object)override;
@@ -220,7 +220,7 @@ protected:
 	virtual btVector3 CalculateInertia(float mass) const override;
 
 private:
-	btTriangleMesh* m_btMesh = nullptr;
+	btTriangleMesh* _btMesh = nullptr;
 };
 DC_END_NAMESPACE
 #pragma warning(pop)

@@ -97,7 +97,7 @@ inline int	btGetVersion()
 #ifdef BT_DEBUG
 	#ifdef _MSC_VER
 		#include <stdio.h>
-		#define btAssert(x) { if(!(x)){printf("Assert "__FILE__ ":%u ("#x")\n", __LINE__);__debugbreak();	}}
+		#define btAssert(x) { if(!(x)){printf("Assert %s:%u (%s)\n", __FILE__, __LINE__, #x);__debugbreak();	}}
 	#else//_MSC_VER
 		#include <assert.h>
 		#define btAssert assert
@@ -292,7 +292,7 @@ static  int btInfinityMask = 0x7F800000;
 #endif
 
 //use this, in case there are clashes (such as xnamath.h)
-#ifndef BT_NO_SIMD_OPERATOR_OVERLOADS
+#if !defined(BT_NO_SIMD_OPERATOR_OVERLOADS) && !defined(__clang__)
 inline __m128 operator + (const __m128 A, const __m128 B)
 {
     return _mm_add_ps(A, B);

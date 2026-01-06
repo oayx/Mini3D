@@ -8,7 +8,6 @@
  
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-bool EOpenProject::IsShow = true;
 void EOpenProject::Render()
 {
 	if (!IsShow)return;
@@ -35,10 +34,10 @@ void EOpenProject::Render()
 			ImGui::SameLine();
 			if (ImGui::Button("New", ImVec2(120, 0)))
 			{
-				std::string select_path = Platform::OpenFileDialog("New Project", ".", "New Project", "", false);
-				if (!select_path.empty())
+				std::string selectPath = Platform::OpenFileDialog("New Project", ".", "New Project", "", false);
+				if (!selectPath.empty())
 				{
-					bool result = EditorAppliction::CreateProject(select_path);
+					bool result = EditorAppliction::CreateProject(selectPath);
 					if (result)
 					{
 						ImGui::CloseCurrentPopup();
@@ -50,10 +49,10 @@ void EOpenProject::Render()
 			ImGui::SameLine();
 			if (ImGui::Button("Open", ImVec2(120, 0)))
 			{
-				std::string select_path = Platform::OpenFolderDialog("Open Project", Path::GetCurrentProcessDirectory().c_str());
-				if (!select_path.empty())
+				std::string selectPath = Platform::OpenFolderDialog("Open Project", Path::GetCurrentProcessDirectory().c_str());
+				if (!selectPath.empty())
 				{
-					bool result = EditorAppliction::OpenProject(select_path);
+					bool result = EditorAppliction::OpenProject(selectPath);
 					if (result)
 					{
 						ImGui::CloseCurrentPopup();
@@ -82,16 +81,16 @@ void EOpenProject::Render()
 				ImGui::PushID(i);
 				Project* project = ProjectManager::GetProject(i);
 				if (!project)continue;
-				String full_path = project->GetFullPath();
-				String name = Path::GetFileName(full_path);
-				String path = Path::GetDirectoryName(full_path);
+				String fullPath = project->GetFullPath();
+				String name = Path::GetFileName(fullPath);
+				String path = Path::GetDirectoryName(fullPath);
 				{//名称
 					ImGui::Dummy(ImVec2(5.0f, 0.0f));
 					ImGui::SameLine();
 					ImGui::PushFont(EditorMain::GetBigFont());
 					if (ImGui::Selectable(name.c_str()))
 					{
-						bool result = EditorAppliction::OpenProject(full_path);
+						bool result = EditorAppliction::OpenProject(fullPath);
 						if (result)
 						{
 							ImGui::CloseCurrentPopup();

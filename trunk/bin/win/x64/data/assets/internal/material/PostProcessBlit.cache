@@ -1,0 +1,12 @@
+<Shader>
+    <Pass>
+        <CG File="PostProcessBlit.hlsl">
+            <Reflect>
+                <Semantics Value="17"/>
+                <Textures>
+                    <Texture Name="_MainTex" Type="1" Slot="0" Stage="4"/>
+                </Textures>
+            </Reflect>
+        </CG>
+    </Pass>
+</Shader>

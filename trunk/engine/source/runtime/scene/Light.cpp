@@ -1,4 +1,4 @@
-#include "Light.h"
+﻿#include "Light.h"
 #include "runtime/graphics/ShadowMap.h"
 #include "runtime/graphics/Material.h"
 #include "runtime/project/QualitySettings.h"
@@ -18,11 +18,11 @@ Light::~Light()
 	SceneManager::RemoveLight(this);
 	SAFE_DELETE(_shadowMap);
 }
-Object* Light::Clone(Object* new_obj)
+Object* Light::Clone(Object* newObj)
 {
-	base::Clone(new_obj);
-	Light* obj = dynamic_cast<Light*>(new_obj);
-	if (!obj)return new_obj;
+	base::Clone(newObj);
+	Light* obj = dynamic_cast<Light*>(newObj);
+	if (!obj)return newObj;
 
 	obj->mType = mType;
 	obj->Diffuse = Diffuse;
@@ -30,11 +30,12 @@ Object* Light::Clone(Object* new_obj)
 	obj->Attenuation = Attenuation;
 	obj->Intensity = Intensity;
 	obj->SpotAngle = SpotAngle;
-	obj->CullMask = CullMask;
 
 	obj->_shadowType = _shadowType;
 	obj->_shadowStrength = _shadowStrength;
 	obj->_shadowBias = _shadowBias;
+	obj->_cullMask = _cullMask;
+
 	if (_shadowType != ShadowType::None)
 		obj->EnableShadowMap();
 
@@ -82,18 +83,18 @@ void Light::OnDrawEditor()
 {
 	base::OnDrawEditor();
 	{
-		const char* sz_flags[] = { "Directional", "Point", "Spot" };
+		const char* szFlags[] = { "Directional", "Point", "Spot" };
 		ImGuiEx::Label("Type");
-		static int current_index = 0;
+		static int currentIndex = 0;
 		switch (mType)
 		{
-		case LightType::Direction: current_index = 0; break;
-		case LightType::Point:current_index = 1; break;
-		case LightType::Spot:current_index = 2; break;
+		case LightType::Direction: currentIndex = 0; break;
+		case LightType::Point:currentIndex = 1; break;
+		case LightType::Spot:currentIndex = 2; break;
 		}
-		if (ImGui::Combo("##Type", &current_index, sz_flags, ARRAY_SIZE(sz_flags)))
+		if (ImGui::Combo("##Type", &currentIndex, szFlags, ARRAY_SIZE(szFlags)))
 		{
-			switch (current_index)
+			switch (currentIndex)
 			{
 			case 0: mType = LightType::Direction; break;
 			case 1: mType = LightType::Point; break;
@@ -106,9 +107,9 @@ void Light::OnDrawEditor()
 
 		if (mType == LightType::Point || mType == LightType::Spot)
 		{
-			float min_value = 0.0f;
+			float minValue = 0.0f;
 			ImGuiEx::Label("Range");
-			ImGui::DragScalar("##Range", ImGuiDataType_Float, &Range, 0.05f, &min_value, nullptr, "%.2f");
+			ImGui::DragScalar("##Range", ImGuiDataType_Float, &Range, 0.05f, &minValue, nullptr, "%.2f");
 		}
 
 		if (mType == LightType::Spot)
@@ -117,34 +118,34 @@ void Light::OnDrawEditor()
 			ImGui::SliderFloat("SpotAngle", &SpotAngle, 1, 179);
 		}
 
-		float min_value = 0.0f;
+		float minValue = 0.0f;
 		ImGuiEx::Label("Intensity");
-		ImGui::DragScalar("##Intensity", ImGuiDataType_Float, &Intensity, 0.05f, &min_value, nullptr, "%.2f");
+		ImGui::DragScalar("##Intensity", ImGuiDataType_Float, &Intensity, 0.05f, &minValue, nullptr, "%.2f");
 	}
 	{
 		ImGui::NewLine();
-		const char* sz_flags[] = { "No Shadows", "Hard Shadows", "Soft Shadows" };
+		const char* szFlags[] = { "No Shadows", "Hard Shadows", "Soft Shadows" };
 		ImGuiEx::Label("Shadow Type");
-		static int current_index = (int)_shadowType;
-		if (ImGui::Combo("##Shadow Type", &current_index, sz_flags, ARRAY_SIZE(sz_flags)))
+		static int currentIndex = (int)_shadowType;
+		if (ImGui::Combo("##Shadow Type", &currentIndex, szFlags, ARRAY_SIZE(szFlags)))
 		{
-			_shadowType = (ShadowType)current_index;
+			_shadowType = (ShadowType)currentIndex;
 			EnableShadowMap();
 		}
 
-		if (current_index != 0)
+		if (currentIndex != 0)
 		{
 			{
 				ImGuiEx::Label("        Strength");
-				float min_value = 0.0f;
-				float max_value = 1.0f;
-				ImGui::DragScalar("##Strength", ImGuiDataType_Float, &_shadowStrength, 0.01f, &min_value, &max_value, "%.2f");
+				float minValue = 0.0f;
+				float maxValue = 1.0f;
+				ImGui::DragScalar("##Strength", ImGuiDataType_Float, &_shadowStrength, 0.01f, &minValue, &maxValue, "%.2f");
 			}
 			{
 				ImGuiEx::Label("        Bias");
-				float min_value = -2.0f;
-				float max_value = 2.0f;
-				ImGui::DragScalar("##Bias", ImGuiDataType_Float, &_shadowBias, 0.001f, &min_value, &max_value, "%.3f");
+				float minValue = -2.0f;
+				float maxValue = 2.0f;
+				ImGui::DragScalar("##Bias", ImGuiDataType_Float, &_shadowBias, 0.001f, &minValue, &maxValue, "%.3f");
 			}
 		}
 	}
@@ -152,7 +153,7 @@ void Light::OnDrawEditor()
 		ImGui::NewLine();
 
 		ImGuiEx::Label("Color Mask");
-		ECommonComponent::ShowCullmask("Color Mask", CullMask);
+		ECommonComponent::ShowCullmask("Color Mask", _cullMask);
 	}
 }
 /********************************************************************/
@@ -168,11 +169,11 @@ void Light::Transfer(TransferFunction& transfer, void* ptr)
 	TRANSFER_SIMPLE(Attenuation);
 	TRANSFER_SIMPLE(Intensity);
 	TRANSFER_SIMPLE(SpotAngle);
-	TRANSFER_SIMPLE(CullMask);
 
 	TRANSFER_ENUM(_shadowType);
 	TRANSFER_SIMPLE(_shadowStrength);
 	TRANSFER_SIMPLE(_shadowBias);
+	TRANSFER_SIMPLE(_cullMask);
 
 	if (transfer.IsRead() && GetValidShadowType() != ShadowType::None)
 	{

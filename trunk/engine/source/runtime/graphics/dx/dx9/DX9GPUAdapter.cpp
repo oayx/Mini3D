@@ -1,4 +1,4 @@
-#include "DX9GPUAdapter.h"
+﻿#include "DX9GPUAdapter.h"
 #include "DX9Device.h"
 
 DC_BEGIN_NAMESPACE
@@ -16,13 +16,13 @@ DX9GPUAdapterInfo::DX9GPUAdapterInfo(int index)
 /********************************************************************/
 GPUAdapterInfo* DX9GPUAdapter::SelectAdapters(void* instance)
 {
-	if (_gPUAdapters.IsEmpty())
+	if (_gpuAdapters.IsEmpty())
 	{
 		this->EnumAdapters(instance);
 	}
-	if (!_gPUAdapters.IsEmpty())
+	if (!_gpuAdapters.IsEmpty())
 	{
-		return _gPUAdapters[0];
+		return _gpuAdapters[0];
 	}
 
 	return nullptr;
@@ -30,6 +30,6 @@ GPUAdapterInfo* DX9GPUAdapter::SelectAdapters(void* instance)
 void DX9GPUAdapter::EnumAdapters(void* instance)
 {
 	DX9GPUAdapterInfo* adapter = DX9GPUAdapterInfo::Create(0);
-	_gPUAdapters.Add(adapter);
+	_gpuAdapters.Add(adapter);
 }
 DC_END_NAMESPACE

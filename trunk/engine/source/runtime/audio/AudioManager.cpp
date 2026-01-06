@@ -1,4 +1,4 @@
- 
+﻿ 
 #include "AudioManager.h"
 #include "AudioListener.h"
 #include "AudioClip.h"
@@ -13,11 +13,8 @@
 
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-static AudioManager* g_AudioManager = nullptr;
 static ALCdevice* g_device = nullptr;
 static ALCcontext* g_context = nullptr;
-AudioListener* AudioManager::m_listener = nullptr;
-AudioManager::AudioClips AudioManager::_audioClips;
 IMPL_REFECTION_TYPE(AudioManager);
 void AudioManager::Initialize()
 {
@@ -73,17 +70,17 @@ void AudioManager::Destroy()
 		g_device = nullptr;
 	}
 
-	m_listener = nullptr;
+	_listener = nullptr;
 	DestroyAudioClip();
 }
 bool AudioManager::AddListener(AudioListener* listener)
 {
-	if (m_listener != nullptr)
+	if (_listener != nullptr)
 	{
 		Debuger::Error("AudioManager::AddListener - already existed listener");
 		return false;
 	}
-	m_listener = listener;
+	_listener = listener;
 	return true;
 }
 bool AudioManager::AddAudioClip(const String& name, AudioClip* clip)

@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Date：2009/12/8
@@ -17,14 +17,14 @@ class RenderQueueGroup;
 /********************************************************************/
 // ClassName：RenderQueue
 // Description：渲染队列管理
-class RenderQueue Final : public Object
+class RenderQueue final : public Object
 {
 	typedef List<std::pair<int64, RenderQueueGroup*>> GroupCollection;
 	DEFAULT_CREATE(RenderQueue);
 	FRIEND_CONSTRUCT_DESTRUCT(RenderQueue);
 	DISALLOW_COPY_ASSIGN(RenderQueue);
 	BEGIN_DERIVED_REFECTION_TYPE(RenderQueue, Object)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 public:
 	RenderQueue();
@@ -49,17 +49,17 @@ private:
 /********************************************************************/
 // ClassName：RenderQueueGroup
 // Description：渲染分组
-class ENGINE_DLL RenderQueueGroup Final : public Object
+class ENGINE_DLL RenderQueueGroup final : public Object
 {
 	typedef List<Renderer*> Renderables;
 	DEFAULT_CREATE(RenderQueueGroup);
 	FRIEND_CONSTRUCT_DESTRUCT(RenderQueueGroup);
 	DISALLOW_COPY_ASSIGN(RenderQueueGroup);
 	BEGIN_DERIVED_REFECTION_TYPE(RenderQueueGroup, Object)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 public:
-	RenderQueueGroup(int64 group_id);
+	RenderQueueGroup(int64 groupId);
 
 public:
 	//添加到当前组

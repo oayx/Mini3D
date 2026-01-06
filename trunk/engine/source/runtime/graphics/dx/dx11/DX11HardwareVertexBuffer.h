@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2009/11/25
@@ -13,14 +13,14 @@ DC_BEGIN_NAMESPACE
 /********************************************************************/
 // ClassName：DX11HardwareVertexBuffer
 // Description：顶点buff
-class DX11HardwareVertexBuffer Final : public HardwareVertexBuffer
+class DX11HardwareVertexBuffer final : public HardwareVertexBuffer
 {
 	friend class DX11Device;
 	DEFAULT_CREATE(DX11HardwareVertexBuffer);
 	FRIEND_CONSTRUCT_DESTRUCT(DX11HardwareVertexBuffer);
 	DISALLOW_COPY_ASSIGN(DX11HardwareVertexBuffer);
 	BEGIN_DERIVED_REFECTION_TYPE(DX11HardwareVertexBuffer, HardwareVertexBuffer)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 protected:
 	DX11HardwareVertexBuffer();

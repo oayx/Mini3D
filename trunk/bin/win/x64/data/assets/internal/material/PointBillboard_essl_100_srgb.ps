@@ -1,0 +1,14 @@
+#version 100
+precision mediump float;
+precision highp int;
+
+uniform highp sampler2D _MainTex;
+
+varying highp vec2 varying_TEXCOORD0;
+
+void main()
+{
+    highp vec4 _34 = texture2D(_MainTex, varying_TEXCOORD0);
+    gl_FragData[0] = vec4(max((pow(max(_34.xyz, vec3(0.0)), vec3(0.4166666567325592041015625)) * 1.05499994754791259765625) - vec3(0.054999999701976776123046875), vec3(0.0)), _34.w);
+}
+

@@ -1,14 +1,12 @@
 apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
 
 android {
-    compileSdkVersion 29
+    compileSdk 34
+    namespace "cn.oayx.airplane"
 
     defaultConfig {
-        applicationId "cn.oayx.airplane"
         minSdkVersion 28 //iconv must need 28 or upper
-        targetSdkVersion 29
+        targetSdkVersion 31
         versionCode 1
         versionName "1.0"
 
@@ -21,14 +19,8 @@ android {
         }
 
         ndk {
-            abiFilters "arm64-v8a","armeabi-v7a"
+            abiFilters "arm64-v8a"//,"armeabi-v7a"
         }
-    }
-    android.applicationVariants.all {
-        variant ->
-            variant.outputs.all {
-                outputFileName = "application.apk"
-            }
     }
     buildTypes {
         release {
@@ -51,9 +43,27 @@ android {
         workingDir './'
         commandLine 'cmd', '/c', 'copy_assets.bat'
     }
+    android.applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            outputFileName = "airplane.apk"
+
+            // 定义目标目录
+            def targetDir = file("../../../../bin/android/apk")
+
+            // 创建独立拷贝任务
+            def copyTask = project.tasks.register("copy${variant.name.capitalize()}Apk", Copy) {
+                from output.outputFile
+                into targetDir
+                doFirst { targetDir.mkdirs() }
+            }
+
+            // 将拷贝任务绑定到 assemble 之后
+            variant.assembleProvider.get().finalizedBy(copyTask)
+        }
+    }
 }
 
 dependencies {
-    implementation fileTree(dir: "libs", include: ["*.jar"])
-    implementation files('libs\\engine.jar')
+    implementation fileTree(dir: "libs", include: ['*.jar', '*.aar'])
+    implementation files('libs/engine.aar')
 }

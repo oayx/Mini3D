@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2021/1/5
@@ -11,7 +11,7 @@
 DC_BEGIN_NAMESPACE
 class ParticleSystem;
 /********************************************************************/
-class ENGINE_DLL ParticleEmission Final : public Object
+class ENGINE_DLL ParticleEmission final : public Object
 {
 	friend class GameObject;
 	friend class ParticleSystem;
@@ -19,7 +19,7 @@ class ENGINE_DLL ParticleEmission Final : public Object
 	DISALLOW_COPY_ASSIGN(ParticleEmission);
 	BEGIN_DERIVED_REFECTION_TYPE(ParticleEmission, Object)
 		CTORS(DEFAULT_CTOR(ParticleEmission))
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 	ParticleEmission() = default;
 

@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2021/9/16
@@ -10,7 +10,7 @@
 
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-class ENGINE_DLL CharacterMove Final : public Component
+class ENGINE_DLL CharacterMove final : public Component
 {
 	friend class GameObject;
 	FRIEND_CONSTRUCT_DESTRUCT(CharacterMove);
@@ -18,7 +18,7 @@ class ENGINE_DLL CharacterMove Final : public Component
 	BEGIN_DERIVED_REFECTION_TYPE(CharacterMove, Component)
 		CTORS(DEFAULT_CTOR(CharacterMove))
 		ADD_EDITOR_COMPONENT("Component/CharacterMove")
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 	CharacterMove() = default;
 

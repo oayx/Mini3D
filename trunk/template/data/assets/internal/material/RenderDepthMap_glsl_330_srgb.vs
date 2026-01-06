@@ -36,11 +36,11 @@ struct type_CameraBuffer
 uniform type_CameraBuffer CameraBuffer;
 
 layout(location = 0) in vec4 in_var_POSITION;
-layout(location = 0) out float out_var_TEXCOORD0;
+layout(location = 0) out float var_TEXCOORD0;
 
 void main()
 {
     gl_Position = in_var_POSITION * TransformBuffer.MATRIX_MVP;
-    out_var_TEXCOORD0 = (in_var_POSITION * TransformBuffer.MATRIX_MV).z * CameraBuffer._ProjectionParams.w;
+    var_TEXCOORD0 = (in_var_POSITION * TransformBuffer.MATRIX_MV).z * CameraBuffer._ProjectionParams.w;
 }
 

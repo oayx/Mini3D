@@ -1,4 +1,4 @@
-#include "EditorAppliction.h"
+﻿#include "EditorAppliction.h"
 #include "EditorCursor.h"
 #include "EditorMain.h"
 #include "EditorMainMenu.h"
@@ -24,12 +24,6 @@ DC_BEGIN_NAMESPACE
 
 /********************************************************************/
 IMPL_DERIVED_REFECTION_TYPE(EditorAppliction, Object);
-LayoutType EditorAppliction::_layoutType = LayoutType::Default;
-InspectorType EditorAppliction::_inspectorType = InspectorType::None;
-uint64 EditorAppliction::_inspectorId = 0;
-String EditorAppliction::_inspectorName = "";
-EComponents	EditorAppliction::_components;
-std::atomic<bool> EditorAppliction::_isWatchFolderChange = false;
 void EditorAppliction::Initialize()
 {
 	EditorConfig::Load();
@@ -53,7 +47,7 @@ void EditorAppliction::Destroy()
 }
 void EditorAppliction::Update()
 {
-	DC_PROFILE_FUNCTION();
+	DC_PROFILE_FUNCTION;
 	if (!Application::IsEditor())return;
 	
 	if (_layoutType != EditorConfig::LayoutIndex)
@@ -87,10 +81,10 @@ void EditorAppliction::Update()
 		}
 		if (Input::GetKey(KeyCode::LeftControl) && Input::GetKey(KeyCode::LeftShift) && Input::GetKeyDown(KeyCode::S))
 		{
-			std::string select_path = Platform::OpenFileDialog("Select Scene", ".", "", "scene", false);
-			if (!select_path.empty())
+			std::string selectPath = Platform::OpenFileDialog("Select Scene", ".", "", "scene", false);
+			if (!selectPath.empty())
 			{
-				String path = ProjectManager::ToProjectAssetsPath(select_path);
+				String path = ProjectManager::ToProjectAssetsPath(selectPath);
 				SceneManager::SaveAsScene(path);
 			}
 		}
@@ -98,7 +92,7 @@ void EditorAppliction::Update()
 }
 void EditorAppliction::Render()
 {
-	DC_PROFILE_FUNCTION();
+	DC_PROFILE_FUNCTION;
 	if (Application::IsEditor())
 	{
 		EditorMain::Render();
@@ -127,8 +121,8 @@ bool EditorAppliction::CreateProject(const String& path)
 bool EditorAppliction::OpenProject(const String& path)
 {
 	Debuger::Log("Open project path:%s", path.c_str());
-	FileInfo file_info(path, SearchOption::TopDirectoryOnly);
-	if (!file_info.HasChildren("assets"))
+	FileInfo fileInfo(path, SearchOption::TopDirectoryOnly);
+	if (!fileInfo.HasChildren("assets"))
 	{
 		Debuger::Log("Is not valid project path:%s", path.c_str());
 		return false;
@@ -189,46 +183,46 @@ void EditorAppliction::InitComponent()
 		if (type != basetype && type->Is(basetype))
 		{
 			VecString names;
-			const std::string& component_group = type->GetEditorComponent();
-			if (!component_group.empty())
+			const std::string& componentGroup = type->GetEditorComponent();
+			if (!componentGroup.empty())
 			{
-				names = String(component_group).Split("/");
+				names = String(componentGroup).Split("/");
 				InitComponent(_components, names, type->GetName());
 			}
 		}
 	}
 }
-void EditorAppliction::InitComponent(EComponents& parent_component, VecString& names, const String& class_name)
+void EditorAppliction::InitComponent(EComponents& parentComponent, VecString& names, const String& className)
 {
 	if (names.IsEmpty())return;
 
 	String name = names.First();
 	names.RemoveAt(0);
-	auto it = parent_component.Childrends.Find(name);
-	if (it != parent_component.Childrends.end())
+	auto it = parentComponent.Childrends.Find(name);
+	if (it != parentComponent.Childrends.end())
 	{
-		InitComponent(it->second, names, class_name);
+		InitComponent(it->second, names, className);
 	}
 	else
 	{
 		if (names.Size() > 0)
 		{
 			EComponents component;
-			InitComponent(component, names, class_name);
-			parent_component.Childrends.Add(name, component);
+			InitComponent(component, names, className);
+			parentComponent.Childrends.Add(name, component);
 		}
 		else
 		{
-			parent_component.Components.Add({ name , class_name});
+			parentComponent.Components.Add({ name , className});
 		}
 	}
 }
 void EditorAppliction::OnSelectObject(uint64 id)
 {
-	GameObject* select_object = SceneManager::GetGameObject(id);
-	if (select_object)
+	GameObject* selectObject = SceneManager::GetGameObject(id);
+	if (selectObject)
 	{
-		UICanvas* canvas = select_object->GetComponent<UICanvas>();
+		UICanvas* canvas = selectObject->GetComponent<UICanvas>();
 		if (canvas)
 		{
 			canvas->SetDrawGizmos(!EditorConfig::Is3D);
@@ -237,12 +231,12 @@ void EditorAppliction::OnSelectObject(uint64 id)
 		{
 			if (EditorConfig::Is3D)
 			{
-				Camera* camera = select_object->GetComponent<Camera>();
-				if (camera && select_object->GetLayer() != LayerMask::NameToLayer(LayerMask::UI))
+				Camera* camera = selectObject->GetComponent<Camera>();
+				if (camera && selectObject->GetLayer() != LayerMask::NameToLayer(LayerMask::UI))
 				{
 					camera->SetDrawGizmos(true);
-					select_object->AddComponent<VirtualRenderer>();
-					select_object->InsertFlag(GameObjectFlag::AlwaysFindInScene);
+					selectObject->AddComponent<VirtualRenderer>();
+					selectObject->InsertFlag(GameObjectFlag::AlwaysFindInScene);
 				}
 			}
 		}
@@ -250,22 +244,22 @@ void EditorAppliction::OnSelectObject(uint64 id)
 }
 void EditorAppliction::OnUnselectObject(uint64 id)
 {
-	GameObject* select_object = SceneManager::GetGameObject(id);
-	if (select_object)
+	GameObject* selectObject = SceneManager::GetGameObject(id);
+	if (selectObject)
 	{
-		UICanvas* canvas = select_object->GetComponent<UICanvas>();
+		UICanvas* canvas = selectObject->GetComponent<UICanvas>();
 		if (canvas)
 		{
 			canvas->SetDrawGizmos(false);
 		}
 		else
 		{
-			Camera* camera = select_object->GetComponent<Camera>();
+			Camera* camera = selectObject->GetComponent<Camera>();
 			if (camera)
 			{
 				camera->SetDrawGizmos(false);
-				select_object->RemoveComponent<VirtualRenderer>();
-				select_object->RemoveFlag(GameObjectFlag::AlwaysFindInScene);
+				selectObject->RemoveComponent<VirtualRenderer>();
+				selectObject->RemoveFlag(GameObjectFlag::AlwaysFindInScene);
 			}
 		}
 	}

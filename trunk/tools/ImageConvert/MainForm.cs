@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -31,12 +31,12 @@ namespace ImageConvert
 
             Control.CheckForIllegalCrossThreadCalls = false;
 
-            _txt_path.Text = Utils.GetConfigValue("src_path");
+            _txt_path.Text = Utils.GetConfigValue("srcPath");
             if(string.IsNullOrEmpty(_txt_path.Text))
             {
                 _txt_path.Text = Utils.GetExePath();
             }
-            _txt_dst_path.Text = Utils.GetConfigValue("dst_path");
+            _txt_dst_path.Text = Utils.GetConfigValue("dstPath");
             if (string.IsNullOrEmpty(_txt_dst_path.Text))
             {
                 _txt_dst_path.Text = Utils.GetExePath() + "/Output";
@@ -104,7 +104,7 @@ namespace ImageConvert
                 return;
             }
 
-            Utils.SetConfigValue("src_path", _txt_path.Text);
+            Utils.SetConfigValue("srcPath", _txt_path.Text);
             Utils.SetConfigValue("dst_define", _txt_dst_path.Text);
 
             if (!string.IsNullOrEmpty(_txt_dst_path.Text))
@@ -156,19 +156,19 @@ namespace ImageConvert
         private void DDSConvertTexture(string src_ext)
         {
             List<string> list_args = new List<string>();
-            string src_path = _txt_path.Text.Replace("/", "\\");
+            string srcPath = _txt_path.Text.Replace("/", "\\");
             if (_cb_path.Checked)
             {//目录
                 list_args.Add("-r:keep");
-                list_args.Add(src_path + "\\*." + src_ext);
+                list_args.Add(srcPath + "\\*." + src_ext);
             }
             else
             {//文件
-                list_args.Add(src_path);
+                list_args.Add(srcPath);
             }
             if (!string.IsNullOrEmpty(_txt_dst_path.Text))
             {//输出目录
-                string dst_path = _txt_dst_path.Text.Replace("/", "\\");
+                string dstPath = _txt_dst_path.Text.Replace("/", "\\");
                 list_args.Add("-o");
                 list_args.Add(_txt_dst_path.Text);
             }
@@ -225,9 +225,9 @@ namespace ImageConvert
 
         private void PKMConvertTexture(string src_ext)
         {
-            string src_path = _txt_path.Text.Replace("/","\\");
-            string dst_path = _txt_dst_path.Text.Replace("/", "\\");
-            if (string.IsNullOrEmpty(dst_path))dst_path = src_path;
+            string srcPath = _txt_path.Text.Replace("/","\\");
+            string dstPath = _txt_dst_path.Text.Replace("/", "\\");
+            if (string.IsNullOrEmpty(dstPath))dstPath = srcPath;
 
             string[] list_args = new string[10];
             list_args[0] = "-s";
@@ -250,7 +250,7 @@ namespace ImageConvert
             }
 
             string pattern = "*." + src_ext;
-            string[] list_files = Directory.GetFiles(src_path, pattern, SearchOption.AllDirectories);
+            string[] list_files = Directory.GetFiles(srcPath, pattern, SearchOption.AllDirectories);
 
             _labal_progress.Text = "0/" + list_files.Length;
             _progress.Maximum = list_files.Length;
@@ -259,13 +259,13 @@ namespace ImageConvert
             {
                 string full_name = file;
                 if (_cb_file_lower.Checked) full_name = full_name.ToLower();
-                string file_name = Path.GetFileNameWithoutExtension(full_name);
-                string file_path = Path.GetDirectoryName(full_name);
-                string relative_path = file_path.Substring(src_path.Length);
-                string output_path = dst_path + relative_path;
+                string fileName = Path.GetFileNameWithoutExtension(full_name);
+                string filePath = Path.GetDirectoryName(full_name);
+                string relative_path = filePath.Substring(srcPath.Length);
+                string output_path = dstPath + relative_path;
                 FileUtils.CreateDirectory(output_path);
                 list_args[8] = full_name;
-                list_args[9] = output_path + "\\" + file_name + ".pkm";
+                list_args[9] = output_path + "\\" + fileName + ".pkm";
                 int result = EngineWrapper.dll_etc_main(list_args.Length, list_args);
                 if (result != 0)
                 {
@@ -277,9 +277,9 @@ namespace ImageConvert
         }
         private void ASTConvertTexture(string src_ext)
         {
-            string src_path = _txt_path.Text.Replace("/", "\\");
-            string dst_path = _txt_dst_path.Text.Replace("/", "\\");
-            if (string.IsNullOrEmpty(dst_path)) dst_path = src_path;
+            string srcPath = _txt_path.Text.Replace("/", "\\");
+            string dstPath = _txt_dst_path.Text.Replace("/", "\\");
+            if (string.IsNullOrEmpty(dstPath)) dstPath = srcPath;
 
             string[] list_args = new string[6];
             list_args[0] = "";//无效，占位用
@@ -288,7 +288,7 @@ namespace ImageConvert
             list_args[5] = "-" + _cb_astc_quality.Items[_cb_astc_quality.SelectedIndex].ToString();
 
             string pattern = "*." + src_ext;
-            string[] list_files = Directory.GetFiles(src_path, pattern, SearchOption.AllDirectories);
+            string[] list_files = Directory.GetFiles(srcPath, pattern, SearchOption.AllDirectories);
 
             _labal_progress.Text = "0/" + list_files.Length;
             _progress.Maximum = list_files.Length;
@@ -297,13 +297,13 @@ namespace ImageConvert
             {
                 string full_name = file;
                 if (_cb_file_lower.Checked) full_name = full_name.ToLower();
-                string file_name = Path.GetFileNameWithoutExtension(full_name);
-                string file_path = Path.GetDirectoryName(full_name);
-                string relative_path = file_path.Substring(src_path.Length);
-                string output_path = dst_path + relative_path;
+                string fileName = Path.GetFileNameWithoutExtension(full_name);
+                string filePath = Path.GetDirectoryName(full_name);
+                string relative_path = filePath.Substring(srcPath.Length);
+                string output_path = dstPath + relative_path;
                 FileUtils.CreateDirectory(output_path);
                 list_args[2] = full_name;
-                list_args[3] = output_path + "\\" + file_name + ".astc";
+                list_args[3] = output_path + "\\" + fileName + ".astc";
                 int result = EngineWrapper.dll_astc_main(list_args.Length, list_args);
                 if (result != 0)
                 {

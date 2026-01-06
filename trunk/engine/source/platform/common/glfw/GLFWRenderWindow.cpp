@@ -1,4 +1,4 @@
-#include "GLFWRenderWindow.h"
+﻿#include "GLFWRenderWindow.h"
 #include "runtime/input/Input.h"
 #include "runtime/input/MouseInput.h"
 #include "runtime/input/KeyboardInput.h"
@@ -184,10 +184,10 @@ GLFWRenderWindow::GLFWRenderWindow()
 }
 GLFWRenderWindow::~GLFWRenderWindow()
 {
-	if (m_hWnd != nullptr)
+	if (_hWnd != nullptr)
 	{
-		glfwDestroyWindow(m_hWnd);
-		m_hWnd = nullptr;
+		glfwDestroyWindow(_hWnd);
+		_hWnd = nullptr;
 	}
 }
 bool GLFWRenderWindow::Create(WindowDesc& info)
@@ -195,18 +195,32 @@ bool GLFWRenderWindow::Create(WindowDesc& info)
 	GLFWmonitor* monitor = glfwGetPrimaryMonitor();
 	const GLFWvidmode* mode = glfwGetVideoMode(monitor);
 
-#if defined(DC_GRAPHICS_API_OPENGL)
+	//TODO:在wasm环境，下面值都会为0
+	Debuger::Log("glfwGetVideoMode redBits:%d,greenBits:%d,blueBits:%d,refreshRate:%d, width:%d, height:%d",
+		mode->redBits, mode->greenBits, mode->blueBits, mode->refreshRate, mode->width, mode->height);
+
+#if defined(DC_GRAPHICS_API_VULKAN)
+	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+#elif defined(DC_GRAPHICS_API_OPENGL)
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
 #elif defined(DC_GRAPHICS_API_OPENGLES3)
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
 #endif
 
+#if defined(DC_PLATFORM_MAC)
+	// mac支持4.1，但是默认是2.1。这里设置 OpenGL 4.1 核心模式（macOS 兼容）
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);//强制 OpenGL 上下文仅支持现代特性（如可编程渲染管线），移除所有已废弃的旧功能（如固定管线函数 glBegin/glEnd、立即模式渲染等）。
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);// MAC必须启用,声明上下文不包含任何已弃用功能，确保代码兼容未来 OpenGL 版本
+#endif
+
 	//颜色模式和刷新频率
-	glfwWindowHint(GLFW_RED_BITS, mode->redBits);
-	glfwWindowHint(GLFW_GREEN_BITS, mode->greenBits);
-	glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
+	glfwWindowHint(GLFW_RED_BITS, mode->redBits == 0 ? 8 : mode->redBits);
+	glfwWindowHint(GLFW_GREEN_BITS, mode->greenBits == 0 ? 8 : mode->greenBits);
+	glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits == 0 ? 8 : mode->blueBits);
 	glfwWindowHint(GLFW_ALPHA_BITS, 8);
-	glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
+	glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate == 0 ? info.fps : mode->redBits);
 	glfwWindowHint(GLFW_DEPTH_BITS, 24);
 	glfwWindowHint(GLFW_STENCIL_BITS, 8);
 	
@@ -218,47 +232,51 @@ bool GLFWRenderWindow::Create(WindowDesc& info)
 	glfwWindowHint(GLFW_RESIZABLE, info.flags & WindowFlag::Resizable ? GLFW_TRUE : GLFW_FALSE);
 
 	//调整窗口
-	int screen_width = mode->width;
-	int screen_height = mode->height;
-	Platform::AdjustWindowRect(info.x, info.y, info.width, info.height, screen_width, screen_height, info.flags & WindowFlag::FullScreen);
+	int screenWidth = mode->width == 0 ? info.width : mode->width;
+	int screenHeight = mode->height == 0 ? info.height : mode->height;
+	Platform::AdjustWindowRect(info.x, info.y, info.width, info.height, screenWidth, screenHeight, info.flags & WindowFlag::FullScreen);
 
-	m_isIgnoreSizeChange = true;
+	_isIgnoreSizeChange = true;
 	//创建窗口，monitor非NULL的话，窗口会被全屏创建到指定的监视器上
-	m_hWnd = glfwCreateWindow(info.width, info.height, info.name.c_str(), (info.flags & WindowFlag::FullScreen) ? monitor : NULL, NULL);
-	if (!m_hWnd)
+	_hWnd = glfwCreateWindow(info.width, info.height, info.name.c_str(), (info.flags & WindowFlag::FullScreen) ? monitor : NULL, NULL);
+	if (!_hWnd)
 	{
+		//const char* error = nullptr;
+		//glfwGetError(&error);
+		//Debuger::Error("GLFWRenderWindow::Create - glfwCreateWindow %s", error);
 		Debuger::Error("GLFWRenderWindow::Create - glfwCreateWindow");
 		glfwTerminate();
 		return false;
 	}
 	//位置
-	glfwSetWindowPos(m_hWnd, info.x, info.y);
+	glfwSetWindowPos(_hWnd, info.x, info.y);
 	//操作相应
-	glfwSetFramebufferSizeCallback(m_hWnd, OnResizeCallback);
-	glfwSetKeyCallback(m_hWnd, OnKeyCallback);
-	glfwSetCharCallback(m_hWnd, OnCharCallback);
-	glfwSetMouseButtonCallback(m_hWnd, OnMouseBtnCallback);
-	glfwSetCursorPosCallback(m_hWnd, OnCursorPositionCallback);
-	glfwSetScrollCallback(m_hWnd, OnScrollCallback);
-	glfwSetWindowFocusCallback(m_hWnd, OnWindowFocusCallback);
-	glfwSetWindowCloseCallback(m_hWnd, OnWindowCloseCallback);
-#if defined(DC_GRAPHICS_API_OPENGL) || defined(DC_GRAPHICS_API_OPENGLES3)
+	glfwSetFramebufferSizeCallback(_hWnd, OnResizeCallback);
+	glfwSetKeyCallback(_hWnd, OnKeyCallback);
+	glfwSetCharCallback(_hWnd, OnCharCallback);
+	glfwSetMouseButtonCallback(_hWnd, OnMouseBtnCallback);
+	glfwSetCursorPosCallback(_hWnd, OnCursorPositionCallback);
+	glfwSetScrollCallback(_hWnd, OnScrollCallback);
+	glfwSetWindowFocusCallback(_hWnd, OnWindowFocusCallback);
+	glfwSetWindowCloseCallback(_hWnd, OnWindowCloseCallback);
 	//设置window中的窗口所关联的OpenGL环境为当前环境
-	glfwMakeContextCurrent(m_hWnd);
+#if !defined(DC_GRAPHICS_API_VULKAN)
+	glfwMakeContextCurrent(_hWnd);
 #endif
 	//标题
-	glfwSetWindowTitle(m_hWnd, info.name.c_str());
+	glfwSetWindowTitle(_hWnd, info.name.c_str());
 	//隐藏鼠标
-	//glfwSetInputMode(m_hWnd, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	//glfwSetInputMode(_hWnd, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-	m_isIgnoreSizeChange = false;
+	_isIgnoreSizeChange = false;
+	Debuger::Log("GLFWRenderWindow create succeed");
 	return base::Create(info);
 }
 void GLFWRenderWindow::Update()
 {
-	if (glfwWindowShouldClose(m_hWnd))
+	if (glfwWindowShouldClose(_hWnd))
 	{
-		WindowManager::CloseWindow(m_hWnd);
+		WindowManager::CloseWindow(_hWnd);
 	}
 }
 void GLFWRenderWindow::Resize(WindowResizeDesc& desc)
@@ -267,37 +285,37 @@ void GLFWRenderWindow::Resize(WindowResizeDesc& desc)
 	const GLFWvidmode* mode = glfwGetVideoMode(monitor);
 
 	//使用之前设定
-	if (!desc.fullscreen_valid)
+	if (!desc.fullscreenValid)
 	{
-		desc.fullscreen = m_fullscreen;
+		desc.fullscreen = _fullscreen;
 	}
 
 	//位置
 	int left = 0, top = 0;
 	if (!desc.fullscreen)
 	{
-		glfwGetWindowPos(m_hWnd, &left, &top);
+		glfwGetWindowPos(_hWnd, &left, &top);
 	}
 
 	//屏幕大小
-	int screen_width = mode->width;
-	int screen_height = mode->height;
+	int screenWidth = mode->width;
+	int screenHeight = mode->height;
 
 	//限定窗口大小不超过屏幕尺寸
 	int width = desc.width, height = desc.height;
 	if (!desc.fullscreen)
 	{
-		if (width > screen_width || width <= 0) width = screen_width;
-		if (height > screen_height || height <= 0) height = screen_height;
+		if (width > screenWidth || width <= 0) width = screenWidth;
+		if (height > screenHeight || height <= 0) height = screenHeight;
 	}
 	else
 	{
-		width = screen_width; height = screen_height;
+		width = screenWidth; height = screenHeight;
 	}
 	desc.width = width; desc.height = height;
-	m_isIgnoreSizeChange = true;
-	glfwSetWindowMonitor(m_hWnd, desc.fullscreen ? monitor : NULL, left, top, width, height, m_fps);
-	m_isIgnoreSizeChange = false;
+	_isIgnoreSizeChange = true;
+	glfwSetWindowMonitor(_hWnd, desc.fullscreen ? monitor : NULL, left, top, width, height, _fps);
+	_isIgnoreSizeChange = false;
 	base::Resize(desc);
 }
 int GLFWRenderWindow::OnWinMsg(uint uMsg, int64 param1, int64 param2, int64 param3, int64 param4)
@@ -392,16 +410,16 @@ int GLFWRenderWindow::OnWinMsg(uint uMsg, int64 param1, int64 param2, int64 para
 		{
 			Vector3 old_pos = Input::mousePosition;
 			MouseInput::HandleInputPosition(mouse_x, mouse_y);
-			if (m_isFirstMove)
+			if (_isFirstMove)
 			{
-				m_isFirstMove = false;
+				_isFirstMove = false;
 				MouseInput::HandleInputMove(0, 0);
 			}
 			else
 			{
-				float offset_x = Input::mousePosition.x - old_pos.x;
-				float offset_y = Input::mousePosition.y - old_pos.y;
-				MouseInput::HandleInputMove(offset_x, offset_y);
+				float offsetX = Input::mousePosition.x - old_pos.x;
+				float offsetY = Input::mousePosition.y - old_pos.y;
+				MouseInput::HandleInputMove(offsetX, offsetY);
 			}
 		}
 		break;
@@ -413,7 +431,7 @@ int GLFWRenderWindow::OnWinMsg(uint uMsg, int64 param1, int64 param2, int64 para
 	}
 	case GLFWMsgType::Resize:
 	{
-		if (!m_isIgnoreSizeChange)
+		if (!_isIgnoreSizeChange)
 		{
 			WindowResizeDesc desc(GetHwnd(), (int)param1, (int)param2, false, false);
 			Application::Resize(desc);
@@ -426,21 +444,22 @@ int GLFWRenderWindow::OnWinMsg(uint uMsg, int64 param1, int64 param2, int64 para
 void GLFWRenderWindow::Draw()
 {
 	base::Draw();
-#if defined(DC_GRAPHICS_API_OPENGL) || defined(DC_GRAPHICS_API_OPENGLES3)
-	if (m_hWnd != nullptr && !glfwWindowShouldClose(m_hWnd))
+#if !defined(DC_GRAPHICS_API_VULKAN)
+	//vulkan不能调用
+	if (_hWnd != nullptr && !glfwWindowShouldClose(_hWnd))
 	{
 		//请求窗口系统将参数window关联的后缓存画面呈现给用户
-		glfwSwapBuffers(m_hWnd);
+		glfwSwapBuffers(_hWnd);
 	}
 #endif
 }
 void* GLFWRenderWindow::GetHwnd()
 {
-	return GetGLFWHwnd(m_hWnd);
+	return GetGLFWHwnd(_hWnd);
 }
 void GLFWRenderWindow::Initialize()
 {
-	//错误回调
+	//错误回调，在wasm没有执行
 	glfwSetErrorCallback([](int error, const char* description)
 		{
 			Debuger::Error("glfw internal error(%d)%s", error, description);
@@ -449,8 +468,10 @@ void GLFWRenderWindow::Initialize()
 	//初始化,必须在其他任何GLFW函数之前被调用，因为它负责初始化整个GLFW库
 	if (!glfwInit())
 	{
-		Debuger::Error("glfwInit error");
+		Debuger::Error("glfw init error");
+		return;
 	}
+	Debuger::Debug("glfw init success");
 }
 void GLFWRenderWindow::Destroy()
 {

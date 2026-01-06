@@ -1,4 +1,4 @@
-#include "GameObject.h"
+﻿#include "GameObject.h"
 #include "Component.h"
 #include "runtime/ui/UIView.h"
 #include "runtime/ui/UICanvas.h"
@@ -96,27 +96,27 @@ GameObject* GameObject::Find(const String& path)
 		return nullptr;
 	}
 	String name = path;
-	String child_path = "";
+	String childPath = "";
 	int split_index = path.IndexOf('/');
 	if (split_index >= 0)
 	{
 		name = path.Substring(0, split_index);
-		child_path = path.Substring(split_index + 1);
+		childPath = path.Substring(split_index + 1);
 	}
 
 	if (SceneManager::GetCurrScene())
 	{
-		Transform* root_node = SceneManager::GetCurrScene()->GetRootObject()->GetTransform();
-		for (int i = 0; i < root_node->GetChildCount(); ++i)
+		Transform* rootNode = SceneManager::GetCurrScene()->GetRootObject()->GetTransform();
+		for (int i = 0; i < rootNode->GetChildCount(); ++i)
 		{
-			Transform* node = root_node->GetChild(i);
+			Transform* node = rootNode->GetChild(i);
 			if (node)
 			{
 				if (node->GetGameObject()->GetInstanceName() == name)
 				{
-					if (!child_path.IsEmpty())
+					if (!childPath.IsEmpty())
 					{
-						Transform* find = node->Find(child_path);
+						Transform* find = node->Find(childPath);
 						if (find != nullptr)
 						{
 							return find->GetGameObject();
@@ -132,10 +132,10 @@ GameObject* GameObject::Find(const String& path)
 	}
 	return nullptr;
 }
-Object* GameObject::Clone(Object* new_obj)
+Object* GameObject::Clone(Object* newObj)
 {
-	GameObject* obj = dynamic_cast<GameObject*>(new_obj);
-	if (!obj)return new_obj;
+	GameObject* obj = dynamic_cast<GameObject*>(newObj);
+	if (!obj)return newObj;
 
 	//基础属性
 	obj->SetInstanceName(_instanceName);
@@ -205,7 +205,7 @@ Component* GameObject::AddComponent(const String& type_name)
 }
 bool GameObject::AddComponent(Component* com)
 {
-	CHECK_RETURN_PTR_NULL(com);
+    CHECK_RETURN_PTR_FALSE(com);
 	//销毁中不能添加组件
 	if (this->IsDestroying())
 	{
@@ -432,8 +432,8 @@ void GameObject::PostComponentAction(ComponentAction type, bool removed, bool ch
 	}
 	if (child && this->GetTransform())
 	{
-		int child_count = this->GetTransform()->GetChildCount();
-		for (int i = 0; i < child_count; ++i)
+		int childCount = this->GetTransform()->GetChildCount();
+		for (int i = 0; i < childCount; ++i)
 		{
 			auto child = this->GetTransform()->GetChild(i);
 			if (child && child->GetGameObject()->ActiveSelf())
@@ -465,8 +465,8 @@ void GameObject::SendMessageUpwards(const String& key, const String& value)
 void GameObject::SendMessageDownward(const String& key, const String& value)
 {
 	SendMessage(key, value);
-	int child_count = this->GetTransform()->GetChildCount();
-	for (int i = 0; i < child_count; ++i)
+	int childCount = this->GetTransform()->GetChildCount();
+	for (int i = 0; i < childCount; ++i)
 	{
 		auto child = this->GetTransform()->GetChild(i);
 		if (child->GetGameObject()->ActiveSelf())

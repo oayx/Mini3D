@@ -1,3 +1,5 @@
+﻿message("当前CMakeLists目录: ${CMAKE_CURRENT_SOURCE_DIR}")
+
 set(ENGINE_EXTERNAL_DIRECTX_SRC
 	source/external/directx/dds/DDSTextureLoader9.cpp
 	source/external/directx/dds/DDSTextureLoader11.cpp

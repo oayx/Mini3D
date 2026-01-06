@@ -1,4 +1,4 @@
- #pragma once
+﻿ #pragma once
 
 #include "TestBase.h"
 
@@ -168,7 +168,7 @@ public:
 			QuadRender * mesh_render = obj->AddComponent<QuadRender>();
 			mesh_render->SetMaterial("internal/material/UnlitTexture.material");
 			mesh_render->GetMaterial()->SetTextureAddress(TextureAddress::Wrap);
-			mesh_render->GetMaterial()->SetDepth(true, true, StencilCmp::LessEqual);
+			mesh_render->GetMaterial()->SetDepth(true, true, StencilCmp::LEqual);
 			mesh_render->SetColor(Color::Red);
 			Transform *node = obj->GetComponent<Transform>();
 			node->SetLocalPosition(Vector3(0, 0, 0));
@@ -180,7 +180,7 @@ public:
 			QuadRender * mesh_render = obj->AddComponent<QuadRender>();
 			mesh_render->SetMaterial("internal/material/UnlitTexture.material");
 			mesh_render->GetMaterial()->SetTextureAddress(TextureAddress::Wrap);
-			mesh_render->GetMaterial()->SetDepth(true, true, StencilCmp::LessEqual);
+			mesh_render->GetMaterial()->SetDepth(true, true, StencilCmp::LEqual);
 			mesh_render->SetColor(Color::Blue);
 			Transform *node = obj->GetComponent<Transform>();
 			node->SetLocalPosition(Vector3(1, 0, 0));
@@ -197,8 +197,8 @@ public:
 			CubeRender * mesh_render = obj->AddComponent<CubeRender>();
 			mesh_render->SetMaterial("internal/material/UnlitTexture.material");
 			mesh_render->GetMaterial()->SetTextureFilter(TextureFilter::Trilinear);
-			//mesh_render->GetMaterial()->SetTextureFile("texture/ac_rock.png");
-			mesh_render->GetMaterial()->SetTextureFile("texture/101.astc");		
+			mesh_render->GetMaterial()->SetTextureFile("texture/ac_rock.png");
+			//mesh_render->GetMaterial()->SetTextureFile("texture/ac_rock.astc");		
 			//mesh_render->GetMaterial()->SetTextureFile("texture/ac_rock.pkm");
 			//mesh_render->GetMaterial()->SetTextureFile("texture/ac_rock.astc");
 			mesh_render->GetMaterial()->SetAlphaBlend(true);
@@ -342,18 +342,19 @@ public:
 			GameObject* obj = GameObject::Instantiation("CubeRender");
 			this->AddGameObject(obj);
 			CubeRender * mesh_render = obj->AddComponent<CubeRender>();
-			mesh_render->SetMaterial("internal/material/UnlitTextureInstance.material");
-			mesh_render->GetMaterial()->SetTextureFile("texture/ac_rock.png");
 
 			Vector<Matrix4> mats;
-			for (int row = -5; row <= 5; row += 2)                       
+			for (int row = -5; row <= 5; row += 2)
 			{
 				for (int col = -5; col <= 5; col += 2)
 				{
 					Matrix4 mat; mat.Translate(col, 0, row); mats.Add(mat);
 				}
 			}
-			mesh_render->SetInstanceTransform(std::move(mats));
+			mesh_render->SetInstanceTransform(mats);
+
+			mesh_render->SetMaterial("internal/material/UnlitTextureInstance.material");
+			mesh_render->GetMaterial()->SetTextureFile("texture/ac_rock.png");
 		}
 		{
 			Camera* camera = SceneManager::GetMainCamera();

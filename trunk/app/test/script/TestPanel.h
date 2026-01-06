@@ -1,4 +1,4 @@
- 
+﻿ 
 #pragma once
 
 #include "TestAnimation.h"
@@ -153,25 +153,25 @@ public:
 		_menuRoot = GameObject::Instantiation("MenuRoot");
 		_menuRoot->GetTransform()->SetParent(_uIRootObject->GetTransform(), false);
 
-		float total_height = Screen::GetHeight();
+		float totalHeight = Screen::GetHeight();
 		float width_scale = Screen::GetWidth() / 1334.0f;
 		float height_scale = Screen::GetHeight() / 750.0f;
 		float per_width = 300 * width_scale;
 		float per_height = 40.0f * height_scale;
-		float offset_x = 30 * width_scale;
-		float offset_y = 10 * height_scale;
+		float offsetX = 30 * width_scale;
+		float offsetY = 10 * height_scale;
 		float start_offset_x = -Screen::GetWidth() * 0.5f + per_width * 0.5f + 20.0f;
-		float start_offset_y = Math::Min<float>((callbacks.Size() * (per_height + offset_y)) * 0.5f, total_height * 0.5f - per_height);
+		float start_offset_y = Math::Min<float>((callbacks.Size() * (per_height + offsetY)) * 0.5f, totalHeight * 0.5f - per_height);
 		int row = 0, col = 0;
 
 		for (uint i = 0; i < callbacks.Size(); ++i)
 		{
 			auto callback = callbacks[i];
 
-			GameObject* menu_obj = GameObject::Instantiation(String::Format("MenuObject:{0}", i));
+			GameObject* menu_obj = GameObject::Instantiation("MenuObject:" + std::to_string(i));
 			menu_obj->GetTransform()->SetParent(_menuRoot->GetTransform(), false);
-			float pos_x = start_offset_x + (per_width + offset_x) * col;
-			float pos_y = start_offset_y - row * (per_height + offset_y) - per_height * 0.5f;
+			float pos_x = start_offset_x + (per_width + offsetX) * col;
+			float pos_y = start_offset_y - row * (per_height + offsetY) - per_height * 0.5f;
 			menu_obj->GetTransform()->SetLocalPosition(Vector3(pos_x, pos_y, 0.0f));
 
 			//按钮
@@ -208,7 +208,7 @@ public:
 
 			//换行列
 			row++;
-			if (pos_y - (per_height + offset_y) <= -total_height * 0.5f)
+			if (pos_y - (per_height + offsetY) <= -totalHeight * 0.5f)
 			{
 				row = 0;
 				col++;

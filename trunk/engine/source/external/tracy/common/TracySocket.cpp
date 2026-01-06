@@ -8,6 +8,7 @@
 
 #include "TracyAlloc.hpp"
 #include "TracySocket.hpp"
+#include "TracySystem.hpp"
 
 #ifdef _WIN32
 #  ifndef NOMINMAX
@@ -20,6 +21,9 @@
 #    pragma warning(disable:4267)
 #  endif
 #  define poll WSAPoll
+#  ifdef _MSC_VER
+#    pragma comment(lib, "ws2_32.lib")
+#  endif
 #else
 #  include <arpa/inet.h>
 #  include <sys/socket.h>
@@ -352,7 +356,7 @@ int Socket::Recv( void* _buf, int len, int timeout )
     }
 }
 
-int Socket::ReadUpTo( void* _buf, int len, int timeout )
+int Socket::ReadUpTo( void* _buf, int len )
 {
     const auto sock = m_sock.load( std::memory_order_relaxed );
     auto buf = (char*)_buf;
@@ -454,7 +458,7 @@ static int addrinfo_and_socket_for_family( uint16_t port, int ai_family, struct 
     hints.ai_family = ai_family;
     hints.ai_socktype = SOCK_STREAM;
 #ifndef TRACY_ONLY_LOCALHOST
-    const char* onlyLocalhost = getenv( "TRACY_ONLY_LOCALHOST" );
+    const char* onlyLocalhost = GetEnvVar( "TRACY_ONLY_LOCALHOST" );
     if( !onlyLocalhost || onlyLocalhost[0] != '1' )
     {
         hints.ai_flags = AI_PASSIVE;
@@ -475,7 +479,7 @@ bool ListenSocket::Listen( uint16_t port, int backlog )
     struct addrinfo* res = nullptr;
 
 #if !defined TRACY_ONLY_IPV4 && !defined TRACY_ONLY_LOCALHOST
-    const char* onlyIPv4 = getenv( "TRACY_ONLY_IPV4" );
+    const char* onlyIPv4 = GetEnvVar( "TRACY_ONLY_IPV4" );
     if( !onlyIPv4 || onlyIPv4[0] != '1' )
     {
         m_sock = addrinfo_and_socket_for_family( port, AF_INET6, &res );
@@ -488,7 +492,7 @@ bool ListenSocket::Listen( uint16_t port, int backlog )
         m_sock = addrinfo_and_socket_for_family( port, AF_INET, &res );
         if( m_sock == -1 ) return false;
     }
-#if defined _WIN32 || defined __CYGWIN__
+#if defined _WIN32
     unsigned long val = 0;
     setsockopt( m_sock, IPPROTO_IPV6, IPV6_V6ONLY, (const char*)&val, sizeof( val ) );
 #elif defined BSD
@@ -677,10 +681,10 @@ bool UdpListen::Listen( uint16_t port )
 #endif
 #if defined _WIN32
     unsigned long reuse = 1;
-    setsockopt( m_sock, SOL_SOCKET, SO_REUSEADDR, (const char*)&reuse, sizeof( reuse ) );
+    setsockopt( sock, SOL_SOCKET, SO_REUSEADDR, (const char*)&reuse, sizeof( reuse ) );
 #else
     int reuse = 1;
-    setsockopt( m_sock, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof( reuse ) );
+    setsockopt( sock, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof( reuse ) );
 #endif
 #if defined _WIN32
     unsigned long broadcast = 1;

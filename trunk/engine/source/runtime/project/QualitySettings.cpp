@@ -1,4 +1,4 @@
-#include "QualitySettings.h"
+﻿#include "QualitySettings.h"
 #include "runtime/resources/Resources.h"
 #include "runtime/scene/Light.h"
 #include "runtime/Application.h"
@@ -6,22 +6,15 @@
 DC_BEGIN_NAMESPACE
 static const String QualityFilePath = "settings/QualitySettings.asset";
 /********************************************************************/
-MSAAType QualitySettings::_mSAAType = MSAAType::Disabled;
-float QualitySettings::_shadowDistance = 200.0f;
-ShadowType QualitySettings::_shadowType = ShadowType::Soft;
-ShadowResolution QualitySettings::_shadowResolution = ShadowResolution::Medium;
-bool QualitySettings::_enableHDR = true;
-float QualitySettings::_hDRExposure = 0.8f;
-ColorFormat	QualitySettings::_hDRFormat = ColorFormat::RGBA16F;
 void QualitySettings::Load()
 {
-	String full_path = Resource::GetFullDataPath(QualityFilePath);
-	if (!File::Exist(full_path))
+	String fullPath = Resource::GetFullDataPath(QualityFilePath);
+	if (!File::Exist(fullPath))
 	{
 		return Save();
 	}
 
-	SerializeRead transfer(full_path);
+	SerializeRead transfer(fullPath);
 	TRANSFER_ENUM(_mSAAType);
 	_mSAAType = (MSAAType)Math::Clamp(int(_mSAAType), 1, int(MSAAType::Level_8));
 
@@ -31,8 +24,8 @@ void QualitySettings::Load()
 }
 void QualitySettings::Save()
 {
-	String full_path = Resource::GetFullDataPath(QualityFilePath);
-	SerializeWrite transfer(full_path);
+	String fullPath = Resource::GetFullDataPath(QualityFilePath);
+	SerializeWrite transfer(fullPath);
 	TRANSFER_ENUM(_mSAAType);
 
 	TRANSFER_ENUM(_shadowType);

@@ -15,7 +15,7 @@ namespace spine
 }
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-class SpineTextureLoader Final : public spine::TextureLoader
+class SpineTextureLoader final : public spine::TextureLoader
 {
 	virtual void load(spine::AtlasPage& page, const spine::String& path)override;
 	virtual void unload(void* texture)override;

@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Description：
@@ -15,7 +15,7 @@ class ENGINE_DLL Template : public Object
 	FRIEND_CONSTRUCT_DESTRUCT(Template);
 	DISALLOW_COPY_ASSIGN(Template);
 	BEGIN_DERIVED_REFECTION_TYPE(Template, Object)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 public:
 	Template() {}

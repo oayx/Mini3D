@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************************************/
 // @author hannibal
 // @date   2020/10/04
@@ -13,7 +13,7 @@ DC_BEGIN_NAMESPACE
 class Texture;
 class VideoDecoder;
 /********************************************************************/
-class ENGINE_DLL VideoPlayer Final : public Component
+class ENGINE_DLL VideoPlayer final : public Component
 {
 	friend class GameObject;
 	FRIEND_CONSTRUCT_DESTRUCT(VideoPlayer);
@@ -21,7 +21,7 @@ class ENGINE_DLL VideoPlayer Final : public Component
 	BEGIN_DERIVED_REFECTION_TYPE(VideoPlayer, Component)
 		CTORS(DEFAULT_CTOR(VideoPlayer))
 		ADD_EDITOR_COMPONENT("VideoPlayer")
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 protected:
 	VideoPlayer();

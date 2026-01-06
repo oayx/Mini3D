@@ -1,4 +1,4 @@
-#include "ManualRender.h"
+﻿#include "ManualRender.h"
 #include "runtime/graphics/Material.h"
 #include "runtime/graphics/null/CGProgram.h"
 #include "runtime/graphics/null/GraphicsDevice.h"
@@ -12,14 +12,11 @@
 DC_BEGIN_NAMESPACE
 /********************************************************************/
 IMPL_DERIVED_REFECTION_TYPE(ManualRender, Renderer);
-ManualRender::~ManualRender()
+Object* ManualRender::Clone(Object* newObj)
 {
-}
-Object* ManualRender::Clone(Object* new_obj)
-{
-	base::Clone(new_obj);
-	ManualRender* obj = dynamic_cast<ManualRender*>(new_obj);
-	if (!obj)return new_obj;
+	base::Clone(newObj);
+	ManualRender* obj = dynamic_cast<ManualRender*>(newObj);
+	if (!obj)return newObj;
 
 	return obj;
 }

@@ -1,13 +1,13 @@
-#include "UIImageList.h"
+﻿#include "UIImageList.h"
  
 DC_BEGIN_NAMESPACE
 /********************************************************************/
 IMPL_DERIVED_REFECTION_TYPE(UIImageList, UIImage);
-Object* UIImageList::Clone(Object* new_obj)
+Object* UIImageList::Clone(Object* newObj)
 {
-	base::Clone(new_obj);
-	UIImageList* obj = dynamic_cast<UIImageList*>(new_obj);
-	if (!obj)return new_obj;
+	base::Clone(newObj);
+	UIImageList* obj = dynamic_cast<UIImageList*>(newObj);
+	if (!obj)return newObj;
 
 	for (const auto& p : _atlases)
 	{

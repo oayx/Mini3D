@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2021/1/6
@@ -11,13 +11,13 @@
 DC_BEGIN_NAMESPACE
 /********************************************************************/
 //旋转
-class ENGINE_DLL RotateComponent Final : public Component
+class ENGINE_DLL RotateComponent final : public Component
 {
 	friend class GameObject;
 	FRIEND_CONSTRUCT_DESTRUCT(RotateComponent);
 	BEGIN_DERIVED_REFECTION_TYPE(RotateComponent, Component)
 		CTORS(DEFAULT_CTOR(RotateComponent))
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 	Vector3 _euler = Vector3::zero;
 
@@ -35,13 +35,13 @@ public:
 };
 /********************************************************************/
 //绕点旋转
-class ENGINE_DLL RotateAroundComponent Final : public Component
+class ENGINE_DLL RotateAroundComponent final : public Component
 {
 	friend class GameObject;
 	FRIEND_CONSTRUCT_DESTRUCT(RotateAroundComponent);
 	BEGIN_DERIVED_REFECTION_TYPE(RotateAroundComponent, Component)
 		CTORS(DEFAULT_CTOR(RotateAroundComponent))
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 	float _degree = 0.0f;
 	Vector3 _targetPos = Vector3::zero;
@@ -61,13 +61,13 @@ public:
 };
 /********************************************************************/
 //回调
-class ENGINE_DLL CallbackComponent Final : public Component
+class ENGINE_DLL CallbackComponent final : public Component
 {
 	friend class GameObject;
 	FRIEND_CONSTRUCT_DESTRUCT(CallbackComponent);
 	BEGIN_DERIVED_REFECTION_TYPE(CallbackComponent, Component)
 		CTORS(DEFAULT_CTOR(CallbackComponent))
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 private:
 	Action _updateCallback = nullptr;

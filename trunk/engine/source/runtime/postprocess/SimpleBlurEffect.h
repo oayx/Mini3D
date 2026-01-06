@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2020/6/18
@@ -10,7 +10,7 @@
 
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-class ENGINE_DLL SimpleBlurEffect Final : public PostEffect
+class ENGINE_DLL SimpleBlurEffect final : public PostEffect
 {
 	friend class PostProcess;
 	DECLARE_OBJECT_CLONE;
@@ -19,7 +19,7 @@ class ENGINE_DLL SimpleBlurEffect Final : public PostEffect
 	BEGIN_DERIVED_REFECTION_TYPE(SimpleBlurEffect, PostEffect)
 		CTORS(DEFAULT_CTOR(SimpleBlurEffect))
 		ADD_EDITOR_COMPONENT("Simple Blur")
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 	SimpleBlurEffect();
 	~SimpleBlurEffect();

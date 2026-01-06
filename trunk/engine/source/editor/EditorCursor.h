@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Description：
@@ -11,7 +11,7 @@
 DC_BEGIN_NAMESPACE
 /********************************************************************/
 //鼠标
-class EditorCursor Final
+class EditorCursor final
 {
 	friend class GUIContext;
 
@@ -28,10 +28,10 @@ public:
 	static const Vector<std::wstring>& GetAddFiles() { return _addFiles; }
 
 private:
-	static bool _isDraging;
-	static ImGuiMouseCursor	_lastMouseCursor;
+	inline static bool _isDraging = false;
+	inline static ImGuiMouseCursor	_lastMouseCursor = ImGuiMouseCursor_COUNT;
 
-	static String _dragFile;
-	static Vector<std::wstring> _addFiles;		//拖动到编辑器的文件
+	inline static String _dragFile = "";
+	inline static Vector<std::wstring> _addFiles;		//拖动到编辑器的文件
 };
 DC_END_NAMESPACE

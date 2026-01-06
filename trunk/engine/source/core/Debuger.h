@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Date：2009/11/21
@@ -25,7 +25,7 @@ enum class LogMsgType
 DECLARE_ENUM_OPERATORS(LogMsgType);
 
 /********************************************************************/
-class ENGINE_DLL Debuger Final
+class ENGINE_DLL Debuger final
 {
 	friend class Application;
 	typedef Delegate<LogMsgType, const char*> LogDelegate;
@@ -36,27 +36,29 @@ class ENGINE_DLL Debuger Final
 
 public:
 	//写日志接口
-	static void Debug(const char* format, ...);
-	static void Log(const char* format, ...);
-	static void Warning(const char* format, ...);
-	static void Error(const char* format, ...);
-	static void Exception(const char* format, ...);
-	static void Output(const char* format, ...);
-	static void Message(const char* title, const char* format, ...);
+	static void Assert(bool expr) noexcept;
+	static void Assert(bool expr, const char* format, ...) noexcept;
+	static void Debug(const char* format, ...) noexcept;
+	static void Log(const char* format, ...) noexcept;
+	static void Warning(const char* format, ...) noexcept;
+	static void Error(const char* format, ...) noexcept;
+	static void Exception(const char* format, ...) noexcept;
+	static void Output(const char* format, ...) noexcept;
+	static void Message(const char* title, const char* format, ...) noexcept;
 
 public:
-	static void SetLogToFileEnable(bool b);
-	static void RegisterLogMessageReceived(Function<void(LogMsgType, const char*)>& action) { _logHandle.Bind(action); }
-	static void UnregisterLogMessageReceived(Function<void(LogMsgType, const char*)>& action) { _logHandle.Unbind(action); }
+	static void SetLogToFileEnable(bool b) noexcept;
+	static void RegisterLogMessageReceived(Function<void(LogMsgType, const char*)>& action) noexcept { _logHandle.Bind(action); }
+	static void UnregisterLogMessageReceived(Function<void(LogMsgType, const char*)>& action) noexcept { _logHandle.Unbind(action); }
 
 private:
-	static void WriteLog(LogMsgType level, const char* msg);
-	static void WriteLogToConsole(LogMsgType level, const char* msg);
-	static void WriteLogToFile(LogMsgType level, const char* msg);
+	static void WriteLog(LogMsgType level, const char* msg) noexcept;
+	static void WriteLogToConsole(LogMsgType level, const char* msg) noexcept;
+	static void WriteLogToFile(LogMsgType level, const char* msg) noexcept;
 
 private:
-	static const int BufferSize = 1024 * 8;
-	static LogDelegate _logHandle;
-	static FileDataStream* _fileStream;
+	inline static constexpr int BufferSize = 1024 * 8;
+	inline static LogDelegate _logHandle;
+	inline static FileDataStream* _fileStream = nullptr;
 };//Log
 DC_END_NAMESPACE

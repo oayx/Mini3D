@@ -1,4 +1,4 @@
-#include "EditorIcon.h"
+﻿#include "EditorIcon.h"
 #include "core/image/ImageManager.h"
 #include "runtime/graphics/null/Texture.h"
 #include "runtime/resources/AssetsManager.h"
@@ -14,12 +14,10 @@ extern const char* GetDefaultFolderData();
 extern const char* GetDefaultFileData();
 /********************************************************************/
 IMPL_DERIVED_REFECTION_TYPE(EditorIcon, Object);
-EditorIcon* EditorIcon::_defaultFileIcon = nullptr;
-EditorIcon* EditorIcon::_defaultFolderIcon = nullptr;
-EditorIcon* EditorIcon::Create(const String& full_path)
+EditorIcon* EditorIcon::Create(const String& fullPath)
 {
-	EditorIcon* icon = DBG_NEW EditorIcon();
-	if (icon->LoadFromFile(full_path))
+	EditorIcon* icon = Memory::New<EditorIcon>();
+	if (icon->LoadFromFile(fullPath))
 	{
 		return icon;
 	}
@@ -30,11 +28,11 @@ EditorIcon* EditorIcon::GetDefaultFileIcon()
 {
 	if (_defaultFileIcon)return _defaultFileIcon;
 
-	_defaultFileIcon = DBG_NEW EditorIcon();
+	_defaultFileIcon = Memory::New<EditorIcon>();
 	_defaultFileIcon->_width = DEFAULT_ICON_SIZE;
 	_defaultFileIcon->_height = DEFAULT_ICON_SIZE;
 	_defaultFileIcon->_size = _defaultFileIcon->_width * _defaultFileIcon->_height * 4;
-	_defaultFileIcon->_data = NewArray<byte>(_defaultFileIcon->_size);
+	_defaultFileIcon->_data = Memory::NewArray<byte>(_defaultFileIcon->_size);
 	Memory::Copy(_defaultFileIcon->_data, GetDefaultFileData(), _defaultFileIcon->_size);
 	return _defaultFileIcon;
 }
@@ -42,11 +40,11 @@ EditorIcon* EditorIcon::GetDefaultFolderIcon()
 {
 	if (_defaultFolderIcon)return _defaultFolderIcon;
 
-	_defaultFolderIcon = DBG_NEW EditorIcon();
+	_defaultFolderIcon = Memory::New<EditorIcon>();
 	_defaultFolderIcon->_width = DEFAULT_ICON_SIZE;
 	_defaultFolderIcon->_height = DEFAULT_ICON_SIZE;
 	_defaultFolderIcon->_size = _defaultFolderIcon->_width * _defaultFolderIcon->_height * 4;
-	_defaultFolderIcon->_data = NewArray<byte>(_defaultFolderIcon->_size);
+	_defaultFolderIcon->_data = Memory::NewArray<byte>(_defaultFolderIcon->_size);
 	Memory::Copy(_defaultFolderIcon->_data, GetDefaultFolderData(), _defaultFolderIcon->_size);
 	return _defaultFolderIcon;
 }
@@ -56,12 +54,12 @@ void EditorIcon::DestroyDefaultIcon()
 	SAFE_DELETE(_defaultFolderIcon);
 }
 #if defined(DC_PLATFORM_WIN32)
-bool EditorIcon::LoadFromFile(const String& full_path)
+bool EditorIcon::LoadFromFile(const String& fullPath)
 {
-	if (!File::Exist(full_path))
+	if (!File::Exist(fullPath))
 		return false;
 	
-	String folder = full_path.Replace('/', '\\');
+	String folder = fullPath.Replace('/', '\\');
 	std::wstring folder_w = folder.ToWString();
 
 	bool result = false;
@@ -86,7 +84,7 @@ bool EditorIcon::LoadFromFile(const String& full_path)
 		if (_size == 0)
 			break;
 
-		_data = NewArray<byte>(_size);
+		_data = Memory::NewArray<byte>(_size);
 		if (::GetBitmapBits(iconInfo.hbmColor, _size, _data) == 0)
 			break;
 
@@ -103,13 +101,12 @@ bool EditorIcon::LoadFromFile(const String& file)
 	_width = DEFAULT_ICON_SIZE;
 	_height = DEFAULT_ICON_SIZE;
 	_size = _width * _height * 4;
-	_data = NewArray<byte>(_size);
+	_data = Memory::NewArray<byte>(_size);
 	Memory::Copy(_data, GetDefaultFolderIcon(), _size);
 	return true;
 }
 #endif
 /********************************************************************/
-EditorIconCache::Textures EditorIconCache::_textures;
 IMPL_REFECTION_TYPE(EditorIconCache);
 void EditorIconCache::Destroy()
 {
@@ -147,7 +144,7 @@ String EditorIconCache::GetIconFile(const AssetMeta* meta)
 }
 Texture* EditorIconCache::GetTexture(const AssetMeta* meta)
 {
-	DC_PROFILE_FUNCTION();
+	DC_PROFILE_FUNCTION;
 	
 	Texture* texture = nullptr;
 	if(_textures.TryGet(meta->GetGUID(), &texture))
@@ -169,7 +166,7 @@ Texture* EditorIconCache::GetTexture(const AssetMeta* meta)
 }
 void EditorIconCache::CacheIcon(const AssetMeta* meta)
 {
-	DC_PROFILE_FUNCTION();
+	DC_PROFILE_FUNCTION;
 
 	String icon_file = GetIconFile(meta);
 	String target_path = Resource::GetFullSavePath("library/icons/" + icon_file);

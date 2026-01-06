@@ -10,7 +10,7 @@
 
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-class ENGINE_DLL EdgeDetectionEffect Final : public PostEffect
+class ENGINE_DLL EdgeDetectionEffect final : public PostEffect
 {
 	friend class PostProcess;
 	DECLARE_OBJECT_CLONE;
@@ -19,7 +19,7 @@ class ENGINE_DLL EdgeDetectionEffect Final : public PostEffect
 	BEGIN_DERIVED_REFECTION_TYPE(EdgeDetectionEffect, PostEffect)
 		CTORS(DEFAULT_CTOR(EdgeDetectionEffect))
 		ADD_EDITOR_COMPONENT("Edge Detection")
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 	EdgeDetectionEffect();
 	~EdgeDetectionEffect();

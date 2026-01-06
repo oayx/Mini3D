@@ -1,4 +1,4 @@
-#include "Billboard.h"
+﻿#include "Billboard.h"
 #include "runtime/graphics/null/Texture.h"
 #include "runtime/graphics/Material.h"
 #include "runtime/graphics/Pass.h"
@@ -29,11 +29,11 @@ void Billboard::Update()
 void Billboard::OnPreRender(Camera* camera)
 {
 	base::OnPreRender(camera);
-	Vector3 look_dir = GetTransform()->GetPosition() - camera->GetTransform()->GetPosition();
-	//look_dir.y = 0;
-	//look_dir.Normalize();
-	//GetTransform()->LookTo(look_dir, Vector3::up);
-	float angle = Math::ATan2(look_dir.x, look_dir.z);
+	Vector3 lookDir = GetTransform()->GetPosition() - camera->GetTransform()->GetPosition();
+	//lookDir.y = 0;
+	//lookDir.Normalize();
+	//GetTransform()->LookTo(lookDir, Vector3::up);
+	float angle = Math::ATan2(lookDir.x, lookDir.z);
 	Quaternion q(angle * Math::Rad2Deg + (angle >= 0 ? 0 : 360), Vector3::up);
 	GetTransform()->SetRotation(q);
 }

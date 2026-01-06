@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Description： 目录监视
@@ -14,7 +14,7 @@ class Win32FolderMonitor : public Object
 	friend class Win32Platform;
 	DISALLOW_COPY_ASSIGN(Win32FolderMonitor);
 	BEGIN_DERIVED_REFECTION_TYPE(Win32FolderMonitor, Object)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 	static void Destroy();
 
@@ -22,9 +22,9 @@ class Win32FolderMonitor : public Object
 	static void Run();
 
 private:
-	static bool _isClose;
-	static std::thread	_handle;
-	static std::string _watchFolder;
-	static Function<void()> _callback;
+	inline static bool _isClose = false;
+	inline static std::thread	_handle;
+	inline static std::string _watchFolder = "";
+	inline static Function<void()> _callback;
 };
 DC_END_NAMESPACE

@@ -1,4 +1,4 @@
-/*****************************************************************************
+﻿/*****************************************************************************
 * Author： hannibal
 * Date：2010/7/21
 * Description： 渲染到纹理
@@ -10,19 +10,20 @@
 
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-class GLRenderTexture Final : public RenderTexture
+class GLRenderTexture final : public RenderTexture
 {
 	friend class GLDevice;
 	DEFAULT_CREATE(GLRenderTexture);
 	FRIEND_CONSTRUCT_DESTRUCT(GLRenderTexture);
 	DISALLOW_CONSTRUCTOR_COPY_ASSIGN(GLRenderTexture);
 	BEGIN_DERIVED_REFECTION_TYPE(GLRenderTexture, RenderTexture)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 protected:
 	GLRenderTexture(const TextureDesc& desc);
-public:
 	~GLRenderTexture();
+
+public:
 	virtual void  PreRender()override;
 	virtual void  BeginFrame(RenderFrameDesc& desc)override;
 	virtual void  PostRender()override;

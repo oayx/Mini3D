@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Date：2020/2/28
@@ -12,14 +12,14 @@ DC_BEGIN_NAMESPACE
 /********************************************************************/
 // ClassName：SphereRender
 // Description：球体
-class ENGINE_DLL SphereRender Final : public Renderer
+class ENGINE_DLL SphereRender final : public Renderer
 {
 	friend class GameObject;
 	FRIEND_CONSTRUCT_DESTRUCT(SphereRender);
 	DISALLOW_CONSTRUCTOR_COPY_ASSIGN(SphereRender);
 	BEGIN_DERIVED_REFECTION_TYPE(SphereRender, Renderer)
 		CTORS(DEFAULT_CTOR(SphereRender))
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 private:
 	virtual void Awake()override;

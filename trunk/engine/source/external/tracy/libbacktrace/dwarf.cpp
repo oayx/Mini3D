@@ -52,6 +52,7 @@ enum dwarf_tag {
   DW_TAG_compile_unit = 0x11,
   DW_TAG_inlined_subroutine = 0x1d,
   DW_TAG_subprogram = 0x2e,
+  DW_TAG_skeleton_unit = 0x4a,
 };
 
 enum dwarf_form {
@@ -472,7 +473,7 @@ enum attr_val_encoding
   /* An address.  */
   ATTR_VAL_ADDRESS,
   /* An index into the .debug_addr section, whose value is relative to
-   * the DW_AT_addr_base attribute of the compilation unit.  */
+     the DW_AT_addr_base attribute of the compilation unit.  */
   ATTR_VAL_ADDRESS_INDEX,
   /* A unsigned integer.  */
   ATTR_VAL_UINT,
@@ -610,8 +611,8 @@ struct function
 struct function_addrs
 {
   /* Range is LOW <= PC < HIGH.  */
-  uint64_t low;
-  uint64_t high;
+  uintptr_t low;
+  uintptr_t high;
   /* Function for this address range.  */
   struct function *function;
 };
@@ -692,8 +693,8 @@ struct unit
 struct unit_addrs
 {
   /* Range is LOW <= PC < HIGH.  */
-  uint64_t low;
-  uint64_t high;
+  uintptr_t low;
+  uintptr_t high;
   /* Compilation unit for this address range.  */
   struct unit *u;
 };
@@ -724,8 +725,8 @@ struct dwarf_data
   struct dwarf_data *next;
   /* The data for .gnu_debugaltlink.  */
   struct dwarf_data *altlink;
-  /* The base address for this file.  */
-  uintptr_t base_address;
+/* The base address mapping for this file.  */
+  struct libbacktrace_base_address base_address;
   /* A sorted list of address ranges.  */
   struct unit_addrs *addrs;
   /* Number of address ranges in list.  */
@@ -746,13 +747,13 @@ struct dwarf_data
 /* Report an error for a DWARF buffer.  */
 
 static void
-dwarf_buf_error (struct dwarf_buf *buf, const char *msg)
+dwarf_buf_error (struct dwarf_buf *buf, const char *msg, int errnum)
 {
   char b[200];
 
   snprintf (b, sizeof b, "%s in %s at %d",
 	    msg, buf->name, (int) (buf->buf - buf->start));
-  buf->error_callback (buf->data, b, 0);
+  buf->error_callback (buf->data, b, errnum);
 }
 
 /* Require at least COUNT bytes in BUF.  Return 1 if all is well, 0 on
@@ -766,7 +767,7 @@ require (struct dwarf_buf *buf, size_t count)
 
   if (!buf->reported_underflow)
     {
-      dwarf_buf_error (buf, "DWARF underflow");
+      dwarf_buf_error (buf, "DWARF underflow", 0);
       buf->reported_underflow = 1;
     }
 
@@ -928,7 +929,7 @@ read_address (struct dwarf_buf *buf, int addrsize)
     case 8:
       return read_uint64 (buf);
     default:
-      dwarf_buf_error (buf, "unrecognized address size");
+      dwarf_buf_error (buf, "unrecognized address size", 0);
       return 0;
     }
 }
@@ -979,7 +980,7 @@ read_uleb128 (struct dwarf_buf *buf)
 	ret |= ((uint64_t) (b & 0x7f)) << shift;
       else if (!overflow)
 	{
-	  dwarf_buf_error (buf, "LEB128 overflows uint64_t");
+	  dwarf_buf_error (buf, "LEB128 overflows uint64_t", 0);
 	  overflow = 1;
 	}
       shift += 7;
@@ -1014,7 +1015,7 @@ read_sleb128 (struct dwarf_buf *buf)
 	val |= ((uint64_t) (b & 0x7f)) << shift;
       else if (!overflow)
 	{
-	  dwarf_buf_error (buf, "signed LEB128 overflows uint64_t");
+	  dwarf_buf_error (buf, "signed LEB128 overflows uint64_t", 0);
 	  overflow = 1;
 	}
       shift += 7;
@@ -1154,7 +1155,7 @@ read_attribute (enum dwarf_form form, uint64_t implicit_val,
 	offset = read_offset (buf, is_dwarf64);
 	if (offset >= dwarf_sections->size[DEBUG_STR])
 	  {
-	    dwarf_buf_error (buf, "DW_FORM_strp out of range");
+	    dwarf_buf_error (buf, "DW_FORM_strp out of range", 0);
 	    return 0;
 	  }
 	val->encoding = ATTR_VAL_STRING;
@@ -1169,7 +1170,7 @@ read_attribute (enum dwarf_form form, uint64_t implicit_val,
 	offset = read_offset (buf, is_dwarf64);
 	if (offset >= dwarf_sections->size[DEBUG_LINE_STR])
 	  {
-	    dwarf_buf_error (buf, "DW_FORM_line_strp out of range");
+	    dwarf_buf_error (buf, "DW_FORM_line_strp out of range", 0);
 	    return 0;
 	  }
 	val->encoding = ATTR_VAL_STRING;
@@ -1216,7 +1217,8 @@ read_attribute (enum dwarf_form form, uint64_t implicit_val,
 	if (form == DW_FORM_implicit_const)
 	  {
 	    dwarf_buf_error (buf,
-			     "DW_FORM_indirect to DW_FORM_implicit_const");
+			     "DW_FORM_indirect to DW_FORM_implicit_const",
+			     0);
 	    return 0;
 	  }
 	return read_attribute ((enum dwarf_form) form, 0, buf, is_dwarf64,
@@ -1349,7 +1351,7 @@ read_attribute (enum dwarf_form form, uint64_t implicit_val,
 	  }
 	if (offset >= altlink->dwarf_sections.size[DEBUG_STR])
 	  {
-	    dwarf_buf_error (buf, "DW_FORM_strp_sup out of range");
+	    dwarf_buf_error (buf, "DW_FORM_strp_sup out of range", 0);
 	    return 0;
 	  }
 	val->encoding = ATTR_VAL_STRING;
@@ -1358,7 +1360,7 @@ read_attribute (enum dwarf_form form, uint64_t implicit_val,
 	return 1;
       }
     default:
-      dwarf_buf_error (buf, "unrecognized DWARF form");
+      dwarf_buf_error (buf, "unrecognized DWARF form", -1);
       return 0;
     }
 }
@@ -1407,7 +1409,9 @@ resolve_string (const struct dwarf_sections *dwarf_sections, int is_dwarf64,
 	offset = read_offset (&offset_buf, is_dwarf64);
 	if (offset >= dwarf_sections->size[DEBUG_STR])
 	  {
-	    dwarf_buf_error (&offset_buf, "DW_FORM_strx offset out of range");
+	    dwarf_buf_error (&offset_buf,
+				   "DW_FORM_strx offset out of range",
+				   0);
 	    return 0;
 	  }
 	*string = (const char *) dwarf_sections->data[DEBUG_STR] + offset;
@@ -1427,7 +1431,7 @@ resolve_addr_index (const struct dwarf_sections *dwarf_sections,
 		    uint64_t addr_base, int addrsize, int is_bigendian,
 		    uint64_t addr_index,
 		    backtrace_error_callback error_callback, void *data,
-		    uint64_t *address)
+		    uintptr_t *address)
 {
   uint64_t offset;
   struct dwarf_buf addr_buf;
@@ -1448,7 +1452,7 @@ resolve_addr_index (const struct dwarf_sections *dwarf_sections,
   addr_buf.data = data;
   addr_buf.reported_underflow = 0;
 
-  *address = read_address (&addr_buf, addrsize);
+  *address = (uintptr_t) read_address (&addr_buf, addrsize);
   return 1;
 }
 
@@ -1527,7 +1531,7 @@ function_addrs_search (const void *vkey, const void *ventry)
 
 static int
 add_unit_addr (struct backtrace_state *state, void *rdata,
-	       uint64_t lowpc, uint64_t highpc,
+	       uintptr_t lowpc, uintptr_t highpc,
 	       backtrace_error_callback error_callback, void *data,
 	       void *pvec)
 {
@@ -1863,10 +1867,10 @@ lookup_abbrev (struct abbrevs *abbrevs, uint64_t code,
    lowpc/highpc is set or ranges is set.  */
 
 struct pcrange {
-  uint64_t lowpc;		/* The low PC value.  */
+  uintptr_t lowpc;             /* The low PC value.  */
   int have_lowpc;		/* Whether a low PC value was found.  */
   int lowpc_is_addr_index;	/* Whether lowpc is in .debug_addr.  */
-  uint64_t highpc;		/* The high PC value.  */
+  uintptr_t highpc;            /* The high PC value.  */
   int have_highpc;		/* Whether a high PC value was found.  */
   int highpc_is_relative;	/* Whether highpc is relative to lowpc.  */
   int highpc_is_addr_index;	/* Whether highpc is in .debug_addr.  */
@@ -1886,12 +1890,12 @@ update_pcrange (const struct attr* attr, const struct attr_val* val,
     case DW_AT_low_pc:
       if (val->encoding == ATTR_VAL_ADDRESS)
 	{
-	  pcrange->lowpc = val->u.uint;
+	  pcrange->lowpc = (uintptr_t) val->u.uint;
 	  pcrange->have_lowpc = 1;
 	}
       else if (val->encoding == ATTR_VAL_ADDRESS_INDEX)
 	{
-	  pcrange->lowpc = val->u.uint;
+	  pcrange->lowpc = (uintptr_t) val->u.uint;
 	  pcrange->have_lowpc = 1;
 	  pcrange->lowpc_is_addr_index = 1;
 	}
@@ -1900,18 +1904,18 @@ update_pcrange (const struct attr* attr, const struct attr_val* val,
     case DW_AT_high_pc:
       if (val->encoding == ATTR_VAL_ADDRESS)
 	{
-	  pcrange->highpc = val->u.uint;
+	  pcrange->highpc = (uintptr_t) val->u.uint;
 	  pcrange->have_highpc = 1;
 	}
       else if (val->encoding == ATTR_VAL_UINT)
 	{
-	  pcrange->highpc = val->u.uint;
+	  pcrange->highpc = (uintptr_t) val->u.uint;
 	  pcrange->have_highpc = 1;
 	  pcrange->highpc_is_relative = 1;
 	}
       else if (val->encoding == ATTR_VAL_ADDRESS_INDEX)
 	{
-	  pcrange->highpc = val->u.uint;
+	  pcrange->highpc = (uintptr_t) val->u.uint;
 	  pcrange->have_highpc = 1;
 	  pcrange->highpc_is_addr_index = 1;
 	}
@@ -1943,19 +1947,20 @@ update_pcrange (const struct attr* attr, const struct attr_val* val,
 static int
 add_low_high_range (struct backtrace_state *state,
 		    const struct dwarf_sections *dwarf_sections,
-		    uintptr_t base_address, int is_bigendian,
-		    struct unit *u, const struct pcrange *pcrange,
+		    struct libbacktrace_base_address base_address,
+		    int is_bigendian, struct unit *u,
+		    const struct pcrange *pcrange,
 		    int (*add_range) (struct backtrace_state *state,
-				      void *rdata, uint64_t lowpc,
-				      uint64_t highpc,
+				      void *rdata, uintptr_t lowpc,
+				      uintptr_t highpc,
 				      backtrace_error_callback error_callback,
 				      void *data, void *vec),
 		    void *rdata,
 		    backtrace_error_callback error_callback, void *data,
 		    void *vec)
 {
-  uint64_t lowpc;
-  uint64_t highpc;
+  uintptr_t lowpc;
+  uintptr_t highpc;
 
   lowpc = pcrange->lowpc;
   if (pcrange->lowpc_is_addr_index)
@@ -1979,8 +1984,8 @@ add_low_high_range (struct backtrace_state *state,
 
   /* Add in the base address of the module when recording PC values,
      so that we can look up the PC directly.  */
-  lowpc += base_address;
-  highpc += base_address;
+  lowpc = libbacktrace_add_base (lowpc, base_address);
+  highpc = libbacktrace_add_base (highpc, base_address);
 
   return add_range (state, rdata, lowpc, highpc, error_callback, data, vec);
 }
@@ -1992,11 +1997,11 @@ static int
 add_ranges_from_ranges (
     struct backtrace_state *state,
     const struct dwarf_sections *dwarf_sections,
-    uintptr_t base_address, int is_bigendian,
-    struct unit *u, uint64_t base,
+    struct libbacktrace_base_address base_address, int is_bigendian,
+    struct unit *u, uintptr_t base,
     const struct pcrange *pcrange,
     int (*add_range) (struct backtrace_state *state, void *rdata,
-		      uint64_t lowpc, uint64_t highpc,
+		      uintptr_t lowpc, uintptr_t highpc,
 		      backtrace_error_callback error_callback, void *data,
 		      void *vec),
     void *rdata,
@@ -2035,13 +2040,14 @@ add_ranges_from_ranges (
 	break;
 
       if (is_highest_address (low, u->addrsize))
-	base = high;
+	base = (uintptr_t) high;
       else
 	{
-	  if (!add_range (state, rdata, 
-			  low + base + base_address,
-			  high + base + base_address,
-			  error_callback, data, vec))
+	  uintptr_t rl, rh;
+
+	  rl = libbacktrace_add_base ((uintptr_t) low + base, base_address);
+	  rh = libbacktrace_add_base ((uintptr_t) high + base, base_address);
+	  if (!add_range (state, rdata, rl, rh, error_callback, data, vec))
 	    return 0;
 	}
     }
@@ -2059,11 +2065,11 @@ static int
 add_ranges_from_rnglists (
     struct backtrace_state *state,
     const struct dwarf_sections *dwarf_sections,
-    uintptr_t base_address, int is_bigendian,
-    struct unit *u, uint64_t base,
+    struct libbacktrace_base_address base_address, int is_bigendian,
+    struct unit *u, uintptr_t base,
     const struct pcrange *pcrange,
     int (*add_range) (struct backtrace_state *state, void *rdata,
-		      uint64_t lowpc, uint64_t highpc,
+		      uintptr_t lowpc, uintptr_t highpc,
 		      backtrace_error_callback error_callback, void *data,
 		      void *vec),
     void *rdata,
@@ -2129,8 +2135,8 @@ add_ranges_from_rnglists (
 	case DW_RLE_startx_endx:
 	  {
 	    uint64_t index;
-	    uint64_t low;
-	    uint64_t high;
+	    uintptr_t low;
+	    uintptr_t high;
 
 	    index = read_uleb128 (&rnglists_buf);
 	    if (!resolve_addr_index (dwarf_sections, u->addr_base,
@@ -2142,9 +2148,10 @@ add_ranges_from_rnglists (
 				     u->addrsize, is_bigendian, index,
 				     error_callback, data, &high))
 	      return 0;
-	    if (!add_range (state, rdata, low + base_address,
-			    high + base_address, error_callback, data,
-			    vec))
+	    if (!add_range (state, rdata,
+			    libbacktrace_add_base (low, base_address),
+			    libbacktrace_add_base (high, base_address),
+			    error_callback, data, vec))
 	      return 0;
 	  }
 	  break;
@@ -2152,8 +2159,8 @@ add_ranges_from_rnglists (
 	case DW_RLE_startx_length:
 	  {
 	    uint64_t index;
-	    uint64_t low;
-	    uint64_t length;
+	    uintptr_t low;
+	    uintptr_t length;
 
 	    index = read_uleb128 (&rnglists_buf);
 	    if (!resolve_addr_index (dwarf_sections, u->addr_base,
@@ -2161,7 +2168,7 @@ add_ranges_from_rnglists (
 				     error_callback, data, &low))
 	      return 0;
 	    length = read_uleb128 (&rnglists_buf);
-	    low += base_address;
+	    low = libbacktrace_add_base (low, base_address);
 	    if (!add_range (state, rdata, low, low + length,
 			    error_callback, data, vec))
 	      return 0;
@@ -2175,39 +2182,41 @@ add_ranges_from_rnglists (
 
 	    low = read_uleb128 (&rnglists_buf);
 	    high = read_uleb128 (&rnglists_buf);
-	    if (!add_range (state, rdata, low + base + base_address,
-			    high + base + base_address,
+	    if (!add_range (state, rdata,
+			    libbacktrace_add_base (low + base, base_address),
+			    libbacktrace_add_base (high + base, base_address),
 			    error_callback, data, vec))
 	      return 0;
 	  }
 	  break;
 
 	case DW_RLE_base_address:
-	  base = read_address (&rnglists_buf, u->addrsize);
+	  base = (uintptr_t) read_address (&rnglists_buf, u->addrsize);
 	  break;
 
 	case DW_RLE_start_end:
 	  {
-	    uint64_t low;
-	    uint64_t high;
+	    uintptr_t low;
+	    uintptr_t high;
 
-	    low = read_address (&rnglists_buf, u->addrsize);
-	    high = read_address (&rnglists_buf, u->addrsize);
-	    if (!add_range (state, rdata, low + base_address,
-			    high + base_address, error_callback, data,
-			    vec))
+	    low = (uintptr_t) read_address (&rnglists_buf, u->addrsize);
+	    high = (uintptr_t) read_address (&rnglists_buf, u->addrsize);
+	    if (!add_range (state, rdata,
+			    libbacktrace_add_base (low, base_address),
+			    libbacktrace_add_base (high, base_address),
+			    error_callback, data, vec))
 	      return 0;
 	  }
 	  break;
 
 	case DW_RLE_start_length:
 	  {
-	    uint64_t low;
-	    uint64_t length;
+	    uintptr_t low;
+	    uintptr_t length;
 
-	    low = read_address (&rnglists_buf, u->addrsize);
-	    length = read_uleb128 (&rnglists_buf);
-	    low += base_address;
+	    low = (uintptr_t) read_address (&rnglists_buf, u->addrsize);
+	    length = (uintptr_t) read_uleb128 (&rnglists_buf);
+	    low = libbacktrace_add_base (low, base_address);
 	    if (!add_range (state, rdata, low, low + length,
 			    error_callback, data, vec))
 	      return 0;
@@ -2215,7 +2224,7 @@ add_ranges_from_rnglists (
 	  break;
 
 	default:
-	  dwarf_buf_error (&rnglists_buf, "unrecognized DW_RLE value");
+	  dwarf_buf_error (&rnglists_buf, "unrecognized DW_RLE value", -1);
 	  return 0;
 	}
     }
@@ -2235,10 +2244,10 @@ add_ranges_from_rnglists (
 static int
 add_ranges (struct backtrace_state *state,
 	    const struct dwarf_sections *dwarf_sections,
-	    uintptr_t base_address, int is_bigendian,
-	    struct unit *u, uint64_t base, const struct pcrange *pcrange,
+	    struct libbacktrace_base_address base_address, int is_bigendian,
+	    struct unit *u, uintptr_t base, const struct pcrange *pcrange,
 	    int (*add_range) (struct backtrace_state *state, void *rdata, 
-			      uint64_t lowpc, uint64_t highpc,
+			      uintptr_t lowpc, uintptr_t highpc,
 			      backtrace_error_callback error_callback,
 			      void *data, void *vec),
 	    void *rdata,
@@ -2271,7 +2280,8 @@ add_ranges (struct backtrace_state *state,
    read, 0 if there is some error.  */
 
 static int
-find_address_ranges (struct backtrace_state *state, uintptr_t base_address,
+find_address_ranges (struct backtrace_state *state,
+		     struct libbacktrace_base_address base_address,
 		     struct dwarf_buf *unit_buf,
 		     const struct dwarf_sections *dwarf_sections,
 		     int is_bigendian, struct dwarf_data *altlink,
@@ -2322,14 +2332,16 @@ find_address_ranges (struct backtrace_state *state, uintptr_t base_address,
 	      break;
 
 	    case DW_AT_stmt_list:
-	      if (abbrev->tag == DW_TAG_compile_unit
+	      if ((abbrev->tag == DW_TAG_compile_unit
+		   || abbrev->tag == DW_TAG_skeleton_unit)
 		  && (val.encoding == ATTR_VAL_UINT
 		      || val.encoding == ATTR_VAL_REF_SECTION))
 		u->lineoff = val.u.uint;
 	      break;
 
 	    case DW_AT_name:
-	      if (abbrev->tag == DW_TAG_compile_unit)
+	      if (abbrev->tag == DW_TAG_compile_unit
+		  || abbrev->tag == DW_TAG_skeleton_unit)
 		{
 		  name_val = val;
 		  have_name_val = 1;
@@ -2337,7 +2349,8 @@ find_address_ranges (struct backtrace_state *state, uintptr_t base_address,
 	      break;
 
 	    case DW_AT_comp_dir:
-	      if (abbrev->tag == DW_TAG_compile_unit)
+	      if (abbrev->tag == DW_TAG_compile_unit
+		  || abbrev->tag == DW_TAG_skeleton_unit)
 		{
 		  comp_dir_val = val;
 		  have_comp_dir_val = 1;
@@ -2345,19 +2358,22 @@ find_address_ranges (struct backtrace_state *state, uintptr_t base_address,
 	      break;
 
 	    case DW_AT_str_offsets_base:
-	      if (abbrev->tag == DW_TAG_compile_unit
+	      if ((abbrev->tag == DW_TAG_compile_unit
+		   || abbrev->tag == DW_TAG_skeleton_unit)
 		  && val.encoding == ATTR_VAL_REF_SECTION)
 		u->str_offsets_base = val.u.uint;
 	      break;
 
 	    case DW_AT_addr_base:
-	      if (abbrev->tag == DW_TAG_compile_unit
+	      if ((abbrev->tag == DW_TAG_compile_unit
+		   || abbrev->tag == DW_TAG_skeleton_unit)
 		  && val.encoding == ATTR_VAL_REF_SECTION)
 		u->addr_base = val.u.uint;
 	      break;
 
 	    case DW_AT_rnglists_base:
-	      if (abbrev->tag == DW_TAG_compile_unit
+	      if ((abbrev->tag == DW_TAG_compile_unit
+		   || abbrev->tag == DW_TAG_skeleton_unit)
 		  && val.encoding == ATTR_VAL_REF_SECTION)
 		u->rnglists_base = val.u.uint;
 	      break;
@@ -2385,7 +2401,8 @@ find_address_ranges (struct backtrace_state *state, uintptr_t base_address,
 	}
 
       if (abbrev->tag == DW_TAG_compile_unit
-	  || abbrev->tag == DW_TAG_subprogram)
+	  || abbrev->tag == DW_TAG_subprogram
+	  || abbrev->tag == DW_TAG_skeleton_unit)
 	{
 	  if (!add_ranges (state, dwarf_sections, base_address,
 			   is_bigendian, u, pcrange.lowpc, &pcrange,
@@ -2393,9 +2410,10 @@ find_address_ranges (struct backtrace_state *state, uintptr_t base_address,
 			   (void *) addrs))
 	    return 0;
 
-	  /* If we found the PC range in the DW_TAG_compile_unit, we
-	     can stop now.  */
-	  if (abbrev->tag == DW_TAG_compile_unit
+	  /* If we found the PC range in the DW_TAG_compile_unit or
+	     DW_TAG_skeleton_unit, we can stop now.  */
+	  if ((abbrev->tag == DW_TAG_compile_unit
+	       || abbrev->tag == DW_TAG_skeleton_unit)
 	      && (pcrange.have_ranges
 		  || (pcrange.have_lowpc && pcrange.have_highpc)))
 	    return 1;
@@ -2418,7 +2436,8 @@ find_address_ranges (struct backtrace_state *state, uintptr_t base_address,
    on success, 0 on failure.  */
 
 static int
-build_address_map (struct backtrace_state *state, uintptr_t base_address,
+build_address_map (struct backtrace_state *state,
+		   struct libbacktrace_base_address base_address,
 		   const struct dwarf_sections *dwarf_sections,
 		   int is_bigendian, struct dwarf_data *altlink,
 		   backtrace_error_callback error_callback, void *data,
@@ -2482,7 +2501,7 @@ build_address_map (struct backtrace_state *state, uintptr_t base_address,
       version = read_uint16 (&unit_buf);
       if (version < 2 || version > 5)
 	{
-	  dwarf_buf_error (&unit_buf, "unrecognized DWARF version");
+	  dwarf_buf_error (&unit_buf, "unrecognized DWARF version", -1);
 	  goto fail;
 	}
 
@@ -2554,6 +2573,9 @@ build_address_map (struct backtrace_state *state, uintptr_t base_address,
       u->comp_dir = NULL;
       u->abs_filename = NULL;
       u->lineoff = 0;
+      u->str_offsets_base = 0;
+      u->addr_base = 0;
+      u->rnglists_base = 0;
 
       /* The actual line number mappings will be read as needed.  */
       u->lines = NULL;
@@ -2634,7 +2656,7 @@ add_line (struct backtrace_state *state, struct dwarf_data *ddata,
 
   /* Add in the base address here, so that we can look up the PC
      directly.  */
-  ln->pc = pc + ddata->base_address;
+  ln->pc = libbacktrace_add_base (pc, ddata->base_address);
 
   ln->filename = filename;
   ln->lineno = lineno;
@@ -2761,7 +2783,8 @@ read_v2_paths (struct backtrace_state *state, struct unit *u,
 	    {
 	      dwarf_buf_error (hdr_buf,
 			       ("invalid directory index in "
-				"line number program header"));
+				"line number program header"),
+			       0);
 	      return 0;
 	    }
 	  dir_len = strlen (dir);
@@ -2830,7 +2853,8 @@ read_lnct (struct backtrace_state *state, struct dwarf_data *ddata,
 		{
 		  dwarf_buf_error (hdr_buf,
 				   ("invalid directory index in "
-				    "line number program header"));
+				    "line number program header"),
+				   0);
 		  return 0;
 		}
 	      dir = hdr->dirs[val.u.uint];
@@ -2845,7 +2869,8 @@ read_lnct (struct backtrace_state *state, struct dwarf_data *ddata,
   if (path == NULL)
     {
       dwarf_buf_error (hdr_buf,
-		       "missing file name in line number program header");
+		       "missing file name in line number program header",
+		       0);
       return 0;
     }
 
@@ -2972,7 +2997,7 @@ read_line_header (struct backtrace_state *state, struct dwarf_data *ddata,
   hdr->version = read_uint16 (line_buf);
   if (hdr->version < 2 || hdr->version > 5)
     {
-      dwarf_buf_error (line_buf, "unsupported line number version");
+      dwarf_buf_error (line_buf, "unsupported line number version", -1);
       return 0;
     }
 
@@ -2986,7 +3011,8 @@ read_line_header (struct backtrace_state *state, struct dwarf_data *ddata,
       if (read_byte (line_buf) != 0)
 	{
 	  dwarf_buf_error (line_buf,
-			   "non-zero segment_selector_size not supported");
+			   "non-zero segment_selector_size not supported",
+			   -1);
 	  return 0;
 	}
     }
@@ -3127,7 +3153,8 @@ read_line_program (struct backtrace_state *state, struct dwarf_data *ddata,
 		      {
 			dwarf_buf_error (line_buf,
 					 ("invalid directory index "
-					  "in line number program"));
+					  "in line number program"),
+					 0);
 			return 0;
 		      }
 		    dir_len = strlen (dir);
@@ -3185,19 +3212,15 @@ read_line_program (struct backtrace_state *state, struct dwarf_data *ddata,
 		uint64_t fileno;
 
 		fileno = read_uleb128 (line_buf);
-		if (fileno == 0)
-		  filename = "";
-		else
+		if (fileno >= hdr->filenames_count)
 		  {
-		    if (fileno >= hdr->filenames_count)
-		      {
-			dwarf_buf_error (line_buf,
-					 ("invalid file number in "
-					  "line number program"));
-			return 0;
-		      }
-		    filename = hdr->filenames[fileno];
+		    dwarf_buf_error (line_buf,
+				     ("invalid file number in "
+				      "line number program"),
+				     0);
+		    return 0;
 		  }
+		filename = hdr->filenames[fileno];
 	      }
 	      break;
 	    case DW_LNS_set_column:
@@ -3428,7 +3451,9 @@ read_referenced_name (struct dwarf_data *ddata, struct unit *u,
   code = read_uleb128 (&unit_buf);
   if (code == 0)
     {
-      dwarf_buf_error (&unit_buf, "invalid abstract origin or specification");
+      dwarf_buf_error (&unit_buf,
+		      "invalid abstract origin or specification",
+		      0);
       return NULL;
     }
 
@@ -3502,7 +3527,7 @@ read_referenced_name (struct dwarf_data *ddata, struct unit *u,
 
 static int
 add_function_range (struct backtrace_state *state, void *rdata,
-		    uint64_t lowpc, uint64_t highpc,
+		    uintptr_t lowpc, uintptr_t highpc,
 		    backtrace_error_callback error_callback, void *data,
 		    void *pvec)
 {
@@ -3542,7 +3567,7 @@ add_function_range (struct backtrace_state *state, void *rdata,
 
 static int
 read_function_entry (struct backtrace_state *state, struct dwarf_data *ddata,
-		     struct unit *u, uint64_t base, struct dwarf_buf *unit_buf,
+		     struct unit *u, uintptr_t base, struct dwarf_buf *unit_buf,
 		     const struct line_header *lhdr,
 		     backtrace_error_callback error_callback, void *data,
 		     struct function_vector *vec_function,
@@ -3601,11 +3626,12 @@ read_function_entry (struct backtrace_state *state, struct dwarf_data *ddata,
 
 	  /* The compile unit sets the base address for any address
 	     ranges in the function entries.  */
-	  if (abbrev->tag == DW_TAG_compile_unit
+	  if ((abbrev->tag == DW_TAG_compile_unit
+	       || abbrev->tag == DW_TAG_skeleton_unit)
 	      && abbrev->attrs[i].name == DW_AT_low_pc)
 	    {
 	      if (val.encoding == ATTR_VAL_ADDRESS)
-		base = val.u.uint;
+		base = (uintptr_t) val.u.uint;
 	      else if (val.encoding == ATTR_VAL_ADDRESS_INDEX)
 		{
 		  if (!resolve_addr_index (&ddata->dwarf_sections,
@@ -3623,20 +3649,15 @@ read_function_entry (struct backtrace_state *state, struct dwarf_data *ddata,
 		case DW_AT_call_file:
 		  if (val.encoding == ATTR_VAL_UINT)
 		    {
-		      if (val.u.uint == 0)
-			function->caller_filename = "";
-		      else
+		      if (val.u.uint >= lhdr->filenames_count)
 			{
-			  if (val.u.uint >= lhdr->filenames_count)
-			    {
-			      dwarf_buf_error (unit_buf,
-					       ("invalid file number in "
-						"DW_AT_call_file attribute"));
-			      return 0;
-			    }
-			  function->caller_filename =
-			    lhdr->filenames[val.u.uint];
+			  dwarf_buf_error (unit_buf,
+					   ("invalid file number in "
+					    "DW_AT_call_file attribute"),
+					   0);
+			  return 0;
 			}
+		      function->caller_filename = lhdr->filenames[val.u.uint];
 		    }
 		  break;
 
@@ -3884,7 +3905,7 @@ read_function_info (struct backtrace_state *state, struct dwarf_data *ddata,
    Returns whatever CALLBACK returns, or 0 to keep going.  */
 
 static int
-report_inlined_functions (uintptr_t pc, struct function *function,
+report_inlined_functions (uintptr_t pc, struct function *function, const char* comp_dir,
 			  backtrace_full_callback callback, void *data,
 			  const char **filename, int *lineno)
 {
@@ -3938,13 +3959,22 @@ report_inlined_functions (uintptr_t pc, struct function *function,
   inlined = match->function;
 
   /* Report any calls inlined into this one.  */
-  ret = report_inlined_functions (pc, inlined, callback, data,
+  ret = report_inlined_functions (pc, inlined, comp_dir, callback, data,
 				  filename, lineno);
   if (ret != 0)
     return ret;
 
   /* Report this inlined call.  */
-  ret = callback (data, pc, match->low, *filename, *lineno, inlined->name);
+  if (*filename[0] != '/' && comp_dir)
+  {
+    char buf[1024];
+    snprintf (buf, 1024, "%s/%s", comp_dir, *filename);
+    ret = callback (data, pc, match->low, buf, *lineno, inlined->name);
+  }
+  else
+  {
+    ret = callback (data, pc, match->low, *filename, *lineno, inlined->name);
+  }
   if (ret != 0)
     return ret;
 
@@ -4211,14 +4241,36 @@ dwarf_lookup_pc (struct backtrace_state *state, struct dwarf_data *ddata,
   filename = ln->filename;
   lineno = ln->lineno;
 
-  ret = report_inlined_functions (pc, function, callback, data,
+  ret = report_inlined_functions (pc, function, entry->u->comp_dir, callback, data,
 				  &filename, &lineno);
   if (ret != 0)
     return ret;
 
-  return callback (data, pc, fmatch->low, filename, lineno, function->name);
+  if (filename[0] != '/' && entry->u->comp_dir)
+  {
+    char buf[1024];
+    snprintf (buf, 1024, "%s/%s", entry->u->comp_dir, filename);
+    return callback (data, pc, fmatch->low, buf, lineno, function->name);
+  }
+  else
+  {
+    return callback (data, pc, fmatch->low, filename, lineno, function->name);
+  }
 }
 
+bool dwarf_fileline_dwarf_lookup_pc_in_all_entries(struct backtrace_state *state, uintptr_t pc,
+      backtrace_full_callback callback, backtrace_error_callback error_callback, void *data,
+      int& found, int ret)
+{
+    for (struct dwarf_data* ddata = (struct dwarf_data *)state->fileline_data;
+         ddata != NULL;
+         ddata = ddata->next)
+    {
+      ret = dwarf_lookup_pc(state, ddata, pc, callback, error_callback, data, &found);
+      if (ret != 0 || found) return true;
+    }
+    return false;
+}
 
 /* Return the file/line information for a PC using the DWARF mapping
    we built earlier.  */
@@ -4230,20 +4282,30 @@ dwarf_fileline (struct backtrace_state *state, uintptr_t pc,
 {
   struct dwarf_data *ddata;
   int found;
-  int ret;
+  int ret = 0;
 
   if (!state->threaded)
+  {
+    if (dwarf_fileline_dwarf_lookup_pc_in_all_entries(state, pc, callback, error_callback, data, found, ret))
     {
-      for (ddata = (struct dwarf_data *) state->fileline_data;
-	   ddata != NULL;
-	   ddata = ddata->next)
-	{
-	  ret = dwarf_lookup_pc (state, ddata, pc, callback, error_callback,
-				 data, &found);
-	  if (ret != 0 || found)
-	    return ret;
-	}
+       return ret;
     }
+
+    // if we failed to obtain an entry in range, it can mean that the address map has been changed and new entries
+    //  have been loaded in the meantime. Request a refresh and try again.
+    if (state->request_known_address_ranges_refresh_fn)
+    {
+        int new_range_count = state->request_known_address_ranges_refresh_fn(state, pc);
+        if (new_range_count > 0)
+        {
+          if (dwarf_fileline_dwarf_lookup_pc_in_all_entries(state, pc, callback, error_callback, data, found, ret))
+          {
+            return ret;
+          }
+        }
+    }
+
+  }
   else
     {
       struct dwarf_data **pp;
@@ -4274,7 +4336,7 @@ dwarf_fileline (struct backtrace_state *state, uintptr_t pc,
 
 static struct dwarf_data *
 build_dwarf_data (struct backtrace_state *state,
-		  uintptr_t base_address,
+		  struct libbacktrace_base_address base_address,
 		  const struct dwarf_sections *dwarf_sections,
 		  int is_bigendian,
 		  struct dwarf_data *altlink,
@@ -4332,7 +4394,7 @@ build_dwarf_data (struct backtrace_state *state,
 
 int
 backtrace_dwarf_add (struct backtrace_state *state,
-		     uintptr_t base_address,
+		     struct libbacktrace_base_address base_address,
 		     const struct dwarf_sections *dwarf_sections,
 		     int is_bigendian,
 		     struct dwarf_data *fileline_altlink,

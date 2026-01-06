@@ -1,4 +1,4 @@
-#include "GUI.h"
+﻿#include "GUI.h"
 #include "core/Encoding.h"
 #include "runtime/input/Input.h"
 #include "runtime/graphics/Pass.h"
@@ -12,8 +12,6 @@
 
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-GUIContext::Primitives GUIContext::_primitives;
-Texture* GUIContext::_texture = nullptr;
 IMPL_REFECTION_TYPE(GUIContext);
 void GUIContext::Initialize()
 {
@@ -71,7 +69,7 @@ void GUIContext::ReleaseImGUI()
 }
 void GUIContext::PreRender()
 {
-	DC_PROFILE_FUNCTION();
+	DC_PROFILE_FUNCTION;
 	ImGuiIO& io = ImGui::GetIO();
 	io.DisplaySize = ImVec2((float)Screen::GetWidth(), (float)Screen::GetHeight());
 	io.DeltaTime = Time::GetUnscaledDeltaTime();
@@ -136,23 +134,28 @@ void GUIContext::PreRender()
 }
 void GUIContext::Render()
 {
-	DC_PROFILE_FUNCTION();
+	DC_PROFILE_FUNCTION;
 	ImGui::Render();
-	ImDrawData* draw_data = ImGui::GetDrawData();
+	ImDrawData* drawData = ImGui::GetDrawData();
 
 	//正交投影
-	float L = draw_data->DisplayPos.x;
-	float R = draw_data->DisplayPos.x + draw_data->DisplaySize.x;
-	float T = draw_data->DisplayPos.y;
-	float B = draw_data->DisplayPos.y + draw_data->DisplaySize.y;
+	float L = drawData->DisplayPos.x;
+	float R = drawData->DisplayPos.x + drawData->DisplaySize.x;
+	float T = drawData->DisplayPos.y;
+	float B = drawData->DisplayPos.y + drawData->DisplaySize.y;
 	Matrix4 mvp(2.0f / (R - L), 0.0f, 0.0f, 0.0f,
 		0.0f, 2.0f / (T - B), 0.0f, 0.0f,
 		0.0f, 0.0f, 0.5f, 0.0f,
 		(R + L) / (L - R), (T + B) / (B - T), 0.5f, 1.0f
 	);
+#if defined(DC_GRAPHICS_API_VULKAN)
+	//Vulkan Y轴朝下，这里修改成Y轴朝上
+	mvp.Set(3, 1, -mvp.Get(3, 1));
+	mvp.Set(1, 1, -mvp.Get(1, 1));
+#endif
 
-	ImVec2 clip_off = draw_data->DisplayPos;
-	if (draw_data->Valid)
+	ImVec2 clip_off = drawData->DisplayPos;
+	if (drawData->Valid)
 	{
 		for (int i = 0; i < _primitives.Size(); ++i)
 		{
@@ -173,53 +176,52 @@ void GUIContext::Render()
 		vtx_offsetes.Reserve(100); idx_offsetes.Reserve(100);
 		Vector<VertexColorUVLayout>& vertexes = primitive->GetVertexBuffer();
 		Vector<uint>& indices = primitive->GetIndexBuffer();
-		int total_vertex_size = 0, total_index_size = 0;
+		int totalVertexSize = 0, totalIndexSize = 0;
 		{
-			DC_PROFILE(GUIContext::BuildVertex);
+			DC_PROFILE_NAME(GUIContext::BuildVertex);
 
 			vtx_offsetes.Add(0);
 			idx_offsetes.Add(0);
-			for (int i = 0; i < draw_data->CmdListsCount; ++i)
+			for (int i = 0; i < drawData->CmdListsCount; ++i)
 			{
-				const ImDrawList* cmd_list = draw_data->CmdLists[i];
-				total_vertex_size += cmd_list->VtxBuffer.size();
-				total_index_size += cmd_list->IdxBuffer.Size;
-				vtx_offsetes.Add(total_vertex_size);
-				idx_offsetes.Add(total_index_size);
+				const ImDrawList* cmdList = drawData->CmdLists[i];
+				totalVertexSize += cmdList->VtxBuffer.size();
+				totalIndexSize += cmdList->IdxBuffer.Size;
+				vtx_offsetes.Add(totalVertexSize);
+				idx_offsetes.Add(totalIndexSize);
 			}
-			if (vertexes.Size() < total_vertex_size)vertexes.Resize(total_vertex_size);
-			if (indices.Size() < total_index_size)indices.Resize(total_index_size);
-			primitive->SetVertexSize(total_vertex_size);
+			if (vertexes.Size() < totalVertexSize)vertexes.Resize(totalVertexSize);
+			if (indices.Size() < totalIndexSize)indices.Resize(totalIndexSize);
+			primitive->SetVertexSize(totalVertexSize);
 
-			int curr_index_offset = 0;
-			for (int i = 0; i < draw_data->CmdListsCount; ++i)
+			for (int i = 0; i < drawData->CmdListsCount; ++i)
 			{
-				const ImDrawList* cmd_list = draw_data->CmdLists[i];
-				::memcpy(&vertexes[vtx_offsetes[i]], cmd_list->VtxBuffer.Data, cmd_list->VtxBuffer.Size * VERTEX_SIZE);
-				::memcpy(&indices[idx_offsetes[i]], cmd_list->IdxBuffer.Data, cmd_list->IdxBuffer.Size * INDEX_SIZE);
+				const ImDrawList* cmdList = drawData->CmdLists[i];
+				::memcpy(&vertexes[vtx_offsetes[i]], cmdList->VtxBuffer.Data, cmdList->VtxBuffer.Size * VERTEX_SIZE);
+				::memcpy(&indices[idx_offsetes[i]], cmdList->IdxBuffer.Data, cmdList->IdxBuffer.Size * INDEX_SIZE);
 			}
 		}
 
 		//step2: submesh
-		for (int i = 0; i < draw_data->CmdListsCount; ++i)
+		for (int i = 0; i < drawData->CmdListsCount; ++i)
 		{
-			DC_PROFILE(GUIContext::Render);
-			const ImDrawList* cmd_list = draw_data->CmdLists[i];
-			for (int j = 0; j < cmd_list->CmdBuffer.size(); ++j)
+			DC_PROFILE_NAME(GUIContext::Render);
+			const ImDrawList* cmdList = drawData->CmdLists[i];
+			for (int j = 0; j < cmdList->CmdBuffer.size(); ++j)
 			{
-				const ImDrawCmd& cmd = cmd_list->CmdBuffer[j];
+				const ImDrawCmd& cmd = cmdList->CmdBuffer[j];
 				//子图元
-				uint elem_count = cmd.ElemCount; uint vtx_offset = cmd.VtxOffset + vtx_offsetes[i]; uint idx_offset = cmd.IdxOffset + idx_offsetes[i];
-				SubPrimitive& sub_prim = primitive->AddSubPrimitive(elem_count, vtx_offset, idx_offset, vtx_offset, idx_offset);
+				uint elem_count = cmd.ElemCount; uint vtx_offset = cmd.VtxOffset + vtx_offsetes[i]; uint idxOffset = cmd.IdxOffset + idx_offsetes[i];
+				SubPrimitive& subPrim = primitive->AddSubPrimitive(elem_count, vtx_offset, idxOffset, vtx_offset, idxOffset);
 				//裁剪区域
 				iRect clip = { int(cmd.ClipRect.x - clip_off.x),int(cmd.ClipRect.y - clip_off.y),int(cmd.ClipRect.z - cmd.ClipRect.x),int(cmd.ClipRect.w - cmd.ClipRect.y) };
-				sub_prim.ScissorRect = clip;
+				subPrim.ScissorRect = clip;
 				//纹理
 				Texture* tex = (Texture*)cmd.GetTexID();
 				if (!tex)tex = _texture;
-				sub_prim.Tex = tex;
-				sub_prim.TexName = "_MainTex";
-				sub_prim.AlphaEnable = !tex->IsRenderTexture();//如果是渲染到纹理，关闭alpha
+				subPrim.Tex = tex;
+				subPrim.TexName = "_MainTex";
+				subPrim.AlphaEnable = !tex->IsRenderTexture();//如果是渲染到纹理，关闭alpha
 			}
 		}
 		//step3:render
@@ -229,7 +231,7 @@ void GUIContext::Render()
 }
 void GUIContext::PostRender()
 {
-	DC_PROFILE_FUNCTION();
+	DC_PROFILE_FUNCTION;
 	ImGui::EndFrame();
 }	
 FixedPrimitive<VertexColorUVLayout>* GUIContext::GetPrimitive(int index)
@@ -251,18 +253,17 @@ void GUIContext::CreateTexture()
 
 	ImGuiIO& io = ImGui::GetIO();
 
-	unsigned char* font_tex_pixels;
-	int font_tex_width;
-	int font_tex_height;
-	io.Fonts->GetTexDataAsRGBA32(&font_tex_pixels, &font_tex_width, &font_tex_height);
+	unsigned char* fontTexPixels;
+	int fontTexWidth;
+	int fontTexHeight;
+	io.Fonts->GetTexDataAsRGBA32(&fontTexPixels, &fontTexWidth, &fontTexHeight);
 	TextureDesc desc;
-	desc.width = font_tex_width; desc.height = font_tex_height; desc.format = ColorFormat::R8G8B8A8; //所有GUI贴图都是gamma空间执行
-	_texture = Texture::CreateFromMemroy(font_tex_pixels, desc);
+	desc.width = fontTexWidth; desc.height = fontTexHeight; desc.format = ColorFormat::R8G8B8A8; //所有GUI贴图都是gamma空间执行
+	_texture = Texture::CreateFromMemroy(fontTexPixels, desc);
 	_texture->Retain();
 	_texture->SetResName("GUIRender");
 }
 /********************************************************************/
-Map<String, Texture*> GUITextureCache::_textures;
 void GUITextureCache::Destroy()
 {
 	for (auto obj : _textures)
@@ -273,18 +274,18 @@ void GUITextureCache::Destroy()
 }
 Texture* GUITextureCache::Get(const String& file)
 {
-	String file_path = file;
+	String filePath = file;
 	if (file.IsEmpty())
-		file_path = "internal/texture/editor/highlight_outline.png";
+		filePath = "internal/texture/editor/highlight_outline.png";
 
 	Texture* tex = nullptr;
-	if (_textures.TryGet(file_path, &tex))
+	if (_textures.TryGet(filePath, &tex))
 		return tex;
 	
 	TextureDesc desc;//所有GUI贴图都是gamma空间执行
-	tex = Texture::Create2D(file_path, desc);
+	tex = Texture::Create2D(filePath, desc);
 	if (tex)tex->Retain();
-	_textures.Add(file_path, tex);
+	_textures.Add(filePath, tex);
 	return tex;
 }
 DC_END_NAMESPACE

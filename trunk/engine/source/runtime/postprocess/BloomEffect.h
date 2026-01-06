@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2020/6/18
@@ -10,7 +10,7 @@
 
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-class ENGINE_DLL BloomEffect Final : public PostEffect
+class ENGINE_DLL BloomEffect final : public PostEffect
 {
 	friend class PostProcess;
 	DECLARE_OBJECT_CLONE;
@@ -19,7 +19,7 @@ class ENGINE_DLL BloomEffect Final : public PostEffect
 	BEGIN_DERIVED_REFECTION_TYPE(BloomEffect, PostEffect)
 		CTORS(DEFAULT_CTOR(BloomEffect))
 		ADD_EDITOR_COMPONENT("Bloom")
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 	BloomEffect();
 	~BloomEffect();

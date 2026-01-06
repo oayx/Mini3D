@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Date：2020/8/19
@@ -67,7 +67,7 @@ class ENGINE_DLL UIView : public Component
 	DISALLOW_COPY_ASSIGN(UIView);
 	FRIEND_CONSTRUCT_DESTRUCT(UIView);
 	BEGIN_DERIVED_REFECTION_TYPE(UIView, Component)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 protected:
 	UIView();
@@ -76,7 +76,7 @@ protected:
 	virtual void	OnEnable() override { SetNeedRebuild(); base::OnEnable(); }
 	virtual void	OnDisable() override { SetNeedRebuild(); base::OnDisable(); }
 	virtual void	OnUISize()override { SetNeedRebuild(); base::OnUISize(); }
-	virtual bool	FillMesh(VariablePrimitive* primitive, Material* material, int& vxt_offset, int& idx_offset) { return false; }
+	virtual bool	FillMesh(VariablePrimitive* primitive, Material* material, int& vxtOffset, int& idxOffset) { return false; }
 	virtual String	GetAtlasFile() = 0;
 
 public:

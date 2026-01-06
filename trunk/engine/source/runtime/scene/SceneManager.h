@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Date：2009/12/2 
@@ -26,7 +26,7 @@ class UICanvas;
 class RenderWindow;
 class ReflectionProbe;
 /********************************************************************/
-class ENGINE_DLL SceneManager Final : public object
+class ENGINE_DLL SceneManager final : public object
 {
 	friend class Application;
 	friend class Light;
@@ -61,10 +61,10 @@ public://渲染
 	static void 	RenderGUI(RenderWindow* window);
 	static void 	PostRender(RenderWindow* window);
 
-	static void		AddDrawTriangles(int n){ m_nDrawTriangles += n; }
-	static void		AddRenderBatch(int n) { m_nRenderBatch += n; }
-	static void		AddSetPassCall(int n) { m_nSetPassCall += n; }
-	static void		AddDrawCall(int n) { m_nDrawCall += n; }
+	static void		AddDrawTriangles(int n){ _nDrawTriangles += n; }
+	static void		AddRenderBatch(int n) { _nRenderBatch += n; }
+	static void		AddSetPassCall(int n) { _nSetPassCall += n; }
+	static void		AddDrawCall(int n) { _nDrawCall += n; }
 	static uint		GetDrawTriangles(){ return _oldDrawTriangles; }
 	static uint		GetRenderBatch(){ return _oldRenderBatch; }
 	static uint		GetSetPassCall(){ return _oldSetPassCall; }
@@ -121,34 +121,34 @@ private://特殊集合管理
 	static void			RemoveGameObject(GameObject* obj);
 
 private://场景所有对象
-	static GameObject*  _engineObject;			//特殊对象，不能删除
-	static MapObjects	_objects;				
-	static Objects		_addedObjects;
-	static Objects		_removedObjects;
+	inline static GameObject*	_engineObject = nullptr;	//特殊对象，不能删除
+	inline static MapObjects	_objects;
+	inline static Objects		_addedObjects;
+	inline static Objects		_removedObjects;
 
 private://渲染
-	static uint			m_nDrawTriangles;		//渲染三角形数量
-	static uint			m_nRenderBatch;			//则是会在第一次调用draw行为的时候加1，如果之后渲染状态没有改变，则batch的数量不再增加，但是一次batch内可能会有多次drawcall调用，只是渲染状态没有改变
-	static uint			m_nSetPassCall;			//指的是切换渲染状态（render state）的次数，比如你的shader中如果有多个pass，或者是场景中有不同的material，都会造成渲染状态切换
-	static uint			m_nDrawCall;			//以gles为例，就是调用draw的实际次数，例如drawarray、drawelement，调用一次都会增加
-	static uint			_oldDrawTriangles;
-	static uint			_oldRenderBatch;
-	static uint			_oldSetPassCall;
-	static uint			_oldDrawCall;
+	inline static uint			_nDrawTriangles = 0;		//渲染三角形数量
+	inline static uint			_nRenderBatch = 0;			//则是会在第一次调用draw行为的时候加1，如果之后渲染状态没有改变，则batch的数量不再增加，但是一次batch内可能会有多次drawcall调用，只是渲染状态没有改变
+	inline static uint			_nSetPassCall = 0;			//指的是切换渲染状态（render state）的次数，比如你的shader中如果有多个pass，或者是场景中有不同的material，都会造成渲染状态切换
+	inline static uint			_nDrawCall = 0;				//以gles为例，就是调用draw的实际次数，例如drawarray、drawelement，调用一次都会增加
+	inline static uint			_oldDrawTriangles = 0;
+	inline static uint			_oldRenderBatch = 0;
+	inline static uint			_oldSetPassCall = 0;
+	inline static uint			_oldDrawCall = 0;
 
 private:
-	static Cameras		_cameras;				//场景所有camera
-	static Camera*		_mainCamera;
+	inline static Cameras		_cameras;					//场景所有camera
+	inline static Camera*		_mainCamera = nullptr;
 
-	static Lights		_lights;
-	static UICanvases	_uICanvas;
-
-private:
-	static ShadeMode	_shadeMode;
+	inline static Lights		_lights;
+	inline static UICanvases	_uICanvas;
 
 private:
-	static Scene*		_currScene;
-	static Scenes		_scenes;
-	static bool			_isLoadScening;
+	inline static ShadeMode		_shadeMode = ShadeMode::Gouraud;
+
+private:
+	inline static Scene*		_currScene = nullptr;
+	inline static Scenes		_scenes;
+	inline static bool			_isLoadScening = false;
 };//SceneManager
 DC_END_NAMESPACE

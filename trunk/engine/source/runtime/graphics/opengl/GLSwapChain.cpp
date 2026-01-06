@@ -6,13 +6,6 @@
 DC_BEGIN_NAMESPACE
 /********************************************************************/
 IMPL_DERIVED_REFECTION_TYPE(GLSwapChain, SwapChain);
-GLSwapChain::GLSwapChain()
-{
-
-}
-GLSwapChain::~GLSwapChain()
-{
-}
 bool GLSwapChain::CreateSwapChain(RenderWindow* window) 
 { 
 	_msaa.Count = window->GetAntiAlias();
@@ -56,13 +49,13 @@ bool GLSwapChain::Copy(Texture* texture)const
 	{//上下颠倒
 		int row_pitch = texture->GetPitch();
 		int total_size = texture->GetBytes();
-		byte* new_by = NewArray<byte>(total_size);
+		byte* new_by = Memory::NewArray<byte>(total_size);
 		Memory::Copy(new_by, by, total_size);//保证by指针不变
 		for (int row = 0; row < (int)texture->GetHeight(); ++row)
 		{
 			Memory::Copy(by + row_pitch * row, new_by + row_pitch * ((int)texture->GetHeight() - row - 1), row_pitch);
 		}
-		DeleteArray(new_by);
+		Memory::DeleteArray(new_by);
 	}
 	texture->Unlock(lock_desc);
 	return true;

@@ -7,15 +7,15 @@ DC_BEGIN_NAMESPACE
 /********************************************************************/
 Type::~Type()
 {
-	m_name = "";
-	m_baseType = nullptr;
-	for (auto obj : m_constructors)
+	_name = "";
+	_baseType = nullptr;
+	for (auto obj : _constructors)
 	{
 		SAFE_DELETE(obj);
 	}
-	m_constructors.clear();
+	_constructors.clear();
 }
-Type* Type::RegisterType(Type* type, const std::string& name, const Type* m_baseType)
+Type* Type::RegisterType(Type* type, const std::string& name, const Type* _baseType) noexcept
 {
 	static std::unordered_map<std::string, Type*>& types = GetTypes();
 	if (types.find(name) != types.end())
@@ -23,14 +23,14 @@ Type* Type::RegisterType(Type* type, const std::string& name, const Type* m_base
 
 	if (type)
 	{
-		type->m_name = name;
-		type->m_baseType = m_baseType;
+		type->_name = name;
+		type->_baseType = _baseType;
 	}
 	types.insert(std::make_pair(name, type));
 
 	return type;
 }
-const Type* Type::GetType(const std::string& typeName)
+const Type* Type::GetType(const std::string& typeName) noexcept
 {
 	static std::unordered_map<std::string, Type*>& types = GetTypes();
 	auto type = types[typeName];
@@ -40,7 +40,7 @@ const Type* Type::GetType(const std::string& typeName)
 	}
 	return type;
 }
-void Type::Output()
+void Type::Output() noexcept
 {
 	std::stringstream ss;
 	for (auto t : GetTypes())
@@ -49,7 +49,7 @@ void Type::Output()
 	}
 	Debuger::Log("%s", ss.str().c_str());
 }
-void Type::Destroy()
+void Type::Destroy() noexcept
 {
 	static std::unordered_map<std::string, Type*>& types = GetTypes();
 	for (auto obj : types)

@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2020/3/18
@@ -13,7 +13,7 @@ DC_BEGIN_NAMESPACE
 class Texture;
 class TextureUnit;
 /********************************************************************/
-class GLProgram Final : public CGProgram
+class GLProgram final : public CGProgram
 {
 	friend class GLDevice;
 	typedef Map<String, uint> UniformIndexMaps;
@@ -21,13 +21,15 @@ class GLProgram Final : public CGProgram
 	FRIEND_CONSTRUCT_DESTRUCT(GLProgram);
 	DISALLOW_CONSTRUCTOR_COPY_ASSIGN(GLProgram);
 	BEGIN_DERIVED_REFECTION_TYPE(GLProgram, CGProgram)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
+
+protected:
+	~GLProgram();
 
 public:
-	~GLProgram();
 	GLuint GetShaderProgram()const { return _shaderProgram; }
 
-	virtual bool LoadFromFile(const ShaderDesc& info)override;
+	virtual bool LoadFromDesc(const ShaderDesc& info)override;
 	virtual bool LoadFromMemory(const String& name, const VecString& codes, const VecString& defines)override;
 
 	virtual void PreRender()override;

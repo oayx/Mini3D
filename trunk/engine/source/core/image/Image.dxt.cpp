@@ -1,21 +1,27 @@
-#include "Image.h"
+﻿#include "Image.h"
 #include "core/math/Math.h"
 #include "runtime/resources/Resources.h"
-#if defined(DC_GRAPHICS_API_DX9) || defined(DC_GRAPHICS_API_DX11)
+#if defined(DC_GRAPHICS_API_DX9) || defined(DC_GRAPHICS_API_DX11) || defined(DC_GRAPHICS_API_DX12)
 #include <directxtex/DirectXTex.h>
-#include "runtime/graphics/dx/dx11/DX11Define.h"
+#	if defined(DC_GRAPHICS_API_DX9)
+#		include "runtime/graphics/dx/dx9/DX9Define.h"
+#	elif defined(DC_GRAPHICS_API_DX11)
+#		include "runtime/graphics/dx/dx11/DX11Define.h"
+#	elif defined(DC_GRAPHICS_API_DX12)
+#		include "runtime/graphics/dx/dx12/DX12Define.h"
+#	endif
 #endif
 
 DC_BEGIN_NAMESPACE
 /********************************************************************/
 bool Image::LoadFromDDSFile(const String& path, bool mipmap)
 {
-#if defined(DC_GRAPHICS_API_DX9) || defined(DC_GRAPHICS_API_DX11)
-	std::wstring w_path = path.ToWString();
+#if defined(DC_GRAPHICS_API_DX9) || defined(DC_GRAPHICS_API_DX11) || defined(DC_GRAPHICS_API_DX12)
+	std::wstring wPath = path.ToWString();
 
 	// Load image data
 	DirectX::ScratchImage image;
-	HRESULT result = DirectX::LoadFromDDSFile(w_path.c_str(), DirectX::DDS_FLAGS_NONE, nullptr, image);
+	HRESULT result = DirectX::LoadFromDDSFile(wPath.c_str(), DirectX::DDS_FLAGS_NONE, nullptr, image);
 	if (FAILED(result))
 	{
 		Debuger::Error("Failed to import texture from file:%s. Result: %d", path.c_str(), static_cast<uint>(result));
@@ -25,13 +31,17 @@ bool Image::LoadFromDDSFile(const String& path, bool mipmap)
 	auto& meta = image.GetMetadata();
 	this->Clear();
 	_size = iSize((int)meta.width, (int)meta.height);
-	_format = DX11GetColorFormat(meta.format);
+#if defined(DC_GRAPHICS_API_DX9)
+	//_format = DX9GetColorFormat(meta.format);
+#elif defined(DC_GRAPHICS_API_DX11) || defined(DC_GRAPHICS_API_DX12)
+	_format = DX10GetColorFormat(meta.format);
+#endif
 	//for (int arrayIndex = 0; arrayIndex < (int)meta.arraySize; arrayIndex++)
 	{//不支持多维数组
 		for (int mipIndex = 0; mipIndex < (int)meta.mipLevels; mipIndex++)
 		{
 			const auto img = image.GetImage(mipIndex, 0, 0);
-			ImageMipData* mip_data = DBG_NEW ImageMipData((uint)img->rowPitch, img->width, img->height, (uint)img->slicePitch);
+			ImageMipData* mip_data = Memory::New<ImageMipData>((uint)img->rowPitch, img->width, img->height, (uint)img->slicePitch);
 			_imageData.Add(mip_data);
 			if (_format == ColorFormat::B8G8R8)
 			{
@@ -57,18 +67,22 @@ bool Image::LoadFromDDSFile(const String& path, bool mipmap)
 }
 bool Image::SaveToDDSFile(const String& path)
 {
-#if defined(DC_GRAPHICS_API_DX9) || defined(DC_GRAPHICS_API_DX11)
+#if defined(DC_GRAPHICS_API_DX9) || defined(DC_GRAPHICS_API_DX11) || defined(DC_GRAPHICS_API_DX12)
 	String dir = Path::GetDirectoryName(path);
 	if (!dir.IsEmpty() && !Directory::Exist(dir))
 	{
 		Directory::Create(dir);
 	}
-	std::wstring w_path = path.ToWString();
+	std::wstring wPath = path.ToWString();
 
 	DirectX::Image image;
 	image.width = _size.width;
 	image.height = _size.height;
-	image.format = DX11GetTextureFormat(_format, false);
+#if defined(DC_GRAPHICS_API_DX9)
+	//image.format = DX9GetTextureFormat(_format);
+#elif defined(DC_GRAPHICS_API_DX11) || defined(DC_GRAPHICS_API_DX12)
+	image.format = DX10GetTextureFormat(_format, false);
+#endif
 	image.rowPitch = GetPitch();
 	image.slicePitch = GetSize();
 	image.pixels = (uint8_t*)this->Data();
@@ -100,7 +114,7 @@ bool Image::SaveToDDSFile(const String& path)
 				img.pixels = (uint8_t*)mip_data->Data;
 			}
 		}
-		result = DirectX::SaveToDDSFile(images.Data(), images.Size(), metadata, DirectX::DDS_FLAGS_NONE, w_path.c_str());
+		result = DirectX::SaveToDDSFile(images.Data(), images.Size(), metadata, DirectX::DDS_FLAGS_NONE, wPath.c_str());
 	}
 
 	return SUCCEEDED(result);

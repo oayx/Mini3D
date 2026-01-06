@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2009/11/25
@@ -71,12 +71,14 @@ inline ShaderType ShaderStageEnum[int(ShaderType::Max)] = { ShaderType::Vertex,S
 //获得语言对应的文件名称
 inline String ShadingLanguageFileName()
 {
-#if defined(DC_GRAPHICS_API_DX9) || defined(DC_GRAPHICS_API_DX11)
+#if defined(DC_GRAPHICS_API_DX9) || defined(DC_GRAPHICS_API_DX11) || defined(DC_GRAPHICS_API_DX12)
 	return "hlsl";
 #elif defined(DC_GRAPHICS_API_OPENGL)
 	return "glsl";
 #elif defined(DC_GRAPHICS_API_OPENGLES3)
 	return "essl";
+#elif defined(DC_GRAPHICS_API_VULKAN)
+	return "spirV";
 #else
 #error "Unknown RendererAPI"
 #endif
@@ -145,7 +147,7 @@ enum class PrimitiveType : byte
 	LineStrip,
 	TriangleList,
 	TriangleStrip,
-	TriangleFun,
+	TriangleFan,
 };
 DECLARE_ENUM_OPERATORS(PrimitiveType);
 
@@ -187,10 +189,10 @@ enum class StencilCmp : byte
 	Never = 1,			//深度测试函数总是返回false
 	Less,				//深度测试值小于深度缓冲区相应值时返回true
 	Equal,				//相等
-	LessEqual,			//小于等于
+	LEqual,				//小于等于
 	Greater,			//大于
 	NotEqual,			//不等于
-	GreaterEqual,		//大于等于
+	GEqual,				//大于等于
 	Always,				//一直  
 };
 DECLARE_ENUM_OPERATORS(StencilCmp);
@@ -233,6 +235,18 @@ enum class AlphaBlend : byte
 	OneMinusDestColor,
 };
 DECLARE_ENUM_OPERATORS(AlphaBlend);
+
+/********************************************************************/
+// 混合操作
+enum class AlphaBlendOp : byte
+{
+	Add,
+	Sub,
+	RevSub,
+	Min,
+	Max,
+};
+DECLARE_ENUM_OPERATORS(AlphaBlendOp);
 
 /********************************************************************/
 // 纹理种类

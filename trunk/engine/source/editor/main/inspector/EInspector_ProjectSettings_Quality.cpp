@@ -1,4 +1,4 @@
-#include "EInspector_ProjectSettings_Quality.h"
+﻿#include "EInspector_ProjectSettings_Quality.h"
 #include "runtime/project/QualitySettings.h"
 #include "editor/EditorAppliction.h"
 
@@ -9,18 +9,18 @@ void EInspector_ProjectSettings_Quality::Render()
 	ImGui::TextUnformatted("Rendering");
 	{
 		ImGuiEx::Label("Anti Aliasing");
-		const char* sz_names[] = { "Disabled", "2x Multi Sampling", "4x Multi Sampling", "8x Multi Sampling" };
-		int current_select = 0;
+		const char* szNames[] = { "Disabled", "2x Multi Sampling", "4x Multi Sampling", "8x Multi Sampling" };
+		int currentSelect = 0;
 		switch (QualitySettings::GetMSAAType())
 		{
-		case MSAAType::Disabled:current_select = 0; break;
-		case MSAAType::Level_2:current_select = 1; break;
-		case MSAAType::Level_4:current_select = 2; break;
-		case MSAAType::Level_8:current_select = 3; break;
+		case MSAAType::Disabled:currentSelect = 0; break;
+		case MSAAType::Level_2:currentSelect = 1; break;
+		case MSAAType::Level_4:currentSelect = 2; break;
+		case MSAAType::Level_8:currentSelect = 3; break;
 		}
-		if (ImGui::Combo("##Anti Aliasing", &current_select, sz_names, ARRAY_SIZE(sz_names)))
+		if (ImGui::Combo("##Anti Aliasing", &currentSelect, szNames, ARRAY_SIZE(szNames)))
 		{
-			switch (current_select)
+			switch (currentSelect)
 			{
 			case 0: QualitySettings::SetMSAAType(MSAAType::Disabled); break;
 			case 1: QualitySettings::SetMSAAType(MSAAType::Level_2); break;
@@ -34,21 +34,21 @@ void EInspector_ProjectSettings_Quality::Render()
 	ImGui::TextUnformatted("Shadows");
 	{
 		{
-			const char* sz_flags[] = { "Disable Shadows", "Hard Shadows Only", "Hard and Soft Shadows" };
+			const char* szFlags[] = { "Disable Shadows", "Hard Shadows Only", "Hard and Soft Shadows" };
 			ImGuiEx::Label("Shadows");
-			static int current_index = (int)QualitySettings::GetShadowType();
-			if (ImGui::Combo("##Shadow Type", &current_index, sz_flags, ARRAY_SIZE(sz_flags)))
+			static int currentIndex = (int)QualitySettings::GetShadowType();
+			if (ImGui::Combo("##Shadow Type", &currentIndex, szFlags, ARRAY_SIZE(szFlags)))
 			{
-				QualitySettings::SetShadowType((ShadowType)current_index);
+				QualitySettings::SetShadowType((ShadowType)currentIndex);
 			}
 		}
 		{
-			const char* sz_flags[] = { "Low Resolution", "Medium Resolution", "High Resolution", "Very High Resolution" };
+			const char* szFlags[] = { "Low Resolution", "Medium Resolution", "High Resolution", "Very High Resolution" };
 			ImGuiEx::Label("Shadow Resolution");
-			static int current_index = (int)QualitySettings::GetShadowResolution();
-			if (ImGui::Combo("##Shadow Resolution", &current_index, sz_flags, ARRAY_SIZE(sz_flags)))
+			static int currentIndex = (int)QualitySettings::GetShadowResolution();
+			if (ImGui::Combo("##Shadow Resolution", &currentIndex, szFlags, ARRAY_SIZE(szFlags)))
 			{
-				QualitySettings::SetShadowResolution((ShadowResolution)current_index);
+				QualitySettings::SetShadowResolution((ShadowResolution)currentIndex);
 			}
 		}
 		{
@@ -83,16 +83,16 @@ void EInspector_ProjectSettings_Quality::Render()
 		}
 		{
 			ImGuiEx::Label("Format");
-			const char* sz_flags[] = { "FP16" };
-			static int current_index = 0;
+			const char* szFlags[] = { "FP16" };
+			static int currentIndex = 0;
 			switch (QualitySettings::GetHDRFormat())
 			{
-			case ColorFormat::RGBA16F:current_index = 0; break;
+			case ColorFormat::RGBA16F:currentIndex = 0; break;
 			default: break;
 			}
-			if (ImGui::Combo("##Format", &current_index, sz_flags, ARRAY_SIZE(sz_flags)))
+			if (ImGui::Combo("##Format", &currentIndex, szFlags, ARRAY_SIZE(szFlags)))
 			{
-				switch (current_index)
+				switch (currentIndex)
 				{
 				case 0:QualitySettings::SetHDRFormat(ColorFormat::RGBA16F); break;
 				default: break;

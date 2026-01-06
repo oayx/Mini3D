@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Date：2020/8/19
@@ -10,14 +10,14 @@
 
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-class ENGINE_DLL KeyFrame Final : public Object
+class ENGINE_DLL KeyFrame final : public Object
 {
 	friend class AnimationNode;
 	DEFAULT_CREATE(KeyFrame);
 	FRIEND_CONSTRUCT_DESTRUCT(KeyFrame);
 	DISALLOW_COPY_ASSIGN(KeyFrame);
 	BEGIN_DERIVED_REFECTION_TYPE(KeyFrame, Object)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 	KeyFrame(uint time) : Time(time){}
 	~KeyFrame() {}

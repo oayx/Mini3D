@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2021/8/7
@@ -18,17 +18,17 @@ class EMain_Project : public EWindowBase
 
 	DISALLOW_CONSTRUCTOR_COPY_ASSIGN(EMain_Project);
 	BEGIN_DERIVED_REFECTION_TYPE(EMain_Project, EWindowBase)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 public:
-	static void SetSelectFile(const String& file_path);
+	static void SetSelectFile(const String& filePath);
 	static const String& GetSelectPath() { return _selectPath; }
 	static const String& GetSelectFile() { return _selectFile; }
 
 private:
 	static void Render();
 
-	static void ShowLeft(const Vector<AssetMeta*>& dirs, String select_path);
+	static void ShowLeft(const Vector<AssetMeta*>& dirs, String selectPath);
 
 	static void ShowRight();
 	static void ShowFiles();
@@ -39,9 +39,9 @@ private:
 	static void DragFileToEditor();
 
 private:
-	static bool IsShow;
-	static String _selectPath;
-	static String _selectFile;
-	static bool   _isInputMode;	//修改名称
+	inline static bool IsShow = true;
+	inline static bool _isInputMode = false;	//修改名称
+	inline static String _selectPath = "";
+	inline static String _selectFile = "";
 };
 DC_END_NAMESPACE

@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************************************/
 // @author hannibal
 // @date   2020/09/24
@@ -15,7 +15,7 @@ class ContactListener;
 class PhysicsDebugDraw;
 class PhysicsComponent;
 /********************************************************************/
-class ENGINE_DLL Physics Final : public Object
+class ENGINE_DLL Physics final : public Object
 {
 	friend class Application;
 	friend class RigidBody;
@@ -25,7 +25,7 @@ class ENGINE_DLL Physics Final : public Object
 	friend class PhysicsComponent;
 	DISALLOW_CONSTRUCTOR_COPY_ASSIGN(Physics);
 	BEGIN_DERIVED_REFECTION_TYPE(Physics, Object)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 private:
 	static void		Initialize();
@@ -34,13 +34,13 @@ private:
 	static void		Simulate(float dt);
 
 public:
-	static bool		Raycast(const Vector3& origin, const Vector3& direction, float distance, RaycastHit& hit_info);
-	static bool		Raycast(const Vector3& origin, const Vector3& direction, float distance, uint layerMask, RaycastHit& hit_info);
+	static bool		Raycast(const Vector3& origin, const Vector3& direction, float distance, RaycastHit& hitInfo);
+	static bool		Raycast(const Vector3& origin, const Vector3& direction, float distance, uint layerMask, RaycastHit& hitInfo);
 	static bool		RaycastAll(const Vector3& origin, const Vector3& direction, float distance, Vector<RaycastHit>& list);
 	static bool		RaycastAll(const Vector3& origin, const Vector3& direction, float distance, uint layerMask, Vector<RaycastHit>& list);
 
 	static void		EnableDebug(bool b);
-	static bool		IsEnableDebug() { return m_btPhysxWorld->getDebugDrawer(); }
+	static bool		IsEnableDebug() { return _btPhysxWorld->getDebugDrawer(); }
 
 	static void		SetGravity(const Vector3& gravity);
 	static const	Vector3& GetGravity() { return _gravity; }
@@ -69,36 +69,36 @@ public:
 	static void		Save();
 
 public:
-	static			btDynamicsWorld* GetWorld() { return m_btPhysxWorld; }
+	static			btDynamicsWorld* GetWorld() { return _btPhysxWorld; }
 
 private:
-	static			btDynamicsWorld*	m_btPhysxWorld;
-	static			btAxisSweep3*		m_btBroadphase;
-	static			btCollisionDispatcher* m_btDispatcher;
-	static			btSequentialImpulseConstraintSolver* m_btSolver;
-	static			btDefaultCollisionConfiguration* m_btCollisionConfiguration;
+	inline static	btDynamicsWorld* _btPhysxWorld = nullptr;
+	inline static	btAxisSweep3* _btBroadphase = nullptr;
+	inline static	btCollisionDispatcher* _btDispatcher = nullptr;
+	inline static	btSequentialImpulseConstraintSolver* _btSolver = nullptr;
+	inline static	btDefaultCollisionConfiguration* _btCollisionConfiguration = nullptr;
 
-	static			ContactListener*	_contactListener;
-	static			PhysicsDebugDraw*	_debugDraw;
+	inline static	ContactListener* _contactListener = nullptr;
+	inline static	PhysicsDebugDraw* _debugDraw = nullptr;
 
-	static Vector3	_gravity;
-	static int		_subSteps;
-	static bool		_autoSimulate;		//是否自动模拟
-	static bool		_useUnscaledTime;	//是否受DeltaTime影响，默认true
-	static bool		_autoSyncTransform;//是否自动同步变换
+	inline static Vector3	_gravity = Vector3(0, -9.8f, 0);
+	inline static int		_subSteps = 10;
+	inline static bool		_autoSimulate = true;		//是否自动模拟
+	inline static bool		_useUnscaledTime = false;	//是否受DeltaTime影响，默认true
+	inline static bool		_autoSyncTransform = true;	//是否自动同步变换
 
-	static float	_defaultFriction;
-	static float	_defaultRestitution;
+	inline static float		_defaultFriction = 0.6f;
+	inline static float		_defaultRestitution = 0.0f;
 
-	static Vector3	_worldCenter;
-	static Vector3	_worldExtent;
+	inline static Vector3	_worldCenter = Vector3::zero;
+	inline static Vector3	_worldExtent = Vector3(500.0f, 500.0f, 500.0f);
 };
 
 class PhysicsComponent : public Component
 {
 	friend class GameObject;
 	BEGIN_DERIVED_REFECTION_TYPE(PhysicsComponent, Component)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 protected:
 	virtual void OnEnable()override;

@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2021/6/16
@@ -18,9 +18,9 @@ class VariablePrimitive;
 class ENGINE_DLL Graphics : public Object
 {
 	friend class Application;
-	DISALLOW_COPY_ASSIGN(Graphics);
+	DISALLOW_CONSTRUCTOR_COPY_ASSIGN(Graphics);
 	BEGIN_DERIVED_REFECTION_TYPE(Graphics, Object)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 private:
 	static void Destroy();
@@ -30,7 +30,7 @@ public:
 	static void Blit(Camera* camera, Texture* source, RenderTexture* dest, Material* mat = nullptr, int pass = 0);
 
 private:
-	static Material*			_blitMaterial;
-	static VariablePrimitive*	_primitive;
+	inline static Material*			 _blitMaterial = nullptr;
+	inline static VariablePrimitive* _primitive = nullptr;
 };
 DC_END_NAMESPACE

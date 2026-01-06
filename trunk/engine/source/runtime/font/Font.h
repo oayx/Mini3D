@@ -49,16 +49,18 @@ enum
 	MAX_FONT_TEXTURE_SIZE = 4096,
 };
 
-class ENGINE_DLL GlyphInfo Final : public object
+class ENGINE_DLL GlyphInfo final : public object
 {
 	friend class Font;
 	DEFAULT_CREATE(GlyphInfo);
+	DISALLOW_COPY_ASSIGN(GlyphInfo);
 	FRIEND_CONSTRUCT_DESTRUCT(GlyphInfo);
+	GlyphInfo() = default;
 	~GlyphInfo();
 public:
 	char32_t c = 0;
 	ushort size = 0;
-	uint glyph_index = 0;
+	uint glyphIndex = 0;
 	int width = 0;
 	int height = 0;
 	int bearing_x = 0;
@@ -76,25 +78,25 @@ public:
 	}
 };
 
-class ENGINE_DLL Font Final : public Object
+class ENGINE_DLL Font final : public Object
 {
 	friend class FontManager;
 	DEFAULT_CREATE(Font);
 	FRIEND_CONSTRUCT_DESTRUCT(Font);
 	DISALLOW_COPY_ASSIGN(Font);
 	BEGIN_DERIVED_REFECTION_TYPE(Font, Object)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
-private:
 	Font();
-	virtual ~Font();
+	~Font();
+
 public:
 	static Font* GetFont(const String& name);
 	static Font* GetDefaultFont();
 
 	const GlyphInfo* GetGlyph(char32_t c, ushort size, bool bold, bool italic, bool mono);
 	bool HasKerning() const;
-	Vector2 GetKerning(uint previous_glyph_index, uint glyph_index);
+	Vector2 GetKerning(uint previousGlyphIndex, uint glyphIndex);
 
 private:
 	void* _font = nullptr;

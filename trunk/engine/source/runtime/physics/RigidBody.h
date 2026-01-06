@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2020/9/24
@@ -10,7 +10,7 @@
 
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-class ENGINE_DLL RigidBody Final : public Component
+class ENGINE_DLL RigidBody final : public Component
 {
 	friend class GameObject;
 	DECLARE_OBJECT_CLONE;
@@ -19,7 +19,7 @@ class ENGINE_DLL RigidBody Final : public Component
 	BEGIN_DERIVED_REFECTION_TYPE(RigidBody, Component)
 		CTORS(DEFAULT_CTOR(RigidBody))
 		ADD_EDITOR_COMPONENT("Physics/RigidBody")
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 protected:
 	virtual void Start()override;

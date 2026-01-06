@@ -1,4 +1,4 @@
- 
+﻿ 
 #pragma once
 
 #include "TestBase.h"
@@ -33,14 +33,14 @@ protected:
 		{
 			Camera* camera = SceneManager::GetMainCamera();
 			Vector3 v_vec = camera->ScreenToWorldPoint(Vector3(Input::mousePosition.x, Input::mousePosition.y, 10));
-			RaycastHit2D hit_info;
-			if (Physics2d::Raycast(Vector2::zero, Vector2(v_vec.x, v_vec.y), v_vec.Lenght(), LayerMask::GetMask(LayerMask::Default), hit_info))
+			RaycastHit2D hitInfo;
+			if (Physics2d::Raycast(Vector2::zero, Vector2(v_vec.x, v_vec.y), v_vec.Lenght(), LayerMask::GetMask(LayerMask::Default), hitInfo))
 			{
-				Debuger::Log("raycast:%s", hit_info.gameobject->GetInstanceName().c_str());
+				Debuger::Log("raycast:%s", hitInfo.gameobject->GetInstanceName().c_str());
 			}
 
-			//RigidBody2d* rigid_body = this->GetGameObject()->GetComponent<RigidBody2d>();
-			//rigid_body->ApplyForce(Vector2(0, 200));
+			//RigidBody2d* rigidBody = this->GetGameObject()->GetComponent<RigidBody2d>();
+			//rigidBody->ApplyForce(Vector2(0, 200));
 		}
 	}
 	virtual void OnDrawGizmos(Camera* camera)override
@@ -126,8 +126,8 @@ public:
 			//PolygonCollider2d* collider = obj->AddComponent<PolygonCollider2d>();
 			//collider->SetVertexs({ Vector2(-1,1), Vector2(1,1), Vector2(1,-1), Vector2(-1,-1) });
 
-			RigidBody2d* rigid_body = obj->AddComponent<RigidBody2d>();
-			rigid_body->SetCollisionDetection(CollisionDetection2d::Continuous);
+			RigidBody2d* rigidBody = obj->AddComponent<RigidBody2d>();
+			rigidBody->SetCollisionDetection(CollisionDetection2d::Continuous);
 		}
 	}
 };

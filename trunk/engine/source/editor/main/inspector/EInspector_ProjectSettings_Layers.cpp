@@ -1,4 +1,4 @@
-#include "EInspector_ProjectSettings_Layers.h"
+﻿#include "EInspector_ProjectSettings_Layers.h"
 #include "runtime/scene/LayerMask.h"
 #include "runtime/scene/TagManager.h"
 #include "editor/EditorAppliction.h"
@@ -16,11 +16,11 @@ void EInspector_ProjectSettings_Layers::RenderLayer()
 	{
 		for (int i = 0; i < 5; ++i)
 		{
-			char sz_name[30] = { 0 };
-			int ret = Snprintf(sz_name, ARRAY_SIZE(sz_name), "Builtin Layer %d", i);
+			char szName[30] = { 0 };
+			Snprintf(szName, ARRAY_SIZE(szName), "Builtin Layer %d", i);
 
 			ImGui::PushID(i);
-			ImGuiEx::Label(sz_name);
+			ImGuiEx::Label(szName);
 
 			const String& layer_name = LayerMask::LayerToName(i);
 			ImGui::TextUnformatted(layer_name.c_str());
@@ -30,11 +30,11 @@ void EInspector_ProjectSettings_Layers::RenderLayer()
 
 		for (int i = 5; i < 32; ++i)
 		{
-			char sz_name[30] = { 0 };
-			int ret = Snprintf(sz_name, ARRAY_SIZE(sz_name), "User Layer %d", i);
+			char szName[30] = { 0 };
+			Snprintf(szName, ARRAY_SIZE(szName), "User Layer %d", i);
 
 			ImGui::PushID(i);
-			ImGuiEx::Label(sz_name);
+			ImGuiEx::Label(szName);
 
 			const String& layer_name = LayerMask::LayerToName(i);
 			char sz_layer_name[LayerMask::MAX_NAME_SIZE] = { 0 };
@@ -53,14 +53,13 @@ void EInspector_ProjectSettings_Layers::RenderTag()
 {
 	if (ImGui::CollapsingHeader("Tags"))
 	{
-		static int selected = -1;
 		for (int i = 0; i < TagManager::GetTagCount(); ++i)
 		{
 			ImGui::PushID(i);
 
-			char sz_name[10] = { 0 };
-			int ret = Snprintf(sz_name, ARRAY_SIZE(sz_name), "Tag %d", i);
-			ImGuiEx::Label(sz_name);
+			char szName[10] = { 0 };
+			Snprintf(szName, ARRAY_SIZE(szName), "Tag %d", i);
+			ImGuiEx::Label(szName);
 
 			const String& tag_name = TagManager::GetTag(i);
 			char sz_tag_name[TagManager::MAX_NAME_SIZE] = { 0 };

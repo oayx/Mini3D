@@ -12,7 +12,7 @@ DC_BEGIN_NAMESPACE
 class AudioClip;
 class AudioSourcePrivate;
 /********************************************************************/
-class ENGINE_DLL AudioSource Final : public Component
+class ENGINE_DLL AudioSource final : public Component
 {
 	friend class GameObject;
 	DECLARE_OBJECT_CLONE;
@@ -22,7 +22,7 @@ class ENGINE_DLL AudioSource Final : public Component
 	BEGIN_DERIVED_REFECTION_TYPE(AudioSource, Component)
 		CTORS(DEFAULT_CTOR(AudioSource))
 		ADD_EDITOR_COMPONENT("Audio/AudioSource")
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 private:
 	AudioSource();

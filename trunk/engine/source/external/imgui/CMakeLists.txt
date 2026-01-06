@@ -1,4 +1,6 @@
-﻿set(ENGINE_EXTERNAL_IMGUI_SRC
+﻿message("当前CMakeLists目录: ${CMAKE_CURRENT_SOURCE_DIR}")
+
+set(ENGINE_EXTERNAL_IMGUI_SRC
 	source/external/imgui/imgui.cpp
 	source/external/imgui/imgui_draw.cpp
 	source/external/imgui/imgui_tables.cpp

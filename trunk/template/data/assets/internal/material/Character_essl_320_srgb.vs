@@ -29,20 +29,14 @@ layout(location = 2) in vec4 in_var_TANGENT;
 layout(location = 3) in vec2 in_var_TEXCOORD0;
 layout(location = 4) in vec4 in_var_BLENDINDICES;
 layout(location = 5) in vec4 in_var_BLENDWEIGHT;
-layout(location = 0) out vec2 out_var_TEXCOORD0;
-layout(location = 1) out float out_var_TEXCOORD1;
+layout(location = 0) out vec2 var_TEXCOORD0;
+layout(location = 1) out float var_TEXCOORD1;
 
 void main()
 {
-    vec4 _45 = in_var_BLENDINDICES;
-    vec4 _44 = in_var_BLENDWEIGHT;
-    uint _50 = uint(0);
-    uint _60 = uint(1);
-    uint _71 = uint(2);
-    uint _82 = uint(3);
-    vec4 _99 = vec4((((((in_var_POSITION * CustomBuffer.BoneMatrixArray[uint(_45[_50])]) * _44[_50]) + ((in_var_POSITION * CustomBuffer.BoneMatrixArray[uint(_45[_60])]) * _44[_60])) + ((in_var_POSITION * CustomBuffer.BoneMatrixArray[uint(_45[_71])]) * _44[_71])) + ((in_var_POSITION * CustomBuffer.BoneMatrixArray[uint(_45[_82])]) * _44[_82])).xyz, 1.0) * TransformBuffer.MATRIX_MVP;
-    gl_Position = _99;
-    out_var_TEXCOORD0 = (in_var_TEXCOORD0 * CustomBuffer._MainTex_ST.xy) + CustomBuffer._MainTex_ST.zw;
-    out_var_TEXCOORD1 = _99.z;
+    vec4 _82 = vec4((((((in_var_POSITION * CustomBuffer.BoneMatrixArray[int(in_var_BLENDINDICES.x)]) * in_var_BLENDWEIGHT.x) + ((in_var_POSITION * CustomBuffer.BoneMatrixArray[int(in_var_BLENDINDICES.y)]) * in_var_BLENDWEIGHT.y)) + ((in_var_POSITION * CustomBuffer.BoneMatrixArray[int(in_var_BLENDINDICES.z)]) * in_var_BLENDWEIGHT.z)) + ((in_var_POSITION * CustomBuffer.BoneMatrixArray[int(in_var_BLENDINDICES.w)]) * in_var_BLENDWEIGHT.w)).xyz, 1.0) * TransformBuffer.MATRIX_MVP;
+    gl_Position = _82;
+    var_TEXCOORD0 = (in_var_TEXCOORD0 * CustomBuffer._MainTex_ST.xy) + CustomBuffer._MainTex_ST.zw;
+    var_TEXCOORD1 = _82.z;
 }
 

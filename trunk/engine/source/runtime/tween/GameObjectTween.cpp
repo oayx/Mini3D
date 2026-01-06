@@ -1,4 +1,4 @@
-#include "GameObjectTween.h"
+﻿#include "GameObjectTween.h"
 #include "TweenManager.h"
 #include "runtime/component/GameObject.h"
  
@@ -8,7 +8,7 @@ IMPL_DERIVED_REFECTION_TYPE(BlinkTween, Tween);
 BlinkTween* BlinkTween::Create(GameObject* target, float time, int count, bool defaultVisible)
 {
 	CHECK_RETURN_PTR_NULL(target);
-	BlinkTween *tween = DBG_NEW BlinkTween();
+	BlinkTween *tween = Memory::New<BlinkTween>();
 	tween->AutoRelease();
 	tween->_isVisible = defaultVisible;
 	tween->_defaultVisible = defaultVisible;
@@ -25,10 +25,10 @@ void BlinkTween::OnStepCompleted()
 	gameobject->SetActive(true);
 	base::OnStepCompleted();
 }
-void BlinkTween::OnUpdate(float curr_time)
+void BlinkTween::OnUpdate(float currTime)
 {
 	GameObject* gameobject = dynamic_cast<GameObject*>(_target);
-	if (curr_time >= _endTime)
+	if (currTime >= _endTime)
 	{
 		gameobject->SetActive(_defaultVisible);
 		return;
@@ -48,16 +48,16 @@ IMPL_DERIVED_REFECTION_TYPE(VisibleTween, Tween);
 VisibleTween* VisibleTween::Create(GameObject* target, bool visible, float time)
 {
 	CHECK_RETURN_PTR_NULL(target);
-	VisibleTween *tween = DBG_NEW VisibleTween();
+	VisibleTween *tween = Memory::New<VisibleTween>();
 	tween->AutoRelease();
 	tween->_isVisible = visible;
 	tween->_transformTime = time;
 	tween->_target = target;
 	return tween;
 }
-void VisibleTween::OnUpdate(float curr_time)
+void VisibleTween::OnUpdate(float currTime)
 {
-	if (curr_time >= _endTime)
+	if (currTime >= _endTime)
 	{
 		GameObject* gameobject = dynamic_cast<GameObject*>(_target);
 		gameobject->SetActive(_isVisible);

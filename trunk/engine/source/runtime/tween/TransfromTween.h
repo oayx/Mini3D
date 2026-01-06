@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Date：2021/1/8
@@ -13,12 +13,12 @@ DC_BEGIN_NAMESPACE
 class Transform;
 /********************************************************************/
 // 位移
-class ENGINE_DLL MoveTween Final : public Tween
+class ENGINE_DLL MoveTween final : public Tween
 {
 	FRIEND_CONSTRUCT_DESTRUCT(MoveTween);
 	DISALLOW_CONSTRUCTOR_COPY_ASSIGN(MoveTween);
 	BEGIN_DERIVED_REFECTION_TYPE(MoveTween, Tween)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 public:
 	/// <summary>
@@ -40,7 +40,7 @@ public:
 
 protected:
 	virtual void OnStarted()override {}
-	virtual void OnUpdate(float curr_time)override;
+	virtual void OnUpdate(float currTime)override;
 	virtual bool EnableEasy()override { return true; }
 	virtual Tween* OnFrom(bool is_relative)override;
 
@@ -52,12 +52,12 @@ protected:
 
 /********************************************************************/
 // 旋转
-class ENGINE_DLL RotateTween Final : public Tween
+class ENGINE_DLL RotateTween final : public Tween
 {
 	FRIEND_CONSTRUCT_DESTRUCT(RotateTween);
 	DISALLOW_CONSTRUCTOR_COPY_ASSIGN(RotateTween);
 	BEGIN_DERIVED_REFECTION_TYPE(RotateTween, Tween)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 public:
 	/// <summary>
@@ -80,7 +80,7 @@ public:
 
 protected:
 	virtual void OnStarted()override {}
-	virtual void OnUpdate(float curr_time)override;
+	virtual void OnUpdate(float currTime)override;
 	virtual bool EnableEasy()override { return true; }
 	virtual Tween* OnFrom(bool is_relative)override;
 
@@ -92,12 +92,12 @@ protected:
 
 /********************************************************************/
 // 绕点旋转
-class ENGINE_DLL RotateAroundTween Final : public Tween
+class ENGINE_DLL RotateAroundTween final : public Tween
 {
 	FRIEND_CONSTRUCT_DESTRUCT(RotateAroundTween);
 	DISALLOW_CONSTRUCTOR_COPY_ASSIGN(RotateAroundTween);
 	BEGIN_DERIVED_REFECTION_TYPE(RotateAroundTween, Tween)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 public:
 	/// <summary>
@@ -112,7 +112,7 @@ public:
 
 protected:
 	virtual void OnStarted()override {}
-	virtual void OnUpdate(float curr_time)override;
+	virtual void OnUpdate(float currTime)override;
 	virtual bool EnableEasy()override { return true; }
 	virtual Tween* OnFrom(bool is_relative)override;
 
@@ -125,12 +125,12 @@ protected:
 
 /********************************************************************/
 // 缩放
-class ENGINE_DLL ScaleTween Final : public Tween
+class ENGINE_DLL ScaleTween final : public Tween
 {
 	FRIEND_CONSTRUCT_DESTRUCT(ScaleTween);
 	DISALLOW_CONSTRUCTOR_COPY_ASSIGN(ScaleTween);
 	BEGIN_DERIVED_REFECTION_TYPE(ScaleTween, Tween)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 public:
 	/// <summary>
@@ -144,7 +144,7 @@ public:
 
 protected:
 	virtual void OnStarted()override {}
-	virtual void OnUpdate(float curr_time)override;
+	virtual void OnUpdate(float currTime)override;
 	virtual bool EnableEasy()override { return true; }
 	virtual Tween* OnFrom(bool is_relative)override;
 
@@ -155,19 +155,19 @@ protected:
 
 /********************************************************************/
 // 镜像
-class ENGINE_DLL FlipTween Final : public Tween
+class ENGINE_DLL FlipTween final : public Tween
 {
 	FRIEND_CONSTRUCT_DESTRUCT(FlipTween);
 	DISALLOW_CONSTRUCTOR_COPY_ASSIGN(FlipTween);
 	BEGIN_DERIVED_REFECTION_TYPE(FlipTween, Tween)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 public:
 	static FlipTween* Create(Transform* target, bool flipX, bool flipY, bool flipZ);
 
 protected:
 	virtual void OnStarted()override;
-	virtual void OnUpdate(float curr_time)override {}
+	virtual void OnUpdate(float currTime)override {}
 
 protected:
 	bool _flipX = false;
@@ -177,19 +177,19 @@ protected:
 
 /********************************************************************/
 // 放置指定位置
-class ENGINE_DLL PlaceTween Final : public Tween
+class ENGINE_DLL PlaceTween final : public Tween
 {
 	FRIEND_CONSTRUCT_DESTRUCT(PlaceTween);
 	DISALLOW_CONSTRUCTOR_COPY_ASSIGN(PlaceTween);
 	BEGIN_DERIVED_REFECTION_TYPE(PlaceTween, Tween)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 public:
 	static PlaceTween* Create(Transform* target, const Vector3& pos);
 
 protected:
 	virtual void OnStarted()override;
-	virtual void OnUpdate(float curr_time)override {}
+	virtual void OnUpdate(float currTime)override {}
 
 protected:
 	Vector3 _position = Vector3::zero;

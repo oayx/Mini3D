@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2021/7/12
@@ -17,7 +17,7 @@ class EditorMain : public Object
 	friend class EditorAppliction;
 	DISALLOW_CONSTRUCTOR_COPY_ASSIGN(EditorMain);
 	BEGIN_DERIVED_REFECTION_TYPE(EditorMain, Object)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 public:
 	static ImFont* GetDefaultFont() { return _defaultFont; }
@@ -35,8 +35,8 @@ private:
 
 
 private:
-	static ImFont* _defaultFont;
-	static ImFont* _bigFont;
-	static ImFont* _bigIconFont;
+	inline static ImFont* _defaultFont = nullptr;
+	inline static ImFont* _bigFont = nullptr;
+	inline static ImFont* _bigIconFont = nullptr;
 };
 DC_END_NAMESPACE

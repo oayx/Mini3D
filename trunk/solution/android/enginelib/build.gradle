@@ -1,0 +1,46 @@
+plugins {
+    id 'com.android.library'
+}
+
+android {
+    namespace 'cn.oayx.engine'
+    compileSdk 34
+
+    defaultConfig {
+        minSdk 28
+
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+    libraryVariants.configureEach { variant ->
+        variant.outputs.all { output ->
+            outputFileName = "engine.aar"
+
+            // 定义目标目录
+            def targetDir = file("../../../bin/android/libs")
+
+            // 创建独立拷贝任务
+            def copyTask = project.tasks.register("copy${variant.name.capitalize()}Aar", Copy) {
+                from output.outputFile
+                into targetDir
+                doFirst { targetDir.mkdirs() }
+            }
+
+            // 将拷贝任务绑定到 assemble 之后
+            variant.assembleProvider.get().finalizedBy(copyTask)
+        }
+    }
+}
+
+dependencies {
+}

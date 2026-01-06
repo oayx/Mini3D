@@ -10,7 +10,7 @@
 
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-class ContactListener Final : public object
+class ContactListener final : public object
 {
 	DEFAULT_CREATE(ContactListener);
 	FRIEND_CONSTRUCT_DESTRUCT(ContactListener);

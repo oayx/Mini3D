@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************************************/
 // @author hannibal
 // @date   2020/09/11
@@ -16,7 +16,7 @@ class ContactListener2d;
 class PhysicsDebugDraw2d;
 class PhysicsComponent2d;
 /********************************************************************/
-class ENGINE_DLL Physics2d Final : public Object
+class ENGINE_DLL Physics2d final : public Object
 {
 	friend class Application;
 	friend class RigidBody2d;
@@ -26,7 +26,7 @@ class ENGINE_DLL Physics2d Final : public Object
 	friend class Project;
 	DISALLOW_CONSTRUCTOR_COPY_ASSIGN(Physics2d);
 	BEGIN_DERIVED_REFECTION_TYPE(Physics2d, Object)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 private:
 	static void		Initialize();
@@ -40,8 +40,8 @@ private:
 	static void		Simulate(float dt);
 
 public:
-	static bool		Raycast(const Vector2& origin, const Vector2& direction, float distance, RaycastHit2D& hit_info);
-	static bool		Raycast(const Vector2& origin, const Vector2& direction, float distance, uint layerMask, RaycastHit2D& hit_info);
+	static bool		Raycast(const Vector2& origin, const Vector2& direction, float distance, RaycastHit2D& hitInfo);
+	static bool		Raycast(const Vector2& origin, const Vector2& direction, float distance, uint layerMask, RaycastHit2D& hitInfo);
 	static bool		RaycastAll(const Vector2& origin, const Vector2& direction, float distance, Vector<RaycastHit2D>& list);
 	static bool		RaycastAll(const Vector2& origin, const Vector2& direction, float distance, uint layerMask, Vector<RaycastHit2D>& list);
 
@@ -69,18 +69,18 @@ public:
 	static void		UseUnscaledTime(bool b) { _useUnscaledTime = b; }
 
 private:
-	static b2World*				_physxWorld;
-	static ContactListener2d*	_contactListener2d;
-	static PhysicsDebugDraw2d*	_debugDraw;
+	inline static b2World* _physxWorld = nullptr;
+	inline static ContactListener2d* _contactListener2d = nullptr;
+	inline static PhysicsDebugDraw2d* _debugDraw = nullptr;
 
-	static int		_velocityIterations;
-	static int		_positionIterations;
+	inline static int	_velocityIterations = 10;
+	inline static int	_positionIterations = 10;
 
-	static bool		_autoSimulate;		//是否自动模拟
-	static bool		_useUnscaledTime;	//是否受DeltaTime影响，默认true
+	inline static bool	_autoSimulate = true;		//是否自动模拟
+	inline static bool	_useUnscaledTime = false;	//是否受DeltaTime影响，默认true
 
-	static float	_defaultFriction;
-	static float	_defaultRestitution;
+	inline static float	_defaultFriction = 0.6f;
+	inline static float	_defaultRestitution = 0.0f;
 };
 
 class PhysicsComponent2d : public Component
@@ -88,7 +88,7 @@ class PhysicsComponent2d : public Component
 	friend class GameObject;
 	friend class Physics2d;
 	BEGIN_DERIVED_REFECTION_TYPE(PhysicsComponent2d, Component)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 protected:
 	virtual void OnEnable()override;

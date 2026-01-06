@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Date：2021年4月5日
@@ -11,12 +11,13 @@
 
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-class DX9Caps Final : public GraphicsCaps
+class DX9Caps final : public GraphicsCaps
 {
 	DEFAULT_CREATE(DX9Caps);
 	FRIEND_CONSTRUCT_DESTRUCT(DX9Caps);
+	DISALLOW_CONSTRUCTOR_COPY_ASSIGN(DX9Caps);
 	BEGIN_DERIVED_REFECTION_TYPE(DX9Caps, GraphicsCaps)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 public:
 	virtual void Initialize()override;

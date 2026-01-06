@@ -46,16 +46,16 @@ bool Image::LoadFromSTBFile(const String& path, ImageType type)
 		switch (type)
 		{
 		case ImageType::DDS:
-			std_data = stbi__dds_load_from_memory(stream.data(), stream.Size(), &width, &height, &n, 4);
+			std_data = stbi__dds_load_from_memory(stream.Buffer(), stream.Size(), &width, &height, &n, 4);
 			break;
 		case ImageType::PKM:
-			std_data = stbi__pkm_load_from_memory(stream.data(), stream.Size(), &width, &height, &n, 4);
+			std_data = stbi__pkm_load_from_memory(stream.Buffer(), stream.Size(), &width, &height, &n, 4);
 			break;
 		case ImageType::PVR:
-			std_data = stbi__pvr_load_from_memory(stream.data(), stream.Size(), &width, &height, &n, 4);
+			std_data = stbi__pvr_load_from_memory(stream.Buffer(), stream.Size(), &width, &height, &n, 4);
 			break;
 		default:
-			std_data = stbi_load_from_memory(stream.data(), stream.Size(), &width, &height, &n, 4);
+			std_data = stbi_load_from_memory(stream.Buffer(), stream.Size(), &width, &height, &n, 4);
 			break;
 		}
 		if (!std_data)
@@ -70,7 +70,7 @@ bool Image::LoadFromSTBFile(const String& path, ImageType type)
 		uint bytes = row_pitch * _size.height;//得到图像位深
 
 		this->Clear();
-		ImageMipData* mip_data = DBG_NEW ImageMipData(row_pitch, _size.width, _size.height, bytes);
+		ImageMipData* mip_data = Memory::New<ImageMipData>(row_pitch, _size.width, _size.height, bytes);
 		_imageData.Add(mip_data);
 #if defined(DC_GRAPHICS_API_DX9)
 		ColorConverter::FromRGBA8toBGRA8(std_data, _size.width*_size.height, mip_data->Data);
@@ -110,7 +110,7 @@ bool Image::LoadFromSTBFile(const String& path, ImageType type)
 		uint bytes = row_pitch * _size.height;//得到图像位深
 
 		this->Clear();
-		ImageMipData* mip_data = DBG_NEW ImageMipData(row_pitch, _size.width, _size.height, bytes);
+		ImageMipData* mip_data = Memory::New<ImageMipData>(row_pitch, _size.width, _size.height, bytes);
 		_imageData.Add(mip_data);
 		for (int y = 0; y < _size.height; y++)
 		{
@@ -174,9 +174,9 @@ bool Image::LoadFromSTBFile(const String& path, ImageType type)
 		uint row_pitch = uint(stream.Size() / size);
 
 		this->Clear();
-		ImageMipData* mip_data = DBG_NEW ImageMipData(row_pitch, _size.width, _size.height, stream.Size());
+		ImageMipData* mip_data = Memory::New<ImageMipData>(row_pitch, _size.width, _size.height, stream.Size());
 		_imageData.Add(mip_data);
-		Memory::Copy(mip_data->Data, stream.data(), stream.Size());
+		Memory::Copy(mip_data->Data, stream.Buffer(), stream.Size());
 	}
 	break;
 	default:

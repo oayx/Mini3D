@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2020/9/16
@@ -17,7 +17,7 @@ class FighterBullet : public FighterActor
 	friend class GameObject;
 	FRIEND_CONSTRUCT_DESTRUCT(FighterBullet);
 	BEGIN_DERIVED_REFECTION_TYPE(FighterBullet, FighterActor)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 	
 protected:
 	virtual void Awake()override;

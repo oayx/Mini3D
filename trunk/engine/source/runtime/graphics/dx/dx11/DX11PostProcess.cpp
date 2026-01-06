@@ -1,4 +1,4 @@
-#include "DX11PostProcess.h"
+﻿#include "DX11PostProcess.h"
 #include "DX11Program.h"
 #include "DX11Device.h"
 #include "DX11RenderContent.h"
@@ -57,23 +57,23 @@ DX11FinalProcess::DX11FinalProcess()
 	VecString defines;
 	ID3DBlob* vs_blob = nullptr;
 	const String& shader_version = Application::GetGraphics()->GetShaderVersion();
-	if (!DX11CompileShader("internal/finalprocess", shader_code, defines, Default_VS_Enter, String("vs_") + shader_version, &vs_blob))
+	if (!DX10CompileShader("internal/finalprocess", shader_code, defines, Default_VS_Enter, String("vs_") + shader_version, &vs_blob))
 	{
 		return;
 	}
-	HR(GetDX11Device()->GetDevice()->CreateVertexShader(vs_blob->GetBufferPointer(), vs_blob->GetBufferSize(), NULL, &_vertexShader));
+	DX_ERROR(GetDX11Device()->GetDevice()->CreateVertexShader(vs_blob->GetBufferPointer(), vs_blob->GetBufferSize(), NULL, &_vertexShader));
 
 	// Create the input layout
-	HR(GetDX11Device()->GetDevice()->CreateInputLayout(DX11ScreenVertex::Decl, 2, vs_blob->GetBufferPointer(), vs_blob->GetBufferSize(), &_vertexLayout));
+	DX_ERROR(GetDX11Device()->GetDevice()->CreateInputLayout(DX11ScreenVertex::Decl, 2, vs_blob->GetBufferPointer(), vs_blob->GetBufferSize(), &_vertexLayout));
 	vs_blob->Release();
 
 	// Create the pixel shader
 	ID3DBlob* ps_blob = nullptr;
-	if (!DX11CompileShader("internal/finalprocess", shader_code, defines, Default_PS_Enter, String("ps_") + shader_version, &ps_blob))
+	if (!DX10CompileShader("internal/finalprocess", shader_code, defines, Default_PS_Enter, String("ps_") + shader_version, &ps_blob))
 	{
 		return;
 	}
-	HR(GetDX11Device()->GetDevice()->CreatePixelShader(ps_blob->GetBufferPointer(), ps_blob->GetBufferSize(), NULL, &_pixelShader));
+	DX_ERROR(GetDX11Device()->GetDevice()->CreatePixelShader(ps_blob->GetBufferPointer(), ps_blob->GetBufferSize(), NULL, &_pixelShader));
 	ps_blob->Release();
 
 	// Create the vertex buffer
@@ -84,7 +84,7 @@ DX11FinalProcess::DX11FinalProcess()
 	bd.CPUAccessFlags = 0;
 	D3D11_SUBRESOURCE_DATA InitData = {};
 	InitData.pSysMem = screen_quad;
-	HR(GetDX11Device()->GetDevice()->CreateBuffer(&bd, &InitData, &_vertexBuffer));
+	DX_ERROR(GetDX11Device()->GetDevice()->CreateBuffer(&bd, &InitData, &_vertexBuffer));
 
 	// Create the index buffer
 	ushort indexs[] = { 0, 1, 2, 0, 2, 3 };
@@ -96,7 +96,7 @@ DX11FinalProcess::DX11FinalProcess()
 
 	InitData = {};
 	InitData.pSysMem = indexs;
-	HR(GetDX11Device()->GetDevice()->CreateBuffer(&bd, &InitData, &_indexBuffer));
+	DX_ERROR(GetDX11Device()->GetDevice()->CreateBuffer(&bd, &InitData, &_indexBuffer));
 
 	// Create sampler state
 	D3D11_SAMPLER_DESC samp_desc = {};
@@ -108,7 +108,7 @@ DX11FinalProcess::DX11FinalProcess()
 	samp_desc.ComparisonFunc = D3D11_COMPARISON_NEVER;
 	samp_desc.MinLOD = 0;
 	samp_desc.MaxLOD = D3D11_FLOAT32_MAX;
-	HR(GetDX11Device()->GetDevice()->CreateSamplerState(&samp_desc, &_samplerState));
+	DX_ERROR(GetDX11Device()->GetDevice()->CreateSamplerState(&samp_desc, &_samplerState));
 }
 DX11FinalProcess::~DX11FinalProcess()
 {
@@ -122,9 +122,9 @@ DX11FinalProcess::~DX11FinalProcess()
 void DX11FinalProcess::Render(Camera* camera, RenderTexture* dest)
 {
 	RenderFrameDesc desc;
-	desc.view_port = camera->GetViewPort();
-	desc.clear_flag = camera->GetClearFlag();
-	desc.clear_color = camera->GetClearColor();
+	desc.viewPort = camera->GetViewPort();
+	desc.clearFlag = camera->GetClearFlag();
+	desc.clearColor = camera->GetClearColor();
 	if (camera->GetRenderTexture())
 	{//拷贝到纹理
 		camera->GetRenderTexture()->PreRender();

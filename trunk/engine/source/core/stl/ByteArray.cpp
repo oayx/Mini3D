@@ -7,9 +7,9 @@ DC_BEGIN_NAMESPACE
 IMPL_REFECTION_TYPE(ByteArray);
 ByteArray::~ByteArray()
 {
-	DeleteArray(_buffer);
+	Memory::DeleteArray(_buffer);
 }
-void ByteArray::Init(uint BufferSize, uint MaxBufferSize)
+void ByteArray::Init(uint BufferSize, uint MaxBufferSize) noexcept
 {
 	AssertEx(_buffer == nullptr,"Already init buffer");
 	_head = 0;
@@ -18,10 +18,10 @@ void ByteArray::Init(uint BufferSize, uint MaxBufferSize)
 	_bufferLen = BufferSize;
 	_maxBufferLen = MaxBufferSize;
 
-	_buffer = NewArray<byte>(_bufferLen);
+	_buffer = Memory::NewArray<byte>(_bufferLen);
 	memset(_buffer, 0, _bufferLen);
 }
-bool ByteArray::Resize(int size)
+bool ByteArray::Resize(int size) noexcept
 {
 	size = Math::Max<int>(size, (int)(_bufferLen >> 1));
 	uint newBufferLen = _bufferLen + size;
@@ -32,7 +32,7 @@ bool ByteArray::Resize(int size)
 		if (newBufferLen < len)return false;
 	}
 
-	byte* newBuffer = NewArray<byte>(newBufferLen);
+	byte* newBuffer = Memory::NewArray<byte>(newBufferLen);
 
 	if (_head<_tail)
 	{
@@ -44,7 +44,7 @@ bool ByteArray::Resize(int size)
 		::memcpy(&newBuffer[_bufferLen - _head], _buffer, _tail);
 	}
 
-	DeleteArray(_buffer);
+	Memory::DeleteArray(_buffer);
 
 	_buffer = newBuffer;
 	_bufferLen = newBufferLen;
@@ -53,68 +53,68 @@ bool ByteArray::Resize(int size)
 
 	return true;
 }
-void ByteArray::Clear()
+void ByteArray::Clear() noexcept
 {
 	_head = 0;
 	_tail = 0;
 }
 
-char ByteArray::ReadChar()
+char ByteArray::ReadChar() noexcept
 {
 	char val;
 	Read((byte*)&val, sizeof(char));
 	return val;
 }
-byte ByteArray::ReadUChar()
+byte ByteArray::ReadUChar() noexcept
 {
 	byte val;
 	Read((byte*)&val, sizeof(byte));
 	return val;
 }
-short ByteArray::ReadShort()
+short ByteArray::ReadShort() noexcept
 {
 	short val;
 	Read((byte*)&val, sizeof(short));
 	return val;
 }
-ushort ByteArray::ReadUShort()
+ushort ByteArray::ReadUShort() noexcept
 {
 	ushort val;
 	Read((byte*)&val, sizeof(ushort));
 	return val;
 }
-int ByteArray::ReadInt()
+int ByteArray::ReadInt() noexcept
 {
 	int val;
 	Read((byte*)&val, sizeof(int));
 	return val;
 }
-uint ByteArray::ReadUint()
+uint ByteArray::ReadUint() noexcept
 {
 	uint val;
 	Read((byte*)&val, sizeof(uint));
 	return val;
 }
-int64 ByteArray::ReadInt64()
+int64 ByteArray::ReadInt64() noexcept
 {
 	int64 val;
 	Read((byte*)&val, sizeof(int64));
 	return val;
 }
-float ByteArray::ReadFloat()
+float ByteArray::ReadFloat() noexcept
 {
 	float val;
 	Read((byte*)&val, sizeof(float));
 	return val;
 }
-double ByteArray::ReadDouble()
+double ByteArray::ReadDouble() noexcept
 {
 	double val;
 	Read((byte*)&val, sizeof(double));
 	return val;
 }
 //返回0表示没有读到数据
-uint ByteArray::Read(byte* buf, uint len)
+uint ByteArray::Read(byte* buf, uint len) noexcept
 {
 	if (len == 0)
 		return 0;
@@ -145,47 +145,47 @@ uint ByteArray::Read(byte* buf, uint len)
 	return len;
 }
 
-uint ByteArray::WriteChar(char buf)
+uint ByteArray::WriteChar(char buf) noexcept
 {
 	return Write((byte*)&buf, sizeof(char));
 }
-uint ByteArray::WriteUChar(byte buf)
+uint ByteArray::WriteUChar(byte buf) noexcept
 {
 	return Write((byte*)&buf, sizeof(byte));
 }
-uint ByteArray::WriteShort(short buf)
+uint ByteArray::WriteShort(short buf) noexcept
 {
 	return Write((byte*)&buf, sizeof(short));
 }
-uint ByteArray::WriteUShort(ushort buf)
+uint ByteArray::WriteUShort(ushort buf) noexcept
 {
 	return Write((byte*)&buf, sizeof(ushort));
 }
-uint ByteArray::WriteInt(int buf)
+uint ByteArray::WriteInt(int buf) noexcept
 {
 	return Write((byte*)&buf, sizeof(int));
 }
-uint ByteArray::WriteUInt(uint buf)
+uint ByteArray::WriteUInt(uint buf) noexcept
 {
 	return Write((byte*)&buf, sizeof(uint));
 }
-uint ByteArray::WriteInt64(int64 buf)
+uint ByteArray::WriteInt64(int64 buf) noexcept
 {
 	return Write((byte*)&buf, sizeof(int64));
 }
-uint ByteArray::WriteFloat(float buf)
+uint ByteArray::WriteFloat(float buf) noexcept
 {
 	return Write((byte*)&buf, sizeof(float));
 }
-uint ByteArray::WriteDouble(double buf)
+uint ByteArray::WriteDouble(double buf) noexcept
 {
 	return Write((byte*)&buf, sizeof(double));
 }
-uint ByteArray::WriteString(const char* buf)
+uint ByteArray::WriteString(const char* buf) noexcept
 {
 	return Write((const byte*)buf, sizeof(buf));
 }
-uint ByteArray::Write(const byte* buf, uint len)
+uint ByteArray::Write(const byte* buf, uint len) noexcept
 {
 	//					//
 	//     T  H			//    H   T			LEN=10
@@ -232,7 +232,7 @@ uint ByteArray::Write(const byte* buf, uint len)
 	return len;
 }
 
-bool ByteArray::Peek(byte* buf, uint len)
+bool ByteArray::Peek(byte* buf, uint len) noexcept
 {
 	if (len == 0)
 		return false;
@@ -262,20 +262,18 @@ bool ByteArray::Peek(byte* buf, uint len)
 	return true;
 }
 
-bool ByteArray::Skip(uint len)
+bool ByteArray::Skip(uint len) noexcept
 {
 	if (len == 0)
-		return false;
+		return true;
 
-	if (len > Available())
-		return false;
-
+	if (len < 0) len += _bufferLen;
 	_head = (_head + len) % _bufferLen;
 
 	return true;
 }
 
-uint ByteArray::Available()const
+uint ByteArray::Available()const noexcept
 {
 	if (_head<_tail)
 		return _tail - _head;

@@ -18,15 +18,17 @@ class VariablePrimitive;
 class ENGINE_DLL PostEffect : public Object
 {
 	friend class PostProcess;
+	FRIEND_CONSTRUCT_DESTRUCT(PostEffect);
 	DISALLOW_COPY_ASSIGN(PostEffect);
 	DECLARE_OBJECT_SERIALIZE(PostEffect);
 	BEGIN_DERIVED_REFECTION_TYPE(PostEffect, Object)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 protected:
 	PostEffect();
 	virtual ~PostEffect();
 
+protected:
 	virtual void Render(Camera* camera, RenderTexture* source, RenderTexture* dest);
 	virtual void OnRenderImage(RenderTexture* source, RenderTexture* dest);
 	virtual void OnDrawEditor();
@@ -53,16 +55,18 @@ class FinalProcess : public Object
 	friend class PostProcess;
 	FRIEND_CONSTRUCT_DESTRUCT(FinalProcess);
 	BEGIN_DERIVED_REFECTION_TYPE(FinalProcess, Object)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 protected:
 	FinalProcess() {}
 	~FinalProcess() {}
+
+protected:
 	virtual void Render(Camera* camera, RenderTexture* dest) = 0;
 };
 /********************************************************************/
 // 后处理
-class ENGINE_DLL PostProcess Final : public Component
+class ENGINE_DLL PostProcess final : public Component
 {
 	friend class Camera;
 	friend class GameObject;
@@ -73,8 +77,9 @@ class ENGINE_DLL PostProcess Final : public Component
 	BEGIN_DERIVED_REFECTION_TYPE(PostProcess, Component)
 		CTORS(DEFAULT_CTOR(PostProcess))
 		ADD_EDITOR_COMPONENT("PostProcess")
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
+protected:
 	PostProcess() = default;
 	virtual ~PostProcess();
 

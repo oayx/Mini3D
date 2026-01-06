@@ -27,23 +27,24 @@ struct type_CustomBuffer
 uniform type_CustomBuffer CustomBuffer;
 
 uniform highp sampler2D _MainTex;
+uniform highp sampler2D _CameraDepthTexture;
 
 varying highp vec2 varying_TEXCOORD0;
 
 void main()
 {
-    highp vec4 _53 = vec4((varying_TEXCOORD0.x * 2.0) - 1.0, (varying_TEXCOORD0.y * 2.0) - 1.0, 1.0, 1.0);
-    highp vec4 _56 = _53 * CameraBuffer.MATRIX_I_VP;
-    highp vec4 _62 = (_56 / vec4(_56.w)) * CustomBuffer._PRE_MATRIX_VP;
-    highp vec2 _73 = ((_53.xy - (_62 / vec4(_62.w)).xy) * vec2(0.5)) * CustomBuffer._Intensity.xy;
-    highp vec2 _76;
-    highp vec4 _79;
-    _76 = varying_TEXCOORD0 + _73;
-    _79 = texture2D(_MainTex, varying_TEXCOORD0);
-    highp vec4 _86;
-    for (int _81 = 1; _81 < 3; _86 = texture2D(_MainTex, _76), _76 += _73, _79 += _86, _81++)
+    highp vec4 _62 = vec4((varying_TEXCOORD0.x * 2.0) - 1.0, (varying_TEXCOORD0.y * 2.0) - 1.0, (texture2D(_CameraDepthTexture, varying_TEXCOORD0).x * 2.0) - 1.0, 1.0);
+    highp vec4 _65 = _62 * CameraBuffer.MATRIX_I_VP;
+    highp vec4 _71 = (_65 / vec4(_65.w)) * CustomBuffer._PRE_MATRIX_VP;
+    highp vec2 _82 = ((_62.xy - (_71 / vec4(_71.w)).xy) * vec2(0.5)) * CustomBuffer._Intensity.xy;
+    highp vec2 _85;
+    highp vec4 _88;
+    _85 = varying_TEXCOORD0 + _82;
+    _88 = texture2D(_MainTex, varying_TEXCOORD0);
+    highp vec4 _95;
+    for (int _90 = 1; _90 < 3; _95 = texture2D(_MainTex, _85), _85 += _82, _88 += _95, _90++)
     {
     }
-    gl_FragData[0] = _79 * vec4(0.3333333432674407958984375);
+    gl_FragData[0] = _88 * vec4(0.3333333432674407958984375);
 }
 

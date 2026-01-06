@@ -1,0 +1,7 @@
+<Material>
+    <Tag>
+        <CastShadow>true</CastShadow>
+        <ReceiveShadow>false</ReceiveShadow>
+    </Tag>
+    <Shader><ShaderFile>internal/material/NormalMapSpec.shader</ShaderFile></Shader>
+</Material>

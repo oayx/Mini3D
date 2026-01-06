@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************************************/
 // @author hannibal
 // @date   2020/09/24
@@ -7,7 +7,7 @@
 #pragma once
 
 #include "runtime/component/GameObject.h"
-#include "bullet/btBulletDynamicsCommon.h"
+#include "external/bullet/btBulletDynamicsCommon.h"
 
 DC_BEGIN_NAMESPACE
 /********************************************************************/

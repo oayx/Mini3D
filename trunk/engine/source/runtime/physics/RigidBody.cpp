@@ -1,7 +1,7 @@
-#include "RigidBody.h"
+﻿#include "RigidBody.h"
 #include "Collider.h"
 #include "Physics.h"
-#include "Box2D/Box2D.h"
+#include "external/Box2D/Box2D.h"
 #include "runtime/component/Component.inl"
 #include "editor/common/ECommonComponent.h"
  
@@ -70,11 +70,11 @@ void RigidBody::SetActive(bool b)
 {
 	_rigidBody->setActivationState(b ? ACTIVE_TAG : WANTS_DEACTIVATION);
 }
-Object* RigidBody::Clone(Object* new_obj)
+Object* RigidBody::Clone(Object* newObj)
 {
-	base::Clone(new_obj);
-	RigidBody* obj = dynamic_cast<RigidBody*>(new_obj);
-	if (!obj)return new_obj;
+	base::Clone(newObj);
+	RigidBody* obj = dynamic_cast<RigidBody*>(newObj);
+	if (!obj)return newObj;
 
 	obj->SetMass(_mass);
 	obj->SetLinearDrag(_linearDrag);
@@ -104,22 +104,16 @@ void RigidBody::OnDrawEditor()
 
 	{
 		ImGuiEx::Label("Mass");
-		float min_value = 0.00001f;
-		float man_value = MAX_float;
 		if (ImGui::InputScalar("##Mass", ImGuiDataType_Float, &_mass, nullptr, "%.3f"))
 		{
 		}
 
 		ImGuiEx::Label("Drag");
-		min_value = 0.0f;
-		man_value = MAX_float;
 		if (ImGui::InputScalar("##Drag", ImGuiDataType_Float, &_linearDrag, nullptr, "%.3f"))
 		{
 		}
 
 		ImGuiEx::Label("Angular Drag");
-		min_value = 0.0f;
-		man_value = MAX_float;
 		if (ImGui::InputScalar("##Angular Drag", ImGuiDataType_Float, &_angularDrag, nullptr, "%.3f"))
 		{
 		}
@@ -135,12 +129,12 @@ void RigidBody::OnDrawEditor()
 		}
 	}
 	{
-		const char* sz_flags[] = { "Discrete", "Continuous" };
+		const char* szFlags[] = { "Discrete", "Continuous" };
 		ImGuiEx::Label("Collision Detection");
-		int current_select = (int)_collisionDetection;
-		if (ImGui::Combo("##CollisionDetection", &current_select, sz_flags, ARRAY_SIZE(sz_flags)))
+		int currentSelect = (int)_collisionDetection;
+		if (ImGui::Combo("##CollisionDetection", &currentSelect, szFlags, ARRAY_SIZE(szFlags)))
 		{
-			_collisionDetection = CollisionDetection(current_select);
+			_collisionDetection = CollisionDetection(currentSelect);
 		}
 	}
 	{

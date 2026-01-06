@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2021/8/27
@@ -24,9 +24,9 @@ public:
 	static void Search(ResourceType type, std::function<void(const String&)> callback);
 
 private:
-	static bool IsShow;
-	static ResourceType _resType;
-	static Vector<AssetMeta*> _reslist;
-	static std::function<void(const String&)> _callback;
+	inline static bool IsShow = false;
+	inline static ResourceType _resType = ResourceType::Undefined;
+	inline static Vector<AssetMeta*> _reslist;
+	inline static std::function<void(const String&)> _callback;
 };
 DC_END_NAMESPACE

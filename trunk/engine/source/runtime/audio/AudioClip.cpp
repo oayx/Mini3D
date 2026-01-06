@@ -1,4 +1,4 @@
- 
+﻿ 
 #include "AudioClip.h"
 #include "AudioManager.h"
 #if DC_PLATFORM_MAC || DC_PLATFORM_IOS
@@ -18,10 +18,10 @@ struct WaveHeader
 	int wave_size;
 	short format;		//格式类别(值为1，表示数据PCMμ律编码的数据)
 	short channel;		//单声道为1，双声道为2通道数
-	int sample_rate;	//采样率（每秒样本数），表示每个通道的播放速度
-	int byte_rate;		//波形音频数据传送速率，其值为通道数×每秒数据位数×每样 本的数据位数／8。播放软件利用此值可以估计缓冲区的大小
-	short block_align;	//数据的调整数（按字节计算）
-	short sample_bits;	//样本数据位数
+	int sampleRate;		//采样率（每秒样本数），表示每个通道的播放速度
+	int byteRate;		//波形音频数据传送速率，其值为通道数×每秒数据位数×每样 本的数据位数／8。播放软件利用此值可以估计缓冲区的大小
+	short blockAlign;	//数据的调整数（按字节计算）
+	short sampleBits;	//样本数据位数
 };
 
 class AudioClipPrivate : public object
@@ -29,9 +29,9 @@ class AudioClipPrivate : public object
 	DEFAULT_CREATE(AudioClipPrivate);
 	FRIEND_CONSTRUCT_DESTRUCT(AudioClipPrivate);
 public:
-	ALuint m_buffer = 0;
+	ALuint _buffer = 0;
 	std::mutex _mutex;
-	bool m_stream_loop = false;
+	bool _isStreamLoop = false;
 
 	AudioClipPrivate()
 	{
@@ -39,44 +39,44 @@ public:
 
 	~AudioClipPrivate()
 	{
-		if (m_buffer)
+		if (_buffer)
 		{
-			alDeleteBuffers(1, &m_buffer);
-			m_buffer = 0;
+			alDeleteBuffers(1, &_buffer);
+			_buffer = 0;
 		}
 	}
-	static void BufferData(ALuint buffer, int channel, int sample_bits, const void* data, int size, int frequency)
+	static void BufferData(ALuint buffer, int channel, int sampleBits, const void* data, int size, int frequency)
 	{
 		ALenum format = 0;
 
 		if (channel == 1)
 		{
-			if (sample_bits == 8)
+			if (sampleBits == 8)
 			{
 				format = AL_FORMAT_MONO8;
 			}
-			else if (sample_bits == 16)
+			else if (sampleBits == 16)
 			{
 				format = AL_FORMAT_MONO16;
 			}
 			else
 			{
-				Debuger::Error("audio data sample bits error: %d", sample_bits);
+				Debuger::Error("audio data sample bits error: %d", sampleBits);
 			}
 		}
 		else if (channel == 2)
 		{
-			if (sample_bits == 8)
+			if (sampleBits == 8)
 			{
 				format = AL_FORMAT_STEREO8;
 			}
-			else if (sample_bits == 16)
+			else if (sampleBits == 16)
 			{
 				format = AL_FORMAT_STEREO16;
 			}
 			else
 			{
-				Debuger::Error("audio data sample bits error: %d", sample_bits);
+				Debuger::Error("audio data sample bits error: %d", sampleBits);
 			}
 		}
 		else
@@ -86,14 +86,14 @@ public:
 
 		alBufferData(buffer, format, data, size, frequency);
 	}
-	void BufferData(int channel, int sample_bits, const void* data, int size, int frequency)
+	void BufferData(int channel, int sampleBits, const void* data, int size, int frequency)
 	{
-		if (m_buffer == 0)
+		if (_buffer == 0)
 		{
-			alGenBuffers(1, &m_buffer);
+			alGenBuffers(1, &_buffer);
 		}
 
-		BufferData(m_buffer, channel, sample_bits, data, size, frequency);
+		BufferData(_buffer, channel, sampleBits, data, size, frequency);
 	}
 };
 /********************************************************************/
@@ -103,7 +103,7 @@ AudioClip* AudioClip::Create(const String& path)
 	AudioClip* clip = AudioManager::GetAudioClip(path);
 	if (clip)return clip;
 
-	clip = DBG_NEW AudioClip();
+	clip = Memory::New<AudioClip>();
 	clip->AutoRelease();
 	clip->Load(path);
 	AudioManager::AddAudioClip(path, clip);
@@ -111,9 +111,9 @@ AudioClip* AudioClip::Create(const String& path)
 }
 bool AudioClip::LoadFromFile(const String& file)
 {
-	String full_path = Resource::GetFullDataPath(file);
+	String fullPath = Resource::GetFullDataPath(file);
 	MemoryDataStream stream;
-	if (File::ReadAllBytes(full_path, stream))
+	if (File::ReadAllBytes(fullPath, stream))
 	{
 		WaveHeader wav;
 		stream.Read(&wav, sizeof(wav));
@@ -148,23 +148,19 @@ bool AudioClip::LoadFromFile(const String& file)
 		if (memcmp(chunk, "data", 4) == 0)
 		{
 			int size = stream.Read<int>();
-			MemoryDataStream buffer(size);
-			buffer.Write(stream.data(), stream.Tell(), size);
-
-			int bytes_per_sample = wav.sample_bits / 8 * wav.channel;
-			int byte_rate = wav.sample_rate * bytes_per_sample;
-			assert(byte_rate == wav.byte_rate);
-			float length = size / (float)byte_rate;
+			int bytes_per_sample = wav.sampleBits / 8 * wav.channel;
+			int byteRate = wav.sampleRate * bytes_per_sample;
+			assert(byteRate == wav.byteRate);
+			float length = size / (float)byteRate;
 			int sample_count = size / bytes_per_sample;
 
-			this->m_channel = wav.channel;
-			this->m_sample_rate = wav.sample_rate;
-			this->m_byte_rate = wav.byte_rate;
-			this->m_sample_bits = wav.sample_bits;
-			this->m_samples = buffer;
-			this->m_length = length;
-			this->m_sample_count = sample_count;
-			this->_private->BufferData(this->m_channel, this->m_sample_bits, this->m_samples.data(), this->m_samples.Size(), this->m_sample_rate);
+			this->_channel = wav.channel;
+			this->_sampleRate = wav.sampleRate;
+			this->_byteRate = wav.byteRate;
+			this->_sampleBits = wav.sampleBits;
+			this->_length = length;
+			this->_sampleCount = sample_count;
+			this->_private->BufferData(this->_channel, this->_sampleBits, stream.CurrBuffer(), size, this->_sampleRate);
 			return true;
 		}
 	}
@@ -175,7 +171,7 @@ bool AudioClip::LoadFromFile(const String& file)
 	return false;
 }
 AudioClip::AudioClip()
-	: base(ResourceType::AudioClip), m_samples(0)
+	: base(ResourceType::AudioClip)
 {
 	_private = AudioClipPrivate::Create();
 }
@@ -185,12 +181,12 @@ AudioClip::~AudioClip()
 }
 void* AudioClip::GetBuffer() const
 {
-	return (void*)(size_t)_private->m_buffer;
+	return (void*)(size_t)_private->_buffer;
 }
 void AudioClip::SetStreamLoop(bool loop)
 {
 	_private->_mutex.lock();
-	_private->m_stream_loop = loop;
+	_private->_isStreamLoop = loop;
 	_private->_mutex.unlock();
 }
 DC_END_NAMESPACE

@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Date：2021/5/14
@@ -13,7 +13,7 @@ DC_BEGIN_NAMESPACE
 class Texture;
 class Camera;
 /********************************************************************/
-class ENGINE_DLL Billboard Final : public Renderer
+class ENGINE_DLL Billboard final : public Renderer
 {
 	friend class GameObject;
 	FRIEND_CONSTRUCT_DESTRUCT(Billboard);
@@ -21,7 +21,7 @@ class ENGINE_DLL Billboard Final : public Renderer
 	BEGIN_DERIVED_REFECTION_TYPE(Billboard, Renderer)
 		CTORS(DEFAULT_CTOR(Billboard))
 		ADD_EDITOR_COMPONENT("Renderer/Billboard")
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 protected:
 	virtual void Awake()override;

@@ -1,11 +1,10 @@
-#include "Resources.h" 
+﻿#include "Resources.h" 
 #include "core/image/Image.h"
 #include "runtime/Application.h"
 
 DC_BEGIN_NAMESPACE
 /********************************************************************/
 IMPL_DERIVED_REFECTION_TYPE(Resource, Object);
-String Resource::_internalPath = "data/assets";
 Resource::Resource(const ResourceType &type)
 	: _type(type)
 {
@@ -13,10 +12,10 @@ Resource::Resource(const ResourceType &type)
 Resource::~Resource()
 {
 }
-Object* Resource::Clone(Object* new_obj)
+Object* Resource::Clone(Object* newObj)
 {
-	base::Clone(new_obj);
-	Resource* obj = dynamic_cast<Resource*>(new_obj);
+	base::Clone(newObj);
+	Resource* obj = dynamic_cast<Resource*>(newObj);
 	AssertEx(obj != nullptr,"null object");
 	obj->_type = this->_type;
 	obj->_resName = this->_resName;
@@ -25,24 +24,35 @@ Object* Resource::Clone(Object* new_obj)
 }
 String Resource::GetInternalDataPath()
 {
-#if defined(DC_PLATFORM_WIN32) || defined(DC_PLATFORM_LINUX)
+#if defined(DC_PLATFORM_WIN32) || defined(DC_PLATFORM_LINUX) || defined(DC_PLATFORM_MAC)
 	return Path::Combine(Application::GetPersistentDataPath(), _internalPath);
+#elif defined(DC_PLATFORM_WASM)
+	return Application::GetPersistentDataPath();
 #else
 	return Application::GetAssetsPath();
 #endif
 }
 String Resource::GetFullDataPath(const String& file) 
 {
-#if defined(DC_PLATFORM_WIN32) || defined(DC_PLATFORM_LINUX)
+	String fullPath = "";
+#if defined(DC_PLATFORM_WIN32) || defined(DC_PLATFORM_LINUX) || defined(DC_PLATFORM_MAC)
 	if (IsInternal(file))
 	{
-		return Path::Combine(Path::Combine(Application::GetPersistentDataPath(), _internalPath), file);
+		fullPath = Path::Combine(Path::Combine(Application::GetPersistentDataPath(), _internalPath), file);
+	}
+	else
+#elif defined(DC_PLATFORM_WASM)
+	if (IsInternal(file))
+	{
+		fullPath = Path::Combine(Application::GetPersistentDataPath(), file);
 	}
 	else
 #endif
 	{
-		return Path::Combine(Application::GetAssetsPath(), file);
+		fullPath = Path::Combine(Application::GetAssetsPath(), file);
 	}
+	Debuger::Log("Resource::GetFullDataPath: %s", fullPath.c_str());
+	return fullPath;
 }
 String Resource::GetFullSavePath(const String& file)
 {
@@ -76,39 +86,39 @@ ResourceType Resource::GetResourceType(const String& file)
 	{
 		return ResourceType::Texture;
 	}
-	else if (ext == "material")
+	else if (ext == ".material")
 	{
 		return ResourceType::Material;
 	}
-	else if (ext == "shader")
+	else if (ext == ".shader")
 	{
 		return ResourceType::Shader;
 	}
-	else if (ext == "fbx" || ext == "obj")
+	else if (ext == ".fbx" || ext == ".obj")
 	{
 		return ResourceType::Mesh;
 	}
-	else if (ext == "wav")
+	else if (ext == ".wav")
 	{
 		return ResourceType::AudioClip;
 	}
-	else if (ext == "mp4")
+	else if (ext == ".mp4")
 	{
 		return ResourceType::Video;
 	}
-	else if (ext == "txt" || ext == "json" || ext == "lua" || ext == "cs" || ext == "asset" || ext == "hlsl")
+	else if (ext == ".txt" || ext == ".json" || ext == ".lua" || ext == ".cs" || ext == ".asset" || ext == ".hlsl")
 	{
 		return ResourceType::Txt;
 	}
-	else if (ext == "bytes")
+	else if (ext == ".bytes")
 	{
 		return ResourceType::Binary;
 	}
-	else if (ext == "ttf")
+	else if (ext == ".ttf")
 	{
 		return ResourceType::Font;
 	}
-	else if (ext == "scene")
+	else if (ext == ".scene")
 	{
 		return ResourceType::Scene;
 	}

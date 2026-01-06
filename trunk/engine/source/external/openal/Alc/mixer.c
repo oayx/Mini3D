@@ -1,4 +1,4 @@
-/**
+﻿/**
  * OpenAL cross platform audio library
  * Copyright (C) 1999-2007 by authors.
  * This library is free software; you can redistribute it and/or
@@ -40,7 +40,7 @@
 static __inline ALfloat point32(const ALfloat *vals, ALint step, ALint frac)
 { return vals[0]; (void)step; (void)frac; }
 static __inline ALfloat lerp32(const ALfloat *vals, ALint step, ALint frac)
-{ return lerp(vals[0], vals[step], frac * (1.0f/FRACTIONONE)); }
+{ return al_lerp(vals[0], vals[step], frac * (1.0f/FRACTIONONE)); }
 static __inline ALfloat cubic32(const ALfloat *vals, ALint step, ALint frac)
 { return cubic(vals[-step], vals[0], vals[step], vals[step+step],
                frac * (1.0f/FRACTIONONE)); }

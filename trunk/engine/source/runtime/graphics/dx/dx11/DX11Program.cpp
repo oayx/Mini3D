@@ -1,4 +1,4 @@
-#include "DX11Program.h"
+﻿#include "DX11Program.h"
 #include "DX11Device.h"
 #include "DX11RenderContent.h"
 #include "DX11ShaderReflect.h"
@@ -14,7 +14,7 @@ DC_BEGIN_NAMESPACE
 DX11CBuffer::DX11CBuffer(const sShaderReflectCBuffer& cbuffer)
 {
 	this->info = cbuffer;
-	this->buffer = NewArray<byte>(cbuffer.size);
+	this->buffer = Memory::NewArray<byte>(cbuffer.size);
 	Memory::Clear(this->buffer, cbuffer.size);
 
 	D3D11_BUFFER_DESC bd = {};
@@ -22,13 +22,13 @@ DX11CBuffer::DX11CBuffer(const sShaderReflectCBuffer& cbuffer)
 	bd.ByteWidth = cbuffer.size;
 	bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	bd.CPUAccessFlags = 0;
-	HR(GetDX11Device()->GetDevice()->CreateBuffer(&bd, NULL, &this->d3d_buffer));
+	DX_ERROR(GetDX11Device()->GetDevice()->CreateBuffer(&bd, NULL, &this->d3d_buffer));
 }
 DX11CBuffer::~DX11CBuffer()
 {
 	if (buffer)
 	{
-		DeleteArray(buffer);
+		Memory::DeleteArray(buffer);
 		buffer = nullptr;
 	}
 	SAFE_RELEASE(d3d_buffer);
@@ -63,9 +63,9 @@ void DX11CBuffer::Update()
 		}
 	}
 }
-void DX11CBuffer::Copy(uint offset, const void* src_data, uint size)
+void DX11CBuffer::Copy(uint offset, const void* srcData, uint size)
 {
-	::memcpy(buffer + offset, src_data, size);
+	::memcpy(buffer + offset, srcData, size);
 	dirty = true;
 }
 /********************************************************************/
@@ -102,25 +102,25 @@ bool DX11Program::LoadFromFile(const String& file)
 	ShaderDesc info;
 	info.ShaderFile[int(ShaderType::Vertex)] = file;
 	info.ShaderFile[int(ShaderType::Pixel)] = file;
-	return LoadFromFile(info);
+	return LoadFromDesc(info);
 }
-bool DX11Program::LoadFromFile(const ShaderDesc& shader_info)
+bool DX11Program::LoadFromDesc(const ShaderDesc& shaderInfo)
 {
-	base::LoadFromFile(shader_info);
+	base::LoadFromDesc(shaderInfo);
 
 	bool result = true;
 	const String& shader_version = Application::GetGraphics()->GetShaderVersion();
 	for (int i = 0; i < int(ShaderType::Max); ++i)
 	{
-		if (shader_info.ShaderFile[i].IsEmpty())continue;
+		if (shaderInfo.ShaderFile[i].IsEmpty())continue;
 
 		ShaderType shader_type = ShaderType(i);
-		String enter_point = shader_info.Enter[i];
+		String enter_point = shaderInfo.Enter[i];
 		if (enter_point.IsEmpty())enter_point = ShaderEnterEnum[i];
-		String target = shader_info.Target[i];
+		String target = shaderInfo.Target[i];
 		if (target.IsEmpty())target = DXGetShaderTarget(shader_type, shader_version);
-		String file_path = Resource::GetFullDataPath(shader_info.ShaderFile[i]);
-		if (!DX11CompileShaderFromFile(file_path, shader_info.ShaderDefines, enter_point, target, &_codeBuffer[i]))
+		String filePath = Resource::GetFullDataPath(shaderInfo.ShaderFile[i]);
+		if (!DX10CompileShaderFromFile(filePath, shaderInfo.ShaderDefines, enter_point, target, &_codeBuffer[i]))
 		{
 			result = false;
 			continue;
@@ -144,7 +144,7 @@ bool DX11Program::LoadFromMemory(const String& name, const VecString& codes, con
 		const String& shader_version = Application::GetGraphics()->GetShaderVersion();
 		String enter_point = ShaderEnterEnum[i];
 		String target = DXGetShaderTarget(shader_type, shader_version);
-		if (!DX11CompileShader(name, code, defines, enter_point, target, &_codeBuffer[i]))
+		if (!DX10CompileShader(name, code, defines, enter_point, target, &_codeBuffer[i]))
 		{
 			result = false;
 			break;
@@ -175,28 +175,28 @@ void DX11Program::CreateShader(ShaderType type)
 		case ShaderType::Vertex:
 		{
 			ID3D11VertexShader*	vertexShader = nullptr;
-			HR(GetDX11Device()->GetDevice()->CreateVertexShader(shader_code->GetBufferPointer(), shader_code->GetBufferSize(), NULL, &vertexShader));
+			DX_ERROR(GetDX11Device()->GetDevice()->CreateVertexShader(shader_code->GetBufferPointer(), shader_code->GetBufferSize(), NULL, &vertexShader));
 			_shaderInstance[int(ShaderType::Vertex)] = vertexShader;
 		}
 		break;
 		case ShaderType::Geometry:
 		{
 			ID3D11GeometryShader* geometryShader = nullptr;
-			HR(GetDX11Device()->GetDevice()->CreateGeometryShader(shader_code->GetBufferPointer(), shader_code->GetBufferSize(), NULL, &geometryShader));
+			DX_ERROR(GetDX11Device()->GetDevice()->CreateGeometryShader(shader_code->GetBufferPointer(), shader_code->GetBufferSize(), NULL, &geometryShader));
 			_shaderInstance[int(ShaderType::Geometry)] = geometryShader;
 		}
 		break;
 		case ShaderType::Pixel:
 		{
 			ID3D11PixelShader* pixelShader = nullptr;
-			HR(GetDX11Device()->GetDevice()->CreatePixelShader(shader_code->GetBufferPointer(), shader_code->GetBufferSize(), NULL, &pixelShader));
+			DX_ERROR(GetDX11Device()->GetDevice()->CreatePixelShader(shader_code->GetBufferPointer(), shader_code->GetBufferSize(), NULL, &pixelShader));
 			_shaderInstance[int(ShaderType::Pixel)] = pixelShader;
 		}
 		break;
 		case ShaderType::Compute:
 		{
 			ID3D11ComputeShader* computeShader = nullptr;
-			HR(GetDX11Device()->GetDevice()->CreateComputeShader(shader_code->GetBufferPointer(), shader_code->GetBufferSize(), NULL, &computeShader));
+			DX_ERROR(GetDX11Device()->GetDevice()->CreateComputeShader(shader_code->GetBufferPointer(), shader_code->GetBufferSize(), NULL, &computeShader));
 			_shaderInstance[int(ShaderType::Compute)] = computeShader;
 		}
 		break;
@@ -267,7 +267,7 @@ bool DX11Program::SetVariable(const String& name, const Matrix4& mat)
 	const sShaderReflectVariable* cb_var = GetCBVariable(name);
 	if (cb_var != nullptr)
 	{
-		cbuffers_t::iterator& it = _cBBuffers.Find(cb_var->cb_name);
+		cbuffers_t::iterator it = _cBBuffers.Find(cb_var->cb_name);
 		if (it != _cBBuffers.end())
 		{
 			it->second->Copy(cb_var->offset, mat.p, cb_var->size);
@@ -281,7 +281,7 @@ bool DX11Program::SetVariable(const String& name, const Matrix4* mats, int count
 	const sShaderReflectVariable* cb_var = GetCBVariable(name);
 	if (cb_var != nullptr)
 	{
-		cbuffers_t::iterator& it = _cBBuffers.Find(cb_var->cb_name);
+		cbuffers_t::iterator it = _cBBuffers.Find(cb_var->cb_name);
 		if (it != _cBBuffers.end())
 		{
 			it->second->Copy(cb_var->offset, mats, sizeof(Matrix4) * count);

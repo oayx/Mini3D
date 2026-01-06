@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Date：2020/9/4
@@ -49,7 +49,7 @@ enum class UIVerticalWrapMode
 };
 DECLARE_ENUM_OPERATORS(UIVerticalWrapMode);
 /********************************************************************/
-class ENGINE_DLL UILabel Final : public UIView
+class ENGINE_DLL UILabel final : public UIView
 {
 	friend class UICanvas;
 	friend class GameObject;
@@ -60,7 +60,7 @@ class ENGINE_DLL UILabel Final : public UIView
 	BEGIN_DERIVED_REFECTION_TYPE(UILabel, UIView)
 		CTORS(DEFAULT_CTOR(UILabel))
 		ADD_EDITOR_COMPONENT("UI/Label")
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 protected:
 	UILabel();
@@ -68,7 +68,7 @@ protected:
 
 public:
 	virtual void	OnDrawEditor()override;
-	virtual bool	FillMesh(VariablePrimitive* primitive, Material* material, int& vxt_offset, int& idx_offset)override;
+	virtual bool	FillMesh(VariablePrimitive* primitive, Material* material, int& vxtOffset, int& idxOffset)override;
 	virtual String	GetAtlasFile()override;
 
 public:
@@ -103,7 +103,7 @@ protected:
 };
 /********************************************************************/
 //阴影
-class ENGINE_DLL UITextShadow Final : public Component
+class ENGINE_DLL UITextShadow final : public Component
 {
 	friend class UILabel;
 	friend class GameObject;
@@ -113,7 +113,7 @@ class ENGINE_DLL UITextShadow Final : public Component
 	BEGIN_DERIVED_REFECTION_TYPE(UITextShadow, Component)
 		CTORS(DEFAULT_CTOR(UITextShadow))
 		ADD_EDITOR_COMPONENT("UI/Shadow")
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 protected:
 	UITextShadow() : color(0.0f, 0.0f, 0.0f, 0.5f) {}
@@ -126,19 +126,19 @@ protected:
 
 public:
 	void SetColor(const Color& color) { this->color = color; SetNeedRebuild(); }
-	void SetDistance(float x, float y) { distance_x = x; distance_y = y; SetNeedRebuild(); }
+	void SetDistance(float x, float y) { distanceX = x; distanceY = y; SetNeedRebuild(); }
 
 private:
 	void SetNeedRebuild();
 
 private:
 	Color color;
-	float distance_x = 1.0f;
-	float distance_y = -1.0f;
+	float distanceX = 1.0f;
+	float distanceY = -1.0f;
 };
 /********************************************************************/
 //描边
-class ENGINE_DLL UITextOutline Final : public Component
+class ENGINE_DLL UITextOutline final : public Component
 {
 	friend class UILabel;
 	friend class GameObject;
@@ -148,7 +148,7 @@ class ENGINE_DLL UITextOutline Final : public Component
 	BEGIN_DERIVED_REFECTION_TYPE(UITextOutline, Component)
 		CTORS(DEFAULT_CTOR(UITextOutline))
 		ADD_EDITOR_COMPONENT("UI/Outline")
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 protected:
 	UITextOutline() : color(0.0f, 0.0f, 0.0f, 0.5f) {}
@@ -161,14 +161,14 @@ protected:
 
 public:
 	void SetColor(const Color& color) { this->color = color; SetNeedRebuild(); }
-	void SetDistance(float x, float y) { distance_x = x; distance_y = y; SetNeedRebuild(); }
+	void SetDistance(float x, float y) { distanceX = x; distanceY = y; SetNeedRebuild(); }
 
 private:
 	void SetNeedRebuild();
 
 private:
 	Color color;
-	float distance_x = 1.0f;
-	float distance_y = 1.0f;
+	float distanceX = 1.0f;
+	float distanceY = 1.0f;
 };
 DC_END_NAMESPACE

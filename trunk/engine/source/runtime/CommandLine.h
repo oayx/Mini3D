@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Description：命令行参数
@@ -9,7 +9,7 @@
 
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-class ENGINE_DLL CommandLine Final : public object
+class ENGINE_DLL CommandLine final : public object
 {
 	DISALLOW_CONSTRUCTOR_COPY_ASSIGN(CommandLine);
 	BEGIN_REFECTION_TYPE(CommandLine)
@@ -19,6 +19,6 @@ public:
 	static void Pause(int argc, char** argv);
 
 private:
-	static VecString _commands;
+	inline static VecString _commands;
 };
 DC_END_NAMESPACE

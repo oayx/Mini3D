@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2009/11/23
@@ -29,7 +29,7 @@ class RenderContent : public EventController
 	FRIEND_CONSTRUCT_DESTRUCT(RenderContent);
 	DISALLOW_COPY_ASSIGN(RenderContent);
 	BEGIN_DERIVED_REFECTION_TYPE(RenderContent, EventController)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 protected:
 	RenderContent();
@@ -52,9 +52,9 @@ public:
 	virtual void RenderOnePrimitive(Camera* camera, Pass* pass, Primitive* primitive, RenderMode mode) = 0;
 	virtual void Present(uint sync) = 0;
 
-	virtual void SetViewport(const ViewPortDesc& view_port) = 0;//把位置从NDC坐标系转换成屏幕坐标系
+	virtual void SetViewport(const ViewPortDesc& viewPort) = 0;//把位置从NDC坐标系转换成屏幕坐标系
 	virtual void SetViewportScissor(const iRect& clip) = 0;//裁剪
-	virtual void ClearBackbuffer(void* target_buffer, void* depth_stencil_buffer, ClearFlag flag, const Color& color) = 0;
+	virtual void ClearBackbuffer(void* targetBuffer, void* depthStencilBuffer, ClearFlag flag, const Color& color) = 0;
 
 	virtual void Resize(const WindowResizeDesc& desc);
 

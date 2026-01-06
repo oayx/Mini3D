@@ -68,7 +68,7 @@ enum class EasyType
 };
 DECLARE_ENUM_OPERATORS(EasyType);
 
-class ENGINE_DLL Easy Final
+class ENGINE_DLL Easy final
 {
 public:
 	/// <summary>

@@ -1,4 +1,4 @@
-/*****************************************************************************************************/
+﻿/*****************************************************************************************************/
 // @author hannibal
 // @date   2021/05/18
 // @brief  内存管理
@@ -10,18 +10,20 @@
 #include "DefaultAllocate.h"
 #include "ConstructDestruct.h"
 
+DC_BEGIN_NAMESPACE
+
+/********************************************************************/
 //重定义new
-#if defined(DC_DEBUG) && !defined(DC_MALLOC) && !defined(DC_DEBUG_MALLOC)
+#if defined(DC_DEBUG) && !defined(DC_MALLOC) && !defined(DC_DEBUG_MALLOC) && defined(DC_PLATFORM_WIN32)
 	#define _CRTDBG_MAP_ALLOC
 	#include <crtdbg.h>
-	#define DBG_NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
+	#define NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
 #else
-	#define DBG_NEW new
+	#define NEW new
 #endif
 
-DC_BEGIN_NAMESPACE
 /********************************************************************/
-class ENGINE_DLL Memory Final
+class ENGINE_DLL Memory final
 {
 	friend class ProgressLife;
 private:
@@ -106,14 +108,98 @@ public://内存操作
 	{
 		return ::memcmp(buf1, buf2, static_cast<size_t>(size));
 	}
+
+public://对象创建和销毁
+	template<class T>
+	static T* New()
+	{
+#if defined(DC_MALLOC) || defined(DC_DEBUG_MALLOC)
+		T* ptr = (T*)Memory::Alloc(sizeof(T));
+		ConstructDestruct::ConstructItem(ptr);
+		return ptr;
+#else
+		return NEW T();
+#endif
+	}
+	template<class T, class... Args>
+	static T* New(Args&&...args)
+	{
+#if defined(DC_MALLOC) || defined(DC_DEBUG_MALLOC)
+		T* ptr = (T*)Memory::Alloc(sizeof(T));
+		ConstructDestruct::ConstructItemArgs(ptr, std::forward<Args>(args)...);
+		return ptr;
+#else
+		return NEW T(std::forward<Args>(args)...);
+#endif
+	}
+	template<class T>
+	static T* NewArray(uint32_t count)
+	{
+#if defined(DC_MALLOC) || defined(DC_DEBUG_MALLOC)
+		T* ptr = (T*)Memory::Alloc(sizeof(T) * count);
+		ConstructDestruct::ConstructItems(ptr, count);
+		return ptr;
+#else
+		return NEW T[count];
+#endif
+	}
+	template<class T>
+	static void Delete(T* ptr)
+	{
+#if defined(DC_MALLOC) || defined(DC_DEBUG_MALLOC)
+		ConstructDestruct::DestructItem(ptr);
+		Memory::Free((void*)ptr);
+#else
+		delete ptr;
+#endif
+	}
+	//POD数组的析构
+	template<class T>
+	static void DeleteArray(T* ptr)
+	{
+#if defined(DC_MALLOC) || defined(DC_DEBUG_MALLOC)
+		ConstructDestruct::DestructItems(ptr);
+		Memory::Free(ptr);
+#else
+		delete[] ptr;
+#endif
+	}
+	//普通数组析构
+	template<class T>
+	static void DeleteArray(T* ptr, uint32_t count)
+	{
+#if defined(DC_MALLOC) || defined(DC_DEBUG_MALLOC)
+		ConstructDestruct::DestructItems(ptr, count);
+		Memory::Free(ptr);
+#else
+		delete[] ptr;
+#endif
+	}
 };
 
 /********************************************************************/
+#if defined(DC_MALLOC) || defined(DC_DEBUG_MALLOC)
+#define DECLARE_ALLOCATOR \
+	public: \
+	inline void* operator new(size_t size)			{ return Memory::Alloc(size, __FILE__ , __LINE__); }   \
+	inline void  operator delete(void* ptr)         { Memory::Free(ptr); }   \
+	inline void* operator new(size_t, void* ptr)	{ return ptr; }   \
+	inline void  operator delete(void*, void*)      { }   \
+	inline void* operator new[](size_t size)		{ return Memory::Alloc(size, __FILE__ , __LINE__); }   \
+	inline void  operator delete[](void* ptr)       { Memory::Free(ptr); }   \
+	inline void* operator new[](size_t, void* ptr)  { return ptr; }   \
+	inline void  operator delete[](void*, void*)    { } \
+	private:
+#else
+#define DECLARE_ALLOCATOR
+#endif
+
+/********************************************************************/
 //根据指针值删除内存
-#define SAFE_DELETE(x)				{if( (x)!=NULL ) { delete(x); (x)=NULL; }}
+#define SAFE_DELETE(x)				{if( (x)!=NULL ) { Memory::Delete(x); (x)=NULL; }}
 
 //根据指针值删除数组类型内存
-#define SAFE_DELETE_ARRAY(x)		{if( (x)!=NULL ) { delete[](x); (x)=NULL; }}
+#define SAFE_DELETE_ARRAY(x)		{if( (x)!=NULL ) { Memory::DeleteArray(x); (x)=NULL; }}
 
 //根据指针调用free接口
 #ifndef SAFE_FREE
@@ -127,70 +213,7 @@ public://内存操作
 #ifndef SAFE_CLOSEHANDLE
 #define SAFE_CLOSEHANDLE(x)			{if( (x)!=NULL ) { ::CloseHandle(x); (x)=NULL; }}
 #endif
-/********************************************************************/
-template<class T>
-inline T* New()
-{
-#if defined(DC_MALLOC) || defined(DC_DEBUG_MALLOC)
-	T* ptr = (T*)Memory::Alloc(sizeof(T));
-	ConstructDestruct::ConstructItem(ptr);
-	return ptr;
-#else
-	return DBG_NEW T();
-#endif
-}
-template<class T, class... Args>
-inline T* New(Args&&...args)
-{
-#if defined(DC_MALLOC) || defined(DC_DEBUG_MALLOC)
-	T* ptr = (T*)Memory::Alloc(sizeof(T));
-	ConstructDestruct::ConstructItemArgs(ptr, std::forward<Args>(args)...);
-	return ptr;
-#else
-	return DBG_NEW T(std::forward<Args>(args)...);
-#endif
-}
-template<class T>
-inline T* NewArray(uint32_t count)
-{
-#if defined(DC_MALLOC) || defined(DC_DEBUG_MALLOC)
-	T* ptr = (T*)Memory::Alloc(sizeof(T) * count);
-	ConstructDestruct::ConstructItems(ptr, count);
-	return ptr;
-#else
-	return DBG_NEW T[count];
-#endif
-}
-template<class T>
-inline void Delete(T* ptr)
-{
-#if defined(DC_MALLOC) || defined(DC_DEBUG_MALLOC)
-	ConstructDestruct::DestructItem(ptr);
-	Memory::Free(ptr);
-#else
-	SAFE_DELETE(ptr);
-#endif
-}
-template<class T>
-inline void DeleteArray(T* ptr)
-{
-#if defined(DC_MALLOC) || defined(DC_DEBUG_MALLOC)
-	ConstructDestruct::DestructItems(ptr);
-	Memory::Free(ptr);
-#else
-	SAFE_DELETE_ARRAY(ptr);
-#endif
-}
-template<class T>
-inline void DeleteArray(T* ptr, uint32_t count)
-{
-#if defined(DC_MALLOC) || defined(DC_DEBUG_MALLOC)
-	ConstructDestruct::DestructItems(ptr, count);
-	Memory::Free(ptr);
-#else
-	SAFE_DELETE_ARRAY(ptr);
-#endif
-}
+
 
 //创建
 #define DEFAULT_CREATE(T) \
@@ -198,16 +221,13 @@ public: \
 template<class... Args> \
 static T* Create(Args&&...args) \
 { \
-	return DBG_NEW T(std::forward<Args>(args)...); \
+	return Memory::New<T>(std::forward<Args>(args)...); \
 } \
 private:
 
 //友元
 #define FRIEND_CONSTRUCT_DESTRUCT(T) \
-friend T* New<T>(); \
-friend T* NewArray<T>(uint32_t count); \
-friend void Delete<T>(T* ptr); \
-friend void DeleteArray<T>(T* ptr, uint32_t count);\
+friend class Memory; \
 friend class ConstructDestruct; \
 friend class ConstructorImpl<T>;
 

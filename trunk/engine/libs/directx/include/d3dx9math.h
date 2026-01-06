@@ -389,8 +389,8 @@ typedef struct _D3DXMATRIXA16 : public D3DXMATRIX
                     FLOAT _41, FLOAT _42, FLOAT _43, FLOAT _44 );
 
     // new operators
-    void* operator new   ( size_t );
-    void* operator new[] ( size_t );
+    void* operator new   ( size_t )throw();
+    void* operator new[] ( size_t )throw();
 
     // delete operators
     void operator delete   ( void* );   // These are NOT virtual; Do not 

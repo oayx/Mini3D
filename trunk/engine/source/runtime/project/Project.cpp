@@ -1,4 +1,4 @@
-#include "Project.h"
+﻿#include "Project.h"
 #include "QualitySettings.h"
 #include "runtime/physics/Physics.h"
 #include "runtime/physics2d/Physics2d.h"
@@ -15,14 +15,14 @@ static const String ProjectFilePath = "settings/ProjectSettings.asset";
 IMPL_DERIVED_REFECTION_TYPE(Project, Object);
 void Project::Serialize()
 {
-	String full_path = Resource::GetFullDataPath(ProjectFilePath);
-	SerializeRead transfer(full_path);
+	String fullPath = Resource::GetFullDataPath(ProjectFilePath);
+	SerializeRead transfer(fullPath);
 	this->Transfer(transfer);
 }
 void Project::Deserialize()
 {
-	String full_path = Resource::GetFullDataPath(ProjectFilePath);
-	SerializeWrite transfer(full_path);
+	String fullPath = Resource::GetFullDataPath(ProjectFilePath);
+	SerializeWrite transfer(fullPath);
 	this->Transfer(transfer);
 }
 bool Project::Create()

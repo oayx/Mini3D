@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Reverb for the OpenAL cross platform audio library
  * Copyright (C) 2008-2009 by Christopher Fitzgerald.
  * This library is free software; you can redistribute it and/or
@@ -266,7 +266,7 @@ static __inline ALfloat EAXModulation(ALverbState *State, ALfloat in)
     // The depth determines the range over which to read the input samples
     // from, so it must be filtered to reduce the distortion caused by even
     // small parameter changes.
-    State->Mod.Filter = lerp(State->Mod.Filter, State->Mod.Depth,
+    State->Mod.Filter = al_lerp(State->Mod.Filter, State->Mod.Depth,
                              State->Mod.Coeff);
 
     // Calculate the read offset and fraction between it and the next sample.
@@ -285,7 +285,7 @@ static __inline ALfloat EAXModulation(ALverbState *State, ALfloat in)
 
     // The output is obtained by linearly interpolating the two samples that
     // were acquired above.
-    return lerp(out0, out1, frac);
+    return al_lerp(out0, out1, frac);
 }
 
 // Delay line output routine for early reflections.
@@ -362,7 +362,7 @@ static __inline ALfloat LateDelayLineOut(ALverbState *State, ALuint index)
 // Low-pass filter input/output routine for late reverb.
 static __inline ALfloat LateLowPassInOut(ALverbState *State, ALuint index, ALfloat in)
 {
-    in = lerp(in, State->Late.LpSample[index], State->Late.LpCoeff[index]);
+    in = al_lerp(in, State->Late.LpSample[index], State->Late.LpCoeff[index]);
     State->Late.LpSample[index] = in;
     return in;
 }
@@ -459,7 +459,7 @@ static __inline ALvoid EAXEcho(ALverbState *State, ALfloat in, ALfloat *late)
     // Mix the energy-attenuated input with the output and pass it through
     // the echo low-pass filter.
     feed += State->Echo.DensityGain * in;
-    feed = lerp(feed, State->Echo.LpSample, State->Echo.LpCoeff);
+    feed = al_lerp(feed, State->Echo.LpSample, State->Echo.LpCoeff);
     State->Echo.LpSample = feed;
 
     // Then the echo all-pass filter.
@@ -1062,7 +1062,7 @@ static ALvoid Update3DPanning(const ALCdevice *Device, const ALfloat *Reflection
     for(index = 0;index < Device->NumChan;index++)
     {
         enum Channel chan = Device->Speaker2Chan[index];
-        State->Early.PanGain[chan] = lerp(ambientGain, speakerGain[chan], dirGain) * Gain;
+        State->Early.PanGain[chan] = al_lerp(ambientGain, speakerGain[chan], dirGain) * Gain;
     }
 
 
@@ -1075,7 +1075,7 @@ static ALvoid Update3DPanning(const ALCdevice *Device, const ALfloat *Reflection
     for(index = 0;index < Device->NumChan;index++)
     {
         enum Channel chan = Device->Speaker2Chan[index];
-        State->Late.PanGain[chan] = lerp(ambientGain, speakerGain[chan], dirGain) * Gain;
+        State->Late.PanGain[chan] = al_lerp(ambientGain, speakerGain[chan], dirGain) * Gain;
     }
 }
 

@@ -11,12 +11,12 @@
 DC_BEGIN_NAMESPACE
 /********************************************************************/
 // 输入系统
-class ENGINE_DLL TouchInput Final : public Object
+class ENGINE_DLL TouchInput final : public Object
 {
 	typedef List<Touch> Touches;
 	DISALLOW_CONSTRUCTOR_COPY_ASSIGN(TouchInput);
 	BEGIN_DERIVED_REFECTION_TYPE(TouchInput, Object)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 public:
 	static int GetTouchCount() { return _touches.Size(); }
@@ -30,7 +30,7 @@ public:
 	static void Reset();
 
 private:
-	static Touches _touches;
-	static bool _multiTouchEnabled;
+	inline static Touches _touches;
+	inline static bool _multiTouchEnabled = true;
 };
 DC_END_NAMESPACE

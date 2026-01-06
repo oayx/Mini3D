@@ -1,4 +1,4 @@
-#include "MotionBlurEffect.h"
+﻿#include "MotionBlurEffect.h"
 #include "runtime/input/Input.h"
 #include "runtime/graphics/Material.h"
 #include "runtime/graphics/Pass.h"
@@ -19,11 +19,11 @@ MotionBlurEffect::~MotionBlurEffect()
 {
 	SAFE_RELEASE(_material);
 }
-Object* MotionBlurEffect::Clone(Object* new_obj)
+Object* MotionBlurEffect::Clone(Object* newObj)
 {
-	base::Clone(new_obj);
-	MotionBlurEffect* obj = dynamic_cast<MotionBlurEffect*>(new_obj);
-	if (!obj)return new_obj;
+	base::Clone(newObj);
+	MotionBlurEffect* obj = dynamic_cast<MotionBlurEffect*>(newObj);
+	if (!obj)return newObj;
 
 	obj->_intensity = _intensity;
 
@@ -36,14 +36,14 @@ void MotionBlurEffect::OnRenderImage(RenderTexture* source, RenderTexture* dest)
 		TextureDesc desc;
 		desc.width = source->GetWidth(); desc.height = source->GetHeight(); desc.format = source->GetFormat();
 		desc.flags = TextureFlag::COLOR;
-		RenderTexture* tmp_texture = RenderTexture::Alloc(desc);
-		_material->SetMatrix("_PRE_MATRIX_VP", m_matViewProj);
+		RenderTexture* tmpTexture = RenderTexture::Alloc(desc);
+		_material->SetMatrix("_PRE_MATRIX_VP", _matViewProj);
 		_material->SetVector("_Intensity", _intensity);
-		Blit(source, tmp_texture, _material);
-		Blit(tmp_texture, dest);
-		RenderTexture::Free(tmp_texture);
+		Blit(source, tmpTexture, _material);
+		Blit(tmpTexture, dest);
+		RenderTexture::Free(tmpTexture);
 
-		m_matViewProj = _camera->GetViewMatrix() * _camera->GetProjMatrix();
+		_matViewProj = _camera->GetViewMatrix() * _camera->GetProjMatrix();
 	}
 	else
 	{
@@ -56,23 +56,23 @@ void MotionBlurEffect::OnDrawEditor()
 	{
 		ImGuiEx::Label("Intensity");
 		const float width = ImGui::GetContentRegionAvail().x;
-		const float char_width = ImGui::GetFontSize();
+		const float charWidth = ImGui::GetFontSize();
 
-		ImGui::SetNextItemWidth(char_width);
+		ImGui::SetNextItemWidth(charWidth);
 		ImGui::Text("X");
 
 		ImGui::SameLine();
-		ImGui::SetNextItemWidth(width * 0.5f - char_width);
+		ImGui::SetNextItemWidth(width * 0.5f - charWidth);
 		if (ImGui::DragScalar("##IntensityX", ImGuiDataType_Float, &_intensity.x, 0.01f))
 		{
 		}
 
 		ImGui::SameLine();
-		ImGui::SetNextItemWidth(char_width);
+		ImGui::SetNextItemWidth(charWidth);
 		ImGui::TextUnformatted("Y");
 
 		ImGui::SameLine();
-		ImGui::SetNextItemWidth(width * 0.5f - char_width);
+		ImGui::SetNextItemWidth(width * 0.5f - charWidth);
 		if (ImGui::DragScalar("##IntensityY", ImGuiDataType_Float, &_intensity.y, 0.01f))
 		{
 		}

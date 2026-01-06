@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************************************/
 // @author hannibal
 // @date   2020/08/04
@@ -13,35 +13,35 @@ DC_BEGIN_NAMESPACE
 #define STREAM_BUFFER_MAX 100
 /********************************************************************/
 class AudioClipPrivate;
-class ENGINE_DLL AudioClip Final : public Resource
+class ENGINE_DLL AudioClip final : public Resource
 {
 	friend class AudioManager;
+	DISALLOW_COPY_ASSIGN(AudioClip);
 	FRIEND_CONSTRUCT_DESTRUCT(AudioClip);
 	BEGIN_DERIVED_REFECTION_TYPE(AudioClip, Resource)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
-private:
 	AudioClip();
-	virtual ~AudioClip();
+	~AudioClip();
+
 public:
 	static  AudioClip* Create(const String& path);
 	virtual bool LoadFromFile(const String& file)override ;
 
 	void*	GetBuffer() const;
-	bool	IsStream() const { return m_stream; }
+	bool	IsStream() const { return _stream; }
 	void	SetStreamLoop(bool loop);
-	float	GetLength()const { return m_length; }
+	float	GetLength()const { return _length; }
 
 private:
 	AudioClipPrivate* _private = nullptr;
-	MemoryDataStream m_samples;
-	int		m_channel = 0;
-	int		m_sample_rate = 0;
-	int		m_byte_rate = 0;
-	int		m_sample_bits = 0;
-	float	m_length = 0;		//时长
-	int		m_sample_count = 0;
-	bool	m_stream = false;
+	int		_channel = 0;
+	int		_sampleRate = 0;
+	int		_byteRate = 0;
+	int		_sampleBits = 0;
+	float	_length = 0;		//时长
+	int		_sampleCount = 0;
+	bool	_stream = false;
 };
 DC_END_NAMESPACE
 /*

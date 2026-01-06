@@ -1,4 +1,4 @@
-#include "UICanvasScaler.h"
+﻿#include "UICanvasScaler.h"
 #include "UICanvas.h"
 #include "runtime/component/Component.inl"
 #include "runtime/scene/Camera.h"
@@ -15,11 +15,11 @@
 DC_BEGIN_NAMESPACE
 /********************************************************************/
 IMPL_DERIVED_REFECTION_TYPE(UICanvasScaler, Component);
-Object* UICanvasScaler::Clone(Object* new_obj)
+Object* UICanvasScaler::Clone(Object* newObj)
 {
-	base::Clone(new_obj);
-	UICanvasScaler* obj = dynamic_cast<UICanvasScaler*>(new_obj);
-	if (!obj)return new_obj;
+	base::Clone(newObj);
+	UICanvasScaler* obj = dynamic_cast<UICanvasScaler*>(newObj);
+	if (!obj)return newObj;
 
 	obj->SetReferenceResolution(_referenceResolution);
 	obj->SetScaleMatchMode(_scaleMatchMode);
@@ -36,10 +36,10 @@ void UICanvasScaler::OnDrawEditor()
 {
 	base::OnDrawEditor();
 	{
-		const char* sz_flags[] = { "Scale With Screen Size"};
+		const char* szFlags[] = { "Scale With Screen Size"};
 		ImGuiEx::Label("UI Scale Mode");
-		static int current_flags = 0;
-		if (ImGui::Combo("##UIScaleMode", &current_flags, sz_flags, ARRAY_SIZE(sz_flags)))
+		static int currentFlags = 0;
+		if (ImGui::Combo("##UIScaleMode", &currentFlags, szFlags, ARRAY_SIZE(szFlags)))
 		{
 		}
 	}
@@ -49,12 +49,12 @@ void UICanvasScaler::OnDrawEditor()
 		ImGui::DragInt2("##", _referenceResolution.p, 0.5f, 0, 4096);
 		
 		{
-			const char* sz_flags[] = { "Match Width or Height", "Expand", "Shrink" };
+			const char* szFlags[] = { "Match Width or Height", "Expand", "Shrink" };
 			ImGuiEx::Label("Scale Match Mode");
-			int current_flags = int(_scaleMatchMode);
-			if (ImGui::Combo("##ScaleMatchMode", &current_flags, sz_flags, ARRAY_SIZE(sz_flags)))
+			int currentFlags = int(_scaleMatchMode);
+			if (ImGui::Combo("##ScaleMatchMode", &currentFlags, szFlags, ARRAY_SIZE(szFlags)))
 			{
-				_scaleMatchMode = UIScaleMatchMode(current_flags);
+				_scaleMatchMode = UIScaleMatchMode(currentFlags);
 			}
 		}
 		if (_scaleMatchMode == UIScaleMatchMode::MatchWidthOrHeight)
@@ -75,12 +75,12 @@ void UICanvasScaler::Refresh()
 	RenderWindow* window = WindowManager::GetWindow(camera->GetTargetDisplay());
 	if (!window)return;
 
-	float orthographic_scale = 0.01f;
-	Size screen_size(window->GetWidth(), window->GetHeight());
+	float orthographicScale = 0.01f;
+	Size screenSize(window->GetWidth(), window->GetHeight());
 	if (Application::IsEditor())
 	{
-		orthographic_scale = 0.01f;
-		screen_size = EMain_GameView::GetWindowSize(screen_size.width, screen_size.height);
+		orthographicScale = 0.01f;
+		screenSize = EMain_GameView::GetWindowSize(screenSize.width, screenSize.height);
 	}
 
 	const iSize& size = this->GetReferenceResolution();
@@ -90,51 +90,51 @@ void UICanvasScaler::Refresh()
 	{
 		if (this->IsMatchWidth())
 		{
-			float match_height = (screen_size.height * size.width) / screen_size.width;
-			camera->SetOrthographicSize(size.width * orthographic_scale, match_height * orthographic_scale);
-			_realResolution.Set(size.width, match_height);
+			float matchHeight = (screenSize.height * size.width) / screenSize.width;
+			camera->SetOrthographicSize(size.width * orthographicScale, matchHeight * orthographicScale);
+			_realResolution.Set(size.width, matchHeight);
 		}
 		else
 		{
-			float match_width = (screen_size.width * size.height) / screen_size.height;
-			camera->SetOrthographicSize(match_width * orthographic_scale, size.height * orthographic_scale);
-			_realResolution.Set(match_width, size.height);
+			float matchWidth = (screenSize.width * size.height) / screenSize.height;
+			camera->SetOrthographicSize(matchWidth * orthographicScale, size.height * orthographicScale);
+			_realResolution.Set(matchWidth, size.height);
 		}
 	}
 	break;
 	case UIScaleMatchMode::Expand:
 	{
-		float scale_screen = screen_size.width / screen_size.height;
-		float scale_resolution = size.width / size.height;
-		if (scale_screen >= scale_resolution)
+		float scaleScreen = screenSize.width / screenSize.height;
+		float scaleResolution = size.width / size.height;
+		if (scaleScreen >= scaleResolution)
 		{
-			float match_width = (screen_size.width * size.height) / screen_size.height;
-			camera->SetOrthographicSize(match_width * orthographic_scale, size.height * orthographic_scale);
-			_realResolution.Set(match_width, size.height);
+			float matchWidth = (screenSize.width * size.height) / screenSize.height;
+			camera->SetOrthographicSize(matchWidth * orthographicScale, size.height * orthographicScale);
+			_realResolution.Set(matchWidth, size.height);
 		}
 		else
 		{
-			float match_height = (screen_size.height * size.width) / screen_size.width;
-			camera->SetOrthographicSize(size.width * orthographic_scale, match_height * orthographic_scale);
-			this->_realResolution.Set(size.width, match_height);
+			float matchHeight = (screenSize.height * size.width) / screenSize.width;
+			camera->SetOrthographicSize(size.width * orthographicScale, matchHeight * orthographicScale);
+			this->_realResolution.Set(size.width, matchHeight);
 		}
 	}
 	break;
 	case UIScaleMatchMode::Shrink:
 	{
-		float scale_screen = screen_size.width / screen_size.height;
-		float scale_resolution = size.width / size.height;
-		if (scale_screen >= scale_resolution)
+		float scaleScreen = screenSize.width / screenSize.height;
+		float scaleResolution = size.width / size.height;
+		if (scaleScreen >= scaleResolution)
 		{
-			float match_height = (screen_size.height * size.width) / screen_size.width;
-			camera->SetOrthographicSize(size.width * orthographic_scale, match_height * orthographic_scale);
-			_realResolution.Set(size.width, match_height);
+			float matchHeight = (screenSize.height * size.width) / screenSize.width;
+			camera->SetOrthographicSize(size.width * orthographicScale, matchHeight * orthographicScale);
+			_realResolution.Set(size.width, matchHeight);
 		}
 		else
 		{
-			float match_width = (screen_size.width * size.height) / screen_size.height;
-			camera->SetOrthographicSize(match_width * orthographic_scale, size.height * orthographic_scale);
-			_realResolution.Set(match_width, size.height);
+			float matchWidth = (screenSize.width * size.height) / screenSize.height;
+			camera->SetOrthographicSize(matchWidth * orthographicScale, size.height * orthographicScale);
+			_realResolution.Set(matchWidth, size.height);
 		}
 	}
 	break;

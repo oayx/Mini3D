@@ -1,4 +1,4 @@
-#include "EInspector_Project_Font.h"
+﻿#include "EInspector_Project_Font.h"
 #include "runtime/font/FontManager.h"
 #include "runtime/graphics/null/Texture.h"
 #include "runtime/resources/AssetsManager.h"
@@ -11,7 +11,7 @@ DC_BEGIN_NAMESPACE
 /********************************************************************/
 void EInspector_Project_Font::Render(AssetMeta* meta)
 {
-	DC_PROFILE_FUNCTION();
+	DC_PROFILE_FUNCTION;
 	base::Render(meta);
 
 	if (!meta)return;

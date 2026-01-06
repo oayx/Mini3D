@@ -1,4 +1,4 @@
-#include "Renderer.h" 
+﻿#include "Renderer.h" 
 #include "runtime/component/GameObject.h"
 #include "runtime/component/Component.inl"
 #include "runtime/graphics/Material.h"
@@ -38,10 +38,10 @@ Renderer::~Renderer()
 	}
 	_primitives.Clear();
 }
-Object* Renderer::Clone(Object* new_obj)
+Object* Renderer::Clone(Object* newObj)
 {
-	Renderer* obj = dynamic_cast<Renderer*>(new_obj);
-	if (!obj)return new_obj;
+	Renderer* obj = dynamic_cast<Renderer*>(newObj);
+	if (!obj)return newObj;
 
 	obj->SetSortLayer(_sortLayer);
 	obj->SetOrderInLayer(_orderInLayer);
@@ -153,21 +153,21 @@ Primitive* Renderer::GetPrimitive(int index)
 }
 void Renderer::CalLightes()
 {
-	uint obj_mask = LayerMask::GetMask(GetGameObject()->GetLayer());
+	uint objMask = LayerMask::GetMask(GetGameObject()->GetLayer());
 	for (auto material : _materials)
 	{
 		List<Light*> lightes;
 		if(material->GetShader()->EnableLight())
 		{
 			int count = 0;
-			int light_count = SceneManager::GetLightCount();
-			for (int i = 0; i < light_count; ++i)
+			int lightCount = SceneManager::GetLightCount();
+			for (int i = 0; i < lightCount; ++i)
 			{//先收集方向光
 				Light* light = SceneManager::GetLight(i);
 				if (light == nullptr || !light->IsEnable() || !light->GetGameObject()->ActiveInHierarchy() || light->mType != LightType::Direction || count >= MAX_DIRECTION_LIGHT)
 					continue;
 
-				if (!(obj_mask & light->CullMask))
+				if (!(objMask & light->GetCullMask()))
 					continue;
 
 				lightes.Add(light);
@@ -175,13 +175,13 @@ void Renderer::CalLightes()
 			}
 
 			count = 0;
-			for (int i = 0; i < light_count; ++i)
+			for (int i = 0; i < lightCount; ++i)
 			{//再收集点光源
 				Light* light = SceneManager::GetLight(i);
 				if (light == nullptr || !light->IsEnable() || !light->GetGameObject()->ActiveInHierarchy() || light->mType != LightType::Point || count >= MAX_POINT_LIGHT)
 					continue;
 
-				if (!(obj_mask & light->CullMask))
+				if (!(objMask & light->GetCullMask()))
 					continue;
 
 				//判断点光源形成的球体是否与物体包围盒相交
@@ -195,13 +195,13 @@ void Renderer::CalLightes()
 			}
 
 			count = 0;
-			for (int i = 0; i < light_count; ++i)
+			for (int i = 0; i < lightCount; ++i)
 			{//再收集聚光灯
 				Light* light = SceneManager::GetLight(i);
 				if (light == nullptr || !light->IsEnable() || light->mType != LightType::Spot || count >= MAX_SPOT_LIGHT)
 					continue;
 
-				if (!(obj_mask & light->CullMask))
+				if (!(objMask & light->GetCullMask()))
 					continue;
 
 				//判断光源形成的球体是否与物体包围盒相交
@@ -352,27 +352,27 @@ void Renderer::AddInstanceTransformRange(const Matrix4* mats, int size)
 	_instanceTransform.Resize(_instanceTransform.Size() + size);
 	Memory::Copy(&_instanceTransform[old_size], mats, size * sizeof(Matrix4));
 }
-int Renderer::AddSubPrimitive(uint elem_count, uint vtx_offset, uint idx_offset, uint start_vertex, uint start_index, int prim)
+int Renderer::AddSubPrimitive(uint elem_count, uint vtx_offset, uint idxOffset, uint start_vertex, uint start_index, int prim)
 {
 	Primitive* primitive = GetPrimitive(prim);
-	primitive->AddSubPrimitive(elem_count, vtx_offset, idx_offset, start_vertex, start_index);
+	primitive->AddSubPrimitive(elem_count, vtx_offset, idxOffset, start_vertex, start_index);
 	return primitive->GetSubPrimitiveCount() - 1;
 }
 void Renderer::OnDrawEditor()
 {
 	base::OnDrawEditor();
-	ImGuiTreeNodeFlags tree_flags = ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_DefaultOpen;
-	if (ImGui::TreeNodeEx("Light", tree_flags))
+	ImGuiTreeNodeFlags treeFlags = ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_DefaultOpen;
+	if (ImGui::TreeNodeEx("Light", treeFlags))
 	{
 		OnDrawLight();
 		ImGui::TreePop();
 	}
-	if (ImGui::TreeNodeEx("Material", tree_flags))
+	if (ImGui::TreeNodeEx("Material", treeFlags))
 	{
 		OnDrawMaterial();
 		ImGui::TreePop();
 	}
-	if (ImGui::TreeNodeEx("Shader", tree_flags))
+	if (ImGui::TreeNodeEx("Shader", treeFlags))
 	{
 		OnDrawShader();
 		ImGui::TreePop();
@@ -384,8 +384,8 @@ void Renderer::OnDrawMaterial()
 	if (!material)return;
 
 	ImGuiEx::Label("File");
-	const char* sz_name = material->GetResName().c_str();
-	ImGui::Button(sz_name, ImVec2(ImGui::GetContentRegionAvail().x - ImGui::CalcTextSize(ICON_FA_LINK).x - 5, 0));
+	const char* szName = material->GetResName().c_str();
+	ImGui::Button(szName, ImVec2(ImGui::GetContentRegionAvail().x - ImGui::CalcTextSize(ICON_FA_LINK).x - 5, 0));
 	if (ImGui::IsItemClicked(0) && material)
 	{
 		EMain_Project::SetSelectFile(material->GetResFile());
@@ -394,10 +394,10 @@ void Renderer::OnDrawMaterial()
 	{
 		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ProjectAsset"))
 		{
-			const String& file_path = EditorCursor::GetDragFile();
-			if (Resource::GetResourceType(file_path) == ResourceType::Material)
+			const String& filePath = EditorCursor::GetDragFile();
+			if (Resource::GetResourceType(filePath) == ResourceType::Material)
 			{
-				this->SetMaterial(file_path);
+				this->SetMaterial(filePath);
 			}
 			EditorCursor::EndDrag();
 		}
@@ -419,7 +419,7 @@ void Renderer::OnDrawShader()
 	Material* material = this->GetMaterial();
 	if (!material)return;
 	
-	ImVec2 start_pos = ImGui::GetCursorScreenPos();
+	ImVec2 startPos = ImGui::GetCursorScreenPos();
 	{
 		if (EInspector_Project_Material::RenderMaterial(material, [this] {this->UploadData(); }))
 		{
@@ -428,12 +428,12 @@ void Renderer::OnDrawShader()
 		
 		OnDrawOrder();
 	}
-	bool is_internal = Resource::IsInternal(material->GetResFile());
-	if (is_internal)
+	bool isInternal = Resource::IsInternal(material->GetResFile());
+	if (isInternal)
 	{
 		ImVec2 end_pos = ImGui::GetCursorScreenPos();
-		ImGui::SetCursorScreenPos(ImVec2(start_pos.x - 30.0f, start_pos.y));
-		ImGuiEx::Rect(ImGui::GetContentRegionAvail().x + 50.0f, end_pos.y - start_pos.y, 0x10FFFFFF, false);
+		ImGui::SetCursorScreenPos(ImVec2(startPos.x - 30.0f, startPos.y));
+		ImGuiEx::Rect(ImGui::GetContentRegionAvail().x + 50.0f, end_pos.y - startPos.y, 0x10FFFFFF, false);
 	}
 }
 void Renderer::OnDrawLight()
@@ -449,10 +449,10 @@ void Renderer::OnDrawLight()
 	}
 
 	ImGuiEx::Label("Receive Shadows");
-	bool receive_shadows = material->IsReceiveShadow();
-	if (ImGui::Checkbox("##Receive Shadows", &receive_shadows))
+	bool receiveShadows = material->IsReceiveShadow();
+	if (ImGui::Checkbox("##Receive Shadows", &receiveShadows))
 	{
-		material->SetReceiveShadow(receive_shadows);
+		material->SetReceiveShadow(receiveShadows);
 	}
 }
 void Renderer::OnDrawOrder()

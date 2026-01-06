@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2020/3/30
@@ -6,6 +6,7 @@
 *****************************************************************************/
 #pragma once
 
+#include <comdef.h>
 #include "runtime/graphics/RenderDefine.h"
 
 DC_BEGIN_NAMESPACE
@@ -75,6 +76,13 @@ inline String DXGetShaderTarget(ShaderType type, const String& version)
 	default:AssertEx(false, ""); return "";
 	}
 }
+
+#if DC_DEBUG
+	#define DX_ERROR(hr) do { AssertEx(SUCCEEDED(hr), "DXError:%s", Encoding::WCharToUtf8(_com_error(hr).ErrorMessage()).c_str()); } while(0)
+#else
+	#define DX_ERROR(hr) UNUSED(hr)
+#endif
+
 DC_END_NAMESPACE
 
 /*

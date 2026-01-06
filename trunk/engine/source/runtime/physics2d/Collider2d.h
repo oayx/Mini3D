@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2020/9/17
@@ -19,7 +19,7 @@ class ENGINE_DLL Collider2d : public Component
 	FRIEND_CONSTRUCT_DESTRUCT(Collider2d);
 	DISALLOW_COPY_ASSIGN(Collider2d);
 	BEGIN_DERIVED_REFECTION_TYPE(Collider2d, Component)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 protected:
 	Collider2d();
@@ -38,7 +38,7 @@ public://需要序列化属性
 	void	SetGroupIndex(int index) { _groupIndex = index; }
 
 public:
-	b2Body* GetBody()const { return m_b2Body; }
+	b2Body* GetBody()const { return _b2Body; }
 
 	void	ModifyPosition(const Vector2& pos);
 
@@ -47,7 +47,7 @@ public:
 	bool	HasContact(uint64 id) { return std::find(_contactes.begin(), _contactes.end(), id) != _contactes.end(); }
 
 protected:
-	b2Body* m_b2Body = nullptr;
+	b2Body* _b2Body = nullptr;
 	Contactes _contactes;//当前接触对象列表
 
 	bool	_isTrigger = false;
@@ -100,7 +100,7 @@ protected:
 	int _groupIndex = 0;
 };
 
-class ENGINE_DLL BoxCollider2d Final : public Collider2d
+class ENGINE_DLL BoxCollider2d final : public Collider2d
 {
 	friend class GameObject;
 	DECLARE_OBJECT_CLONE;
@@ -109,7 +109,7 @@ class ENGINE_DLL BoxCollider2d Final : public Collider2d
 	BEGIN_DERIVED_REFECTION_TYPE(BoxCollider2d, Collider2d)
 		//CTORS(DEFAULT_CTOR(BoxCollider2d))
 		//ADD_EDITOR_COMPONENT("Physics2D/BoxCollider")
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 	using base::base;
 
@@ -127,7 +127,7 @@ private:
 	Size _localSize = Size(1.0f, 1.0f);
 };
 
-class ENGINE_DLL CircleCollider2d Final : public Collider2d
+class ENGINE_DLL CircleCollider2d final : public Collider2d
 {
 	friend class GameObject;
 	DECLARE_OBJECT_CLONE;
@@ -136,7 +136,7 @@ class ENGINE_DLL CircleCollider2d Final : public Collider2d
 	BEGIN_DERIVED_REFECTION_TYPE(CircleCollider2d, Collider2d)
 		//CTORS(DEFAULT_CTOR(CircleCollider2d))
 		//ADD_EDITOR_COMPONENT("Physics2D/CircleCollider")
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 	using base::base;
 
@@ -153,7 +153,7 @@ private:
 	float _radius = 1.0f;
 };
 
-class ENGINE_DLL PolygonCollider2d Final : public Collider2d
+class ENGINE_DLL PolygonCollider2d final : public Collider2d
 {
 	friend class GameObject;
 	DECLARE_OBJECT_CLONE;
@@ -162,7 +162,7 @@ class ENGINE_DLL PolygonCollider2d Final : public Collider2d
 	BEGIN_DERIVED_REFECTION_TYPE(PolygonCollider2d, Collider2d)
 		//CTORS(DEFAULT_CTOR(PolygonCollider2d))
 		//ADD_EDITOR_COMPONENT("Physics2D/PolygonCollider")
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 	using base::base;
 

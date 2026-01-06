@@ -1,6 +1,10 @@
-#include "Shader.h"
+﻿#include "Shader.h"
 #include "Pass.h"
 #include "core/stream/DataStream.h"
+#include "runtime/graphics/ShaderlabUtils.h"
+#include "external/shaderlab/ShaderParser.h"
+
+using namespace shaderlab;
  
 DC_BEGIN_NAMESPACE
 /********************************************************************/
@@ -21,7 +25,7 @@ Shader::~Shader()
 }
 Shader* Shader::Create(Material* material)
 {
-	Shader* shader = DBG_NEW Shader(material);
+	Shader* shader = Memory::New<Shader>(material);
 	shader->AutoRelease();
 	return shader;
 }
@@ -57,18 +61,17 @@ bool Shader::ParseFromFile(const String& file)
 	this->_castShadow = serialize->CastShadow;
 	this->_receiveShadow = serialize->ReceiveShadow;
 	this->_renderType = serialize->RenderType;
-	this->m_nRenderQueue = serialize->RenderQueue;
+	this->_nRenderQueue = serialize->RenderQueue;
 	this->_enableLight = serialize->EnableLight;
 	this->_scissorEnable = serialize->ScissorEnable;
 	this->_shaderVariables = serialize->ShaderVariables;
 	this->_shaderTextures = serialize->ShaderTextures;
-	this->_shaderDefines = serialize->ShaderDefines;
 
 	//多Pass
 	for (int i = 0; i < serialize->mPassSerializes.Size(); ++i)
 	{
 		Pass* pass = CreatePass(i);
-		pass->Serialize(serialize->mPassSerializes[i]);
+		pass->SerializeFromInfo(serialize->mPassSerializes[i]);
 	}
 
 	//初始化贴图文件
@@ -86,185 +89,170 @@ bool Shader::LoadFromFile(const String& file)
 /********************************************************************/
 void ShaderSerialize::Serialize(const String& file)
 {
-	String file_path = Resource::GetFullDataPath(file);
+	Debuger::Log("ShaderSerialize::Serialize - %s", file.c_str());
+	String filePath = Resource::GetFullDataPath(file);
+	{//.shader
+		std::shared_ptr<ASTNode> root = ShaderlabUtils::ParseShader(filePath);
+		if (root == nullptr)
+			return;
 
-	tinyxml2::XMLDocument doc;
-	FileDataStream stream(file_path, "rb+");
-	tinyxml2::XMLError error = doc.LoadFile(stream.GetHandle());
-	if (error != tinyxml2::XML_SUCCESS)
-	{
-		Debuger::Error("Shader::Serialize -  open XML error (%s)", file_path.c_str());
-		return;
-	}
-	else
-	{
-		tinyxml2::XMLElement* root_node = doc.RootElement();
-		if (root_node->Attribute("Hide"))
-		{
-			this->HideInspector = String(root_node->Attribute("Hide")).ToBool();
-		}
-		if (root_node->Attribute("Group"))
-		{
-			this->GroupInspector = String(root_node->Attribute("Group"));
-		}
+		const String& shaderName = std::dynamic_pointer_cast<ASTShaderNode>(root)->Name;
+		if (shaderName.StartsWith("Hidden/", true))
+			this->HideInspector = true;
+		this->GroupInspector = shaderName;
 
-		//tag
-		tinyxml2::XMLElement* node = root_node->FirstChildElement("Tag");
-		if (node)
+		for (const auto& node : root->children)
 		{
-			if (node->Attribute("RenderType"))
+			switch (node->Type)
 			{
-				this->RenderType= node->Attribute("RenderType");
-			}
-			if (node->Attribute("RenderQueue"))
+			case ASTNodeType::Properties:
 			{
-				this->RenderQueue = String(node->Attribute("RenderQueue")).ToInt();
-			}
-			if (node->Attribute("EnableLight"))
-			{
-				this->EnableLight = String(node->Attribute("EnableLight")).ToBool();
-			}
-			if (node->Attribute("CastShadow"))
-			{
-				this->CastShadow = String(node->Attribute("CastShadow")).ToBool();
-			}
-			if (node->Attribute("ReceiveShadow"))
-			{
-				this->ReceiveShadow = String(node->Attribute("ReceiveShadow")).ToBool();
-			}
-		}
-
-		//Properties
-		node = root_node->FirstChildElement("Properties");
-		if (node)
-		{
-			tinyxml2::XMLElement* variable_node = node->FirstChildElement("Propertie");
-			while (variable_node)
-			{
-				ShaderVariable var_info;
-				if (variable_node->Attribute("Name"))
+				for (auto childNode : node->children)
 				{
-					var_info.Name = variable_node->Attribute("Name");
-					AssertEx(!var_info.Name.IsEmpty(), "the name is empty");
-				}
-				if (variable_node->Attribute("Alias"))
-				{
-					var_info.Alias = variable_node->Attribute("Alias");
-				}
-				else
-				{
-					var_info.Alias = var_info.Name;
-				}
-				if (variable_node->Attribute("Type"))
-				{
-					String type = variable_node->Attribute("Type");
-					if (type.Equals("Int", true))var_info.Type = ShaderVariableType::Int;
-					else if (type.Equals("Float", true))var_info.Type = ShaderVariableType::Float;
-					else if (type.Equals("Bool", true))var_info.Type = ShaderVariableType::Bool;
-					else if (type.Equals("Slider", true))var_info.Type = ShaderVariableType::Slider;
-					else if (type.Equals("Color", true))var_info.Type = ShaderVariableType::Color;
-					else if (type.Equals("Vector", true))var_info.Type = ShaderVariableType::Vector;
-					else if (type.Equals("Rect", true))var_info.Type = ShaderVariableType::Rect;
-					else if (type.Equals("2D", true))var_info.Type = ShaderVariableType::D2;
-					else if (type.Equals("3D", true))var_info.Type = ShaderVariableType::D3;
-					else if (type.Equals("Cube", true))var_info.Type = ShaderVariableType::Cube;
-					else AssertEx(false, "parse error:%s", type.c_str());
-				}
-				if (variable_node->Attribute("Value"))
-				{
-					var_info.Value = variable_node->Attribute("Value");
-					if (var_info.Type == ShaderVariableType::D2 || var_info.Type == ShaderVariableType::D3 || var_info.Type == ShaderVariableType::Cube)
+					const auto& propertyNode = std::dynamic_pointer_cast<ASTPropertyNode>(childNode);
+					MyAssert(propertyNode != nullptr);
+					if (propertyNode->PropType == PropertyType::Rect || propertyNode->PropType == PropertyType::Texture2D ||
+						propertyNode->PropType == PropertyType::Texture2DArray || propertyNode->PropType == PropertyType::Texture3D ||
+						propertyNode->PropType == PropertyType::TextureCube || propertyNode->PropType == PropertyType::TextureCubeArray)
 					{
-						AssertEx(var_info.Value == "" || var_info.Value == "white" || var_info.Value == "black", "error color%s", var_info.Value.c_str());
-					}
-				}
-				if (variable_node->Attribute("Range"))
-				{
-					var_info.Range = Vector2(variable_node->Attribute("Range"));
-				}
-				if (variable_node->Attribute("HideInspector"))
-				{
-					var_info.HideInspector = String(variable_node->Attribute("HideInspector")).ToBool();
-				}
-				if (!var_info.Name.IsEmpty())ShaderVariables.Add(var_info);
-				variable_node = variable_node->NextSiblingElement("Propertie");
-			}
-		}
-
-		//Defines
-		node = root_node->FirstChildElement("Defines");
-		if (node)
-		{
-			tinyxml2::XMLElement* defines_node = node->FirstChildElement("Define");
-			while (defines_node)
-			{
-				if (defines_node->Attribute("Name"))
-				{
-					String name = defines_node->Attribute("Name");
-					if (!name.IsEmpty())
-					{
-						VecString defines = name.Split(",");
-						for (const auto& define : defines)
+						ShaderTexture texture_info;
+						switch (propertyNode->PropType)
 						{
-							ShaderDefines.Add(define);
+						case PropertyType::Rect: texture_info.Type = TextureType::D2; break;
+						case PropertyType::Texture2D: texture_info.Type = TextureType::D2; break;
+						case PropertyType::Texture2DArray: texture_info.Type = TextureType::D2Array; break;
+						case PropertyType::Texture3D: texture_info.Type = TextureType::D3; break;
+						case PropertyType::TextureCube: texture_info.Type = TextureType::Cube; break;
+						default: MyAssert(false); break;
 						}
+						texture_info.Name = propertyNode->Name;
+						String texFile = propertyNode->DefaultValue;
+						texture_info.File = texFile.Replace("{}", "");
+						ShaderTextures.Add(texture_info);
+					}
+					else
+					{
+						ShaderVariable var_info;
+						var_info.Name = propertyNode->Name;
+						var_info.Alias = propertyNode->DisplayName;
+						var_info.Value = propertyNode->DefaultValue;
+						switch (propertyNode->PropType)
+						{
+						case PropertyType::Int: var_info.Type = ShaderVariableType::Int; break;
+						case PropertyType::Float: var_info.Type = ShaderVariableType::Float; break;
+						case PropertyType::Range:
+						{
+							var_info.Type = ShaderVariableType::Slider;
+							var_info.Range = Vector2(propertyNode->Range.min, propertyNode->Range.max);
+							break;
+						}
+						case PropertyType::Vector:
+						{
+							var_info.Type = ShaderVariableType::Vector; 
+							var_info.Value = var_info.Value.Substring(1, var_info.Value.Size() - 2);
+							break;
+						}
+						case PropertyType::Color:
+						{
+							var_info.Type = ShaderVariableType::Color;
+							var_info.Value = var_info.Value.Substring(1, var_info.Value.Size() - 2);
+							break;
+						}
+						default: MyAssert(false); break;
+						}
+
+						if (!propertyNode->Header.empty())
+						{
+							if (String(propertyNode->Header).Contains("HideInInspector"))
+								this->HideInspector = true;
+						}
+
+						ShaderVariables.Add(var_info);
+					}
+
+				}
+				break;
+			}
+			case ASTNodeType::SubShader:
+			{
+				mPassSerializes.Clear();
+				for (const auto& childNode : node->children)
+				{
+					switch (childNode->Type)
+					{
+					case ASTNodeType::Tags:
+					{
+						const auto& tagNode = std::dynamic_pointer_cast<ASTTagsNode>(childNode);
+						for (const auto& tag : tagNode->tags)
+						{
+							String key = tag.first;
+							if (key.Equals("RenderType", true))
+								this->RenderType = tag.second;
+							else if (key.Equals("Queue", true))
+								this->RenderQueue = StringUtils::ParseShaderlabQueue(tag.second);
+							else if (key.Equals("EnableLight", true))
+								this->EnableLight = String(tag.second).ToBool();
+							else if (key.Equals("CastShadow", true))
+								this->CastShadow = String(tag.second).ToBool();
+							else if (key.Equals("ReceiveShadow", true))
+								this->ReceiveShadow = String(tag.second).ToBool();
+							else
+								Debuger::Error("Shader::Serialize -  unknow type: (%s)", tag.first.c_str());
+						}
+						break;
+					}
+					case ASTNodeType::Pass:
+					{
+						mPassSerializes.Add(PassSerialize());
+						mPassSerializes.Last().Serialize(file, std::dynamic_pointer_cast<ASTPassNode>(childNode));
+						break;
+					}
+					default:
+						break;
 					}
 				}
-				defines_node = defines_node->NextSiblingElement("Define");
+				break;
 			}
-		}
-
-		//TextureUnits
-		node = root_node->FirstChildElement("TextureUnits");
-		if (node)
-		{
-			tinyxml2::XMLElement* child_node = node->FirstChildElement("TextureUnit");
-			while (child_node)
+			case ASTNodeType::FallBack:
 			{
-				ShaderTexture texture_info;
-				if (child_node->Attribute("Name") != 0)
-				{
-					texture_info.Name = child_node->Attribute("Name");
-				}
-				if (child_node->Attribute("File") != 0)
-				{
-					texture_info.File = child_node->Attribute("File");
-				}
-				if (child_node->Attribute("Type") != 0)
-				{
-					String tex_type = child_node->Attribute("Type");
-					if (tex_type.Equals("2D", true))texture_info.Type = TextureType::D2;
-					else if (tex_type.Equals("3D", true))texture_info.Type = TextureType::D3;
-					else if (tex_type.Equals("Cube", true))texture_info.Type = TextureType::Cube;
-					else if (tex_type.Equals("Volume", true))texture_info.Type = TextureType::D2Array;
-					else AssertEx(0, "%s", tex_type.c_str());
-				}
-				if (child_node->Attribute("Scale") != 0)
-				{
-					texture_info.Scale = Vector2(child_node->Attribute("Scale"));
-				}
-				if (child_node->Attribute("Offset") != 0)
-				{
-					texture_info.Offset = Vector2(child_node->Attribute("Offset"));
-				}
-				child_node = child_node->NextSiblingElement("TextureUnit");
-				ShaderTextures.Add(texture_info);
+				//TODO
+				break;
+			}
+			default:
+			{
+				AssertEx(false, "parse error, unknow type:%d", (int)node->Type);
+				break;
+			}
 			}
 		}
-
-		//Pass
-		mPassSerializes.Clear();
-		node = root_node->FirstChildElement("Pass");
-		while (node)
+	}
+	{//.reflect
+		filePath = filePath.Replace(".shader", ".cache");
+		tinyxml2::XMLDocument doc;
+		FileDataStream stream(filePath, "rb+");
+		tinyxml2::XMLError error = doc.LoadFile(stream.GetHandle());
+		if (error != tinyxml2::XML_SUCCESS)
 		{
-			mPassSerializes.Add(PassSerialize());
-			mPassSerializes.Last().Serialize(file, node);
-			node = node->NextSiblingElement("Pass");
+			Debuger::Error("Shader::Serialize -  open XML error (%s)", filePath.c_str());
+			return;
+		}
+		else
+		{
+			tinyxml2::XMLElement* rootNode = doc.RootElement();
+			tinyxml2::XMLElement* node = nullptr;
+
+			//Pass
+			int index = 0;
+			node = rootNode->FirstChildElement("Pass");
+			while (node)
+			{
+				mPassSerializes[index++].Serialize(file, node);
+				node = node->NextSiblingElement("Pass");
+			}
 		}
 	}
 }
 /********************************************************************/
-ShaderSerializePools::ShaderSerializes ShaderSerializePools::_shaderSerializes;
 void ShaderSerializePools::Destroy()
 {
 	for (auto obj : _shaderSerializes)

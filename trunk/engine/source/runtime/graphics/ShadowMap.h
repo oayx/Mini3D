@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2020/3/18
@@ -15,14 +15,14 @@ class Material;
 class Renderer;
 class RenderTexture;
 /********************************************************************/
-class ShadowMap Final : public Object
+class ShadowMap final : public Object
 {
 	friend class Light;
 	DEFAULT_CREATE(ShadowMap);
 	FRIEND_CONSTRUCT_DESTRUCT(ShadowMap);
 	DISALLOW_CONSTRUCTOR_COPY_ASSIGN(ShadowMap);
 	BEGIN_DERIVED_REFECTION_TYPE(ShadowMap, Object)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 private:
 	ShadowMap(int w, int h, ColorFormat format);

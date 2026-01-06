@@ -28,9 +28,9 @@ uniform type_CustomBuffer CustomBuffer;
 layout(location = 0) in vec4 in_var_POSITION;
 layout(location = 1) in vec4 in_var_COLOR;
 layout(location = 2) in vec2 in_var_TEXCOORD0;
-layout(location = 0) out vec4 out_var_COLOR;
-layout(location = 1) out vec2 out_var_TEXCOORD0;
-layout(location = 2) out float out_var_TEXCOORD1;
+layout(location = 0) out vec4 var_COLOR;
+layout(location = 1) out vec2 var_TEXCOORD0;
+layout(location = 2) out float var_TEXCOORD1;
 
 void main()
 {
@@ -40,8 +40,8 @@ void main()
     vec2 _54 = _48;
     _54.y = in_var_TEXCOORD0.y + (CustomBuffer._Time.y * CustomBuffer._VSpeed);
     gl_Position = _40;
-    out_var_COLOR = in_var_COLOR;
-    out_var_TEXCOORD0 = (_54 * CustomBuffer._MainTex_ST.xy) + CustomBuffer._MainTex_ST.zw;
-    out_var_TEXCOORD1 = _40.z;
+    var_COLOR = in_var_COLOR;
+    var_TEXCOORD0 = (_54 * CustomBuffer._MainTex_ST.xy) + CustomBuffer._MainTex_ST.zw;
+    var_TEXCOORD1 = _40.z;
 }
 

@@ -13,56 +13,59 @@
 #	include <EGL/egl.h>
 #	include <EGL/eglext.h>
 #	include <GLES3/gl32.h>
-#	if !defined(glClearDepth)
-#		define glClearDepth(v)					glClearDepthf((float)v)
-#	endif
-#	if !defined(GL_TEXTURE_WRAP_R)
-#		define GL_TEXTURE_WRAP_R				0x8072
-#	endif
-#	if !defined(GL_ETC1_RGB8_OES)
-#		define GL_ETC1_RGB8_OES					0x8D64
-#	endif
 #elif defined(DC_PLATFORM_WIN32)
 #	define GL_GLEXT_PROTOTYPES
 #	define GLFW_EXPOSE_NATIVE_WIN32
 #	if defined(DC_GRAPHICS_API_OPENGLES3)
 #		define GLFW_INCLUDE_ES32
 #		define GLFW_INCLUDE_GLEXT
-#		include <glfw/glfw3.h>
-#		include <glfw/glfw3native.h>
+#		include <glfw3/glfw3.h>
+#		include <glfw3/glfw3native.h>
 #		include <EGL/egl.h>
 #		include <EGL/eglext.h>
-#		if !defined(glClearDepth)
-#			define glClearDepth(v)				glClearDepthf((float)v)
-#		endif
-#		if !defined(GL_TEXTURE_WRAP_R)
-#			define GL_TEXTURE_WRAP_R			0x8072
-#		endif
 #	else
 #		include "external/glad/glad.h"
 #	endif
 #elif defined(DC_PLATFORM_LINUX)
 #	include "external/glad/glad.h"
+#elif defined(DC_PLATFORM_WASM)
+#	define GL_GLEXT_PROTOTYPES
+#	define GLFW_INCLUDE_ES3						//最高支持gles3.0
+#	define GLFW_INCLUDE_GLEXT
+#	include <GLFW/glfw3.h>						//使用emscripten自带的
+#elif defined(DC_PLATFORM_MAC)
+#	include "external/glad/glad.h"				//mac最高支持opengl4.1
+#elif defined(DC_PLATFORM_IOS)
+#	define GL_GLEXT_PROTOTYPES
+#	define GLFW_INCLUDE_ES3						//iOS最高支持gles3.0
+#	define GLFW_INCLUDE_GLEXT
 #endif
 
+#if !defined(glClearDepth)
+#	define glClearDepth(v)						glClearDepthf((float)v)
+#endif
+#if !defined(GL_TEXTURE_WRAP_R)
+#	define GL_TEXTURE_WRAP_R					0x8072
+#endif
 #if !defined(GL_ETC1_RGB8_OES)
 #	define GL_ETC1_RGB8_OES						0x8D64
 #endif
+
 #if !defined(GL_COMPRESSED_RGBA_ASTC_4x4)
-#	define GL_COMPRESSED_RGBA_ASTC_4x4			0x93B0
-#	define GL_COMPRESSED_RGBA_ASTC_5x4			0x93B1
-#	define GL_COMPRESSED_RGBA_ASTC_5x5      	0x93B2
-#	define GL_COMPRESSED_RGBA_ASTC_6x5      	0x93B3
-#	define GL_COMPRESSED_RGBA_ASTC_6x6      	0x93B4
-#	define GL_COMPRESSED_RGBA_ASTC_8x5      	0x93B5
-#	define GL_COMPRESSED_RGBA_ASTC_8x6      	0x93B6
-#	define GL_COMPRESSED_RGBA_ASTC_8x8      	0x93B7
-#	define GL_COMPRESSED_RGBA_ASTC_10x5     	0x93B8
-#	define GL_COMPRESSED_RGBA_ASTC_10x6     	0x93B9
-#	define GL_COMPRESSED_RGBA_ASTC_10x8     	0x93BA
-#	define GL_COMPRESSED_RGBA_ASTC_10x10    	0x93BB
-#	define GL_COMPRESSED_RGBA_ASTC_12x10    	0x93BC
-#	define GL_COMPRESSED_RGBA_ASTC_12x12    	0x93BD
+#	define GL_COMPRESSED_RGBA_ASTC_4x4			GL_COMPRESSED_RGBA_ASTC_4x4_KHR
+#	define GL_COMPRESSED_RGBA_ASTC_5x4			GL_COMPRESSED_RGBA_ASTC_5x4_KHR
+#	define GL_COMPRESSED_RGBA_ASTC_5x5      	GL_COMPRESSED_RGBA_ASTC_5x5_KHR
+#	define GL_COMPRESSED_RGBA_ASTC_6x5      	GL_COMPRESSED_RGBA_ASTC_6x5_KHR
+#	define GL_COMPRESSED_RGBA_ASTC_6x6      	GL_COMPRESSED_RGBA_ASTC_6x6_KHR
+#	define GL_COMPRESSED_RGBA_ASTC_8x5      	GL_COMPRESSED_RGBA_ASTC_8x5_KHR
+#	define GL_COMPRESSED_RGBA_ASTC_8x6      	GL_COMPRESSED_RGBA_ASTC_8x6_KHR
+#	define GL_COMPRESSED_RGBA_ASTC_8x8      	GL_COMPRESSED_RGBA_ASTC_8x8_KHR
+#	define GL_COMPRESSED_RGBA_ASTC_10x5     	GL_COMPRESSED_RGBA_ASTC_10x5_KHR
+#	define GL_COMPRESSED_RGBA_ASTC_10x6     	GL_COMPRESSED_RGBA_ASTC_10x6_KHR
+#	define GL_COMPRESSED_RGBA_ASTC_10x8     	GL_COMPRESSED_RGBA_ASTC_10x8_KHR
+#	define GL_COMPRESSED_RGBA_ASTC_10x10    	GL_COMPRESSED_RGBA_ASTC_10x10_KHR
+#	define GL_COMPRESSED_RGBA_ASTC_12x10    	GL_COMPRESSED_RGBA_ASTC_12x10_KHR
+#	define GL_COMPRESSED_RGBA_ASTC_12x12    	GL_COMPRESSED_RGBA_ASTC_12x12_KHR
 #endif
 #ifndef GL_IMG_texture_compression_pvrtc
 #	define GL_COMPRESSED_RGB_PVRTC_4BPPV1_IMG	0x8C00
@@ -71,12 +74,34 @@
 #	define GL_COMPRESSED_RGBA_PVRTC_2BPPV1_IMG	0x8C03
 #endif
 
+//支持opengles3.0
+#ifndef GL_GEOMETRY_SHADER
+#	define GL_GEOMETRY_SHADER					GL_GEOMETRY_SHADER_OES
+#endif
+#ifndef GL_TESS_CONTROL_SHADER
+#	define GL_TESS_CONTROL_SHADER				GL_TESS_CONTROL_SHADER_OES
+#endif
+#ifndef GL_TESS_EVALUATION_SHADER
+#	define GL_TESS_EVALUATION_SHADER			GL_TESS_EVALUATION_SHADER_OES
+#endif
+#ifndef GL_COMPUTE_SHADER
+#	define GL_COMPUTE_SHADER					0x91B9
+#endif
+#ifndef GL_CLAMP_TO_BORDER
+#	define GL_CLAMP_TO_BORDER					GL_CLAMP_TO_BORDER_OES
+#endif
+#ifndef GL_TEXTURE_BORDER_COLOR
+#	define GL_TEXTURE_BORDER_COLOR				GL_TEXTURE_BORDER_COLOR_OES
+#endif
+
 DC_BEGIN_NAMESPACE
 
 #if DC_DEBUG
-	#define GL_ERROR(x) do { {x;} GLenum err = glGetError(); AssertEx((err == 0), "0x%04x", (uint)err); } while(0)
+#	define GL_ERROR(x) do { {x;} GLenum err = glGetError(); AssertEx((err == 0), "0x%04x", (uint)err); } while(0)
+#	define GL_CHECK_ERROR() do { GLenum err = glGetError(); AssertEx((err == 0), "0x%04x", (uint)err); } while(0)
 #else
-	#define GL_ERROR(x) UNUSED(x)
+#	define GL_ERROR(x) UNUSED(x)
+#	define GL_CHECK_ERROR(x) UNUSED(x)
 #endif
 #define GL_DEBUG_ERROR(code, msg) AssertEx(((code) == 0), msg)
 #define GL_BUFFER_OFFSET(bytes) ((GLubyte*)NULL + (bytes))
@@ -169,23 +194,13 @@ inline GLenum GL_GetShadeMode(ShadeMode value)
 #endif
 	return 0;
 }
-inline GLenum GL_GetIndexType(IndexType value)
+constexpr GLenum GL_GetIndexType(IndexType value)
 {
-	switch (value)
-	{
-	case IndexType::B16:return GL_UNSIGNED_SHORT;
-	case IndexType::B32:return GL_UNSIGNED_INT;
-	default:AssertEx(false, "%d", value); return GL_UNSIGNED_SHORT;
-	}
+	return value == IndexType::B16 ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT;
 }
-inline uint GL_GetIndexSize(IndexType value)
+constexpr uint GL_GetIndexSize(IndexType value)
 {
-	switch (value)
-	{
-	case IndexType::B16:return 2;
-	case IndexType::B32:return 4;
-	default:AssertEx(false, "%d", value); return 4;
-	}
+	return value == IndexType::B16 ? 2 : 4;
 }
 inline GLenum GL_GetTextureType(TextureType value, bool msaa)
 {
@@ -263,7 +278,7 @@ inline GLenum GL_GetPrimitiveType(PrimitiveType value)
 	case PrimitiveType::LineStrip:return GL_LINE_STRIP;
 	case PrimitiveType::TriangleList:return GL_TRIANGLES;
 	case PrimitiveType::TriangleStrip:return GL_TRIANGLE_STRIP;
-	case PrimitiveType::TriangleFun:return GL_TRIANGLE_FAN;
+	case PrimitiveType::TriangleFan:return GL_TRIANGLE_FAN;
 	default:AssertEx(false, "%d", value); return GL_TRIANGLES;
 	}
 }
@@ -368,7 +383,7 @@ inline GLenum GL_GetInternalFormat(ColorFormat value, bool sRGB)
 	case ColorFormat::PVRTC_RGB4:return GL_COMPRESSED_RGB_PVRTC_4BPPV1_IMG;
 	case ColorFormat::PVRTC_RGBA4:return GL_COMPRESSED_RGBA_PVRTC_4BPPV1_IMG;
 
-#if defined(DC_GRAPHICS_API_OPENGLES3)
+#if defined(DC_GRAPHICS_API_OPENGLES3) && defined(GL_COMPRESSED_SRGB8_ALPHA8_ASTC_4x4)
 	case ColorFormat::ASTC_RGB_4x4:return sRGB ? GL_COMPRESSED_SRGB8_ALPHA8_ASTC_4x4 : GL_COMPRESSED_RGBA_ASTC_4x4;
 	case ColorFormat::ASTC_RGB_5x5:return sRGB ? GL_COMPRESSED_SRGB8_ALPHA8_ASTC_5x5 : GL_COMPRESSED_RGBA_ASTC_5x5;
 	case ColorFormat::ASTC_RGB_6x6:return sRGB ? GL_COMPRESSED_SRGB8_ALPHA8_ASTC_4x4 : GL_COMPRESSED_RGBA_ASTC_6x6;
@@ -491,10 +506,10 @@ inline GLenum GL_GetStencilCmp(StencilCmp value)
 	case StencilCmp::Never:return GL_NEVER;
 	case StencilCmp::Less:return GL_LESS;
 	case StencilCmp::Equal:return GL_EQUAL;
-	case StencilCmp::LessEqual:return GL_LEQUAL;
+	case StencilCmp::LEqual:return GL_LEQUAL;
 	case StencilCmp::Greater:return GL_GREATER;
 	case StencilCmp::NotEqual:return GL_NOTEQUAL;
-	case StencilCmp::GreaterEqual:return GL_GEQUAL;
+	case StencilCmp::GEqual:return GL_GEQUAL;
 	case StencilCmp::Always:return GL_ALWAYS;
 	default:AssertEx(false, "%d", value); return GL_GREATER;
 	}
@@ -514,7 +529,6 @@ inline GLenum GL_GetFogMode(FogMode value)
 
 class GLDevice;
 extern GLDevice* GetGLDevice();
-extern bool GL_QueryExtension(const char* ext);
 DC_END_NAMESPACE
 
 

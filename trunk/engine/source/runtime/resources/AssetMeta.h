@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Description：meta文件
@@ -14,10 +14,11 @@ DC_BEGIN_NAMESPACE
 /********************************************************************/
 class AssetMeta : public Object
 {
-	friend class AssetsManager;
+	friend class AssetsManager; 
+	FRIEND_CONSTRUCT_DESTRUCT(AssetMeta);
 	DECLARE_SERIALIZE(AssetMeta);
 	BEGIN_DERIVED_REFECTION_TYPE(AssetMeta, Object)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 	static AssetMeta* Create(ResourceType type);
 
@@ -34,7 +35,7 @@ protected:
 	}
 
 	void SetGUID(const String& guid) { _gUID = guid; }
-	void SetFileInfo(const FileInfo& file_info, const String& assets_root_path);
+	void SetFileInfo(const FileInfo& fileInfo, const String& assetsRootPath);
 
 	virtual void Serialize()override;
 	virtual void Deserialize()override;
@@ -81,15 +82,16 @@ class TextureMeta : public AssetMeta
 	friend class AssetsManager;
 	friend class EInspector_Project_Texture;
 	DECLARE_SERIALIZE(TextureMeta);
+	FRIEND_CONSTRUCT_DESTRUCT(TextureMeta);
 	BEGIN_DERIVED_REFECTION_TYPE(TextureMeta, AssetMeta)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 	TextureMeta() { _resType = ResourceType::Texture; }
 	bool operator ==(const TextureMeta& meta)
 	{
 		return _textureGroup == meta._textureGroup
 			&& _textureType == meta._textureType
-			&& m_sRGB == meta.m_sRGB 
+			&& _sRGB == meta._sRGB 
 			&& _enableReadWrite == meta._enableReadWrite
 			&& _generateMipMaps == meta._generateMipMaps
 			&& _addressMode == meta._addressMode
@@ -110,7 +112,7 @@ public:
 	void			SetTextureGroup(TextureGroup group);
 	TextureGroup	GetTextureGroup()const { return _textureGroup; }
 	TextureType		GetTextureType()const{ return _textureType; }
-	bool			IssRGB()const{ return m_sRGB; }
+	bool			IssRGB()const{ return _sRGB; }
 	bool			IsEnableReadWrite()const{ return _enableReadWrite; }
 	bool			IsGenerateMipMaps()const{ return _generateMipMaps; }
 	TextureAddress	GetAddressMode()const{ return _addressMode; }
@@ -121,7 +123,7 @@ public:
 protected:
 	TextureGroup	_textureGroup = TextureGroup::Default;
 	TextureType		_textureType = TextureType::D2;
-	bool			m_sRGB = true;
+	bool			_sRGB = true;
 	bool			_enableReadWrite = false;
 	bool			_generateMipMaps = false;
 
@@ -139,8 +141,9 @@ class MeshMeta : public AssetMeta
 	friend class AssetsManager;
 	friend class EInspector_Project_Mesh;
 	DECLARE_SERIALIZE(MeshMeta);
+	FRIEND_CONSTRUCT_DESTRUCT(MeshMeta);
 	BEGIN_DERIVED_REFECTION_TYPE(MeshMeta, AssetMeta)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 	MeshMeta() { _resType = ResourceType::Mesh; }
 	bool operator ==(const MeshMeta& meta)
@@ -177,8 +180,9 @@ class MaterialMeta : public AssetMeta
 	friend class AssetMeta;
 	friend class AssetsManager;
 	DECLARE_SERIALIZE(MaterialMeta);
+	FRIEND_CONSTRUCT_DESTRUCT(MaterialMeta);
 	BEGIN_DERIVED_REFECTION_TYPE(MaterialMeta, AssetMeta)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 	MaterialMeta() { _resType = ResourceType::Material; }
 	bool operator ==(const MaterialMeta& meta)
@@ -198,8 +202,9 @@ class ShaderMeta : public AssetMeta
 	friend class AssetMeta;
 	friend class AssetsManager;
 	DECLARE_SERIALIZE(ShaderMeta);
+	FRIEND_CONSTRUCT_DESTRUCT(ShaderMeta);
 	BEGIN_DERIVED_REFECTION_TYPE(ShaderMeta, AssetMeta)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 	ShaderMeta() { _resType = ResourceType::Shader; }
 	bool operator ==(const ShaderMeta& meta)
@@ -220,8 +225,9 @@ class FontMeta : public AssetMeta
 	friend class AssetsManager;
 	friend class EInspector_Project_Font;
 	DECLARE_SERIALIZE(FontMeta);
+	FRIEND_CONSTRUCT_DESTRUCT(FontMeta);
 	BEGIN_DERIVED_REFECTION_TYPE(FontMeta, AssetMeta)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 	FontMeta() { _resType = ResourceType::Font; }
 	bool operator ==(const FontMeta& meta)
@@ -251,8 +257,9 @@ class AudioMeta : public AssetMeta
 	friend class AssetMeta;
 	friend class AssetsManager;
 	DECLARE_SERIALIZE(AudioMeta);
+	FRIEND_CONSTRUCT_DESTRUCT(AudioMeta);
 	BEGIN_DERIVED_REFECTION_TYPE(AudioMeta, AssetMeta)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 	AudioMeta() { _resType = ResourceType::AudioClip; }
 	bool operator ==(const AudioMeta& meta)
@@ -275,8 +282,9 @@ class VideoMeta : public AssetMeta
 	friend class AssetMeta;
 	friend class AssetsManager;
 	DECLARE_SERIALIZE(VideoMeta);
+	FRIEND_CONSTRUCT_DESTRUCT(VideoMeta);
 	BEGIN_DERIVED_REFECTION_TYPE(VideoMeta, AssetMeta)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 	VideoMeta() { _resType = ResourceType::Video; }
 	bool operator ==(const VideoMeta& meta)

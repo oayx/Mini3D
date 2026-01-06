@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2021/9/4
@@ -15,9 +15,9 @@ class EOpenProject : public EWindowBase
 	friend class EMain_Menu;
 
 public:
-
 	static void Render();
+
 private:
-	static bool IsShow;
+	inline static bool IsShow = true;
 };
 DC_END_NAMESPACE

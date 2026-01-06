@@ -1,4 +1,4 @@
-#include "EditorMainMenu.h"
+﻿#include "EditorMainMenu.h"
 #include "runtime/ui/GUI.h"
 #include "runtime/Application.h"
 #include "runtime/Screen.h"
@@ -13,7 +13,7 @@ static bool is_show_app_info = false;
 static bool is_show_scene_info = false;
 void EditorMainMenu::Render()
 {
-	DC_PROFILE_FUNCTION();
+	DC_PROFILE_FUNCTION;
 	if (is_show_app_info)ShowAppInfo();
 	if (is_show_scene_info)ShowSceneInfo();
 
@@ -78,10 +78,10 @@ void ShowSceneInfo()
 
 	if (SceneManager::GetCurrScene())
 	{
-		Transform* root_node = SceneManager::GetCurrScene()->GetRootObject()->GetTransform();
-		for (int i = 0; i < root_node->GetChildCount(); ++i)
+		Transform* rootNode = SceneManager::GetCurrScene()->GetRootObject()->GetTransform();
+		for (int i = 0; i < rootNode->GetChildCount(); ++i)
 		{
-			Transform* node = root_node->GetChild(i);
+			Transform* node = rootNode->GetChild(i);
 			if (node)
 			{
 				ShowSceneNode(node);

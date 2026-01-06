@@ -1,4 +1,4 @@
-/**
+﻿/**
  * OpenAL cross platform audio library
  * Copyright (C) 2011 by Chris Robinson
  * This library is free software; you can redistribute it and/or
@@ -164,11 +164,11 @@ void GetLerpedHrtfCoeffs(const struct Hrtf *Hrtf, ALfloat elevation, ALfloat azi
         gain *= 1.0f/32767.0f;
         for(i = 0;i < HRIR_LENGTH;i++)
         {
-            coeffs[i][0] = lerp(lerp(Hrtf->coeffs[lidx[0]][i], Hrtf->coeffs[lidx[1]][i], mu[0]),
-                                lerp(Hrtf->coeffs[lidx[2]][i], Hrtf->coeffs[lidx[3]][i], mu[1]),
+            coeffs[i][0] = al_lerp(al_lerp(Hrtf->coeffs[lidx[0]][i], Hrtf->coeffs[lidx[1]][i], mu[0]),
+                                al_lerp(Hrtf->coeffs[lidx[2]][i], Hrtf->coeffs[lidx[3]][i], mu[1]),
                                 mu[2]) * gain;
-            coeffs[i][1] = lerp(lerp(Hrtf->coeffs[ridx[0]][i], Hrtf->coeffs[ridx[1]][i], mu[0]),
-                                lerp(Hrtf->coeffs[ridx[2]][i], Hrtf->coeffs[ridx[3]][i], mu[1]),
+            coeffs[i][1] = al_lerp(al_lerp(Hrtf->coeffs[ridx[0]][i], Hrtf->coeffs[ridx[1]][i], mu[0]),
+                                al_lerp(Hrtf->coeffs[ridx[2]][i], Hrtf->coeffs[ridx[3]][i], mu[1]),
                                 mu[2]) * gain;
         }
     }
@@ -182,11 +182,11 @@ void GetLerpedHrtfCoeffs(const struct Hrtf *Hrtf, ALfloat elevation, ALfloat azi
     }
 
     // Calculate the HRIR delays using linear interpolation.
-    delays[0] = fastf2u(lerp(lerp(Hrtf->delays[lidx[0]], Hrtf->delays[lidx[1]], mu[0]),
-                             lerp(Hrtf->delays[lidx[2]], Hrtf->delays[lidx[3]], mu[1]),
+    delays[0] = fastf2u(al_lerp(al_lerp(Hrtf->delays[lidx[0]], Hrtf->delays[lidx[1]], mu[0]),
+                             al_lerp(Hrtf->delays[lidx[2]], Hrtf->delays[lidx[3]], mu[1]),
                              mu[2]) * 65536.0f);
-    delays[1] = fastf2u(lerp(lerp(Hrtf->delays[ridx[0]], Hrtf->delays[ridx[1]], mu[0]),
-                             lerp(Hrtf->delays[ridx[2]], Hrtf->delays[ridx[3]], mu[1]),
+    delays[1] = fastf2u(al_lerp(al_lerp(Hrtf->delays[ridx[0]], Hrtf->delays[ridx[1]], mu[0]),
+                             al_lerp(Hrtf->delays[ridx[2]], Hrtf->delays[ridx[3]], mu[1]),
                              mu[2]) * 65536.0f);
 }
 
@@ -247,11 +247,11 @@ ALuint GetMovingHrtfCoeffs(const struct Hrtf *Hrtf, ALfloat elevation, ALfloat a
             left = coeffs[i][0] - (coeffStep[i][0] * counter);
             right = coeffs[i][1] - (coeffStep[i][1] * counter);
 
-            coeffs[i][0] = lerp(lerp(Hrtf->coeffs[lidx[0]][i], Hrtf->coeffs[lidx[1]][i], mu[0]),
-                                lerp(Hrtf->coeffs[lidx[2]][i], Hrtf->coeffs[lidx[3]][i], mu[1]),
+            coeffs[i][0] = al_lerp(al_lerp(Hrtf->coeffs[lidx[0]][i], Hrtf->coeffs[lidx[1]][i], mu[0]),
+                                al_lerp(Hrtf->coeffs[lidx[2]][i], Hrtf->coeffs[lidx[3]][i], mu[1]),
                                 mu[2]) * gain;
-            coeffs[i][1] = lerp(lerp(Hrtf->coeffs[ridx[0]][i], Hrtf->coeffs[ridx[1]][i], mu[0]),
-                                lerp(Hrtf->coeffs[ridx[2]][i], Hrtf->coeffs[ridx[3]][i], mu[1]),
+            coeffs[i][1] = al_lerp(al_lerp(Hrtf->coeffs[ridx[0]][i], Hrtf->coeffs[ridx[1]][i], mu[0]),
+                                al_lerp(Hrtf->coeffs[ridx[2]][i], Hrtf->coeffs[ridx[3]][i], mu[1]),
                                 mu[2]) * gain;
 
             coeffStep[i][0] = step * (coeffs[i][0] - left);
@@ -279,11 +279,11 @@ ALuint GetMovingHrtfCoeffs(const struct Hrtf *Hrtf, ALfloat elevation, ALfloat a
     left = (ALfloat)(delays[0] - (delayStep[0] * counter));
     right = (ALfloat)(delays[1] - (delayStep[1] * counter));
 
-    delays[0] = fastf2u(lerp(lerp(Hrtf->delays[lidx[0]], Hrtf->delays[lidx[1]], mu[0]),
-                             lerp(Hrtf->delays[lidx[2]], Hrtf->delays[lidx[3]], mu[1]),
+    delays[0] = fastf2u(al_lerp(al_lerp(Hrtf->delays[lidx[0]], Hrtf->delays[lidx[1]], mu[0]),
+                             al_lerp(Hrtf->delays[lidx[2]], Hrtf->delays[lidx[3]], mu[1]),
                              mu[2]) * 65536.0f);
-    delays[1] = fastf2u(lerp(lerp(Hrtf->delays[ridx[0]], Hrtf->delays[ridx[1]], mu[0]),
-                             lerp(Hrtf->delays[ridx[2]], Hrtf->delays[ridx[3]], mu[1]),
+    delays[1] = fastf2u(al_lerp(al_lerp(Hrtf->delays[ridx[0]], Hrtf->delays[ridx[1]], mu[0]),
+                             al_lerp(Hrtf->delays[ridx[2]], Hrtf->delays[ridx[3]], mu[1]),
                              mu[2]) * 65536.0f);
 
     delayStep[0] = fastf2i(step * (delays[0] - left));

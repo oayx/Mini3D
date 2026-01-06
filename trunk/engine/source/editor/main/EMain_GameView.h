@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2021/9/3
@@ -18,7 +18,7 @@ class EMain_GameView : public EWindowBase
 	friend class EditorAppliction;
 	DISALLOW_CONSTRUCTOR_COPY_ASSIGN(EMain_GameView);
 	BEGIN_DERIVED_REFECTION_TYPE(EMain_GameView, EWindowBase)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 private:
 	static void Update();
@@ -37,12 +37,12 @@ public:
 	static RenderTexture* GetRenderTexture() { return _renderTexture; }
 
 private:
-	static bool			  IsShow;
-	static bool			  _isRTDirty;
-	static bool			  _isEnableMSAA;
-	static bool			  _isFocus;
-	static Rect			  _viewPort;		//坐标系：左上角(0,0)
-	static Rect			  _oldViewPort;
-	static RenderTexture* _renderTexture;
+	inline static bool	IsShow = true;
+	inline static bool	_isRTDirty = true;
+	inline static bool	_isEnableMSAA = false;
+	inline static bool	_isFocus = false;
+	inline static Rect	_viewPort = Rect::zero;		//坐标系：左上角(0,0)
+	inline static Rect	_oldViewPort = Rect::zero;
+	inline static RenderTexture* _renderTexture = nullptr;
 };
 DC_END_NAMESPACE

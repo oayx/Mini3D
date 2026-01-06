@@ -209,7 +209,7 @@ static __inline ALint64 clampi64(ALint64 val, ALint64 min, ALint64 max)
 { return mini64(max, maxi64(min, val)); }
 
 
-static __inline ALfloat lerp(ALfloat val1, ALfloat val2, ALfloat mu)
+static __inline ALfloat al_lerp(ALfloat val1, ALfloat val2, ALfloat mu)
 {
     return val1 + (val2-val1)*mu;
 }

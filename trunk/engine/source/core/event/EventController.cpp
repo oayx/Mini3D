@@ -5,7 +5,7 @@ DC_BEGIN_NAMESPACE
 IMPL_DERIVED_REFECTION_TYPE(EventController, Object);
 bool EventController::AddEventListener(const String& type, Object *object, const EventHandler &selector)
 {
-	map_range_type it_range = _map_event.equal_range(type);
+	map_range_type it_range = _mapEventes.equal_range(type);
 	for (map_it it = it_range.first; it != it_range.second; ++it)
 	{
 		EventItem& item = it->second;
@@ -17,13 +17,13 @@ bool EventController::AddEventListener(const String& type, Object *object, const
 	}
 
 	EventItem item(object, selector);
-	_map_event.insert(map_event_type::value_type(type, item));
+	_mapEventes.insert(map_event_type::value_type(type, item));
 
 	return true;
 }
 bool EventController::AddEventListener(const String& type, Object *object, const EventHandler1 &selector)
 {
-	map_range_type it_range = _map_event.equal_range(type);
+	map_range_type it_range = _mapEventes.equal_range(type);
 	for (map_it it = it_range.first; it != it_range.second; ++it)
 	{
 		EventItem& item = it->second;
@@ -35,13 +35,13 @@ bool EventController::AddEventListener(const String& type, Object *object, const
 	}
 
 	EventItem item(object, selector);
-	_map_event.insert(map_event_type::value_type(type, item));
+	_mapEventes.insert(map_event_type::value_type(type, item));
 
 	return true;
 }
 bool EventController::AddEventListener(const String& type, Object *object, const EventHandler2 &selector)
 {
-	map_range_type it_range = _map_event.equal_range(type);
+	map_range_type it_range = _mapEventes.equal_range(type);
 	for (map_it it = it_range.first; it != it_range.second; ++it)
 	{
 		EventItem& item = it->second;
@@ -53,13 +53,13 @@ bool EventController::AddEventListener(const String& type, Object *object, const
 	}
 
 	EventItem item(object, selector);
-	_map_event.insert(map_event_type::value_type(type, item));
+	_mapEventes.insert(map_event_type::value_type(type, item));
 
 	return true;
 }
 bool EventController::AddEventListener(const String& type, Object *object, const EventHandler3 &selector)
 {
-	map_range_type it_range = _map_event.equal_range(type);
+	map_range_type it_range = _mapEventes.equal_range(type);
 	for (map_it it = it_range.first; it != it_range.second; ++it)
 	{
 		EventItem& item = it->second;
@@ -71,13 +71,13 @@ bool EventController::AddEventListener(const String& type, Object *object, const
 	}
 
 	EventItem item(object, selector);
-	_map_event.insert(map_event_type::value_type(type, item));
+	_mapEventes.insert(map_event_type::value_type(type, item));
 
 	return true;
 }
 bool EventController::AddEventListener(const String& type, Object *object, const EventHandler4 &selector)
 {
-	map_range_type it_range = _map_event.equal_range(type);
+	map_range_type it_range = _mapEventes.equal_range(type);
 	for (map_it it = it_range.first; it != it_range.second; ++it)
 	{
 		EventItem& item = it->second;
@@ -89,21 +89,21 @@ bool EventController::AddEventListener(const String& type, Object *object, const
 	}
 
 	EventItem item(object, selector);
-	_map_event.insert(map_event_type::value_type(type, item));
+	_mapEventes.insert(map_event_type::value_type(type, item));
 
 	return true;
 }
 bool EventController::RemoveEventListener(const String& type, Object *object, const EventHandler &selector)
 {
 	bool ret = false;
-	map_range_type it_range = _map_event.equal_range(type);
+	map_range_type it_range = _mapEventes.equal_range(type);
 	map_it it = it_range.first;
 	while (it != it_range.second)
 	{
 		EventItem& item = it->second;
 		if (item.object == object && item.handler == selector)
 		{
-			_map_event.erase(it);
+			_mapEventes.erase(it);
 			ret = true;
 			break;
 		}
@@ -117,14 +117,14 @@ bool EventController::RemoveEventListener(const String& type, Object *object, co
 bool EventController::RemoveEventListener(const String& type, Object *object, const EventHandler1 &selector)
 {
 	bool ret = false;
-	map_range_type it_range = _map_event.equal_range(type);
+	map_range_type it_range = _mapEventes.equal_range(type);
 	map_it it = it_range.first;
 	while (it != it_range.second)
 	{
 		EventItem& item = it->second;
 		if (item.object == object && item.handler1 == selector)
 		{
-			_map_event.erase(it);
+			_mapEventes.erase(it);
 			ret = true;
 			break;
 		}
@@ -138,14 +138,14 @@ bool EventController::RemoveEventListener(const String& type, Object *object, co
 bool EventController::RemoveEventListener(const String& type, Object *object, const EventHandler2 &selector)
 {
 	bool ret = false;
-	map_range_type it_range = _map_event.equal_range(type);
+	map_range_type it_range = _mapEventes.equal_range(type);
 	map_it it = it_range.first;
 	while (it != it_range.second)
 	{
 		EventItem& item = it->second;
 		if (item.object == object && item.handler2 == selector)
 		{
-			_map_event.erase(it);
+			_mapEventes.erase(it);
 			ret = true;
 			break;
 		}
@@ -159,14 +159,14 @@ bool EventController::RemoveEventListener(const String& type, Object *object, co
 bool EventController::RemoveEventListener(const String& type, Object *object, const EventHandler3 &selector)
 {
 	bool ret = false;
-	map_range_type it_range = _map_event.equal_range(type);
+	map_range_type it_range = _mapEventes.equal_range(type);
 	map_it it = it_range.first;
 	while (it != it_range.second)
 	{
 		EventItem& item = it->second;
 		if (item.object == object && item.handler3 == selector)
 		{
-			_map_event.erase(it);
+			_mapEventes.erase(it);
 			ret = true;
 			break;
 		}
@@ -180,14 +180,14 @@ bool EventController::RemoveEventListener(const String& type, Object *object, co
 bool EventController::RemoveEventListener(const String& type, Object *object, const EventHandler4 &selector)
 {
 	bool ret = false;
-	map_range_type it_range = _map_event.equal_range(type);
+	map_range_type it_range = _mapEventes.equal_range(type);
 	map_it it = it_range.first;
 	while (it != it_range.second)
 	{
 		EventItem& item = it->second;
 		if (item.object == object && item.handler4 == selector)
 		{
-			_map_event.erase(it);
+			_mapEventes.erase(it);
 			ret = true;
 			break;
 		}
@@ -220,13 +220,13 @@ void EventController::TriggerEvent(const String& type, const String& arg1, const
 }
 void EventController::TriggerEventImpl(int flag, const String& type, const String& arg1, const String& arg2, const String& arg3, const String& arg4)
 {
-	++_dispatch_count;
+	++_dispatchCount;
 	//派发事件
 	bool has_notify = true;
 	while (has_notify)
 	{
 		has_notify = false;
-		map_range_type it_range = _map_event.equal_range(type);
+		map_range_type it_range = _mapEventes.equal_range(type);
 		for (map_it it = it_range.first; it != it_range.second; ++it)
 		{
 			EventItem& item = it->second;
@@ -250,10 +250,10 @@ void EventController::TriggerEventImpl(int flag, const String& type, const Strin
 		}
 	}
 
-	--_dispatch_count;
-	if (_dispatch_count == 0)
+	--_dispatchCount;
+	if (_dispatchCount == 0)
 	{
-		map_range_type it_range = _map_event.equal_range(type);
+		map_range_type it_range = _mapEventes.equal_range(type);
 		for (map_it it = it_range.first; it != it_range.second; ++it)
 		{
 			EventItem& item = it->second;
@@ -263,6 +263,6 @@ void EventController::TriggerEventImpl(int flag, const String& type, const Strin
 }
 void EventController::Clear()
 {
-	_map_event.clear();
+	_mapEventes.clear();
 }
 DC_END_NAMESPACE

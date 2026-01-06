@@ -6,9 +6,11 @@
 /*****************************************************************************************************/
 #pragma once
 
-#include <stdio.h>
+#include <utility>
+#include <cstdio>
+#include <cstdlib>
+#include <cstdint>
 #include <cstring>
-#include "core/Atomic.h"
 #include "core/BaseMacro.h"
 
 DC_BEGIN_NAMESPACE
@@ -18,7 +20,7 @@ template<typename... Params>
 class Delegate;
 /********************************************************************/
 template<typename ReturnType, typename... Params>
-class Function<ReturnType(Params ...)>
+class Function<ReturnType(Params ...)> final
 {
 	friend Delegate<Params...>;
 public:
@@ -118,7 +120,7 @@ public:
 };
 
 template<typename... Params>
-class Delegate
+class Delegate final
 {
 public:
 	Delegate()
@@ -126,7 +128,7 @@ public:
 	}
 	~Delegate()
 	{
-		::free((void*)m_ptr);
+		::free((void*)_ptr);
 	}
 	DISALLOW_COPY_ASSIGN(Delegate);
 
@@ -135,8 +137,8 @@ public:
 	using FunctionType = Function<void(Params ...)>;
 
 protected:
-	intptr_t volatile m_ptr = 0;
-	intptr_t volatile m_size = 0;
+	intptr_t _ptr = 0;
+	intptr_t _size = 0;
 	typedef void(*StubSignature)(void*, Params ...);
 
 public:
@@ -161,16 +163,17 @@ public:
 	}
 	void Bind(const FunctionType& f)
 	{
-		const intptr_t size = Atomic::Read(&m_size);
-		FunctionType* bindings = (FunctionType*)Atomic::Read(&m_ptr);
+		const intptr_t size = _size;
+		FunctionType* bindings = (FunctionType*)_ptr;
 		if (bindings)
 		{
 			// 看看是否有空闲的槽位
 			for (intptr_t i = 0; i < size; i++)
 			{
-				if (Atomic::CompareExchange((intptr_t volatile*)&bindings[i]._function, (intptr_t)f._function, 0) == 0)
+				if (bindings[i]._function == 0)
 				{
-					Atomic::Store((intptr_t volatile*)&bindings[i]._callee, (intptr_t)f._callee);
+					bindings[i]._function = f._function;
+					bindings[i]._callee = f._callee;
 					return;
 				}
 			}
@@ -186,17 +189,11 @@ public:
 		newBindings[size] = f;
 
 		// 设置新的链表
-		auto oldBindings = (FunctionType*)Atomic::CompareExchange((intptr_t*)&m_ptr, (intptr_t)newBindings, (intptr_t)bindings);
-		if (oldBindings != bindings)
-		{//如果其他线程在此之前修改了，删除新创建的链表，重新绑定
-			::free((void*)newBindings);
-			Bind(f);
-		}
-		else
-		{//成功替换，ptr已经是新创建的链表，释放旧的
-			Atomic::Store(&m_size, newSize);
-			::free((void*)bindings);
-		}
+		_ptr = (intptr_t)newBindings;
+
+		//成功替换，ptr已经是新创建的链表，释放旧的
+		_size = newSize;
+		if(bindings)::free((void*)bindings);
 	}
 	template<void(*Method)(Params ...)>
 	void Unbind()
@@ -219,51 +216,43 @@ public:
 	}
 	void Unbind(FunctionType& f)
 	{
-		const intptr_t size = Atomic::Read(&m_size);
-		FunctionType* bindings = (FunctionType*)Atomic::Read(&m_ptr);
-		for (intptr_t i = 0; i < size; i++)
+		FunctionType* bindings = (FunctionType*)_ptr;
+		for (intptr_t i = 0; i < _size; i++)
 		{
-			if (Atomic::Read((intptr_t volatile*)&bindings[i]._callee) == (intptr_t)f._callee && Atomic::Read((intptr_t volatile*)&bindings[i]._function) == (intptr_t)f._function)
+			if (bindings[i]._callee == f._callee && bindings[i]._function == f._function)
 			{
-				Atomic::Store((intptr_t volatile*)&bindings[i]._callee, 0);
-				Atomic::Store((intptr_t volatile*)&bindings[i]._function, 0);
+				bindings[i]._callee = 0;
+				bindings[i]._function = 0;
 				break;
 			}
-		}
-		if ((FunctionType*)Atomic::Read(&m_ptr) != bindings)
-		{//有人更改了绑定列表，所以重试解除新绑定
-			Unbind(f);
 		}
 	}
 	void UnbindAll()
 	{
-		const intptr_t size = Atomic::Read(&m_size);
-		FunctionType* bindings = (FunctionType*)Atomic::Read(&m_ptr);
-		for (intptr_t i = 0; i < size; i++)
+		FunctionType* bindings = (FunctionType*)_ptr;
+		for (intptr_t i = 0; i < _size; i++)
 		{
-			Atomic::Store((intptr_t volatile*)&bindings[i]._function, 0);
-			Atomic::Store((intptr_t volatile*)&bindings[i]._callee, 0);
+			bindings[i]._function = 0;
+			bindings[i]._callee = 0;
 		}
 	}
 	int Count() const
 	{
 		int count = 0;
-		const intptr_t size = Atomic::Read((intptr_t volatile*)&m_size);
-		FunctionType* bindings = (FunctionType*)Atomic::Read((intptr_t volatile*)&m_ptr);
-		for (intptr_t i = 0; i < size; i++)
+		FunctionType* bindings = (FunctionType*)_ptr;
+		for (intptr_t i = 0; i < _size; i++)
 		{
-			if (Atomic::Read((intptr_t volatile*)&bindings[i]._function) != 0)
+			if (bindings[i]._function != 0)
 				count++;
 		}
 		return count;
 	}
 	bool IsBinded() const
 	{
-		const intptr_t size = Atomic::Read((intptr_t volatile*)&m_size);
-		FunctionType* bindings = (FunctionType*)Atomic::Read((intptr_t volatile*)&m_ptr);
-		for (intptr_t i = 0; i < size; i++)
+		FunctionType* bindings = (FunctionType*)_ptr;
+		for (intptr_t i = 0; i < _size; i++)
 		{
-			if (Atomic::Read((intptr_t volatile*)&bindings[i]._function) != 0)
+			if (bindings[i]._function != 0)
 				return true;
 		}
 		return false;
@@ -271,14 +260,13 @@ public:
 	int GetBindings(FunctionType* buffer, int bufferSize) const
 	{
 		int count = 0;
-		const intptr_t size = Atomic::Read((intptr_t volatile*)&m_size);
-		FunctionType* bindings = (FunctionType*)Atomic::Read((intptr_t volatile*)&m_ptr);
-		for (intptr_t i = 0; i < size && i < bufferSize; i++)
+		FunctionType* bindings = (FunctionType*)_ptr;
+		for (intptr_t i = 0; i < _size && i < bufferSize; i++)
 		{
-			buffer[count]._function = (StubSignature)Atomic::Read((intptr_t volatile*)&bindings[i]._function);
+			buffer[count]._function = bindings[i]._function;
 			if (buffer[count]._function != nullptr)
 			{
-				buffer[count]._callee = (void*)Atomic::Read((intptr_t volatile*)&bindings[i]._callee);
+				buffer[count]._callee = bindings[i]._callee;
 				count++;
 			}
 		}
@@ -286,15 +274,14 @@ public:
 	}
 	void operator()(Params ... params) const
 	{
-		const intptr_t size = Atomic::Read((intptr_t volatile*)&m_size);
-		FunctionType* bindings = (FunctionType*)Atomic::Read((intptr_t volatile*)&m_ptr);
-		for (intptr_t i = 0; i < size; i++)
+		FunctionType* bindings = (FunctionType*)_ptr;
+		for (intptr_t i = 0; i < _size; i++)
 		{
 			FunctionType f;
-			f._function = (StubSignature)Atomic::Read((intptr_t volatile*)&bindings[i]._function);
+			f._function = bindings[i]._function;
 			if (f._function != nullptr)
 			{
-				f._callee = (void*)Atomic::Read((intptr_t volatile*)&bindings[i]._callee);
+				f._callee = bindings[i]._callee;
 				f._function(f._callee, std::forward<Params>(params)...);
 			}
 		}

@@ -1,4 +1,4 @@
-#include "ParticleRender.h"
+﻿#include "ParticleRender.h"
 #include "ParticleSystem.h"
 #include "Particle.h"
 #include "runtime/graphics/Material.h"
@@ -82,18 +82,18 @@ void ParticleRender::Refresh(Camera* camera)
 	if (camera && _particleSystem)
 	{
 		VariablePrimitive* primitive = static_cast<VariablePrimitive*>(this->GetPrimitive(0));
-		Material* material = this->GetMaterial(0);
-		int vxt_offset = 0, idx_offset = 0;
+		int vxtOffset = 0, idxOffset = 0;
 		const List<Particle*>& particles = _particleSystem->_particles;
 		for (const auto& particle : particles)
 		{
-			this->FillMesh(particle, camera, primitive, vxt_offset, idx_offset);
+			this->FillMesh(particle, camera, primitive, vxtOffset, idxOffset);
 		}
 	}
 	this->UploadData();
 }
-bool ParticleRender::FillMesh(Particle* particle, Camera* camera, VariablePrimitive* primitive, int& vxt_offset, int& idx_offset)
+bool ParticleRender::FillMesh(Particle* particle, Camera* camera, VariablePrimitive* primitive, int& vxtOffset, int& idxOffset)
 {
+	DC_PROFILE_FUNCTION;
 	if(!_particleSystem)return false;
 	//缩放
 	Vector3 scale = particle->Scale;
@@ -120,13 +120,13 @@ bool ParticleRender::FillMesh(Particle* particle, Camera* camera, VariablePrimit
 		}
 	}
 	//变换矩阵
-	Matrix4 mat_world = Matrix4(particle->Position, camera->GetTransform()->GetRotation(), scale);
+	Matrix4 matWorld = Matrix4(particle->Position, camera->GetTransform()->GetRotation(), scale);
 
 	//position
-	primitive->AddVertex(mat_world.TransformPoint(Vector3(-0.5f, 0.5f, 0)));
-	primitive->AddVertex(mat_world.TransformPoint(Vector3(0.5f, 0.5f, 0)));
-	primitive->AddVertex(mat_world.TransformPoint(Vector3(0.5f, -0.5f, 0)));
-	primitive->AddVertex(mat_world.TransformPoint(Vector3(-0.5f, -0.5f, 0)));
+	primitive->AddVertex(matWorld.TransformPoint(Vector3(-0.5f, 0.5f, 0)));
+	primitive->AddVertex(matWorld.TransformPoint(Vector3(0.5f, 0.5f, 0)));
+	primitive->AddVertex(matWorld.TransformPoint(Vector3(0.5f, -0.5f, 0)));
+	primitive->AddVertex(matWorld.TransformPoint(Vector3(-0.5f, -0.5f, 0)));
 
 	//uv
 	Vector2 uv1 = { 0,0 }, uv2 = { 1,0 }, uv3 = { 1,1 }, uv4 = { 0,1 };
@@ -155,16 +155,16 @@ bool ParticleRender::FillMesh(Particle* particle, Camera* camera, VariablePrimit
 	primitive->AddColor(particle->CurrColor);
 
 	//index
-	primitive->AddIndex(vxt_offset + 0);
-	primitive->AddIndex(vxt_offset + 1);
-	primitive->AddIndex(vxt_offset + 2);
-	primitive->AddIndex(vxt_offset + 0);
-	primitive->AddIndex(vxt_offset + 2);
-	primitive->AddIndex(vxt_offset + 3);
+	primitive->AddIndex(vxtOffset + 0);
+	primitive->AddIndex(vxtOffset + 1);
+	primitive->AddIndex(vxtOffset + 2);
+	primitive->AddIndex(vxtOffset + 0);
+	primitive->AddIndex(vxtOffset + 2);
+	primitive->AddIndex(vxtOffset + 3);
 
 	//submesh
-	vxt_offset += 4;
-	idx_offset += 6;
+	vxtOffset += 4;
+	idxOffset += 6;
 
 	return true;
 }
@@ -188,10 +188,10 @@ void ParticleRender::OnDrawEditor()
 	{
 		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ProjectAsset"))
 		{
-			const String& file_path = EditorCursor::GetDragFile();
-			if (Resource::GetResourceType(file_path) == ResourceType::Material)
+			const String& filePath = EditorCursor::GetDragFile();
+			if (Resource::GetResourceType(filePath) == ResourceType::Material)
 			{
-				material = this->SetMaterial(file_path);
+				material = this->SetMaterial(filePath);
 				if (material)
 				{
 					material->SetCastShadow(false);
@@ -222,10 +222,10 @@ void ParticleRender::OnDrawEditor()
 		ImGui::NewLine();
 
 		ImGuiEx::Label("Sort Layer");
-		int sort_layer = this->GetSortLayer();
-		if (ImGui::DragInt("##SortLayer", &sort_layer, 0.5f, INT_MIN, INT_MAX))
+		int sortLayer = this->GetSortLayer();
+		if (ImGui::DragInt("##SortLayer", &sortLayer, 0.5f, INT_MIN, INT_MAX))
 		{
-			this->SetSortLayer(sort_layer);
+			this->SetSortLayer(sortLayer);
 		}
 
 		ImGuiEx::Label("Order In Layer");

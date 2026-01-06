@@ -1,4 +1,4 @@
-#include "SkeletonExtension2d.h"
+﻿#include "SkeletonExtension2d.h"
 #include "runtime/graphics/null/Texture.h"
 USING_NAMESPACE_DC;
 namespace spine
@@ -116,12 +116,12 @@ static TextureAddress GetAddress(spine::TextureWrap wrap)
 }
 void SpineTextureLoader::load(spine::AtlasPage& page, const spine::String& path)
 {
-	String file_path = String(path.buffer());
-	file_path = Resource::GetRelativePath(file_path);
+	String filePath = String(path.buffer());
+	filePath = Resource::GetRelativePath(filePath);
 	TextureDesc desc;
 	desc.address = GetAddress(page.uWrap); desc.filter = GetFilter(page.minFilter);
 	desc.flags |= TextureFlag::sRGB;
-	Texture* tex = Texture::Create2D(file_path, desc);
+	Texture* tex = Texture::Create2D(filePath, desc);
 	tex->Retain();
 	page.setRendererObject(tex);
 	page.width = tex->GetWidth();

@@ -1,7 +1,7 @@
-#include "Socket.h"
+﻿#include "Socket.h"
 #if defined(DC_PLATFORM_WIN32)
 #include <ws2tcpip.h>
-#elif defined(DC_PLATFORM_LINUX) || defined(DC_PLATFORM_ANDROID) || defined(DC_PLATFORM_MAC) || defined(DC_PLATFORM_IOS)
+#else
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
@@ -29,7 +29,7 @@ Socket::Socket()
 	int result = ::WSAStartup(MAKEWORD(2,2), &wsad);
 	if (result != 0)Debuger::Error("WSAStartup error:%d", result);
 #endif
-	m_nSocket = INVALID_SOCKET;
+	_nSocket = INVALID_SOCKET;
 }
 Socket::~Socket()
 {
@@ -43,7 +43,7 @@ int Socket::Bind(const struct sockaddr_in *addr)
 	addrin.sin_addr.s_addr = addr->sin_addr.s_addr;
 	addrin.sin_port = addr->sin_port;
 
-	int err = ::bind( m_nSocket, (sockaddr*)&addrin, sizeof(addrin) );
+	int err = ::bind( _nSocket, (sockaddr*)&addrin, sizeof(addrin) );
 	if ( err != 0 )
 	{
 		Debuger::Error("bind socket error:%d", WSAGetLastError());
@@ -51,18 +51,18 @@ int Socket::Bind(const struct sockaddr_in *addr)
 
 	return err ? WSAGetLastError() : 0;
 }
-int Socket::Bind(const char* host_name, int port)
+int Socket::Bind(const char* hostName, int port)
 {
 	struct sockaddr_in addrIn;
-	int err = ResolveHost(host_name, &addrIn.sin_addr);
+	int err = ResolveHost(hostName, &addrIn.sin_addr);
 	if (err) return err;
-	addrIn.sin_port = ::htons(port);
+	addrIn.sin_port = htons((ushort)port);
 
 	return Bind(&addrIn);
 }
 int Socket::Listen(int backlog)
 {
-	int err = ::listen( m_nSocket, backlog );
+	int err = ::listen( _nSocket, backlog );
 	if (err != 0)
 	{
 		Debuger::Error("listen socket error:%d", WSAGetLastError());
@@ -77,10 +77,10 @@ int Socket::Connect(const addrinfo *addr)
 	const addrinfo *pAddr = NULL;
 	for (pAddr = addr; pAddr; pAddr = pAddr->ai_next)
 	{
-		m_nSocket = socket(pAddr->ai_family, pAddr->ai_socktype, pAddr->ai_protocol);
-		if (m_nSocket < 0)
+		_nSocket = socket(pAddr->ai_family, pAddr->ai_socktype, pAddr->ai_protocol);
+		if (_nSocket < 0)
 			continue;
-		err = ::connect(m_nSocket, addr->ai_addr, (int)addr->ai_addrlen);
+		err = ::connect(_nSocket, addr->ai_addr, (int)addr->ai_addrlen);
 		if (err == 0)
 			break;
 	}
@@ -91,7 +91,7 @@ int Socket::Connect(const addrinfo *addr)
 	}
 	else
 	{
-		m_nSocket = INVALID_SOCKET;
+		_nSocket = INVALID_SOCKET;
 		err = WSAGetLastError();
 		if (err == WSAEWOULDBLOCK)
 		{
@@ -113,7 +113,7 @@ int Socket::Connect(const struct sockaddr_in *addr)
 	addrin.sin_addr.s_addr = addr->sin_addr.s_addr;
 	addrin.sin_port = addr->sin_port;
 
-	int err = ::connect(m_nSocket, (sockaddr*)&addrin, sizeof(addrin));
+	int err = ::connect(_nSocket, (sockaddr*)&addrin, sizeof(addrin));
 	if ( err == 0 )
 	{
 		_isClose = false;
@@ -134,14 +134,14 @@ int Socket::Connect(const struct sockaddr_in *addr)
 
 	return err;
 }
-int Socket::Connect(const char* host_name, int port)
+int Socket::Connect(const String& hostName, int port)
 {
 	struct addrinfo *result = NULL;
-	int err = ResolveHostV6(host_name, &result);
+	int err = ResolveHostV6(hostName, &result);
 	if (err || result == NULL)
 		return err;
 	sockaddr_in* pSockaddr_in = (sockaddr_in*)result->ai_addr;
-	pSockaddr_in->sin_port = ::htons(port);
+	pSockaddr_in->sin_port = htons((ushort)port);
 	return Connect(result);
 }
 int Socket::Accept(int64 *socket, int wait_msec, struct sockaddr_in *remoteAddr)
@@ -151,17 +151,17 @@ int Socket::Accept(int64 *socket, int wait_msec, struct sockaddr_in *remoteAddr)
 	timeval tv;
 #if defined(DC_PLATFORM_WIN32)
 	int addrsize;
-#elif defined(DC_PLATFORM_LINUX) || defined(DC_PLATFORM_ANDROID) || defined(DC_PLATFORM_MAC) || defined(DC_PLATFORM_IOS)
+#else
 	socklen_t addrsize;
 #endif
 
 	FD_ZERO( &set );
-	FD_SET( m_nSocket, &set );
+	FD_SET( _nSocket, &set );
 
 	tv.tv_sec = long(wait_msec / 1000);
 	tv.tv_usec = long(wait_msec * 1000);
 
-	err = ::select( int(m_nSocket + 1), &set, NULL, NULL, &tv );
+	err = ::select( int(_nSocket + 1), &set, NULL, NULL, &tv );
 	if (err < 0)
 	{
 		Debuger::Error("select socket error:%d", WSAGetLastError());
@@ -170,7 +170,7 @@ int Socket::Accept(int64 *socket, int wait_msec, struct sockaddr_in *remoteAddr)
 	if ( err > 0 )
 	{
 		addrsize = sizeof(*remoteAddr);
-		*socket = ::accept( m_nSocket, (sockaddr*)remoteAddr, &addrsize );
+		*socket = ::accept( _nSocket, (sockaddr*)remoteAddr, &addrsize );
 		if (*socket == INVALID_SOCKET)
 		{
 			Debuger::Error("accept socket error:%d", WSAGetLastError());
@@ -187,7 +187,7 @@ int Socket::Recv(void* buf, int len, const int flags)
 #ifndef DC_PLATFORM_WIN32
 	//flags |= MSG_NOSIGNAL;
 #endif
-	int err = ::recv(m_nSocket, (char*)buf, len, flags);
+	int err = ::recv(_nSocket, (char*)buf, len, flags);
 	if (err == 0)
 	{
 		this->Close();
@@ -199,7 +199,7 @@ int Socket::Recv(void* buf, int len, const int flags)
 			err = WSAGetLastError();
 			if (err != WSAEWOULDBLOCK)
 			{
-				DoSocketError(m_nSocket, err);
+				DoSocketError(_nSocket, err);
 				err = -1;
 			}
 			else err = SOCKET_ERROR - 1;
@@ -245,7 +245,7 @@ int Socket::Send(const void* buf, int len, const int flags)
 	nRet = 0;
 	while ( len > 0 )
 	{//对于非阻塞SOCK_STREAM类型的套接口，实际写的数据数目可能在1到所需大小之间，其值取决于本地和远端主机的缓冲区大小
-		err = ::send( m_nSocket, (char*)ptr, len, flags );
+		err = ::send( _nSocket, (char*)ptr, len, flags );
 		if ( err == 0 )
 		{
 			nRet = 0;
@@ -260,7 +260,7 @@ int Socket::Send(const void* buf, int len, const int flags)
 				if ( err != WSAEWOULDBLOCK )
 				{
 					nRet = SOCKET_ERROR;
-					DoSocketError(m_nSocket, WSAGetLastError());
+					DoSocketError(_nSocket, WSAGetLastError());
 				}
 				else if ( nRet == 0 )
 				{
@@ -278,16 +278,16 @@ int Socket::Send(const void* buf, int len, const int flags)
 	}
 	return nRet;
 }
-int Socket::RecvFrom(const char* host_name, int port, char* buf, int len, const int flags)
+int Socket::RecvFrom(const String& hostName, int port, char* buf, int len, const int flags)
 {
 	struct sockaddr_in addrIn;
-	int err = ResolveHost(host_name, &addrIn.sin_addr);
+	int err = ResolveHost(hostName, &addrIn.sin_addr);
 	if (err)return err;
-	addrIn.sin_port = ::htons(port);
+	addrIn.sin_port = htons((ushort)port);
 	addrIn.sin_family = SOCK_DGRAM;
 	socklen_t addrLen = sizeof(addrIn);
 	
-	err = ::recvfrom(m_nSocket, buf, len, flags, (sockaddr*)&addrIn, &addrLen);
+	err = ::recvfrom(_nSocket, buf, len, flags, (sockaddr*)&addrIn, &addrLen);
 	if (err == SOCKET_ERROR)
 	{
 		if (_isNonBlocking)
@@ -303,19 +303,19 @@ int Socket::RecvFrom(const char* host_name, int port, char* buf, int len, const 
 	}
 	return err;
 }
-int Socket::SendTo(const char* host_name, int port, const char* buf, int len, const int flags)
+int Socket::SendTo(const String& hostName, int port, const char* buf, int len, const int flags)
 {
 	struct sockaddr_in addrIn;
-	int err = ResolveHost(host_name, &addrIn.sin_addr);
+	int err = ResolveHost(hostName, &addrIn.sin_addr);
 	if (err)return err;
-	addrIn.sin_port = ::htons(port);
+	addrIn.sin_port = htons((ushort)port);
 	addrIn.sin_family = SOCK_DGRAM;
 
 	int nRet = 0;
 	char *ptr = (char*)buf;
 	while (len > 0)
 	{//如果传送系统的缓冲区空间不够保存需传送的数据，除非套接口处于非阻塞I/O方式，否则sendto()将阻塞
-		err = ::sendto(m_nSocket, ptr, len, flags, (sockaddr*)&addrIn, sizeof(addrIn));
+		err = ::sendto(_nSocket, ptr, len, flags, (sockaddr*)&addrIn, sizeof(addrIn));
 		if (err == SOCKET_ERROR)
 		{
 			nRet = 0;
@@ -335,11 +335,11 @@ void Socket::Close()
 {
 	_isClose = true;
 	_isNonBlocking = false;
-	if (m_nSocket != INVALID_SOCKET)
+	if (_nSocket != INVALID_SOCKET)
 	{
-		CloseSocket(m_nSocket);
+		CloseSocket(_nSocket);
 		DoClosed();
-		m_nSocket = INVALID_SOCKET;
+		_nSocket = INVALID_SOCKET;
 	}
 }
 void Socket::ClientClose(int64 socket)
@@ -350,7 +350,7 @@ int Socket::SetNonBlocking(bool nonBlocking)
 {
 	if (nonBlocking != _isNonBlocking)
 	{
-		int err = SetNonBlocking(m_nSocket, nonBlocking);
+		int err = SetNonBlocking(_nSocket, nonBlocking);
 		if (err == 0)
 		{
 			_isNonBlocking = nonBlocking;
@@ -377,7 +377,7 @@ int Socket::CloseSocket(int64 socket)
 		int err = 0;
 #if defined(DC_PLATFORM_WIN32)
 		err = ::closesocket(socket);
-#elif defined(DC_PLATFORM_LINUX) || defined(DC_PLATFORM_ANDROID) || defined(DC_PLATFORM_MAC) || defined(DC_PLATFORM_IOS)
+#else
 		err = ::close(socket);
 #endif
 		if(err)
@@ -393,7 +393,7 @@ int Socket::GetBufferSize(int64 socket, uint &recvSize, uint &sendSize)
 #if defined(DC_PLATFORM_WIN32)
 	int oplenR = sizeof(recvSize);
 	int oplenS = sizeof(sendSize);
-#elif defined(DC_PLATFORM_LINUX) || defined(DC_PLATFORM_ANDROID) || defined(DC_PLATFORM_MAC) || defined(DC_PLATFORM_IOS)
+#else
 	socklen_t oplenR = sizeof(recvSize);
 	socklen_t oplenS = sizeof(sendSize);
 #endif
@@ -462,7 +462,7 @@ int Socket::SetNonBlocking(int64 socket, bool nonBlocking)
 		Debuger::Error("ioctlsocket socket error:%d", WSAGetLastError());
 		return WSAGetLastError();
 	}
-#elif defined(DC_PLATFORM_LINUX) || defined(DC_PLATFORM_ANDROID) || defined(DC_PLATFORM_MAC) || defined(DC_PLATFORM_IOS)
+#else
 	int flags = ::fcntl(socket, F_GETFL);
 	if (flags < 0)
 	{
@@ -534,10 +534,10 @@ int Socket::SetReuseAddr(int64 socket, bool enable)
 	}
 	return 0;
 }
-int Socket::ResolveHost(const char* name, struct in_addr *addr)
+int Socket::ResolveHost(const String& hostName, struct in_addr *addr)
 {
 	hostent *phost;
-	phost = ::gethostbyname(name);
+	phost = ::gethostbyname(hostName.c_str());
 	if ( phost )
 	{
 		addr->s_addr = *(u_long*)phost->h_addr_list[0];
@@ -550,13 +550,13 @@ int Socket::ResolveHost(const char* name, struct in_addr *addr)
 		return WSAGetLastError();
 	}
 }
-int Socket::ResolveHostV6(const char* name, addrinfo** result)
+int Socket::ResolveHostV6(const String& hostName, addrinfo** result)
 {
 	struct addrinfo hints;
 	memset(&hints, 0, sizeof(struct addrinfo));
 	hints.ai_family = AF_UNSPEC;    /* Allow IPv4 or IPv6 */
 	hints.ai_socktype = SOCK_STREAM;
-	int ret = ::getaddrinfo(name, NULL, &hints, result);
+	int ret = ::getaddrinfo(hostName.c_str(), NULL, &hints, result);
 	if (0 == ret)
 	{
 		return ret;
@@ -653,9 +653,9 @@ IP_OPTIONS		在IP头中设置选项。
 	u_short l_onoff;
 	u_short l_linger;
 	};
-	struct linger m_sLinger;
-	m_sLinger.l_onoff = 1; //在调用close(socket)时还有数据未发送完，允许等待
-	// 若m_sLinger.l_onoff=0;则调用closesocket()后强制关闭
-	m_sLinger.l_linger = 5; //设置等待时间为5秒
-	setsockopt( s, SOL_SOCKET, SO_LINGER, (const char*)&m_sLinger, sizeof(struct linger));
+	struct linger _sLinger;
+	_sLinger.l_onoff = 1; //在调用close(socket)时还有数据未发送完，允许等待
+	// 若_sLinger.l_onoff=0;则调用closesocket()后强制关闭
+	_sLinger.l_linger = 5; //设置等待时间为5秒
+	setsockopt( s, SOL_SOCKET, SO_LINGER, (const char*)&_sLinger, sizeof(struct linger));
 */

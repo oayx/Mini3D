@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -104,9 +104,9 @@ namespace dc.tools.project
 
                     //拷贝引擎
                     {
-                        string src_path = "../../";
-                        string dst_path = target_path + "/engine/";
-                        bool result = FileUtils.DirectoryCopy(src_path, dst_path);
+                        string srcPath = "../../";
+                        string dstPath = target_path + "/engine/";
+                        bool result = FileUtils.DirectoryCopy(srcPath, dstPath);
                         if (!result)
                         {
                             Log.Error("拷贝engine失败");
@@ -118,10 +118,10 @@ namespace dc.tools.project
                     //拷贝template project
                     {
                         //拷贝项目
-                        string src_path = "../../../project";
-                        string dst_path = target_path + "/project";
-                        bool result = FileUtils.DirectoryCopy(src_path, dst_path);
-                        if (!result && Directory.Exists(src_path))
+                        string srcPath = "../../../project";
+                        string dstPath = target_path + "/project";
+                        bool result = FileUtils.DirectoryCopy(srcPath, dstPath);
+                        if (!result && Directory.Exists(srcPath))
                         {
                             Log.Error("拷贝template失败");
                             break;
@@ -131,19 +131,19 @@ namespace dc.tools.project
 
                     {
                         //拷贝engine目录下的bin到外层
-                        string src_path = target_path + "/engine/bin/win/x86";
-                        string dst_path = target_path + "/bin/win/x86";
-                        bool result = FileUtils.DirectoryCopy(src_path, dst_path);
-                        if (!result && Directory.Exists(src_path))
+                        string srcPath = target_path + "/engine/bin/win/x86";
+                        string dstPath = target_path + "/bin/win/x86";
+                        bool result = FileUtils.DirectoryCopy(srcPath, dstPath);
+                        if (!result && Directory.Exists(srcPath))
                         {
                             Log.Error("拷贝engine/engine/bin/win/x86失败");
                             break;
                         }
                         SetProgress(70);
-                        src_path = target_path + "/engine/bin/win/x64";
-                        dst_path = target_path + "/bin/win/x64";
-                        result = FileUtils.DirectoryCopy(src_path, dst_path);
-                        if (!result && Directory.Exists(src_path))
+                        srcPath = target_path + "/engine/bin/win/x64";
+                        dstPath = target_path + "/bin/win/x64";
+                        result = FileUtils.DirectoryCopy(srcPath, dstPath);
+                        if (!result && Directory.Exists(srcPath))
                         {
                             Log.Error("拷贝engine/bin/win/x64失败");
                             break;
@@ -151,10 +151,10 @@ namespace dc.tools.project
                         SetProgress(80);
 
                         //拷贝engine目录下的assets到bin
-                        src_path = target_path + "/engine/assets";
-                        dst_path = target_path + "/bin/assets";
-                        result = FileUtils.DirectoryCopy(src_path, dst_path);
-                        if (!result && Directory.Exists(src_path))
+                        srcPath = target_path + "/engine/assets";
+                        dstPath = target_path + "/bin/assets";
+                        result = FileUtils.DirectoryCopy(srcPath, dstPath);
+                        if (!result && Directory.Exists(srcPath))
                         {
                             Log.Error("拷贝engine/assets失败");
                             break;

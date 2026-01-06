@@ -1,4 +1,4 @@
-#include "DX11ShaderReflect.h"
+﻿#include "DX11ShaderReflect.h"
 #include "core/file/File.h"
 #include "core/stream/DataStream.h"
 #include "runtime/input/Input.h"
@@ -12,24 +12,24 @@ void DX11ShaderReflect::Reflect(ShaderType type, ID3DBlob* shader_code)
 {
 	//反射shader信息
 	ID3D11ShaderReflection* reflector = nullptr;
-	HR(D3DReflect(shader_code->GetBufferPointer(), shader_code->GetBufferSize(), __uuidof(ID3D11ShaderReflection), (void**)&reflector));
+	DX_ERROR(D3DReflect(shader_code->GetBufferPointer(), shader_code->GetBufferSize(), __uuidof(ID3D11ShaderReflection), (void**)&reflector));
 	
 	D3D11_SHADER_DESC shader_desc;
-	HR(reflector->GetDesc(&shader_desc));
+	DX_ERROR(reflector->GetDesc(&shader_desc));
 	//Debuger::Log("shader version:%u", shader_desc.Version);
 	for (int i = 0; i != shader_desc.BoundResources; ++i)
 	{
 		D3D11_SHADER_INPUT_BIND_DESC bind_desc;
-		HR(reflector->GetResourceBindingDesc(i, &bind_desc));
+		DX_ERROR(reflector->GetResourceBindingDesc(i, &bind_desc));
 		switch (bind_desc.Type)
 		{
 		case D3D_SIT_CBUFFER:
 		{
 			ID3D11ShaderReflectionConstantBuffer *cb = reflector->GetConstantBufferByName(bind_desc.Name);
 			D3D11_SHADER_BUFFER_DESC cb_desc;
-			HR(cb->GetDesc(&cb_desc));
+			DX_ERROR(cb->GetDesc(&cb_desc));
 
-			auto& it_cbuffer = mCBBuffers.Find(bind_desc.Name);
+			auto it_cbuffer = mCBBuffers.Find(bind_desc.Name);
 			if (it_cbuffer == mCBBuffers.end())
 			{
 				sShaderReflectCBuffer buffer;
@@ -51,7 +51,7 @@ void DX11ShaderReflect::Reflect(ShaderType type, ID3DBlob* shader_code)
 				D3D11_SHADER_VARIABLE_DESC var_desc;
 				c_var->GetDesc(&var_desc);
 
-				auto& it = mCBVariables.Find(var_desc.Name);
+				auto it = mCBVariables.Find(var_desc.Name);
 				if (it == mCBVariables.end())
 				{
 					sShaderReflectVariable cb_variable;
@@ -71,7 +71,7 @@ void DX11ShaderReflect::Reflect(ShaderType type, ID3DBlob* shader_code)
 		break;
 		case D3D_SIT_TEXTURE:
 		{
-			auto& it = mTextures.Find(bind_desc.Name);
+			auto it = mTextures.Find(bind_desc.Name);
 			if (it == mTextures.end())
 			{
 				sShaderReflectTexture texture;
@@ -107,7 +107,7 @@ void DX11ShaderReflect::Reflect(ShaderType type, ID3DBlob* shader_code)
 	{
 		ID3D11ShaderReflectionConstantBuffer *cb = reflector->GetConstantBufferByIndex(i);
 		D3D11_SHADER_BUFFER_DESC cb_desc;
-		HR(cb->GetDesc(&cb_desc));
+		DX_ERROR(cb->GetDesc(&cb_desc));
 
 		ShaderReflectCBuffers::const_iterator it = mCBBuffers.Find(cb_desc.Name);
 		if (it == mCBBuffers.end())
@@ -120,9 +120,9 @@ void DX11ShaderReflect::Reflect(ShaderType type, ID3DBlob* shader_code)
 		{
 			ID3D11ShaderReflectionVariable* c_var = cb->GetVariableByIndex(j);
 			D3D11_SHADER_VARIABLE_DESC var_desc;
-			HR(c_var->GetDesc(&var_desc));
+			DX_ERROR(c_var->GetDesc(&var_desc));
 
-			auto& it = mCBVariables.Find(var_desc.Name);
+			auto it = mCBVariables.Find(var_desc.Name);
 			if (it == mCBVariables.end())
 			{
 				sShaderReflectVariable cb_variable;
@@ -146,37 +146,37 @@ void DX11ShaderReflect::Reflect(ShaderType type, ID3DBlob* shader_code)
 		for (int i = 0; i != shader_desc.InputParameters; ++i)
 		{
 			D3D11_SIGNATURE_PARAMETER_DESC input_desc;
-			HR(reflector->GetInputParameterDesc(i, &input_desc));
+			DX_ERROR(reflector->GetInputParameterDesc(i, &input_desc));
 			VertexSemantic sem = DXGetVertexSemantic(input_desc.SemanticIndex, input_desc.SemanticName);
 			mVertexSemantic |= sem;
 		}
 	}
 	SAFE_RELEASE(reflector);
 }
-int DX11ShaderReflect::Reflect(const String& path, const ShaderDesc& shader_info, const char* version)
+int DX11ShaderReflect::Reflect(const String& path, const ShaderDesc& shaderInfo, const char* version)
 {
 	for (int i = 0; i < int(ShaderType::Max); ++i)
 	{
-		if (shader_info.ShaderFile[i].IsEmpty())continue;
+		if (shaderInfo.ShaderFile[i].IsEmpty())continue;
 
 		ShaderType shader_type = ShaderType(i);
-		String content = File::ReadAllText(Path::Combine(path, shader_info.ShaderFile[i]));
+		String content = File::ReadAllText(Path::Combine(path, shaderInfo.ShaderFile[i]));
 		if (!content.IsEmpty())
 		{
-			String enter_point = shader_info.Enter[i];
+			String enter_point = shaderInfo.Enter[i];
 			if (enter_point.IsEmpty())
 			{
 				enter_point = ShaderEnterEnum[i];
 			}
 
-			String target = shader_info.Target[i];
+			String target = shaderInfo.Target[i];
 			if (target.IsEmpty())
 			{
 				target = DXGetShaderTarget(shader_type, version);
 			}
 
 			ID3DBlob* code_buffer = nullptr;
-			if (!DX11CompileShader("", content, {}, enter_point, target, &code_buffer))
+			if (!DX10CompileShader("", content, shaderInfo.ShaderDefines, enter_point, target, &code_buffer))
 			{
 				return -1;
 			}

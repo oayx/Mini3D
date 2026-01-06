@@ -1,4 +1,5 @@
-#include "Debuger.h"
+﻿#include "Debuger.h"
+#include "Encoding.h"
 #include "file/File.h"
 #include "file/Path.h"
 #include "memory/Memory.h"
@@ -8,6 +9,8 @@
 #include "platform/PlatformDefine.h"
 #if defined(DC_PLATFORM_ANDROID)
 #include "android/log.h"
+#elif defined(DC_PLATFORM_WASM)
+#include <emscripten/console.h>
 #endif
  
 DC_BEGIN_NAMESPACE
@@ -19,10 +22,8 @@ DC_BEGIN_NAMESPACE
 		FOREGROUND_INTENSITY | FOREGROUND_RED };
 #endif
 
-char* TypeToString[5] = { "Debug", "Log","Warning","Error", "Exception" };
+const char* TypeToString[5] = { "Debug", "Log","Warning","Error", "Exception" };
 /********************************************************************/
-Debuger::LogDelegate Debuger::_logHandle;
-FileDataStream* Debuger::_fileStream = nullptr;
 void Debuger::Initialize()
 {
 	SetLogToFileEnable(true);
@@ -35,18 +36,24 @@ void Debuger::Destroy()
 		SAFE_DELETE(_fileStream);
 	}
 }
-void Debuger::Debug(const char* format, ...)
+void Debuger::Assert(bool expr) noexcept
+{
+}
+void Debuger::Assert(bool expr, const char* format, ...) noexcept
+{
+}
+void Debuger::Debug(const char* format, ...) noexcept
 {
 #if DC_DEBUG
 	char msg[BufferSize] = { 0 };
 	va_list list;
 	va_start(list, format);
-	vsnprintf(msg, BufferSize, format, list);//vsnprintf会自动在写入字符的后面加上停止符\0，实际有效的是BufferSize-1，返回值是源字符串的大小(巨坑)
+	vsnprintf(msg, BufferSize, format, list);//vsnprintf最多向 buf 写入 size-1 个字符，然后在 buf[size-1] 处写 '\0'（即总共 size 字节，包括结尾 '\0'）
 	va_end(list);
 	WriteLog(LogMsgType::Debug, msg);
 #endif
 }
-void Debuger::Log(const char* format, ...)
+void Debuger::Log(const char* format, ...) noexcept
 {
 	char msg[BufferSize] = { 0 };
 	va_list list;
@@ -55,7 +62,7 @@ void Debuger::Log(const char* format, ...)
 	va_end(list);
 	WriteLog(LogMsgType::Log, msg);
 }
-void Debuger::Warning(const char* format, ...)
+void Debuger::Warning(const char* format, ...) noexcept
 {
 	char msg[BufferSize] = { 0 };
 	va_list list;
@@ -64,7 +71,7 @@ void Debuger::Warning(const char* format, ...)
 	va_end(list);
 	WriteLog(LogMsgType::Warning, msg);
 }
-void Debuger::Error(const char* format, ...)
+void Debuger::Error(const char* format, ...) noexcept
 {
 	char msg[BufferSize] = { 0 };
 	va_list list;
@@ -73,7 +80,7 @@ void Debuger::Error(const char* format, ...)
 	va_end(list);
 	WriteLog(LogMsgType::Error, msg);
 }
-void Debuger::Exception(const char* format, ...)
+void Debuger::Exception(const char* format, ...) noexcept
 {
 	char msg[BufferSize] = { 0 };
 	va_list list;
@@ -82,21 +89,7 @@ void Debuger::Exception(const char* format, ...)
 	va_end(list);
 	WriteLog(LogMsgType::Exception, msg);
 }
-void Debuger::Output(const char* format, ...)
-{
-	char msg[BufferSize] = { 0 };
-	va_list list;
-	va_start(list, format);
-	vsnprintf(msg, BufferSize - 1, format, list);//预留\n位置
-	va_end(list);
-#if defined(DC_PLATFORM_WIN32)
-	msg[strlen(msg)] = '\n';
-	::OutputDebugStringA(msg);
-#else
-	WriteLog(LogMsgType::Log, msg);
-#endif
-}
-void Debuger::Message(const char* title, const char* format, ...)
+void Debuger::Output(const char* format, ...) noexcept
 {
 	char msg[BufferSize] = { 0 };
 	va_list list;
@@ -104,12 +97,25 @@ void Debuger::Message(const char* title, const char* format, ...)
 	vsnprintf(msg, BufferSize, format, list);
 	va_end(list);
 #if defined(DC_PLATFORM_WIN32)
-	::MessageBoxA(NULL, msg, title, MB_OK);
+	::OutputDebugStringW(Encoding::Utf8ToWChar(msg).c_str());
 #else
-	WriteLog(LogMsgType::Log, msg);
+	//TODO:其他平台实现
 #endif
 }
-void Debuger::WriteLog(LogMsgType type, const char* msg)
+void Debuger::Message(const char* title, const char* format, ...) noexcept
+{
+	char msg[BufferSize] = { 0 };
+	va_list list;
+	va_start(list, format);
+	vsnprintf(msg, BufferSize, format, list);
+	va_end(list);
+#if defined(DC_PLATFORM_WIN32)
+	::MessageBoxW(NULL, Encoding::Utf8ToWChar(msg).c_str(), Encoding::Utf8ToWChar(title).c_str(), MB_OK);
+#else
+	//TODO:其他平台实现
+#endif
+}
+void Debuger::WriteLog(LogMsgType type, const char* msg) noexcept
 {
 	static bool is_log_handle = false;
 	if (is_log_handle)return;
@@ -123,7 +129,7 @@ void Debuger::WriteLog(LogMsgType type, const char* msg)
 		is_log_handle = false;
 	}
 }
-void Debuger::WriteLogToConsole(LogMsgType type, const char* msg)
+void Debuger::WriteLogToConsole(LogMsgType type, const char* msg) noexcept
 {
 	const char* sz_type = TypeToString[(int)type];
 #if defined(DC_PLATFORM_WIN32)
@@ -142,24 +148,50 @@ void Debuger::WriteLogToConsole(LogMsgType type, const char* msg)
 	case LogMsgType::Exception: log_type = ANDROID_LOG_ERROR; break;
 	}
 	__android_log_print(log_type, "Engine", "%s\n", msg);
+#elif defined(DC_PLATFORM_WASM)
+	switch (type) {
+	case LogMsgType::Debug:		emscripten_console_log(msg); break;		// emscripten_console_log->console.log
+	case LogMsgType::Log:		emscripten_console_log(msg); break;		// emscripten_console_log->console.info
+	case LogMsgType::Warning:	emscripten_console_warn(msg); break;	// emscripten_console_warn->console.warn
+	case LogMsgType::Error:
+	case LogMsgType::Exception: emscripten_console_error(msg); break;	// emscripten_console_error->console.error
+	}
+#elif defined(DC_PLATFORM_IOS)
+	//NSString* ns_msg = [NSString stringWithFormat : @"[%s] %s (frame:%d)", sz_type, msg, Time::GetFrameCount()];
+	//NSLog(@"%@", ns_msg);
+	printf("[%s]:%s, frame:%d\n", sz_type, msg, Time::GetFrameCount());
+#elif defined(DC_PLATFORM_MAC)
+	// 定义ANSI颜色代码
+	const char* color_code = "";
+	switch (type) {
+	case LogMsgType::Debug:     color_code = "\033[36m"; break; // Cyan
+	case LogMsgType::Log:		color_code = "\033[37m"; break; // White
+	case LogMsgType::Warning:   color_code = "\033[33m"; break; // Yellow
+	case LogMsgType::Error:
+	case LogMsgType::Exception: color_code = "\033[31m"; break; // Red
+	}
+	// 带颜色和类型前缀的终端输出
+	printf("%s[%s]: %s, frame:%d\033[0m\n", color_code, sz_type, msg, Time::GetFrameCount());
+#else
+	printf("[%s]:%s, frame:%d\n", sz_type, msg, Time::GetFrameCount());
 #endif
 }
-void Debuger::WriteLogToFile(LogMsgType type, const char* msg)
+void Debuger::WriteLogToFile(LogMsgType type, const char* msg) noexcept
 {
 	if (_fileStream == nullptr)return;
 
 	const char* sz_type = TypeToString[(int)type];
 	char full_msg[BufferSize + 100] = {0};
 #if defined(DC_PLATFORM_WIN32)
-	char* break_line = "\r\n";
-#elif defined(DC_PLATFORM_LINUX) || defined(DC_PLATFORM_ANDROID) || defined(DC_PLATFORM_MAC) || defined(DC_PLATFORM_IOS)
+	const char* break_line = "\r\n";
+#else
 	const char* break_line = "\n";
 #endif
 	snprintf(full_msg, BufferSize + 100, "[%s]:%s,frame:%d%s", sz_type, msg, Time::GetFrameCount(), break_line);
 	_fileStream->Write(full_msg, 0, strlen(full_msg));
 	_fileStream->Flush();
 }
-void Debuger::SetLogToFileEnable(bool b)
+void Debuger::SetLogToFileEnable(bool b) noexcept
 {
 	if (b)
 	{

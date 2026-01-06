@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Date：2020/3/18
 * Author： hannibal
@@ -11,7 +11,7 @@
 DC_BEGIN_NAMESPACE
 /********************************************************************/
 // 路径操作
-class ENGINE_DLL Path Final : public object
+class ENGINE_DLL Path final : public object
 {
 	DISALLOW_CONSTRUCTOR_COPY_ASSIGN(Path);
 	BEGIN_REFECTION_TYPE(Path)
@@ -30,6 +30,7 @@ public:
 	//返回文件夹名称
 	static String GetFolderName(const String& path);
 	//返回指定的路径字符串的扩展名
+	//D:\\1\\2\\.config会返回""，与C#不一样
 	static String GetExtension(const String& path);
 	//替换扩展名
 	static String ReplaceExtension(const String& path, const String& new_ext);
@@ -41,6 +42,10 @@ public:
 	static String GetFullDataPath(const String& path);
 	//获取指定路径的根目录信息
 	static String GetPathRoot(const String& path);
+	//获取指定路径的绝对路径
+	static String GetAbsolutePath(const String& path);
+	//获得一个路径相对另外一个路径的相对路径
+	static String GetRelativePath(const String& file, const String& path);
 	//确定路径是否包括文件扩展名
 	static bool HasExtension(const String& path);
 	//是否目录
@@ -49,7 +54,7 @@ public:
 	static String ReplaceSplit(const String& path);
 };//Path
 
-inline void ConvertSeparatorsToGNUC(char* pathName)
+constexpr inline void ConvertSeparatorsToGNUC(char* pathName)
 {
 	while (*pathName != '\0') 
 	{
@@ -58,7 +63,7 @@ inline void ConvertSeparatorsToGNUC(char* pathName)
 		++pathName;
 	}
 }
-inline void ConvertSeparatorsToWindows(wchar_t* pathName)
+constexpr inline void ConvertSeparatorsToWindows(wchar_t* pathName)
 {
 	while (*pathName != L'\0') 
 	{
@@ -75,7 +80,7 @@ inline void ConvertSeparatorsToWindows(std::wstring& pathName)
 			pathName[i] = L'\\';
 	}
 }
-inline void ConvertSeparatorsToWindows(char* pathName)
+constexpr inline void ConvertSeparatorsToWindows(char* pathName)
 {
 	while (*pathName != '\0')
 	{

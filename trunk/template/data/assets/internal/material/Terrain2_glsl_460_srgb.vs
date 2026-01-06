@@ -68,13 +68,13 @@ layout(location = 0) in vec4 in_var_POSITION;
 layout(location = 1) in vec3 in_var_NORMAL;
 layout(location = 2) in vec4 in_var_TANGENT;
 layout(location = 3) in vec2 in_var_TEXCOORD0;
-layout(location = 0) out vec2 out_var_TEXCOORD0;
-layout(location = 1) out vec2 out_var_TEXCOORD1;
-layout(location = 2) out vec2 out_var_TEXCOORD2;
-layout(location = 3) out mat3 out_var_TEXCOORD3;
-layout(location = 6) out vec3 out_var_TEXCOORD6;
-layout(location = 7) out vec3 out_var_TEXCOORD7;
-layout(location = 8) out float out_var_TEXCOORD8;
+layout(location = 0) out vec2 var_TEXCOORD0;
+layout(location = 1) out vec2 var_TEXCOORD1;
+layout(location = 2) out vec2 var_TEXCOORD2;
+layout(location = 3) out mat3 var_TEXCOORD3;
+layout(location = 6) out vec3 var_TEXCOORD6;
+layout(location = 7) out vec3 var_TEXCOORD7;
+layout(location = 8) out float var_TEXCOORD8;
 
 void main()
 {
@@ -97,12 +97,12 @@ void main()
         }
     } while(false);
     gl_Position = _66;
-    out_var_TEXCOORD0 = (in_var_TEXCOORD0 * CustomBuffer._MainTex0_ST.xy) + CustomBuffer._MainTex0_ST.zw;
-    out_var_TEXCOORD1 = (in_var_TEXCOORD0 * CustomBuffer._MainTex1_ST.xy) + CustomBuffer._MainTex1_ST.zw;
-    out_var_TEXCOORD2 = in_var_TEXCOORD0;
-    out_var_TEXCOORD3 = mat3(_81, cross(_79, _81) * in_var_TANGENT.w, _79);
-    out_var_TEXCOORD6 = _105;
-    out_var_TEXCOORD7 = normalize(CameraBuffer._WorldSpaceCameraPos - _89);
-    out_var_TEXCOORD8 = _66.z;
+    var_TEXCOORD0 = (in_var_TEXCOORD0 * CustomBuffer._MainTex0_ST.xy) + CustomBuffer._MainTex0_ST.zw;
+    var_TEXCOORD1 = (in_var_TEXCOORD0 * CustomBuffer._MainTex1_ST.xy) + CustomBuffer._MainTex1_ST.zw;
+    var_TEXCOORD2 = in_var_TEXCOORD0;
+    var_TEXCOORD3 = mat3(_81, cross(_79, _81) * in_var_TANGENT.w, _79);
+    var_TEXCOORD6 = _105;
+    var_TEXCOORD7 = normalize(CameraBuffer._WorldSpaceCameraPos - _89);
+    var_TEXCOORD8 = _66.z;
 }
 

@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2021/1/5
@@ -14,7 +14,7 @@ class Particle;
 class VariablePrimitive;
 class ParticleSystem;
 /********************************************************************/
-class ENGINE_DLL ParticleRender Final : public Renderer
+class ENGINE_DLL ParticleRender final : public Renderer
 {
 	friend class GameObject;
 	friend class ParticleSystem;
@@ -22,7 +22,7 @@ class ENGINE_DLL ParticleRender Final : public Renderer
 	DISALLOW_COPY_ASSIGN(ParticleRender);
 	BEGIN_DERIVED_REFECTION_TYPE(ParticleRender, Renderer)
 		CTORS(DEFAULT_CTOR(ParticleRender))
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 	ParticleRender() = default;
 
@@ -41,7 +41,7 @@ protected:
 private:
 	void CalFrameTime();
 	void Refresh(Camera* camera);
-	bool FillMesh(Particle* particle, Camera* camera, VariablePrimitive* primitive, int& vxt_offset, int& idx_offset);
+	bool FillMesh(Particle* particle, Camera* camera, VariablePrimitive* primitive, int& vxtOffset, int& idxOffset);
 
 private:
 	ParticleSystem* _particleSystem = nullptr;

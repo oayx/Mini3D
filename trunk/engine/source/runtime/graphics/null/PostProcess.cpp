@@ -1,4 +1,4 @@
-#include "PostProcess.h"
+﻿#include "PostProcess.h"
 #include "runtime/graphics/Graphics.h"
 #include "runtime/graphics/Material.h"
 #include "runtime/input/Input.h"
@@ -80,11 +80,11 @@ PostProcess::~PostProcess()
 	SAFE_RELEASE(_renderTexture);
 	SAFE_DELETE(_finalProcess)
 }
-Object* PostProcess::Clone(Object* new_obj)
+Object* PostProcess::Clone(Object* newObj)
 {
-	base::Clone(new_obj);
-	PostProcess* obj = dynamic_cast<PostProcess*>(new_obj);
-	if (!obj)return new_obj;
+	base::Clone(newObj);
+	PostProcess* obj = dynamic_cast<PostProcess*>(newObj);
+	if (!obj)return newObj;
 
 	for (auto effect : _effects)
 	{
@@ -124,6 +124,7 @@ void PostProcess::Resize(int w, int h)
 }
 void PostProcess::Render(Camera* camera)
 {
+	DC_PROFILE_FUNCTION;
 	if (_effects.Size() > 0)
 	{
 		//排序

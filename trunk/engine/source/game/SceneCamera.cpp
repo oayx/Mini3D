@@ -1,4 +1,4 @@
-#include "SceneCamera.h"
+﻿#include "SceneCamera.h"
 #include "runtime/input/Input.h"
 #include "runtime/scene/Camera.h"
 #include "runtime/Application.h"
@@ -21,31 +21,31 @@ void SceneFreeCamera::Update()
 	if (!Input::GetKey(KeyCode::LeftControl) && !Input::GetKey(KeyCode::LeftShift) && !Input::GetKey(KeyCode::LeftAlt) &&
 		!Input::GetKey(KeyCode::RightControl) && !Input::GetKey(KeyCode::RightShift) && !Input::GetKey(KeyCode::RightAlt))
 	{//移动镜头
-		float move_speed = _moveSpeed;
+		float moveSpeed = _moveSpeed;
 		if (Input::GetKey(KeyCode::W))
 		{
-			camera->MoveForwardBack(move_speed);
+			camera->MoveForwardBack(moveSpeed);
 		}
 		if (Input::GetKey(KeyCode::S))
 		{
-			camera->MoveForwardBack(-move_speed);
+			camera->MoveForwardBack(-moveSpeed);
 		}
 		if (Input::GetKey(KeyCode::A))
 		{
-			camera->MoveLeftRight(-move_speed);
+			camera->MoveLeftRight(-moveSpeed);
 		}
 		if (Input::GetKey(KeyCode::D))
 		{
-			camera->MoveLeftRight(move_speed);
+			camera->MoveLeftRight(moveSpeed);
 		}
 	}
 	if (EditorConfig::Is3D && Input::IsMouseMove() && Input::GetMouseButton(MouseBtnID::Right))
 	{//旋转镜头
-		float offset_x = Input::mousePositionDelta.x;
-		float offset_y = -Input::mousePositionDelta.y;
-		if (Math::Abs(offset_x) > 0 || Math::Abs(offset_y) > 0)
+		float offsetX = Input::mousePositionDelta.x;
+		float offsetY = -Input::mousePositionDelta.y;
+		if (Math::Abs(offsetX) > 0 || Math::Abs(offsetY) > 0)
 		{
-			camera->Rotate(offset_x, offset_y);
+			camera->Rotate(offsetX, offsetY);
 		}
 	}
 }
@@ -54,8 +54,8 @@ void SceneFreeCamera::OnDrawEditor()
 	base::OnDrawEditor();
 
 	ImGuiEx::Label("MoveSpeed");
-	float min_value = 0.0f;
-	ImGui::DragScalar("##MoveSpeed", ImGuiDataType_Float, &_moveSpeed, 0.01f, &min_value);
+	float minValue = 0.0f;
+	ImGui::DragScalar("##MoveSpeed", ImGuiDataType_Float, &_moveSpeed, 0.01f, &minValue);
 }
 INSTANTIATE_TEMPLATE_TRANSFER_WITH_DECL(SceneFreeCamera);
 template<class TransferFunction> inline

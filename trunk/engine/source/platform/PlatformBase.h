@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Description：
@@ -34,7 +34,7 @@ public://监视目录
 
 public://window
 	//调整窗口大小
-	static void AdjustWindowRect(int& left, int& top, int& width, int& height, int screen_width, int screen_height, bool full_screen);
+	static void AdjustWindowRect(int& left, int& top, int& width, int& height, int screenWidth, int screenHeight, bool fullScreen);
 
 public:
 	static bool Is64BitPlatform();

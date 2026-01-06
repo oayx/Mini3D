@@ -1,4 +1,4 @@
-#include "TrailRender.h"
+﻿#include "TrailRender.h"
 #include "runtime/graphics/null/Texture.h"
 #include "runtime/graphics/Material.h"
 #include "runtime/graphics/Pass.h"
@@ -52,11 +52,11 @@ void TrailRender::OnPreRender(Camera* camera)
 		this->UploadData();
 	}
 }
-Object* TrailRender::Clone(Object* new_obj)
+Object* TrailRender::Clone(Object* newObj)
 {
-	base::Clone(new_obj);
-	TrailRender* obj = dynamic_cast<TrailRender*>(new_obj);
-	if (!obj)return new_obj;
+	base::Clone(newObj);
+	TrailRender* obj = dynamic_cast<TrailRender*>(newObj);
+	if (!obj)return newObj;
 
 	obj->SetColor(_color);
 	obj->SetWidth(_widthRange.width, _widthRange.height);
@@ -81,19 +81,20 @@ Vector2 Calculate2DLineExtrusion(const Vector3& p0, const Vector3& delta, float 
 }
 void TrailRender::Build3DLine(VariablePrimitive* prim, Camera* camera)
 {
-	Matrix4 world_camera_matrix = camera->GetViewMatrix();
-	Matrix4 camera_world_matrix = world_camera_matrix.Inverse();
+	DC_PROFILE_FUNCTION;
+	Matrix4 worldCameraMatrix = camera->GetViewMatrix();
+	Matrix4 cameraWorldMatrix = worldCameraMatrix.Inverse();
 
-	Vector3 delta = camera_world_matrix.TransformPoint(_positions[0]) - camera_world_matrix.TransformPoint(_positions[1]);
+	Vector3 delta = cameraWorldMatrix.TransformPoint(_positions[0]) - cameraWorldMatrix.TransformPoint(_positions[1]);
 	for (int i = 0; i < (int)_positions.size(); i++)
 	{
 		//UV
 		float u = i / (float)(_positions.size() - 1);
 
-		Vector3 p0 = camera_world_matrix.TransformPoint(_positions[i]);
+		Vector3 p0 = cameraWorldMatrix.TransformPoint(_positions[i]);
 		if (i + 1 != (int)_positions.size())
 		{
-			Vector3 p1 = camera_world_matrix.TransformPoint(_positions[i + 1]);
+			Vector3 p1 = cameraWorldMatrix.TransformPoint(_positions[i + 1]);
 			delta = p0 - p1;
 		}
 
@@ -103,11 +104,11 @@ void TrailRender::Build3DLine(VariablePrimitive* prim, Camera* camera)
 		Vector2 dif = Calculate2DLineExtrusion(p0, delta, width * 0.5f);
 
 		//下顶点
-		prim->AddVertex(world_camera_matrix.TransformPoint(Vector3(p0.x - dif.x, p0.y - dif.y, p0.z)));
+		prim->AddVertex(worldCameraMatrix.TransformPoint(Vector3(p0.x - dif.x, p0.y - dif.y, p0.z)));
 		prim->AddColor(_color);
 		prim->AddTexcoord1(Vector2(u, 1.0f));
 		//上顶点
-		prim->AddVertex(world_camera_matrix.TransformPoint(Vector3(p0.x + dif.x, p0.y + dif.y, p0.z)));
+		prim->AddVertex(worldCameraMatrix.TransformPoint(Vector3(p0.x + dif.x, p0.y + dif.y, p0.z)));
 		prim->AddColor(_color);
 		prim->AddTexcoord1(Vector2(u, 0.0f));
 	}

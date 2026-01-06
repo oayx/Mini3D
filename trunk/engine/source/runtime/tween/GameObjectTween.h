@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Date：2021/1/8
@@ -12,12 +12,12 @@ DC_BEGIN_NAMESPACE
 class GameObject;
 /********************************************************************/
 // callback
-class ENGINE_DLL BlinkTween Final : public Tween
+class ENGINE_DLL BlinkTween final : public Tween
 {
 	FRIEND_CONSTRUCT_DESTRUCT(BlinkTween);
 	DISALLOW_CONSTRUCTOR_COPY_ASSIGN(BlinkTween);
 	BEGIN_DERIVED_REFECTION_TYPE(BlinkTween, Tween)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 public:
 	/// <summary>
@@ -33,7 +33,7 @@ public:
 protected:
 	virtual void OnStarted()override {}
 	virtual void OnStepCompleted()override;
-	virtual void OnUpdate(float curr_time)override;
+	virtual void OnUpdate(float currTime)override;
 
 protected:
 	bool	_isVisible = false;		//变换完成后目标可视状态
@@ -44,12 +44,12 @@ protected:
 
 /********************************************************************/
 // 可视变换器
-class ENGINE_DLL VisibleTween Final : public Tween
+class ENGINE_DLL VisibleTween final : public Tween
 {
 	FRIEND_CONSTRUCT_DESTRUCT(VisibleTween);
 	DISALLOW_CONSTRUCTOR_COPY_ASSIGN(VisibleTween);
 	BEGIN_DERIVED_REFECTION_TYPE(VisibleTween, Tween)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 public:
 	/// <summary>
@@ -63,7 +63,7 @@ public:
 
 protected:
 	virtual void OnStarted()override {}
-	virtual void OnUpdate(float curr_time)override;
+	virtual void OnUpdate(float currTime)override;
 
 protected:
 	bool _isVisible = false;//变换完成后目标可视状态

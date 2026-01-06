@@ -1,4 +1,4 @@
-#include "EInspector_Project_Mesh.h"
+﻿#include "EInspector_Project_Mesh.h"
 #include "runtime/graphics/null/Texture.h"
 #include "runtime/resources/AssetsManager.h"
 #include "runtime/ui/GUI.h"
@@ -10,7 +10,7 @@ DC_BEGIN_NAMESPACE
 /********************************************************************/
 void EInspector_Project_Mesh::Render(AssetMeta* meta)
 {
-	DC_PROFILE_FUNCTION();
+	DC_PROFILE_FUNCTION;
 	base::Render(meta);
 
 	if (!meta)return;

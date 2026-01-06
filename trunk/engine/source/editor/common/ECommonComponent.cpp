@@ -1,4 +1,4 @@
-#include "ECommonComponent.h"
+﻿#include "ECommonComponent.h"
 #include "runtime/mesh/Mesh.h"
 #include "runtime/mesh/MeshRender.h"
 #include "runtime/particle/ParticleRender.h"
@@ -89,7 +89,7 @@ bool ECommonComponent::ShowCullmask(const char* label, uint& cullmask)
 	if (cullmask == 0xffffffff || cullmask == all_mask)label_name = "Everything";
 	else if (cullmask == 0)label_name = "Nothing";
 
-	ImVec2 popup_start = ImGui::GetCursorScreenPos();
+	ImVec2 popupStart = ImGui::GetCursorScreenPos();
 	ImVec2 button_size(ImGui::GetContentRegionAvail().x, 0);
 	if (ImGui::Button(label_name.c_str(), button_size))
 	{
@@ -97,8 +97,8 @@ bool ECommonComponent::ShowCullmask(const char* label, uint& cullmask)
 	}
 
 	bool result = false;
-	popup_start.y += ImGui::GetFrameHeight() + 5.0f;
-	ImGui::SetNextWindowPos(popup_start);
+	popupStart.y += ImGui::GetFrameHeight() + 5.0f;
+	ImGui::SetNextWindowPos(popupStart);
 	ImGui::SetNextWindowSize(ImVec2(button_size.x, 0.0f));
 	if (ImGui::BeginPopup("CullMaskPopup", 0))
 	{
@@ -121,9 +121,9 @@ bool ECommonComponent::ShowCullmask(const char* label, uint& cullmask)
 
 		for (int i = 0; i < 32; ++i)
 		{
-			const char* sz_name = LayerMask::LayerToName(i).c_str();
-			if (sz_name[0] == '\0')continue;
-			if (ImGui::MenuItem(sz_name, "", &selected[i + 2]))
+			const char* szName = LayerMask::LayerToName(i).c_str();
+			if (szName[0] == '\0')continue;
+			if (ImGui::MenuItem(szName, "", &selected[i + 2]))
 			{
 				if (selected[i + 2])
 				{
@@ -143,7 +143,7 @@ bool ECommonComponent::ShowCullmask(const char* label, uint& cullmask)
 }
 bool ECommonComponent::ShowPopupList(const char* label, int& curr_select, const VecString& list)
 {
-	ImVec2 popup_start = ImGui::GetCursorScreenPos();
+	ImVec2 popupStart = ImGui::GetCursorScreenPos();
 	ImVec2 button_size(ImGui::GetContentRegionAvail().x, 0);
 
 	if (ImGui::Button(label, button_size))
@@ -152,8 +152,8 @@ bool ECommonComponent::ShowPopupList(const char* label, int& curr_select, const 
 	}
 
 	bool result = false;
-	popup_start.y += ImGui::GetFrameHeight() + 5.0f;
-	ImGui::SetNextWindowPos(popup_start);
+	popupStart.y += ImGui::GetFrameHeight() + 5.0f;
+	ImGui::SetNextWindowPos(popupStart);
 	ImGui::SetNextWindowSize(ImVec2(button_size.x, 300.0f));
 	if (ImGui::BeginPopup(label, 0))
 	{
@@ -169,10 +169,10 @@ bool ECommonComponent::ShowPopupList(const char* label, int& curr_select, const 
 
 		for(int i = 0; i < list.Size(); ++i)
 		{
-			const char* sz_name = list[i].c_str();
-			if (filter[0] == '\0' || String::Stristr(sz_name, filter) != nullptr)
+			const char* szName = list[i].c_str();
+			if (filter[0] == '\0' || String::Stristr(szName, filter) != nullptr)
 			{
-				if (ImGui::Selectable(sz_name))
+				if (ImGui::Selectable(szName))
 				{
 					curr_select = i;
 					result = true;
@@ -251,14 +251,14 @@ bool ECommonComponent::ShowFileIcon(const char* label, bool isSelected, Texture*
 
 	return ret;
 }
-void ECommonComponent::ShowAddComponent(std::function<void(String)> action, const EComponents& parent_component)
+void ECommonComponent::ShowAddComponent(std::function<void(String)> action, const EComponents& parentComponent)
 {
 	int id = 0;
-	for (const auto& component : parent_component.Components)
+	for (const auto& component : parentComponent.Components)
 	{
 		ImGui::PushID(id++);
-		const char* sz_name = component.second.c_str();
-		const Type* type = Type::GetType(sz_name);
+		const char* szName = component.second.c_str();
+		const Type* type = Type::GetType(szName);
 		if (type && type->HasFlag(TypeFlag::ShowInEditor))
 		{
 			if (ImGui::MenuItem(component.first.c_str()))
@@ -269,11 +269,11 @@ void ECommonComponent::ShowAddComponent(std::function<void(String)> action, cons
 		ImGui::PopID();
 	}
 
-	for (const auto& child : parent_component.Childrends)
+	for (const auto& child : parentComponent.Childrends)
 	{
 		ImGui::PushID(id++);
-		const char* sz_name = child.first.c_str();
-		if (ImGui::BeginMenu(sz_name))
+		const char* szName = child.first.c_str();
+		if (ImGui::BeginMenu(szName))
 		{
 			ShowAddComponent(action, child.second);
 			ImGui::EndMenu();
@@ -286,15 +286,15 @@ void ECommonComponent::ShowCreateObject()
 	//创建空对象
 	auto OnCreateEmpty = []() -> GameObject*
 	{
-		Transform* parent_node = nullptr;
+		Transform* parentNode = nullptr;
 		if (EditorAppliction::GetInspectorId())
 		{
 			GameObject* obj = SceneManager::GetGameObject(EditorAppliction::GetInspectorId());
-			if (obj)parent_node = obj->GetTransform();
+			if (obj)parentNode = obj->GetTransform();
 		}
-		GameObject* new_obj = GameObject::Instantiation("GameObject", parent_node);
-		EditorAppliction::SetInspectorType(InspectorType::Hierarchy, new_obj->GetInstanceId());
-		return new_obj;
+		GameObject* newObj = GameObject::Instantiation("GameObject", parentNode);
+		EditorAppliction::SetInspectorType(InspectorType::Hierarchy, newObj->GetInstanceId());
+		return newObj;
 	};
 
 	//创建空UI对象
@@ -321,20 +321,20 @@ void ECommonComponent::ShowCreateObject()
 			scaler->SetMatchWidth(true);
 		}
 
-		Transform* parent_node = nullptr;
+		Transform* parentNode = nullptr;
 		if (EditorAppliction::GetInspectorId())
 		{
 			GameObject* obj = SceneManager::GetGameObject(EditorAppliction::GetInspectorId());
-			if (obj)parent_node = obj->GetTransform();
+			if (obj)parentNode = obj->GetTransform();
 		}
 		else
 		{
 			UICanvas* canvas = SceneManager::GetUICanvas(0);
-			if (canvas)parent_node = canvas->GetTransform();
+			if (canvas)parentNode = canvas->GetTransform();
 		}
-		GameObject* new_obj = GameObject::InstantiationUI("GameObject", parent_node);
-		EditorAppliction::SetInspectorType(InspectorType::Hierarchy, new_obj->GetInstanceId());
-		return new_obj;
+		GameObject* newObj = GameObject::InstantiationUI("GameObject", parentNode);
+		EditorAppliction::SetInspectorType(InspectorType::Hierarchy, newObj->GetInstanceId());
+		return newObj;
 	};
 
 	ImGui::Separator();
@@ -360,16 +360,16 @@ void ECommonComponent::ShowCreateObject()
 				file = "internal/mesh/quad.obj";
 			if (!file.IsEmpty())
 			{
-				GameObject* new_obj = OnCreateEmpty();
-				MeshRender* mesh_render = new_obj->AddComponent<MeshRender>();
+				GameObject* newObj = OnCreateEmpty();
+				MeshRender* mesh_render = newObj->AddComponent<MeshRender>();
 				mesh_render->SetMesh(Mesh::Create(file));
 			}
 		}
 		ImGui::Separator();
 		if (ImGui::Selectable("Terrain"))
 		{
-			GameObject* new_obj = OnCreateEmpty();
-			Terrain* render = new_obj->AddComponent<Terrain>();
+			GameObject* newObj = OnCreateEmpty();
+			Terrain* render = newObj->AddComponent<Terrain>();
 			render->SetHeightMap("internal/texture/height.jpg");
 		}
 		ImGui::EndMenu();
@@ -378,8 +378,8 @@ void ECommonComponent::ShowCreateObject()
 	{
 		if (ImGui::Selectable("Sprite"))
 		{
-			GameObject* new_obj = OnCreateEmpty();
-			new_obj->AddComponent<Sprite>();
+			GameObject* newObj = OnCreateEmpty();
+			newObj->AddComponent<Sprite>();
 		}
 		ImGui::EndMenu();
 	}
@@ -387,9 +387,9 @@ void ECommonComponent::ShowCreateObject()
 	{
 		if (ImGui::Selectable("Particle System"))
 		{
-			GameObject* new_obj = OnCreateEmpty();
-			ParticleSystem* ps = new_obj->AddComponent<ParticleSystem>();
-			new_obj->GetTransform()->Pitch(-90.0f);
+			GameObject* newObj = OnCreateEmpty();
+			newObj->AddComponent<ParticleSystem>();
+			newObj->GetTransform()->Pitch(-90.0f);
 		}
 		ImGui::EndMenu();
 	}
@@ -397,20 +397,20 @@ void ECommonComponent::ShowCreateObject()
 	{
 		if (ImGui::Selectable("Directional Light"))
 		{
-			GameObject* new_obj = OnCreateEmpty();
-			Light* component = new_obj->AddComponent<Light>();
+			GameObject* newObj = OnCreateEmpty();
+			Light* component = newObj->AddComponent<Light>();
 			component->mType = LightType::Direction;
 		}
 		if (ImGui::Selectable("Point Light"))
 		{
-			GameObject* new_obj = OnCreateEmpty();
-			Light* component = new_obj->AddComponent<Light>();
+			GameObject* newObj = OnCreateEmpty();
+			Light* component = newObj->AddComponent<Light>();
 			component->mType = LightType::Point;
 		}
 		if (ImGui::Selectable("Spot Light"))
 		{
-			GameObject* new_obj = OnCreateEmpty();
-			Light* component = new_obj->AddComponent<Light>();
+			GameObject* newObj = OnCreateEmpty();
+			Light* component = newObj->AddComponent<Light>();
 			component->mType = LightType::Spot;
 		}
 		if (ImGui::Selectable("Relection Probe"))
@@ -423,32 +423,32 @@ void ECommonComponent::ShowCreateObject()
 	{
 		if (ImGui::Selectable("Image"))
 		{
-			GameObject* new_obj = OnCreateUIEmpty();
-			new_obj->SetInstanceName("Image");
-			UIImage* image = new_obj->AddComponent<UIImage>();
+			GameObject* newObj = OnCreateUIEmpty();
+			newObj->SetInstanceName("Image");
+			UIImage* image = newObj->AddComponent<UIImage>();
 			image->SetAtlas("", "");
 		}
 		if (ImGui::Selectable("Text"))
 		{
-			GameObject* new_obj = OnCreateUIEmpty();
-			new_obj->SetInstanceName("Text");
-			UILabel* label = new_obj->AddComponent<UILabel>();
+			GameObject* newObj = OnCreateUIEmpty();
+			newObj->SetInstanceName("Text");
+			UILabel* label = newObj->AddComponent<UILabel>();
 			label->SetText("");
 		}
 		if (ImGui::Selectable("Button"))
 		{
-			GameObject* new_obj = OnCreateUIEmpty();
-			new_obj->SetInstanceName("Button");
-			new_obj->AddComponent<UIButton>();
+			GameObject* newObj = OnCreateUIEmpty();
+			newObj->SetInstanceName("Button");
+			newObj->AddComponent<UIButton>();
 		}
 		if (ImGui::Selectable("LabelButton"))
 		{
-			GameObject* new_obj = OnCreateUIEmpty();
-			new_obj->SetInstanceName("LabelButton");
-			new_obj->AddComponent<UIButton>();
+			GameObject* newObj = OnCreateUIEmpty();
+			newObj->SetInstanceName("LabelButton");
+			newObj->AddComponent<UIButton>();
 
 			//label
-			GameObject* obj_label = GameObject::Instantiation("Text", new_obj->GetTransform());
+			GameObject* obj_label = GameObject::Instantiation("Text", newObj->GetTransform());
 			UILabel* label = obj_label->AddComponent<UILabel>();
 			label->SetText("Button");
 			label->SetColor(Color::Black);
@@ -458,19 +458,19 @@ void ECommonComponent::ShowCreateObject()
 		}
 		if (ImGui::Selectable("NormalButton"))
 		{
-			GameObject* new_obj = OnCreateUIEmpty();
-			new_obj->SetInstanceName("NormalButton");
-			UINormalButton* button = new_obj->AddComponent<UINormalButton>();
+			GameObject* newObj = OnCreateUIEmpty();
+			newObj->SetInstanceName("NormalButton");
+			UINormalButton* button = newObj->AddComponent<UINormalButton>();
 			button->SetStatus(UIButtonStatus::Normal);
 		}
 		if (ImGui::Selectable("InputField"))
 		{
-			GameObject* new_obj = OnCreateUIEmpty();
-			new_obj->SetInstanceName("InputField");
-			UIInputField* input_field = new_obj->AddComponent<UIInputField>();
+			GameObject* newObj = OnCreateUIEmpty();
+			newObj->SetInstanceName("InputField");
+			UIInputField* input_field = newObj->AddComponent<UIInputField>();
 
 			//label
-			GameObject* obj_label = GameObject::Instantiation("Text", new_obj->GetTransform());
+			GameObject* obj_label = GameObject::Instantiation("Text", newObj->GetTransform());
 			UILabel* label = obj_label->AddComponent<UILabel>();
 			label->SetColor(Color::Black);
 			label->SetAlignment(UITextAnchor::MiddleLeft);
@@ -478,7 +478,7 @@ void ECommonComponent::ShowCreateObject()
 			label->SetRaycastTarget(false);
 
 			//caret
-			GameObject* obj_caret = GameObject::Instantiation("Placeholder", new_obj->GetTransform());
+			GameObject* obj_caret = GameObject::Instantiation("Placeholder", newObj->GetTransform());
 			UIImage* caret = obj_caret->AddComponent<UIImage>();
 			caret->SetColor(label->GetColor());
 			caret->SetSize(1, label->GetFontSize());
@@ -492,39 +492,39 @@ void ECommonComponent::ShowCreateObject()
 		}
 		if (ImGui::Selectable("Checkbox"))
 		{
-			GameObject* new_obj = OnCreateUIEmpty();
-			new_obj->SetInstanceName("Checkbox");
-			UICheckbox* checkbox = new_obj->AddComponent<UICheckbox>();
+			GameObject* newObj = OnCreateUIEmpty();
+			newObj->SetInstanceName("Checkbox");
+			UICheckbox* checkbox = newObj->AddComponent<UICheckbox>();
 			checkbox->SetChecked(false);
 		}
 		if (ImGui::Selectable("Canvas"))
 		{
-			GameObject* new_obj = OnCreateUIEmpty();
-			new_obj->SetInstanceName("Canvas");
-			new_obj->AddComponent<UICanvas>();
+			GameObject* newObj = OnCreateUIEmpty();
+			newObj->SetInstanceName("Canvas");
+			newObj->AddComponent<UICanvas>();
 		}
 		ImGui::EndMenu();
 	}
 	if (ImGui::MenuItem("Camera"))
 	{
-		GameObject* new_obj = OnCreateEmpty();
-		new_obj->AddComponent<Camera>();
+		GameObject* newObj = OnCreateEmpty();
+		newObj->AddComponent<Camera>();
 	}
 }
 void ECommonComponent::ShowCreateAsset()
 {
 	if (ImGui::BeginMenu("Create"))
 	{
-		const String& select_path = EMain_Project::GetSelectPath();
+		const String& selectPath = EMain_Project::GetSelectPath();
 		ImGui::Separator();
 		//if (ImGui::MenuItem("Folder"))
 		//{
-		//	Directory::Create(Path::Combine(Resource::GetFullDataPath(select_path), "New Folder"));
+		//	Directory::Create(Path::Combine(Resource::GetFullDataPath(selectPath), "New Folder"));
 		//}
 
 		if (ImGui::MenuItem("Material"))
 		{
-			String path = Path::Combine(Resource::GetFullDataPath(select_path), "New Material.material");
+			String path = Path::Combine(Resource::GetFullDataPath(selectPath), "New Material.material");
 			File::Copy(Resource::GetFullSavePath("data/template/MaterialTemplate.material"), path);
 		}
 

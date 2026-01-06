@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2021/8/7
@@ -18,7 +18,7 @@ class EMain_Inspector : public EWindowBase
 
 	DISALLOW_CONSTRUCTOR_COPY_ASSIGN(EMain_Inspector);
 	BEGIN_DERIVED_REFECTION_TYPE(EMain_Inspector, EWindowBase)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 private:
 	static void Initialize();
@@ -27,8 +27,8 @@ private:
 	static void Render();
 
 private:
-	static bool IsShow;
-	static InspectorType    _inspectorType;
-	static EInspector_Base* _inspectors[(int)InspectorType::Max];
+	inline static bool IsShow = true;
+	inline static InspectorType _inspectorType = InspectorType::None;
+	inline static EInspector_Base* _inspectors[(int)InspectorType::Max] = { nullptr };
 };
 DC_END_NAMESPACE

@@ -1,4 +1,4 @@
-/* Copyright (c) 2013 Dropbox, Inc.
+﻿/* Copyright (c) 2013 Dropbox, Inc.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -34,7 +34,6 @@ namespace json11 {
     using std::map;
     using std::make_shared;
     using std::initializer_list;
-    using std::move;
 
     /* * * * * * * * * * * * * * * * * * * *
     * Serialization
@@ -147,7 +146,7 @@ namespace json11 {
 
         // Constructors
         explicit Value(const T &value) : m_value(value) {}
-        explicit Value(T &&value) : m_value(move(value)) {}
+        explicit Value(T &&value) : m_value(std::move(value)) {}
 
         // Get type tag
         Json::Type type() const override {
@@ -195,7 +194,7 @@ namespace json11 {
         const string &string_value() const override { return m_value; }
     public:
         explicit JsonString(const string &value) : Value(value) {}
-        explicit JsonString(string &&value) : Value(move(value)) {}
+        explicit JsonString(string &&value) : Value(std::move(value)) {}
     };
 
     class JsonArray final : public Value<Json::ARRAY, Json::array> {
@@ -203,7 +202,7 @@ namespace json11 {
         const Json & operator[](size_t i) const override;
     public:
         explicit JsonArray(const Json::array &value) : Value(value) {}
-        explicit JsonArray(Json::array &&value) : Value(move(value)) {}
+        explicit JsonArray(Json::array &&value) : Value(std::move(value)) {}
     };
 
     class JsonObject final : public Value<Json::OBJECT, Json::object> {
@@ -211,7 +210,7 @@ namespace json11 {
         const Json & operator[](const string &key) const override;
     public:
         explicit JsonObject(const Json::object &value) : Value(value) {}
-        explicit JsonObject(Json::object &&value) : Value(move(value)) {}
+        explicit JsonObject(Json::object &&value) : Value(std::move(value)) {}
     };
 
     class JsonNull final : public Value<Json::NUL, std::nullptr_t> {
@@ -253,12 +252,12 @@ namespace json11 {
     Json::Json(int value) : m_ptr(make_shared<JsonInt>(value)) {}
     Json::Json(bool value) : m_ptr(value ? statics().t : statics().f) {}
     Json::Json(const string &value) : m_ptr(make_shared<JsonString>(value)) {}
-    Json::Json(string &&value) : m_ptr(make_shared<JsonString>(move(value))) {}
+    Json::Json(string &&value) : m_ptr(make_shared<JsonString>(std::move(value))) {}
     Json::Json(const char * value) : m_ptr(make_shared<JsonString>(value)) {}
     Json::Json(const Json::array &values) : m_ptr(make_shared<JsonArray>(values)) {}
-    Json::Json(Json::array &&values) : m_ptr(make_shared<JsonArray>(move(values))) {}
+    Json::Json(Json::array &&values) : m_ptr(make_shared<JsonArray>(std::move(values))) {}
     Json::Json(const Json::object &values) : m_ptr(make_shared<JsonObject>(values)) {}
-    Json::Json(Json::object &&values) : m_ptr(make_shared<JsonObject>(move(values))) {}
+    Json::Json(Json::object &&values) : m_ptr(make_shared<JsonObject>(std::move(values))) {}
 
     /* * * * * * * * * * * * * * * * * * * *
     * Accessors
@@ -351,7 +350,7 @@ namespace json11 {
         * Mark this parse as failed.
         */
         Json fail(string &&msg) {
-            return fail(move(msg), Json());
+            return fail(std::move(msg), Json());
         }
 
         template <typename T>

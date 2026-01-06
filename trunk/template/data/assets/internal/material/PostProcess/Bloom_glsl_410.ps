@@ -1,0 +1,23 @@
+#version 410
+
+struct type_CustomBuffer
+{
+    vec4 _MainTex_TexelSize;
+    vec4 _ColorThreshold;
+    vec4 _BlurOffsets;
+    vec4 _BloomColor;
+    float _BloomFactor;
+};
+
+uniform type_CustomBuffer CustomBuffer;
+
+uniform sampler2D _MainTex;
+
+layout(location = 0) in vec2 var_TEXCOORD0;
+layout(location = 0) out vec4 out_var_SV_Target;
+
+void main()
+{
+    out_var_SV_Target = clamp(texture(_MainTex, var_TEXCOORD0) - CustomBuffer._ColorThreshold, vec4(0.0), vec4(1.0));
+}
+

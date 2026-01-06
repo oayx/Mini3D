@@ -1,32 +1,28 @@
 ﻿#include "EditorCursor.h"
 #include "runtime/input/Input.h"
 #include "platform/WindowManager.h"
-#if defined(DC_PLATFORM_WIN32) || defined(DC_PLATFORM_LINUX)
+#if defined(DC_PLATFORM_WIN32) || defined(DC_PLATFORM_LINUX) || defined(DC_PLATFORM_MAC)
 #include "platform/common/glfw/GLFWRenderWindow.h"
 #endif
  
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-bool EditorCursor::_isDraging = false;
-String EditorCursor::_dragFile = "";
-ImGuiMouseCursor EditorCursor::_lastMouseCursor = ImGuiMouseCursor_COUNT;
-Vector<std::wstring> EditorCursor::_addFiles;
 bool EditorCursor::Update()
 {
-	DC_PROFILE_FUNCTION();
+	DC_PROFILE_FUNCTION;
 	ImGuiIO& io = ImGui::GetIO();
 
-	ImGuiMouseCursor mouse_cursor = io.MouseDrawCursor ? ImGuiMouseCursor_None : ImGui::GetMouseCursor();
+	ImGuiMouseCursor mouseCursor = io.MouseDrawCursor ? ImGuiMouseCursor_None : ImGui::GetMouseCursor();
 
-	if (_isDraging && mouse_cursor != ImGuiMouseCursor_None)
-		mouse_cursor = ImGuiMouseCursor_Hand;
+	if (_isDraging && mouseCursor != ImGuiMouseCursor_None)
+		mouseCursor = ImGuiMouseCursor_Hand;
 
-	if (_lastMouseCursor == mouse_cursor)
+	if (_lastMouseCursor == mouseCursor)
 		return false;
 	
-	_lastMouseCursor = mouse_cursor;
-#if defined(DC_PLATFORM_WIN32) || defined(DC_PLATFORM_LINUX)
-	#if defined(DC_GRAPHICS_API_DX9) || defined(DC_GRAPHICS_API_DX11)
+	_lastMouseCursor = mouseCursor;
+#if defined(DC_PLATFORM_WIN32) || defined(DC_PLATFORM_LINUX) || defined(DC_PLATFORM_MAC)
+	#if defined(DC_GRAPHICS_API_DX9) || defined(DC_GRAPHICS_API_DX11) || defined(DC_GRAPHICS_API_DX12)
 		static HCURSOR MouseCursors[ImGuiMouseCursor_COUNT] =
 		{
 			::LoadCursor(NULL, IDC_ARROW),
@@ -40,13 +36,13 @@ bool EditorCursor::Update()
 			::LoadCursor(NULL, IDC_NO),
 		};
 
-		if (mouse_cursor == ImGuiMouseCursor_None || io.MouseDrawCursor)
+		if (mouseCursor == ImGuiMouseCursor_None || io.MouseDrawCursor)
 		{
 			::SetCursor(NULL);
 		}
 		else
 		{
-			::SetCursor(MouseCursors[mouse_cursor]);
+			::SetCursor(MouseCursors[mouseCursor]);
 		}
 	#elif defined(DC_GRAPHICS_API_OPENGL) || defined(DC_GRAPHICS_API_OPENGLES3)
 		static GLFWcursor* MouseCursors[ImGuiMouseCursor_COUNT] = 
@@ -66,13 +62,13 @@ bool EditorCursor::Update()
 		if (render_window->Is<GLFWRenderWindow>())
 		{
 			GLFWwindow* window = render_window->As<GLFWRenderWindow>()->GetGLFWwindow();
-			if (mouse_cursor == ImGuiMouseCursor_None || io.MouseDrawCursor)
+			if (mouseCursor == ImGuiMouseCursor_None || io.MouseDrawCursor)
 			{
 				glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 			}
 			else
 			{
-				glfwSetCursor(window, MouseCursors[mouse_cursor]);
+				glfwSetCursor(window, MouseCursors[mouseCursor]);
 				glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 			}
 		}

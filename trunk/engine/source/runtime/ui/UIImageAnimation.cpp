@@ -1,13 +1,13 @@
-#include "UIImageAnimation.h"
+﻿#include "UIImageAnimation.h"
  
 DC_BEGIN_NAMESPACE
 /********************************************************************/
 IMPL_DERIVED_REFECTION_TYPE(UIImageAnimation, UIImage);
-Object* UIImageAnimation::Clone(Object* new_obj)
+Object* UIImageAnimation::Clone(Object* newObj)
 {
-	base::Clone(new_obj);
-	UIImageAnimation* obj = dynamic_cast<UIImageAnimation*>(new_obj);
-	if (!obj)return new_obj;
+	base::Clone(newObj);
+	UIImageAnimation* obj = dynamic_cast<UIImageAnimation*>(newObj);
+	if (!obj)return newObj;
 
 	for (const auto& p : _atlases)
 	{

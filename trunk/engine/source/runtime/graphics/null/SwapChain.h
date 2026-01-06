@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Description：
@@ -16,11 +16,12 @@ class RenderWindow;
 class SwapChain : public Object
 {
 	friend class GraphicsDevice;
+	FRIEND_CONSTRUCT_DESTRUCT(SwapChain);
 	DISALLOW_COPY_ASSIGN(SwapChain);
 	BEGIN_DERIVED_REFECTION_TYPE(SwapChain, Object)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
-public:
+protected:
 	SwapChain() = default;
 	~SwapChain() = default;
 

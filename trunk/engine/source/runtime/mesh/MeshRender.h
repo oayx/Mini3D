@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Date：2020/12/13
@@ -21,7 +21,7 @@ class ENGINE_DLL MeshRender : public Renderer
 	BEGIN_DERIVED_REFECTION_TYPE(MeshRender, Renderer)
 		CTORS(DEFAULT_CTOR(MeshRender))
 		ADD_EDITOR_COMPONENT("Mesh/MeshRender")
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 protected:
 	~MeshRender();

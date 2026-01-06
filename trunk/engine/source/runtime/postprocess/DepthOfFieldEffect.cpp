@@ -1,4 +1,4 @@
-#include "DepthOfFieldEffect.h"
+﻿#include "DepthOfFieldEffect.h"
 #include "runtime/input/Input.h"
 #include "runtime/graphics/Material.h"
 #include "runtime/graphics/Pass.h"
@@ -19,11 +19,11 @@ DepthOfFieldEffect::~DepthOfFieldEffect()
 {
 	SAFE_RELEASE(_material);
 }
-Object* DepthOfFieldEffect::Clone(Object* new_obj)
+Object* DepthOfFieldEffect::Clone(Object* newObj)
 {
-	base::Clone(new_obj);
-	DepthOfFieldEffect* obj = dynamic_cast<DepthOfFieldEffect*>(new_obj);
-	if (!obj)return new_obj;
+	base::Clone(newObj);
+	DepthOfFieldEffect* obj = dynamic_cast<DepthOfFieldEffect*>(newObj);
+	if (!obj)return newObj;
 
 	obj->_downSample = _downSample;
 

@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************************************/
 // @author hannibal
 // @date   2020/08/04
@@ -11,7 +11,7 @@
 DC_BEGIN_NAMESPACE
 class AudioListenerPrivate;
 /********************************************************************/
-class ENGINE_DLL AudioListener Final : public Component
+class ENGINE_DLL AudioListener final : public Component
 {
 	friend class GameObject;
 	DECLARE_OBJECT_CLONE;
@@ -20,7 +20,7 @@ class ENGINE_DLL AudioListener Final : public Component
 	BEGIN_DERIVED_REFECTION_TYPE(AudioListener, Component)
 		CTORS(DEFAULT_CTOR(AudioListener))
 		ADD_EDITOR_COMPONENT("Audio/AudioListener")
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 private:
 	AudioListener();

@@ -10,13 +10,13 @@ const Vector2 Vector2::xAxis(1.0f,0.0f);
 const Vector2 Vector2::yAxis(0.0f,1.0f);
 const Vector2 Vector2::one(1.0f, 1.0f);
 const Vector2 Vector2::Infinity(std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity());
-Vector2 Vector2::Normalize()const
+Vector2 Vector2::Normalize()const noexcept
 {
 	Vector2 vec = *this;
 	vec.Normalize();
 	return vec;
 }
-Vector2 Vector2::Normalize()
+Vector2 Vector2::Normalize() noexcept
 {
 	float fLenght = Lenght();
 	if (Math::FloatEqual(fLenght, 0.0f))
@@ -31,13 +31,13 @@ Vector2 Vector2::Normalize()
 	}
 	return *this;
 }
-Vector2 Vector2::Lerp(const Vector2& from, const Vector2& to, float t, bool clamp_01)
+Vector2 Vector2::Lerp(const Vector2& from, const Vector2& to, float t, bool clamp_01) noexcept
 {
 	return Vector2(
 		Math::Lerp(from.x, to.x, t, clamp_01),
 		Math::Lerp(from.y, to.y, t, clamp_01));
 }
-float Vector2::RotationAngle(const Vector2 &vec)const
+float Vector2::RotationAngle(const Vector2 &vec)const noexcept
 {
 	const float epsilon = (float)(1.0e-6);
 	const float nyPI = acos(-1.0f);
@@ -103,7 +103,7 @@ float Vector2::RotationAngle(const Vector2 &vec)const
 * 参数列表： 
 * 返 回 值： 
 ============================================================================*/
-Vector2 Vector2::CounterClockwiseRotation(float radian)
+Vector2 Vector2::CounterClockwiseRotation(float radian) noexcept
 {
 	float fCos = Math::Cos(radian);
 	float fSin = Math::Sin(radian);
@@ -129,7 +129,7 @@ Vector2 Vector2::CounterClockwiseRotation(float radian)
 * 参数列表： 
 * 返 回 值： 
 ============================================================================*/
-Vector2 Vector2::ClockwiseRotation(float radian)
+Vector2 Vector2::ClockwiseRotation(float radian) noexcept
 {
 	float fCos = Math::Cos(radian);
 	float fSin = Math::Sin(radian);

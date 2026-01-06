@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2020/3/16
@@ -10,7 +10,7 @@
 #include "runtime/CommonDefine.h"
 
 DC_BEGIN_NAMESPACE
-class ENGINE_DLL ImageMipData Final : public object
+class ENGINE_DLL ImageMipData final : public object
 {
 public:
 	uint RowPitch = 0;
@@ -23,13 +23,13 @@ public:
 	ImageMipData(uint row_pitch, uint width, uint height, uint size)
 		: RowPitch(row_pitch), Width(width), Height(height), Size(size)
 	{
-		Data = NewArray<byte>(Size);
+		Data = Memory::NewArray<byte>(Size);
 	}
 	~ImageMipData()
 	{
 		if (Data)
 		{
-			DeleteArray(Data);
+			Memory::DeleteArray(Data);
 			Data = nullptr;
 		}
 	}
@@ -52,14 +52,14 @@ public:
 	}
 };
 /********************************************************************/
-class ENGINE_DLL Image Final : public Object
+class ENGINE_DLL Image final : public Object
 {
 	typedef Vector<ImageMipData*> ImageDatas; 
 	FRIEND_CONSTRUCT_DESTRUCT(Image);
 	DECLARE_OBJECT_CLONE;
 	DISALLOW_COPY_ASSIGN(Image);
 	BEGIN_DERIVED_REFECTION_TYPE(Image, Object)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 	Image() {}
 	Image(ColorFormat format, const iSize& size, bool round);
@@ -92,7 +92,7 @@ public:
 	int			MipLevels()const { return _imageData.Size(); }
 
 	Color 		GetPixel(uint x, uint y) const;
-	void  		SetPixel(uint x, uint y, const Color &color, bool blend = false );
+	bool  		SetPixel(uint x, uint y, const Color &color, bool blend = false );
 
 	bool		Resize(uint w, uint h);//调整大小，只针对非压缩格式，而且levels为1的情况
 	void		Fill(const Color &color);
@@ -114,9 +114,9 @@ private:
 
 private:
 	String		_file = "";
-	ImageDatas	_imageData;					//数据
+	ImageDatas	_imageData;						//数据
 	iSize		_size;							//大小
-	ColorFormat _format = ColorFormat::UNKNOWN;//格式
+	ColorFormat _format = ColorFormat::UNKNOWN;	//格式
 	bool		_isCube = false;				//是否立方体
 	bool		_isStatic = false;				//是否静态(从文件读取)，如果是静态不能修改
 };//Image

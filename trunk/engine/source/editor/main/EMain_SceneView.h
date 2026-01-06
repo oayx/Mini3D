@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2021/9/2
@@ -21,7 +21,7 @@ class EMain_SceneView : public EWindowBase
 	friend class EditorAppliction;
 	DISALLOW_CONSTRUCTOR_COPY_ASSIGN(EMain_SceneView);
 	BEGIN_DERIVED_REFECTION_TYPE(EMain_SceneView, EWindowBase)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 private:
 	static void Update();
@@ -40,14 +40,14 @@ public:
 	static void OnDoubleClick(Transform* node);
 
 private:
-	static const int	TEXTURE_SIZE = 2048;
-	static bool			IsShow;
-	static bool			_isFocus;
-	static bool			_isForcus;		//获得焦点
-	static bool			_isMouseIn;	//鼠标在窗口
-	static Camera*		_camera;		//编辑模式相机
-	static LineRender*	_lineGrid;		//网格
-	static Rect			_viewPort;		//视口
-	static Rect			_oldViewPort;
+	inline static constexpr int	TEXTURE_SIZE = 2048;
+	inline static bool IsShow = true;
+	inline static bool _isFocus = false;
+	inline static bool _isForcus = false;		//获得焦点
+	inline static bool _isMouseIn = false;	//鼠标在窗口
+	inline static Camera* _camera = nullptr;		//编辑模式相机
+	inline static LineRender* _lineGrid = nullptr;		//网格
+	inline static Rect _viewPort = Rect::zero;		//视口
+	inline static Rect _oldViewPort = Rect::zero;
 };
 DC_END_NAMESPACE

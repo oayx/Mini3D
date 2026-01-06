@@ -16,11 +16,11 @@ uniform type_TransformBuffer TransformBuffer;
 
 layout(location = 0) in vec4 in_var_POSITION;
 layout(location = 1) in vec4 in_var_COLOR0;
-layout(location = 0) out vec4 out_var_TEXCOORD0;
+layout(location = 0) out vec4 var_TEXCOORD0;
 
 void main()
 {
     gl_Position = in_var_POSITION * TransformBuffer.MATRIX_MVP;
-    out_var_TEXCOORD0 = in_var_COLOR0;
+    var_TEXCOORD0 = in_var_COLOR0;
 }
 

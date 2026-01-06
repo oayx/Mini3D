@@ -23,29 +23,29 @@
     <RootNamespace>Main</RootNamespace>
     <Keyword>Win32Proj</Keyword>
     <ProjectName>engine</ProjectName>
-    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
@@ -107,8 +107,8 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>.\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32_LEAN_AND_MEAN;DC_EXPORT_DLL;_DEBUG;DC_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <MinimalRebuild>true</MinimalRebuild>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32_LEAN_AND_MEAN;DC_EXPORT_DLL;TRACY_ENABLE;_DEBUG;DC_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>false</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
@@ -117,7 +117,7 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <DisableSpecificWarnings>
       </DisableSpecificWarnings>
-      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <FunctionLevelLinking>
       </FunctionLevelLinking>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
@@ -131,11 +131,13 @@
       <Command>if not exist "$(OutDir)" mkdir "$(OutDir)"
 xcopy /Y /Q "$(SolutionDir)..\..\engine\libs\directx\prebuilt\win\x86\*.*" "$(OutDir)"
 xcopy /Y /Q "$(SolutionDir)..\..\engine\libs\ffmpeg\prebuilt\win\x86\*.*" "$(OutDir)"
-xcopy /Y /Q /E "$(SolutionDir)..\..\engine\libs\opengles\prebuilt\win\x86\*.*" "$(OutDir)"</Command>
+xcopy /Y /Q "$(SolutionDir)..\..\engine\libs\vulkan\prebuilt\win\x86\vulkan-1.lib" "$(OutDir)"
+xcopy /Y /Q /E "$(SolutionDir)..\..\engine\libs\opengles\prebuilt\win\x86\*.*" "$(OutDir)"
+xcopy /Y /Q /E "$(SolutionDir)..\..\engine\libs\dxcompiler\prebuilt\win\x86\*.*" "$(OutDir)"</Command>
     </PreLinkEvent>
     <Link>
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libassimp.lib;libastc.lib;libbox2d.lib;libbullet.lib;libcrypto.lib;libddsconv.lib;libdirectxtex.lib;libetcpack.lib;libformat.lib;libfreetype.lib;libglad.lib;libglfw.lib;libglm.lib;libiconv.lib;libimgui.lib;libjson.lib;liblua.lib;libopenal.lib;libqrencode.lib;libsoil2.lib;libspine.lib;libstb.lib;libtinyexpr.lib;libtinystl.lib;libtinyxml2.lib;libyamlcpp.lib;libzlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libassimp.lib;libastc.lib;libbox2d.lib;libbullet.lib;libcrypto.lib;libddsconv.lib;libdirectxtex.lib;libetcpack.lib;libformat.lib;libfreetype.lib;libglad.lib;libglfw.lib;libiconv.lib;libimgui.lib;libjson.lib;liblua.lib;libopenal.lib;libqrencode.lib;libsoil2.lib;libspine.lib;libstb.lib;libtinyexpr.lib;libtinyxml2.lib;libyamlcpp.lib;libzlib.lib;ShaderConductor.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>
       </SubSystem>
@@ -154,7 +156,7 @@ xcopy /Y /Q /E "$(SolutionDir)..\..\template\data\*.*" "$(OutDir)\data"</Command
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>.\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32_LEAN_AND_MEAN;DC_EXPORT_DLL;_WIN64;_DEBUG;DC_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32_LEAN_AND_MEAN;DC_EXPORT_DLL;TRACY_ENABLE;_WIN64;_DEBUG;DC_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
@@ -163,7 +165,7 @@ xcopy /Y /Q /E "$(SolutionDir)..\..\template\data\*.*" "$(OutDir)\data"</Command
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <DisableSpecificWarnings>
       </DisableSpecificWarnings>
-      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <FunctionLevelLinking>
       </FunctionLevelLinking>
       <OmitFramePointers>false</OmitFramePointers>
@@ -178,6 +180,7 @@ xcopy /Y /Q /E "$(SolutionDir)..\..\template\data\*.*" "$(OutDir)\data"</Command
       <Command>if not exist "$(OutDir)" mkdir "$(OutDir)"
 xcopy /Y /Q "$(SolutionDir)..\..\engine\libs\directx\prebuilt\win\x64\*.*" "$(OutDir)"
 xcopy /Y /Q "$(SolutionDir)..\..\engine\libs\ffmpeg\prebuilt\win\x64\*.*" "$(OutDir)"
+xcopy /Y /Q "$(SolutionDir)..\..\engine\libs\vulkan\prebuilt\win\x64\vulkan-1.lib" "$(OutDir)"
 xcopy /Y /Q /E "$(SolutionDir)..\..\engine\libs\opengles\prebuilt\win\x64\*.*" "$(OutDir)"
 xcopy /Y /Q /E "$(SolutionDir)..\..\engine\libs\dxcompiler\prebuilt\win\x64\*.*" "$(OutDir)"</Command>
     </PreLinkEvent>
@@ -186,7 +189,7 @@ xcopy /Y /Q /E "$(SolutionDir)..\..\engine\libs\dxcompiler\prebuilt\win\x64\*.*"
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>
       </SubSystem>
-      <AdditionalDependencies>libassimp.lib;libastc.lib;libbox2d.lib;libbullet.lib;libcrypto.lib;libddsconv.lib;libdirectxtex.lib;libetcpack.lib;libformat.lib;libfreetype.lib;libglad.lib;libglfw.lib;libglm.lib;libiconv.lib;libimgui.lib;libjson.lib;liblua.lib;libopenal.lib;libqrencode.lib;libsoil2.lib;libspine.lib;libstb.lib;libtinyexpr.lib;libtinystl.lib;libtinyxml2.lib;libyamlcpp.lib;libzlib.lib;ShaderConductor.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libassimp.lib;libastc.lib;libbox2d.lib;libbullet.lib;libcrypto.lib;libddsconv.lib;libdirectxtex.lib;libetcpack.lib;libformat.lib;libfreetype.lib;libglad.lib;libglfw.lib;libiconv.lib;libimgui.lib;libjson.lib;liblua.lib;libopenal.lib;libqrencode.lib;libsoil2.lib;libspine.lib;libstb.lib;libtinyexpr.lib;libtinyxml2.lib;libyamlcpp.lib;libzlib.lib;ShaderConductor.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>if not exist "$(OutDir)\data" mkdir "$(OutDir)\data"
@@ -209,7 +212,7 @@ xcopy /Y /Q /E "$(SolutionDir)..\..\template\data\*.*" "$(OutDir)\data"</Command
       <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <FunctionLevelLinking>
       </FunctionLevelLinking>
       <WholeProgramOptimization>false</WholeProgramOptimization>
@@ -226,11 +229,13 @@ xcopy /Y /Q /E "$(SolutionDir)..\..\template\data\*.*" "$(OutDir)\data"</Command
       <Command>if not exist "$(OutDir)" mkdir "$(OutDir)"
 xcopy /Y /Q "$(SolutionDir)..\..\engine\libs\directx\prebuilt\win\x86\*.*" "$(OutDir)"
 xcopy /Y /Q "$(SolutionDir)..\..\engine\libs\ffmpeg\prebuilt\win\x86\*.*" "$(OutDir)"
-xcopy /Y /Q /E "$(SolutionDir)..\..\engine\libs\opengles\prebuilt\win\x86\*.*" "$(OutDir)"</Command>
+xcopy /Y /Q "$(SolutionDir)..\..\engine\libs\vulkan\prebuilt\win\x86\vulkan-1.lib" "$(OutDir)"
+xcopy /Y /Q /E "$(SolutionDir)..\..\engine\libs\opengles\prebuilt\win\x86\*.*" "$(OutDir)"
+xcopy /Y /Q /E "$(SolutionDir)..\..\engine\libs\dxcompiler\prebuilt\win\x86\*.*" "$(OutDir)"</Command>
     </PreLinkEvent>
     <Link>
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libassimp.lib;libastc.lib;libbox2d.lib;libbullet.lib;libcrypto.lib;libddsconv.lib;libdirectxtex.lib;libetcpack.lib;libformat.lib;libfreetype.lib;libglad.lib;libglfw.lib;libglm.lib;libiconv.lib;libimgui.lib;libjson.lib;liblua.lib;libopenal.lib;libqrencode.lib;libsoil2.lib;libspine.lib;libstb.lib;libtinyexpr.lib;libtinystl.lib;libtinyxml2.lib;libyamlcpp.lib;libzlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libassimp.lib;libastc.lib;libbox2d.lib;libbullet.lib;libcrypto.lib;libddsconv.lib;libdirectxtex.lib;libetcpack.lib;libformat.lib;libfreetype.lib;libglad.lib;libglfw.lib;libiconv.lib;libimgui.lib;libjson.lib;liblua.lib;libopenal.lib;libqrencode.lib;libsoil2.lib;libspine.lib;libstb.lib;libtinyexpr.lib;libtinyxml2.lib;libyamlcpp.lib;libzlib.lib;ShaderConductor.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>
       </SubSystem>
@@ -256,7 +261,7 @@ xcopy /Y /Q /E "$(SolutionDir)..\..\template\data\*.*" "$(OutDir)\data"</Command
       <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <FunctionLevelLinking>
       </FunctionLevelLinking>
       <OmitFramePointers>false</OmitFramePointers>
@@ -274,6 +279,7 @@ xcopy /Y /Q /E "$(SolutionDir)..\..\template\data\*.*" "$(OutDir)\data"</Command
       <Command>if not exist "$(OutDir)" mkdir "$(OutDir)"
 xcopy /Y /Q "$(SolutionDir)..\..\engine\libs\directx\prebuilt\win\x64\*.*" "$(OutDir)"
 xcopy /Y /Q "$(SolutionDir)..\..\engine\libs\ffmpeg\prebuilt\win\x64\*.*" "$(OutDir)"
+xcopy /Y /Q "$(SolutionDir)..\..\engine\libs\vulkan\prebuilt\win\x64\vulkan-1.lib" "$(OutDir)"
 xcopy /Y /Q /E "$(SolutionDir)..\..\engine\libs\opengles\prebuilt\win\x64\*.*" "$(OutDir)"
 xcopy /Y /Q /E "$(SolutionDir)..\..\engine\libs\dxcompiler\prebuilt\win\x64\*.*" "$(OutDir)"</Command>
     </PreLinkEvent>
@@ -282,7 +288,7 @@ xcopy /Y /Q /E "$(SolutionDir)..\..\engine\libs\dxcompiler\prebuilt\win\x64\*.*"
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>
       </SubSystem>
-      <AdditionalDependencies>libassimp.lib;libastc.lib;libbox2d.lib;libbullet.lib;libcrypto.lib;libddsconv.lib;libdirectxtex.lib;libetcpack.lib;libformat.lib;libfreetype.lib;libglad.lib;libglfw.lib;libglm.lib;libiconv.lib;libimgui.lib;libjson.lib;liblua.lib;libopenal.lib;libqrencode.lib;libsoil2.lib;libspine.lib;libstb.lib;libtinyexpr.lib;libtinystl.lib;libtinyxml2.lib;libyamlcpp.lib;libzlib.lib;ShaderConductor.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libassimp.lib;libastc.lib;libbox2d.lib;libbullet.lib;libcrypto.lib;libddsconv.lib;libdirectxtex.lib;libetcpack.lib;libformat.lib;libfreetype.lib;libglad.lib;libglfw.lib;libiconv.lib;libimgui.lib;libjson.lib;liblua.lib;libopenal.lib;libqrencode.lib;libsoil2.lib;libspine.lib;libstb.lib;libtinyexpr.lib;libtinyxml2.lib;libyamlcpp.lib;libzlib.lib;ShaderConductor.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>if not exist "$(OutDir)\data" mkdir "$(OutDir)\data"
@@ -295,7 +301,6 @@ xcopy /Y /Q /E "$(SolutionDir)..\..\template\data\*.*" "$(OutDir)\data"</Command
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="core\Atomic.cpp" />
     <ClCompile Include="core\color\Color.cpp" />
     <ClCompile Include="core\color\ColorConverter.cpp" />
     <ClCompile Include="core\Debuger.cpp" />
@@ -308,7 +313,6 @@ xcopy /Y /Q /E "$(SolutionDir)..\..\template\data\*.*" "$(OutDir)\data"</Command
     <ClCompile Include="core\geometry\Frustum.cpp" />
     <ClCompile Include="core\geometry\Plane.cpp" />
     <ClCompile Include="core\geometry\Ray.cpp" />
-    <ClCompile Include="core\geometry\Triangle.cpp" />
     <ClCompile Include="core\image\Image.astc.cpp" />
     <ClCompile Include="core\image\Image.cpp" />
     <ClCompile Include="core\image\Image.dxt.cpp" />
@@ -323,7 +327,7 @@ xcopy /Y /Q /E "$(SolutionDir)..\..\template\data\*.*" "$(OutDir)\data"</Command
     <ClCompile Include="core\math\Vector2.cpp" />
     <ClCompile Include="core\math\Vector3.cpp" />
     <ClCompile Include="core\math\Vector4.cpp" />
-    <ClCompile Include="core\memory\Memory.cpp" />
+    <ClCompile Include="core\memory\MemoryOperator.h" />
     <ClCompile Include="core\Object.cpp" />
     <ClCompile Include="core\reflection\Type.cpp" />
     <ClCompile Include="core\serialize\SerializeBase.cpp" />
@@ -371,15 +375,25 @@ xcopy /Y /Q /E "$(SolutionDir)..\..\template\data\*.*" "$(OutDir)\data"</Command
     <ClCompile Include="game\CommonComponent.cpp" />
     <ClCompile Include="game\CharacterCamera.cpp" />
     <ClCompile Include="game\SceneCamera.cpp" />
+    <ClCompile Include="platform\android\AndroidNativeAssets.cpp" />
+    <ClCompile Include="platform\android\AndroidNativeCallJava.cpp" />
+    <ClCompile Include="platform\android\AndroidNativeInteraction.cpp" />
     <ClCompile Include="platform\android\AndroidPlatform.cpp" />
-    <ClCompile Include="platform\android\native_android.cpp" />
+    <ClCompile Include="platform\android\AndroidNativeEngine.cpp" />
     <ClCompile Include="platform\android\window\AndroidGLESRenderWindow.cpp" />
     <ClCompile Include="platform\common\egl\EGL_Context.cpp" />
     <ClCompile Include="platform\common\glfw\GLFWRenderWindow.cpp" />
+    <ClCompile Include="platform\ios\iOSPlatform.cpp" />
+    <ClCompile Include="platform\ios\window\iOSGLRenderWindow.cpp" />
     <ClCompile Include="platform\linux\LinuxPlatform.cpp" />
     <ClCompile Include="platform\linux\window\LinuxGLRenderWindow.cpp" />
+    <ClCompile Include="platform\mac\MacPlatform.cpp" />
+    <ClCompile Include="platform\mac\window\MacGLRenderWindow.cpp" />
     <ClCompile Include="platform\PlatformBase.cpp" />
     <ClCompile Include="platform\RenderWindow.cpp" />
+    <ClCompile Include="platform\wasm\WASMNative.cpp" />
+    <ClCompile Include="platform\wasm\WASMPlatform.cpp" />
+    <ClCompile Include="platform\wasm\window\WASMGLRenderWindow.cpp" />
     <ClCompile Include="platform\WindowManager.cpp" />
     <ClCompile Include="platform\windows\Win32FolderMonitor.cpp" />
     <ClCompile Include="platform\windows\Win32Mouse.cpp" />
@@ -387,6 +401,7 @@ xcopy /Y /Q /E "$(SolutionDir)..\..\template\data\*.*" "$(OutDir)\data"</Command
     <ClCompile Include="platform\windows\window\Win32GLESRenderWindow.cpp" />
     <ClCompile Include="platform\windows\window\Win32GLRenderWindow.cpp" />
     <ClCompile Include="platform\windows\window\Win32DXRenderWindow.cpp" />
+    <ClCompile Include="platform\windows\window\Win32VKRenderWindow.cpp" />
     <ClCompile Include="runtime\audio\AudioClip.cpp" />
     <ClCompile Include="runtime\audio\AudioListener.cpp" />
     <ClCompile Include="runtime\audio\AudioManager.cpp" />
@@ -401,8 +416,8 @@ xcopy /Y /Q /E "$(SolutionDir)..\..\template\data\*.*" "$(OutDir)\data"</Command
     <ClCompile Include="runtime\font\Font.cpp" />
     <ClCompile Include="runtime\font\FontAtlas.cpp" />
     <ClCompile Include="runtime\font\FontManager.cpp" />
+    <ClCompile Include="runtime\graphics\dx\DX10Define.cpp" />
     <ClCompile Include="runtime\graphics\dx\dx11\DX11Caps.cpp" />
-    <ClCompile Include="runtime\graphics\dx\dx11\DX11Define.cpp" />
     <ClCompile Include="runtime\graphics\dx\dx11\DX11Device.cpp" />
     <ClCompile Include="runtime\graphics\dx\dx11\DX11HardwareIndexBuffer.cpp" />
     <ClCompile Include="runtime\graphics\dx\dx11\DX11HardwareVertexBuffer.cpp" />
@@ -413,6 +428,18 @@ xcopy /Y /Q /E "$(SolutionDir)..\..\template\data\*.*" "$(OutDir)\data"</Command
     <ClCompile Include="runtime\graphics\dx\dx11\DX11ShaderReflect.cpp" />
     <ClCompile Include="runtime\graphics\dx\dx11\DX11SwapChain.cpp" />
     <ClCompile Include="runtime\graphics\dx\dx11\DX11Texture.cpp" />
+    <ClCompile Include="runtime\graphics\dx\dx12\DX12Caps.cpp" />
+    <ClCompile Include="runtime\graphics\dx\dx12\DX12Device.cpp" />
+    <ClCompile Include="runtime\graphics\dx\dx12\DX12HardwareIndexBuffer.cpp" />
+    <ClCompile Include="runtime\graphics\dx\dx12\DX12HardwareVertexBuffer.cpp" />
+    <ClCompile Include="runtime\graphics\dx\dx12\DX12PostProcess.cpp" />
+    <ClCompile Include="runtime\graphics\dx\dx12\DX12Program.cpp" />
+    <ClCompile Include="runtime\graphics\dx\dx12\DX12RenderContent.cpp" />
+    <ClCompile Include="runtime\graphics\dx\dx12\DX12RenderTexture.cpp" />
+    <ClCompile Include="runtime\graphics\dx\dx12\DX12ShaderReflect.cpp" />
+    <ClCompile Include="runtime\graphics\dx\dx12\DX12SwapChain.cpp" />
+    <ClCompile Include="runtime\graphics\dx\dx12\DX12TempCommand.cpp" />
+    <ClCompile Include="runtime\graphics\dx\dx12\DX12Texture.cpp" />
     <ClCompile Include="runtime\graphics\dx\dx9\DX9Caps.cpp" />
     <ClCompile Include="runtime\graphics\dx\dx9\DX9Device.cpp" />
     <ClCompile Include="runtime\graphics\dx\dx9\DX9GPUAdapter.cpp" />
@@ -452,6 +479,19 @@ xcopy /Y /Q /E "$(SolutionDir)..\..\template\data\*.*" "$(OutDir)\data"</Command
     <ClCompile Include="runtime\graphics\Shader.cpp" />
     <ClCompile Include="runtime\graphics\ShadowMap.cpp" />
     <ClCompile Include="runtime\graphics\TextureUnit.cpp" />
+    <ClCompile Include="runtime\graphics\vulkan\VKCaps.cpp" />
+    <ClCompile Include="runtime\graphics\vulkan\VKDefine.cpp" />
+    <ClCompile Include="runtime\graphics\vulkan\VKDevice.cpp" />
+    <ClCompile Include="runtime\graphics\vulkan\VKGPUAdapter.cpp" />
+    <ClCompile Include="runtime\graphics\vulkan\VKHardwareIndexBuffer.cpp" />
+    <ClCompile Include="runtime\graphics\vulkan\VKHardwareVertexBuffer.cpp" />
+    <ClCompile Include="runtime\graphics\vulkan\VKPostProcess.cpp" />
+    <ClCompile Include="runtime\graphics\vulkan\VKProgram.cpp" />
+    <ClCompile Include="runtime\graphics\vulkan\VKRenderContent.cpp" />
+    <ClCompile Include="runtime\graphics\vulkan\VKRenderTexture.cpp" />
+    <ClCompile Include="runtime\graphics\vulkan\VKSwapChain.cpp" />
+    <ClCompile Include="runtime\graphics\vulkan\VKTempCommand.cpp" />
+    <ClCompile Include="runtime\graphics\vulkan\VKTexture.cpp" />
     <ClCompile Include="Runtime\Input\Input.cpp" />
     <ClCompile Include="runtime\input\KeyboardInput.cpp" />
     <ClCompile Include="runtime\input\MouseInput.cpp" />
@@ -563,9 +603,7 @@ xcopy /Y /Q /E "$(SolutionDir)..\..\template\data\*.*" "$(OutDir)\data"</Command
     <ClCompile Include="runtime\video\VideoPlayer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BaseMain.h" />
     <ClInclude Include="core\Assert.h" />
-    <ClInclude Include="core\Atomic.h" />
     <ClInclude Include="core\AutoPointer.h" />
     <ClInclude Include="core\BaseMacro.h" />
     <ClInclude Include="core\BaseType.h" />
@@ -577,8 +615,10 @@ xcopy /Y /Q /E "$(SolutionDir)..\..\template\data\*.*" "$(OutDir)\data"</Command
     <ClInclude Include="core\memory\DebugAllocate.h" />
     <ClInclude Include="core\memory\CrtAllocate.h" />
     <ClInclude Include="core\memory\Memory.h" />
+    <ClInclude Include="core\memory\MemoryTrace.h" />
     <ClInclude Include="core\memory\STLAllocate.h" />
     <ClInclude Include="core\reflection\Constructor.h" />
+    <ClInclude Include="core\reflection\Meta.h" />
     <ClInclude Include="core\reflection\Reflection.h" />
     <ClInclude Include="core\reflection\Type.h" />
     <ClInclude Include="core\RTTI.h" />
@@ -679,21 +719,33 @@ xcopy /Y /Q /E "$(SolutionDir)..\..\template\data\*.*" "$(OutDir)\data"</Command
     <ClInclude Include="game\CommonComponent.h" />
     <ClInclude Include="game\CharacterCamera.h" />
     <ClInclude Include="game\SceneCamera.h" />
+    <ClInclude Include="platform\android\AndroidNative.h" />
     <ClInclude Include="platform\android\AndroidPlatform.h" />
     <ClInclude Include="platform\android\AndroidPlatformDefine.h">
       <FileType>Text</FileType>
     </ClInclude>
     <ClInclude Include="platform\android\window\AndroidGLESRenderWindow.h" />
+    <ClInclude Include="platform\BaseMain.h" />
     <ClInclude Include="platform\common\egl\EGL_Context.h" />
     <ClInclude Include="platform\common\glfw\GLFWRenderWindow.h" />
+    <ClInclude Include="platform\ios\iOSPlatform.h" />
+    <ClInclude Include="platform\ios\iOSPlatformDefine.h" />
+    <ClInclude Include="platform\ios\window\iOSGLRenderWindow.h" />
     <ClInclude Include="platform\linux\LinuxPlatform.h" />
     <ClInclude Include="Platform\Linux\LinuxPlatformDefine.h">
       <FileType>Text</FileType>
     </ClInclude>
     <ClInclude Include="platform\linux\window\LinuxGLRenderWindow.h" />
+    <ClInclude Include="platform\mac\MacPlatform.h" />
+    <ClInclude Include="platform\mac\MacPlatformDefine.h" />
+    <ClInclude Include="platform\mac\window\MacGLRenderWindow.h" />
     <ClInclude Include="platform\PlatformBase.h" />
     <ClInclude Include="platform\PlatformDefine.h" />
     <ClInclude Include="platform\RenderWindow.h" />
+    <ClInclude Include="platform\wasm\WASMNative.h" />
+    <ClInclude Include="platform\wasm\WASMPlatform.h" />
+    <ClInclude Include="platform\wasm\WASMPlatformDefine.h" />
+    <ClInclude Include="platform\wasm\window\WASMGLRenderWindow.h" />
     <ClInclude Include="platform\WindowManager.h" />
     <ClInclude Include="platform\windows\Win32FolderMonitor.h" />
     <ClInclude Include="platform\windows\Win32Mouse.h" />
@@ -702,6 +754,7 @@ xcopy /Y /Q /E "$(SolutionDir)..\..\template\data\*.*" "$(OutDir)\data"</Command
     <ClInclude Include="platform\windows\window\Win32GLESRenderWindow.h" />
     <ClInclude Include="platform\windows\window\Win32GLRenderWindow.h" />
     <ClInclude Include="platform\windows\window\Win32DXRenderWindow.h" />
+    <ClInclude Include="platform\windows\window\Win32VKRenderWindow.h" />
     <ClInclude Include="runtime\audio\AudioClip.h" />
     <ClInclude Include="runtime\audio\AudioListener.h" />
     <ClInclude Include="runtime\audio\AudioManager.h" />
@@ -717,6 +770,22 @@ xcopy /Y /Q /E "$(SolutionDir)..\..\template\data\*.*" "$(OutDir)\data"</Command
     <ClInclude Include="runtime\font\Font.h" />
     <ClInclude Include="runtime\font\FontAtlas.h" />
     <ClInclude Include="runtime\font\FontManager.h" />
+    <ClInclude Include="runtime\graphics\dx\DX10Define.h" />
+    <ClInclude Include="runtime\graphics\dx\dx12\d3dx12.h" />
+    <ClInclude Include="runtime\graphics\dx\dx12\DX12Caps.h" />
+    <ClInclude Include="runtime\graphics\dx\dx12\DX12Define.h" />
+    <ClInclude Include="runtime\graphics\dx\dx12\DX12Device.h" />
+    <ClInclude Include="runtime\graphics\dx\dx12\DX12HardwareIndexBuffer.h" />
+    <ClInclude Include="runtime\graphics\dx\dx12\DX12HardwareVertexBuffer.h" />
+    <ClInclude Include="runtime\graphics\dx\dx12\DX12PostProcess.h" />
+    <ClInclude Include="runtime\graphics\dx\dx12\DX12Program.h" />
+    <ClInclude Include="runtime\graphics\dx\dx12\DX12RenderContent.h" />
+    <ClInclude Include="runtime\graphics\dx\dx12\DX12RenderTexture.h" />
+    <ClInclude Include="runtime\graphics\dx\dx12\DX12ShaderReflect.h" />
+    <ClInclude Include="runtime\graphics\dx\dx12\DX12SwapChain.h" />
+    <ClInclude Include="runtime\graphics\dx\dx12\DX12TempCommand.h" />
+    <ClInclude Include="runtime\graphics\dx\dx12\DX12Texture.h" />
+    <ClInclude Include="runtime\graphics\ShaderlabUtils.h" />
     <ClInclude Include="runtime\graphics\dx\dx11\DX11Caps.h" />
     <ClInclude Include="runtime\graphics\dx\dx11\DX11Device.h" />
     <ClInclude Include="runtime\graphics\dx\dx11\DX11HardwareIndexBuffer.h" />
@@ -774,6 +843,19 @@ xcopy /Y /Q /E "$(SolutionDir)..\..\template\data\*.*" "$(OutDir)\data"</Command
     <ClInclude Include="runtime\graphics\Shader.h" />
     <ClInclude Include="runtime\graphics\ShadowMap.h" />
     <ClInclude Include="runtime\graphics\TextureUnit.h" />
+    <ClInclude Include="runtime\graphics\vulkan\VKCaps.h" />
+    <ClInclude Include="runtime\graphics\vulkan\VKDefine.h" />
+    <ClInclude Include="runtime\graphics\vulkan\VKDevice.h" />
+    <ClInclude Include="runtime\graphics\vulkan\VKGPUAdapter.h" />
+    <ClInclude Include="runtime\graphics\vulkan\VKHardwareIndexBuffer.h" />
+    <ClInclude Include="runtime\graphics\vulkan\VKHardwareVertexBuffer.h" />
+    <ClInclude Include="runtime\graphics\vulkan\VKPostProcess.h" />
+    <ClInclude Include="runtime\graphics\vulkan\VKProgram.h" />
+    <ClInclude Include="runtime\graphics\vulkan\VKRenderContent.h" />
+    <ClInclude Include="runtime\graphics\vulkan\VKRenderTexture.h" />
+    <ClInclude Include="runtime\graphics\vulkan\VKSwapChain.h" />
+    <ClInclude Include="runtime\graphics\vulkan\VKTempCommand.h" />
+    <ClInclude Include="runtime\graphics\vulkan\VKTexture.h" />
     <ClInclude Include="Runtime\Input\Input.h" />
     <ClInclude Include="Runtime\Input\InputDefine.h" />
     <ClInclude Include="runtime\input\KeyboardInput.h" />
@@ -897,14 +979,15 @@ xcopy /Y /Q /E "$(SolutionDir)..\..\template\data\*.*" "$(OutDir)\data"</Command
     <Text Include="editor\CMakeLists.txt" />
     <Text Include="game\CMakeLists.txt" />
     <Text Include="Platform\Android\CMakeLists.txt" />
+    <Text Include="platform\ios\CMakeLists.txt" />
     <Text Include="Platform\Linux\CMakeLists.txt" />
+    <Text Include="platform\mac\CMakeLists.txt" />
     <Text Include="platform\wasm\CMakeLists.txt" />
     <Text Include="platform\windows\CMakeLists.txt" />
     <Text Include="runtime\CMakeLists.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="core\stl\RBTree.inl" />
-    <None Include="core\String.inl" />
     <None Include="runtime\component\Component.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -1,4 +1,4 @@
-#include "ColorConverter.h"
+﻿#include "ColorConverter.h"
  
 
 DC_BEGIN_NAMESPACE

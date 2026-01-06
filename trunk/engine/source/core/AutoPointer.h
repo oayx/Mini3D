@@ -12,26 +12,26 @@
 DC_BEGIN_NAMESPACE
 /********************************************************************/
 template <class T>
-class AutoPointer Final : public object
+class AutoPointer final : public object
 {
 public:
 	AutoPointer (T* object = 0);
 	AutoPointer (const AutoPointer& pointer);
 	~AutoPointer ();
 		
-	T& operator* () const { return *_object; }
-	T* operator-> () const { return _object; }
+	T& operator* () const noexcept { return *_object; }
+	T* operator-> () const noexcept { return _object; }
 		
-	AutoPointer& operator= (T* object);
-	AutoPointer& operator= (const AutoPointer& ref);
+	AutoPointer& operator= (T* object) noexcept;
+	AutoPointer& operator= (const AutoPointer& ref) noexcept;
 		
-	bool operator== (T* object) const { return (_object == object); }
-	bool operator!= (T* object) const { return (_object != object); }
-	bool operator== (const AutoPointer& ref) const { return (_object == ref._object); }
-	bool operator!= (const AutoPointer& ref) const { return (_object != ref._object); }
-	operator T*()const { return _object; }
+	bool operator== (T* object) const noexcept { return (_object == object); }
+	bool operator!= (T* object) const noexcept { return (_object != object); }
+	bool operator== (const AutoPointer& ref) const noexcept { return (_object == ref._object); }
+	bool operator!= (const AutoPointer& ref) const noexcept { return (_object != ref._object); }
+	operator T*()const noexcept { return _object; }
 		
-	T * Get()const { return _object; }
+	T * Get()const noexcept { return _object; }
 
 private:
 	T* _object = nullptr;
@@ -68,7 +68,7 @@ AutoPointer<T>::~AutoPointer()
 	}
 }
 template <class T>
-AutoPointer<T>& AutoPointer<T>::operator= (T* object)
+AutoPointer<T>& AutoPointer<T>::operator= (T* object) noexcept
 {
 	if (_object != object)
 	{
@@ -83,14 +83,14 @@ AutoPointer<T>& AutoPointer<T>::operator= (T* object)
 		}
 
 		{
-			thread_lock(_mutex);
+			LOCK(_mutex);
 			_object = object;
 		}
 	}
 	return *this;
 }
 template <class T>
-AutoPointer<T>& AutoPointer<T>::operator= (const AutoPointer& pointer)
+AutoPointer<T>& AutoPointer<T>::operator= (const AutoPointer& pointer) noexcept
 {
 	if (_object != pointer._object)
 	{
@@ -105,7 +105,7 @@ AutoPointer<T>& AutoPointer<T>::operator= (const AutoPointer& pointer)
 		}
 
 		{
-			thread_lock(_mutex);
+			LOCK(_mutex);
 			_object = pointer._object;
 		}
 	}

@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Date：2020年3月18日
@@ -12,20 +12,21 @@
 DC_BEGIN_NAMESPACE
 /********************************************************************/
 // d3d9 shader程序
-class DX9Program Final : public CGProgram
+class DX9Program final : public CGProgram
 {
 	friend class DX9Device;
 	DEFAULT_CREATE(DX9Program);
 	FRIEND_CONSTRUCT_DESTRUCT(DX9Program);
+	DISALLOW_COPY_ASSIGN(DX9Program);
 	BEGIN_DERIVED_REFECTION_TYPE(DX9Program, CGProgram)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 	DX9Program() = default;
+	~DX9Program();
 
 public:
-	~DX9Program();
 	virtual bool LoadFromFile(const String& file)override;
-	virtual bool LoadFromFile(const ShaderDesc& info)override;
+	virtual bool LoadFromDesc(const ShaderDesc& info)override;
 	virtual bool LoadFromMemory(const String& name, const VecString& codes, const VecString& defines)override;
 
 	virtual void PreRender()override;
@@ -48,8 +49,8 @@ private:
 	bool SetPixelShader();
 
 private:
-	IDirect3DVertexShader9* m_pVertexShader = nullptr;
-	IDirect3DPixelShader9*	m_pPixelShader = nullptr;
+	IDirect3DVertexShader9* _pVertexShader = nullptr;
+	IDirect3DPixelShader9*	_pPixelShader = nullptr;
 	ID3DXConstantTable*     _constantTable[(int)ShaderType::Max] = {};
 };
 bool DX9CompileShaderFromFile(const String& file, const VecString& defines, const String& enter_point, const String& compile_target, ID3DXConstantTable* &constTable, ID3DXBuffer* &codeBuffer);

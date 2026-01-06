@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Description：内存分配
@@ -21,21 +21,4 @@ public:
 	virtual void* AlignedAlloc(uint32_t size, uint32_t alignment) = 0;
 	virtual void AlignedFree(void* addr, uint32_t alignment) = 0;
 };
-
-/********************************************************************/
-#if defined(DC_MALLOC) || defined(DC_DEBUG_MALLOC)
-#define DECLARE_ALLOCATOR \
-	public: \
-	inline void* operator new(size_t size)			{ return Memory::Alloc(size, __FILE__ , __LINE__); }   \
-	inline void  operator delete(void* ptr)         { Memory::Free(ptr); }   \
-	inline void* operator new(size_t, void* ptr)	{ return ptr; }   \
-	inline void  operator delete(void*, void*)      { }   \
-	inline void* operator new[](size_t size)		{ return Memory::Alloc(size, __FILE__ , __LINE__); }   \
-	inline void  operator delete[](void* ptr)       { Memory::Free(ptr); }   \
-	inline void* operator new[](size_t, void* ptr)  { return ptr; }   \
-	inline void  operator delete[](void*, void*)    { } \
-	private:
-#else
-#define DECLARE_ALLOCATOR
-#endif
 DC_END_NAMESPACE

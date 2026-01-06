@@ -13,14 +13,14 @@
 DC_BEGIN_NAMESPACE
 /********************************************************************/
 // Android window
-class AndroidGLESRenderWindow Final : public RenderWindow
+class AndroidGLESRenderWindow final : public RenderWindow
 {
 	friend class WindowManager;
 	DEFAULT_CREATE(AndroidGLESRenderWindow);
 	FRIEND_CONSTRUCT_DESTRUCT(AndroidGLESRenderWindow);
 	DISALLOW_COPY_ASSIGN(AndroidGLESRenderWindow);
 	BEGIN_DERIVED_REFECTION_TYPE(AndroidGLESRenderWindow, RenderWindow)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 protected:
 	AndroidGLESRenderWindow();
@@ -31,10 +31,10 @@ public:
 	virtual void Resize(WindowResizeDesc& desc)override;
 	virtual int  OnWinMsg(uint uMsg, int64 param1, int64 param2, int64 param3, int64 param4)override { return 0; }
 	virtual void Draw()override;
-	virtual void* GetHwnd()override { return m_hWnd; }
+	virtual void* GetHwnd()override { return _hWnd; }
 
 private:
-	EGLNativeWindowType m_hWnd;
+	EGLNativeWindowType _hWnd;
 };
 DC_END_NAMESPACE
 #endif

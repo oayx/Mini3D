@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -22,12 +22,12 @@ namespace dc.tools.core
         /// </summary>
         /// <param name="dir">查找的目录</param>
         /// <param name="listFiles">文件列表</param>
-        static public void GetDirectoryFiles(string dir_path, ref List<string> list_files)
+        static public void GetDirectoryFiles(string dirPath, ref List<string> list_files)
         {
-            if (!Directory.Exists(dir_path)) return;
+            if (!Directory.Exists(dirPath)) return;
 
-            DirectoryInfo dir = new DirectoryInfo(dir_path);
-            RecursiveDirectoryFiles(dir, dir_path + '/', ref list_files);
+            DirectoryInfo dir = new DirectoryInfo(dirPath);
+            RecursiveDirectoryFiles(dir, dirPath + '/', ref list_files);
         }
         static private void RecursiveDirectoryFiles(DirectoryInfo dir, string parent_path, ref List<string> list_files)
         {
@@ -47,26 +47,26 @@ namespace dc.tools.core
                 RecursiveDirectoryFiles(d, parent_path + d.Name + '/', ref list_files);
             }
         }
-        static public string[] GetDirectoryFiles(string dir_path, List<string> withoutExtensions)
+        static public string[] GetDirectoryFiles(string dirPath, List<string> withoutExtensions)
         {
-            if (!Directory.Exists(dir_path))
+            if (!Directory.Exists(dirPath))
                 return new string[0];
             //List<string> withoutExtensions = new List<string>() { ".prefab", ".unity", ".mat", ".asset", ".controller", ".anim", ".fontsettings", ".playable", ".guiskin", ".spriteatlas", ".flare", ".mixer", ".cubemap", ".json", ".txt" };
-            string[] files = Directory.GetFiles(dir_path, "*.*", SearchOption.AllDirectories)
+            string[] files = Directory.GetFiles(dirPath, "*.*", SearchOption.AllDirectories)
                 .Where(s => withoutExtensions.Contains(Path.GetExtension(s).ToLower())).ToArray();
             return files;
         }
         /// <summary>
         /// 获得所有目录
         /// </summary>
-        /// <param name="dir_path"></param>
+        /// <param name="dirPath"></param>
         /// <param name="list_dirs"></param>
-        static public void GetDirectorys(string dir_path, ref List<string> list_dirs)
+        static public void GetDirectorys(string dirPath, ref List<string> list_dirs)
         {
-            if (!Directory.Exists(dir_path)) return;
+            if (!Directory.Exists(dirPath)) return;
 
-            DirectoryInfo dir = new DirectoryInfo(dir_path);
-            RecursiveDirectory(dir, dir_path + '/', ref list_dirs);
+            DirectoryInfo dir = new DirectoryInfo(dirPath);
+            RecursiveDirectory(dir, dirPath + '/', ref list_dirs);
         }
         static private void RecursiveDirectory(DirectoryInfo dir, string parent_path, ref List<string> list_dirs)
         {
@@ -233,27 +233,27 @@ namespace dc.tools.core
         /// <summary>
         /// 拷贝文件
         /// </summary>
-        public static bool CopyFiles(string src_path, string dst_path, List<string> ext)
+        public static bool CopyFiles(string srcPath, string dstPath, List<string> ext)
         {
             try
             {
-                if (!Directory.Exists(src_path))
+                if (!Directory.Exists(srcPath))
                     return false;
 
-                if (Directory.Exists(dst_path))
-                    FileUtils.DeleteDirectory(dst_path);
-                Directory.CreateDirectory(dst_path);
+                if (Directory.Exists(dstPath))
+                    FileUtils.DeleteDirectory(dstPath);
+                Directory.CreateDirectory(dstPath);
 
-                src_path = src_path.Replace("\\", "/");
-                dst_path = dst_path.Replace("\\", "/");
-                string[] files = Directory.GetFiles(src_path, "*.*", SearchOption.AllDirectories).Where(s => ext.Contains(Path.GetExtension(s).ToLower())).ToArray();
+                srcPath = srcPath.Replace("\\", "/");
+                dstPath = dstPath.Replace("\\", "/");
+                string[] files = Directory.GetFiles(srcPath, "*.*", SearchOption.AllDirectories).Where(s => ext.Contains(Path.GetExtension(s).ToLower())).ToArray();
                 for (int i = 0; i < files.Length; ++i)
                 {
                     string src_full_name = files[i].Replace("\\", "/");
                     string src_file_name = Path.GetFileName(src_full_name);
                     string src_file_path = Path.GetDirectoryName(src_full_name);
-                    string src_relative_path = src_file_path.Substring(src_path.Length);
-                    string dst_file_path = dst_path;
+                    string src_relative_path = src_file_path.Substring(srcPath.Length);
+                    string dst_file_path = dstPath;
                     if (!string.IsNullOrEmpty(src_relative_path)) dst_file_path += "/" + src_relative_path;
                     string dst_full_name = dst_file_path + "/" + src_file_name;
                     if (!string.IsNullOrEmpty(src_relative_path) && !Directory.Exists(dst_file_path))
@@ -497,13 +497,13 @@ namespace dc.tools.core
         /// <summary>
         /// 获得文件占用磁盘大小
         /// </summary>
-        /// <param name="asset_path">绝对路径</param>
+        /// <param name="assetPath">绝对路径</param>
         /// <returns>单位M</returns>
-        public static float GetFileSize(string full_path)
+        public static float GetFileSize(string fullPath)
         {
             try
             {
-                FileInfo fileInfo = new FileInfo(full_path);
+                FileInfo fileInfo = new FileInfo(fullPath);
                 long size = fileInfo.Length;
                 float mem = size / 1024f / 1024f;
                 return mem;

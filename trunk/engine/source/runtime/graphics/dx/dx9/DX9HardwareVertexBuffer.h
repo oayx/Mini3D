@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Date：2009年11月25日
@@ -11,14 +11,14 @@
 
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-class DX9HardwareVertexBuffer Final : public HardwareVertexBuffer
+class DX9HardwareVertexBuffer final : public HardwareVertexBuffer
 {
 	friend class DX9Device;
 	DEFAULT_CREATE(DX9HardwareVertexBuffer);
 	FRIEND_CONSTRUCT_DESTRUCT(DX9HardwareVertexBuffer);
 	DISALLOW_COPY_ASSIGN(DX9HardwareVertexBuffer);
 	BEGIN_DERIVED_REFECTION_TYPE(DX9HardwareVertexBuffer, HardwareVertexBuffer)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 protected:
 	DX9HardwareVertexBuffer();

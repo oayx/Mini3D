@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Date：2020/9/9
@@ -10,7 +10,7 @@
 
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-class ENGINE_DLL UICheckbox Final : public UIButton
+class ENGINE_DLL UICheckbox final : public UIButton
 {
 	friend class UICanvas;
 	friend class GameObject;
@@ -21,7 +21,7 @@ class ENGINE_DLL UICheckbox Final : public UIButton
 	BEGIN_DERIVED_REFECTION_TYPE(UICheckbox, UIButton)
 		CTORS(DEFAULT_CTOR(UICheckbox))
 		ADD_EDITOR_COMPONENT("UI/Checkbox")
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 protected:
 	virtual void OnMouseClick(const Vector2& pos, MouseBtnID btn)override;

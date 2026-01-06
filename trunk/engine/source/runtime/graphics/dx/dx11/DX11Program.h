@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2020/3/18
@@ -14,11 +14,12 @@ class Texture;
 class DX11ShaderReflect;
 /********************************************************************/
 //cbuffer
-class DX11CBuffer Final : public object
+class DX11CBuffer final : public object
 {
 	friend class DX11Program;
 	DEFAULT_CREATE(DX11CBuffer);
 	FRIEND_CONSTRUCT_DESTRUCT(DX11CBuffer);
+
 private:
 	bool dirty = true;
 	sShaderReflectCBuffer info;
@@ -30,12 +31,12 @@ private:
 	~DX11CBuffer();
 
 	void Update();
-	void Copy(uint offset, const void* src_data, uint size);
+	void Copy(uint offset, const void* srcData, uint size);
 };
 
 /********************************************************************/
 // D3D11 shader程序
-class DX11Program Final : public CGProgram
+class DX11Program final : public CGProgram
 {
 	friend class DX11Device;
 	typedef Map<String, DX11CBuffer*> cbuffers_t;
@@ -43,14 +44,14 @@ class DX11Program Final : public CGProgram
 	FRIEND_CONSTRUCT_DESTRUCT(DX11Program);
 	DISALLOW_COPY_ASSIGN(DX11Program);
 	BEGIN_DERIVED_REFECTION_TYPE(DX11Program, CGProgram)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 	DX11Program();
+	~DX11Program();
 
 public:
-	~DX11Program();
 	virtual bool LoadFromFile(const String& file)override;
-	virtual bool LoadFromFile(const ShaderDesc& info)override;
+	virtual bool LoadFromDesc(const ShaderDesc& info)override;
 	virtual bool LoadFromMemory(const String& name, const VecString& codes, const VecString& defines)override;
 
 	virtual void PreRender()override;

@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Date：2021/1/8
@@ -11,7 +11,7 @@
 DC_BEGIN_NAMESPACE
 class Tween;
 /********************************************************************/
-class ENGINE_DLL TweenManager Final : object
+class ENGINE_DLL TweenManager final : object
 {
 	friend class Tween;
 	friend class Application;
@@ -49,10 +49,10 @@ public:
 	static void  SetSpeed(float speed) { _speed = speed; }
 
 private:
-	static Tweenes	_inactiveList;		//未激活列表
-	static Tweenes	_updateList;		//已激活列表
-	static bool		_autoSimulate;		//是否自动模拟
-	static bool		_useUnscaledTime;	//是否受DeltaTime影响，默认true
-	static float	_speed;				//更新速度
+	inline static Tweenes	_inactiveList;			//未激活列表
+	inline static Tweenes	_updateList;			//已激活列表
+	inline static bool		_autoSimulate = true;	//是否自动模拟
+	inline static bool		_useUnscaledTime = false;//是否受DeltaTime影响，默认true
+	inline static float		_speed = 1.0f;			//更新速度
 };
 DC_END_NAMESPACE

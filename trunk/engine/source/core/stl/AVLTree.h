@@ -39,50 +39,50 @@ public:
 	~AVLTree<T>() { SAFE_DELETE(_rootNode); }
 
 	//插入结点
-	void Add(T x);
+	void Add(T x) noexcept;
 	//删除结点
-	bool Remove(T x);
+	bool Remove(T x) noexcept;
 	//查找是否存在给定值的结点
-	bool Contains(const T x) const;
+	bool Contains(const T x) const noexcept;
 	//前序遍历
-	void PreOrder();
+	void PreOrder() noexcept;
 	//中序遍历
-	void InOrder();
+	void InOrder() noexcept;
 
 private:
 	//插入结点
-	void Add(AVLNode<T> *&t, T x);
+	void Add(AVLNode<T> *&t, T x) noexcept;
 	//删除结点
-	bool Remove(AVLNode<T> *&t, T x);
+	bool Remove(AVLNode<T> *&t, T x) noexcept;
 	//查找是否存在给定值的结点
-	bool Contains(AVLNode<T> *t, const T x) const;
+	bool Contains(AVLNode<T> *t, const T x) const noexcept;
 	//前序遍历
-	void PreOrder(AVLNode<T> *t);
+	void PreOrder(AVLNode<T> *t) noexcept;
 	//中序遍历
-	void InOrder(AVLNode<T> *t);
-	AVLNode<T> *FindMin(AVLNode<T> *t) const;
-	AVLNode<T> *FindMax(AVLNode<T> *t) const;
+	void InOrder(AVLNode<T> *t) noexcept;
+	AVLNode<T> *FindMin(AVLNode<T> *t) const noexcept;
+	AVLNode<T> *FindMax(AVLNode<T> *t) const noexcept;
 	//求树的高度
-	int GetHeight(AVLNode<T> *t);
+	int GetHeight(AVLNode<T> *t) noexcept;
 	//单旋转 左
-	AVLNode<T> *LL(AVLNode<T> *t);
+	AVLNode<T> *LL(AVLNode<T> *t) noexcept;
 	//单旋转 右
-	AVLNode<T> *RR(AVLNode<T> *t);
+	AVLNode<T> *RR(AVLNode<T> *t) noexcept;
 	//双旋转 右左
-	AVLNode<T> *LR(AVLNode<T> *t);
+	AVLNode<T> *LR(AVLNode<T> *t) noexcept;
 	//双旋转 左右
-	AVLNode<T> *RL(AVLNode<T> *t);
+	AVLNode<T> *RL(AVLNode<T> *t) noexcept;
 
 private:
 	AVLNode<T> *_rootNode = nullptr;
 };
 template <typename T>
-void AVLTree<T>::Add(T x)
+void AVLTree<T>::Add(T x) noexcept
 {
 	Add(_rootNode, x);
 }
 template <typename T>
-void AVLTree<T>::Add(AVLNode<T> *&t, T x)
+void AVLTree<T>::Add(AVLNode<T> *&t, T x) noexcept
 {
 	if (t == nullptr)
 		t = new AVLNode<T>(x);
@@ -117,12 +117,12 @@ void AVLTree<T>::Add(AVLNode<T> *&t, T x)
 	}
 }
 template <typename T>
-bool AVLTree<T>::Remove(T x)
+bool AVLTree<T>::Remove(T x) noexcept
 {
 	return Remove(_rootNode, x);
 }
 template <typename T>
-bool AVLTree<T>::Remove(AVLNode<T> *&t, T x)
+bool AVLTree<T>::Remove(AVLNode<T> *&t, T x) noexcept
 {
 	//t为空 未找到要删除的结点
 	if (t == nullptr)
@@ -203,12 +203,12 @@ bool AVLTree<T>::Remove(AVLNode<T> *&t, T x)
 }
 //查找结点
 template <typename T>
-bool AVLTree<T>::Contains(const T x) const
+bool AVLTree<T>::Contains(const T x) const noexcept
 {
 	return Contains(_rootNode, x);
 }
 template <typename T>
-bool AVLTree<T>::Contains(AVLNode<T> *t, const T x) const
+bool AVLTree<T>::Contains(AVLNode<T> *t, const T x) const noexcept
 {
 	if (t == nullptr)
 		return false;
@@ -221,12 +221,12 @@ bool AVLTree<T>::Contains(AVLNode<T> *t, const T x) const
 }
 //前序遍历
 template <typename T>
-void AVLTree<T>::PreOrder()
+void AVLTree<T>::PreOrder() noexcept
 {
 	PreOrder(_rootNode);
 }
 template <typename T>
-void AVLTree<T>::PreOrder(AVLNode<T> *t)
+void AVLTree<T>::PreOrder(AVLNode<T> *t) noexcept
 {
 	if (t)
 	{
@@ -237,12 +237,12 @@ void AVLTree<T>::PreOrder(AVLNode<T> *t)
 }
 //中序遍历
 template <typename T>
-void AVLTree<T>::InOrder()
+void AVLTree<T>::InOrder() noexcept
 {
 	InOrder(_rootNode);
 }
 template <typename T>
-void AVLTree<T>::InOrder(AVLNode<T> *t)
+void AVLTree<T>::InOrder(AVLNode<T> *t) noexcept
 {
 	if (t)
 	{
@@ -252,7 +252,7 @@ void AVLTree<T>::InOrder(AVLNode<T> *t)
 	}
 }
 template <typename T>
-AVLNode<T> * AVLTree<T>::FindMax(AVLNode<T> *t) const
+AVLNode<T> * AVLTree<T>::FindMax(AVLNode<T> *t) const noexcept
 {
 	if (t == nullptr)
 		return nullptr;
@@ -262,7 +262,7 @@ AVLNode<T> * AVLTree<T>::FindMax(AVLNode<T> *t) const
 }
 
 template <typename T>
-AVLNode<T> * AVLTree<T>::FindMin(AVLNode<T> *t) const
+AVLNode<T> * AVLTree<T>::FindMin(AVLNode<T> *t) const noexcept
 {
 	if (t == nullptr)
 		return nullptr;
@@ -271,7 +271,7 @@ AVLNode<T> * AVLTree<T>::FindMin(AVLNode<T> *t) const
 	return FindMin(t->left);
 }
 template <typename T>
-int AVLTree<T>::GetHeight(AVLNode<T> *t)
+int AVLTree<T>::GetHeight(AVLNode<T> *t) noexcept
 {
 	if (t == nullptr)
 		return -1;
@@ -281,7 +281,7 @@ int AVLTree<T>::GetHeight(AVLNode<T> *t)
 //单旋转
 //左左插入导致的不平衡
 template <typename T>
-AVLNode<T> * AVLTree<T>::LL(AVLNode<T> *t)
+AVLNode<T> * AVLTree<T>::LL(AVLNode<T> *t) noexcept
 {
 	AVLNode<T> *q = t->left;
 	t->left = q->right;
@@ -294,7 +294,7 @@ AVLNode<T> * AVLTree<T>::LL(AVLNode<T> *t)
 //单旋转
 //右右插入导致的不平衡
 template <typename T>
-AVLNode<T> * AVLTree<T>::RR(AVLNode<T> *t)
+AVLNode<T> * AVLTree<T>::RR(AVLNode<T> *t) noexcept
 {
 	AVLNode<T> *q = t->right;
 	t->right = q->left;
@@ -307,7 +307,7 @@ AVLNode<T> * AVLTree<T>::RR(AVLNode<T> *t)
 //双旋转
 //插入点位于t的左儿子的右子树
 template <typename T>
-AVLNode<T> * AVLTree<T>::LR(AVLNode<T> *t)
+AVLNode<T> * AVLTree<T>::LR(AVLNode<T> *t) noexcept
 {
 	//双旋转可以通过两次单旋转实现
 	//对t的左结点进行RR旋转，再对根节点进行LL旋转
@@ -317,7 +317,7 @@ AVLNode<T> * AVLTree<T>::LR(AVLNode<T> *t)
 //双旋转
 //插入点位于t的右儿子的左子树
 template <typename T>
-AVLNode<T> * AVLTree<T>::RL(AVLNode<T> *t)
+AVLNode<T> * AVLTree<T>::RL(AVLNode<T> *t) noexcept
 {
 	LL(t->right);
 	return RR(t);

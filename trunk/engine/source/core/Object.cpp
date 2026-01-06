@@ -1,4 +1,4 @@
-#include "Object.h" 
+﻿#include "Object.h" 
 #include "Point.h"
 #include "Size.h"
 #include "Rect.h"
@@ -18,12 +18,13 @@ DC_BEGIN_NAMESPACE
 IMPL_REFECTION_TYPE(object);
 IMPL_REFECTION_TYPE(Object); 
 IMPL_REFECTION_TYPE(Sphere);
+IMPL_REFECTION_TYPE(Triangle);
 IMPL_REFECTION_TYPE(ByteOrder);
 IMPL_REFECTION_TYPE(Bool);
 IMPL_REFECTION_TYPE(BitsArray);
-IMPL_TEMPLATE_REFECTION_TYPE(tPoint);
-IMPL_TEMPLATE_REFECTION_TYPE(tSize);
-IMPL_TEMPLATE_REFECTION_TYPE(tRect);
+IMPL_REFECTION_TYPE(tPoint);
+IMPL_REFECTION_TYPE(tSize);
+IMPL_REFECTION_TYPE(tRect);
 IMPL_DERIVED_REFECTION_TYPE(ClockTime, Object);
 IMPL_DERIVED_REFECTION_TYPE(LogicIntervalTime, Object);
 IMPL_DERIVED_REFECTION_TYPE(IntervalTime,Object);
@@ -39,19 +40,18 @@ void Object::Release()
 	if (_refCount == 0)
 	{
 		AutoreleasePool::DeleteObject(this);
+		Object* object = this;
+		SAFE_DELETE(object);
 	}
 }
-void Object::AutoRelease()
+void Object::AutoRelease() noexcept
 {
-	{
-		_isAutoRelease = true;
-	}
+	_isAutoRelease = true;
 	AutoreleasePool::AddObject(this);
 }
 /********************************************************************/
-AutoreleasePool::Pools* AutoreleasePool::_appendList = DBG_NEW AutoreleasePool::Pools();
-AutoreleasePool::Pools* AutoreleasePool::_releasePools = DBG_NEW AutoreleasePool::Pools();
-AutoreleasePool::Pools AutoreleasePool::_removePools;
+AutoreleasePool::Pools* AutoreleasePool::_appendList = Memory::New<AutoreleasePool::Pools>();
+AutoreleasePool::Pools* AutoreleasePool::_releasePools = Memory::New<AutoreleasePool::Pools>();
 std::mutex AutoreleasePool::_mutex;
 void AutoreleasePool::Destroy()
 {
@@ -62,27 +62,25 @@ void AutoreleasePool::AddObject(Object* object)
 {
 	AssertEx(std::find(_appendList->begin(), _appendList->end(), object) == _appendList->end(), "have already added");
 	{
-		thread_lock(_mutex);
+		LOCK(_mutex);
 		_appendList->Add(object);
 	}
 }
 void AutoreleasePool::DeleteObject(Object* object)
 {
 	{
-		thread_lock(_mutex);
+		LOCK(_mutex);
 		_appendList->Remove(object);
-		_removePools.Add(object);
 	}
-	SAFE_DELETE(object);
 }
-void AutoreleasePool::Clear()
+void AutoreleasePool::Update()
 {
-	DC_PROFILE_FUNCTION();
+	DC_PROFILE_FUNCTION;
 	if (!_appendList->IsEmpty())
 	{
 		auto runList = _appendList;
 		{
-			thread_lock(_mutex);
+			LOCK(_mutex);
 			_appendList = _releasePools;
 			_releasePools = runList;
 		}
@@ -90,7 +88,7 @@ void AutoreleasePool::Clear()
 		for (auto it = runList->begin(); it != runList->end(); ++it)
 		{
 			Object* obj = *it;
-			if (!_removePools.Contains(obj) && obj->GetRefCount() == 0)//引用次数初始为0
+			if (obj->GetRefCount() == 0)//引用次数初始为0
 			{
 				SAFE_RELEASE(obj);
 			}

@@ -1,4 +1,4 @@
-#include "Component.h"
+﻿#include "Component.h"
 #include "GameObject.h"
 #include "Component.inl"
 #include "runtime/Application.h"
@@ -35,10 +35,10 @@ bool Component::CanExecute(ComponentAction type)
 	if (!Application::IsEditor())return true;
 	return (Application::IsPlay() || (GetEditorAction() & uint64(type))) && !Application::IsPause();
 }
-Object* Component::Clone(Object* new_obj)
+Object* Component::Clone(Object* newObj)
 {
-	Component* obj = dynamic_cast<Component*>(new_obj);
-	if (!obj)return new_obj;
+	Component* obj = dynamic_cast<Component*>(newObj);
+	if (!obj)return newObj;
 
 	obj->SetEnable(_enable);
 

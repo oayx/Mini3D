@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2020/10/18
@@ -15,14 +15,14 @@ class Material;
 class Renderer;
 class RenderTexture;
 /********************************************************************/
-class RenderDepthMap Final : public Object
+class RenderDepthMap final : public Object
 {
 	friend class Camera;
 	DEFAULT_CREATE(RenderDepthMap);
 	FRIEND_CONSTRUCT_DESTRUCT(RenderDepthMap);
 	DISALLOW_CONSTRUCTOR_COPY_ASSIGN(RenderDepthMap);
 	BEGIN_DERIVED_REFECTION_TYPE(RenderDepthMap, Object)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 private:
 	RenderDepthMap(DepthTextureMode mode, int w, int h, ColorFormat format);

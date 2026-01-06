@@ -31,95 +31,99 @@ static bool FindGLExtension(const char* extensions, const char* ext)
 	}
 	return false;
 }
-bool GL_QueryExtension(const char* ext)
+bool GLCaps::QueryExtension(const char* ext)
 {
-	static const char* extensions = NULL;
-	if (!extensions)
-	{
-		extensions = (const char*)glGetString(GL_EXTENSIONS);
-		Debuger::Log("%s", extensions);
-	}
-	return FindGLExtension(extensions, ext);
+	return _extensions.Contains(ext);
 }
 void GLCaps::Initialize()
 {
-	const char* rendererString = (const char*)glGetString(GL_RENDERER);
-	const char* vendorString = (const char*)glGetString(GL_VENDOR);
-	const char* version = (const char*)glGetString(GL_VERSION);
-	const char* shader_version = (const char*)glGetString(GL_SHADING_LANGUAGE_VERSION);
-	const char* extensions = (const char*)glGetString(GL_EXTENSIONS);
+	const char* rendererString = (const char*)glGetString(GL_RENDERER); GL_CHECK_ERROR();
+	const char* vendorString = (const char*)glGetString(GL_VENDOR); GL_CHECK_ERROR();
+	const char* version = (const char*)glGetString(GL_VERSION); GL_CHECK_ERROR();
+	const char* shader_version = (const char*)glGetString(GL_SHADING_LANGUAGE_VERSION); GL_CHECK_ERROR();
 	Debuger::Log("GL_RENDERER:%s", rendererString);
 	Debuger::Log("GL_VENDOR:%s", vendorString);
 	Debuger::Log("GL_VERSION:%s", version);
 	Debuger::Log("GL_SHADING_LANGUAGE_VERSION:%s", shader_version);
-	Debuger::Log("GL_EXTENSIONS:%s", extensions);
 
-#if defined(GL_MAX_LIGHTS)
-	glGetIntegerv(GL_MAX_LIGHTS, &maxLights);
+	GLint numExtensions = 0;
+	GL_ERROR(glGetIntegerv(GL_NUM_EXTENSIONS, &numExtensions));
+	Debuger::Log("GL_EXTENSIONS nums:%d", numExtensions);
+	for (GLint i = 0; i < numExtensions; i++) 
+	{
+		const char* extension = (const char*)glGetStringi(GL_EXTENSIONS, i); GL_CHECK_ERROR();
+		_extensions.Add(extension);
+		Debuger::Log("------Extension:%d : %s", i, extension);
+	}
+
+#if defined(GL_MAX_LIGHTS) && !defined(DC_PLATFORM_MAC)
+	GL_ERROR(glGetIntegerv(GL_MAX_LIGHTS, &maxLights));
 #endif
 
-	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
-	glGetIntegerv(GL_MAX_CUBE_MAP_TEXTURE_SIZE, &maxCubeMapSize);
-	glGetIntegerv(GL_MAX_RENDERBUFFER_SIZE, &maxRenderTextureSize);
+	GL_ERROR(glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize));
+	GL_ERROR(glGetIntegerv(GL_MAX_CUBE_MAP_TEXTURE_SIZE, &maxCubeMapSize));
+	GL_ERROR(glGetIntegerv(GL_MAX_RENDERBUFFER_SIZE, &maxRenderTextureSize));
 #if defined(GL_MAX_DRAW_BUFFERS)
-	glGetIntegerv(GL_MAX_DRAW_BUFFERS, &maxRenderTargets);
+	GL_ERROR(glGetIntegerv(GL_MAX_DRAW_BUFFERS, &maxRenderTargets));
 #endif
-	glGetIntegerv(GL_MAX_RENDERBUFFER_SIZE, &maxRenderBufferSize);
+	GL_ERROR(glGetIntegerv(GL_MAX_RENDERBUFFER_SIZE, &maxRenderBufferSize));
 
-#if defined(GL_MAX_TEXTURE_COORDS)
-	glGetIntegerv(GL_MAX_TEXTURE_COORDS, &maxTexCoords);
+#if defined(GL_MAX_TEXTURE_COORDS) && !defined(DC_PLATFORM_MAC)
+	GL_ERROR(glGetIntegerv(GL_MAX_TEXTURE_COORDS, &maxTexCoords));
 #endif
-	glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &maxTexUnits);
+	GL_ERROR(glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &maxTexUnits));
 
 #if defined(GL_MAX_ELEMENTS_VERTICES)
-	glGetIntegerv(GL_MAX_ELEMENTS_VERTICES, &maxVertexCount);
+	GL_ERROR(glGetIntegerv(GL_MAX_ELEMENTS_VERTICES, &maxVertexCount));
 #endif
 #if defined(GL_MAX_ELEMENTS_INDICES)
-	glGetIntegerv(GL_MAX_ELEMENTS_INDICES, &maxIndexCount);
+	GL_ERROR(glGetIntegerv(GL_MAX_ELEMENTS_INDICES, &maxIndexCount));
 #endif
-	glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &maxVertexAttribs);
+	GL_ERROR(glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &maxVertexAttribs));
 	maxPrimitiveCount = maxVertexCount;
-	glGetIntegerv(GL_MAX_VERTEX_UNIFORM_VECTORS, &maxVertexShaderUniform);
+	GL_ERROR(glGetIntegerv(GL_MAX_VERTEX_UNIFORM_VECTORS, &maxVertexShaderUniform));
 
+#if !defined(DC_PLATFORM_MAC)
 	Size size; 
-	glGetFloatv(GL_ALIASED_POINT_SIZE_RANGE, size.p); //两个字段分别为【最小，最大】
+	GL_ERROR(glGetFloatv(GL_ALIASED_POINT_SIZE_RANGE, size.p)); //两个字段分别为【最小，最大】
 	maxPointSize = size.height;
-	glGetFloatv(GL_ALIASED_LINE_WIDTH_RANGE, size.p);
+	GL_ERROR(glGetFloatv(GL_ALIASED_LINE_WIDTH_RANGE, size.p));
 	maxLineWidth = size.height;
+#endif
 
-	hasAnisoFilter = GL_QueryExtension("GL_EXT_texture_filter_anisotropic");
+	hasAnisoFilter = QueryExtension("GL_EXT_texture_filter_anisotropic");
 #if defined(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT)
 	if (hasAnisoFilter)
-		glGetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, (GLint *)&maxAnisoLevel);
+		GL_ERROR(glGetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, (GLint *)&maxAnisoLevel));
 #endif
 
-	hasAutoMipMapGen = GL_QueryExtension("GL_SGIS_generate_mipmap");
+	hasAutoMipMapGen = QueryExtension("GL_SGIS_generate_mipmap");
 
-	has3DTexture = GL_QueryExtension("GL_EXT_texture3D");
-	hasRenderToTexture = GL_QueryExtension("GL_EXT_framebuffer_object");
+	has3DTexture = QueryExtension("GL_EXT_texture3D");
+	hasRenderToTexture = QueryExtension("GL_EXT_framebuffer_object");
 	hasRenderToCubemap = hasRenderToTexture;
 	hasRenderTo3D = has3DTexture && hasRenderToTexture;
 
-	hasDXT1Texture = GL_QueryExtension("GL_EXT_texture_compression_s3tc") || GL_QueryExtension("GL_EXT_texture_compression_dxt1");
-	hasDXT3Texture = GL_QueryExtension("GL_EXT_texture_compression_s3tc") || GL_QueryExtension("GL_EXT_texture_compression_dxt3");
-	hasDXT5Texture = GL_QueryExtension("GL_EXT_texture_compression_s3tc") || GL_QueryExtension("GL_EXT_texture_compression_dxt5");
-	hasPVRTCTexture = GL_QueryExtension("GL_IMG_texture_compression_pvrtc");
-	hasASTCTexture = GL_QueryExtension("GL_KHR_texture_compression_astc_ldr");
+	hasDXT1Texture = QueryExtension("GL_EXT_texture_compression_s3tc") || QueryExtension("GL_EXT_texture_compression_dxt1");
+	hasDXT3Texture = QueryExtension("GL_EXT_texture_compression_s3tc") || QueryExtension("GL_EXT_texture_compression_dxt3");
+	hasDXT5Texture = QueryExtension("GL_EXT_texture_compression_s3tc") || QueryExtension("GL_EXT_texture_compression_dxt5");
+	hasPVRTCTexture = QueryExtension("GL_IMG_texture_compression_pvrtc");
+	hasASTCTexture = QueryExtension("GL_KHR_texture_compression_astc_ldr");
 #if defined(DC_GRAPHICS_API_OPENGLES3)
 	hasETC1Texture = true;
 	hasETC2Texture = true;
 #else
-	hasETC1Texture = GL_QueryExtension("GL_OES_compressed_ETC1_RGB8_texture");
-	hasETC2Texture = GL_QueryExtension("GL_OES_compressed_ETC2_RGB8_texture");
+	hasETC1Texture = QueryExtension("GL_OES_compressed_ETC1_RGB8_texture");
+	hasETC2Texture = QueryExtension("GL_OES_compressed_ETC2_RGB8_texture");
 #endif
 	Debuger::Log("hasDXT1Texture:%d,hasDXT3Texture:%d,hasDXT5Texture:%d,hasETC1Texture:%d,hasETC2Texture:%d,hasPVRTCTexture:%d,hasASTCTexture:%d",
 		hasDXT1Texture, hasDXT3Texture, hasDXT5Texture, hasETC1Texture, hasETC2Texture, hasPVRTCTexture, hasASTCTexture);
 
-	hasMultiSample = GL_QueryExtension("GL_ARB_multisample");
-	hasMultiSample &= GL_QueryExtension("GL_EXT_framebuffer_multisample");
-	hasMapbuffer = GL_QueryExtension("GL_OES_mapbuffer");
-	hasMapbufferRange = GL_QueryExtension("GL_EXT_map_buffer_range");
-	hasFrameBufferBlit = GL_QueryExtension("GL_EXT_framebuffer_blit");
+	hasMultiSample = QueryExtension("GL_ARB_multisample");
+	hasMultiSample &= QueryExtension("GL_EXT_framebuffer_multisample");
+	hasMapbuffer = QueryExtension("GL_OES_mapbuffer");
+	hasMapbufferRange = QueryExtension("GL_EXT_map_buffer_range");
+	hasFrameBufferBlit = QueryExtension("GL_EXT_framebuffer_blit");
 	Debuger::Log("hasMapbuffer:%d,hasMapbufferRange:%d,hasFrameBufferBlit:%d", hasMapbuffer, hasMapbufferRange, hasFrameBufferBlit);
 
 	hasGeometryShader = true;
@@ -130,7 +134,7 @@ void GLCaps::Initialize()
 
 #if !defined(DC_DEBUG)
 	int binFormatCount = 0;
-	glGetIntegerv(GL_NUM_PROGRAM_BINARY_FORMATS, &binFormatCount);
+	GL_ERROR(glGetIntegerv(GL_NUM_PROGRAM_BINARY_FORMATS, &binFormatCount));
 	useProgramBinary = binFormatCount > 0;
 #endif
 }

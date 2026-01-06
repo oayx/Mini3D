@@ -76,6 +76,10 @@ public:
     explicit DeadlyImportError(T&&... args) :
             DeadlyErrorBase(Assimp::Formatter::format(), std::forward<T>(args)...) {}
 };
+inline std::ostream& operator<<(std::ostream& os, const DeadlyImportError& err) {
+    os << err.what();
+    return os;
+}
 
 class ASSIMP_API DeadlyExportError : public DeadlyErrorBase {
 public:
@@ -84,6 +88,10 @@ public:
     explicit DeadlyExportError(T&&... args) :
             DeadlyErrorBase(Assimp::Formatter::format(), std::forward<T>(args)...) {}
 };
+inline std::ostream& operator<<(std::ostream& os, const DeadlyExportError& err) {
+    os << err.what();
+    return os;
+}
 
 #ifdef _MSC_VER
 #pragma warning(default : 4275)

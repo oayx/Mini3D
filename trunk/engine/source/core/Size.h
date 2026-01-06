@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************************************/
 // @author hannibal
 // @date   2015/04/21
@@ -12,15 +12,15 @@
 DC_BEGIN_NAMESPACE
 /********************************************************************/
 template<typename T>
-class ENGINE_DLL tSize Final : public object
+class ENGINE_DLL tSize final : public object
 {
 	BEGIN_REFECTION_TYPE(tSize)
 	END_FINAL_REFECTION_TYPE;
 	
 public:
-	tSize() { Set(T(0), T(0)); }
-	tSize(T _width, T _height) { Set(_width, _height); }
-	tSize(const tSize& other) { Set(other.width, other.height); }
+	constexpr tSize() : width(T(0)), height(T(0)) {}
+	constexpr tSize(T _width, T _height) : width(_width), height(_height) {}
+	constexpr tSize(const tSize& other) : width(other.width), height(other.height) {}
 	tSize(const String& str)
 	{
 		Vector<float> vec = str.Split<float>(',');
@@ -28,21 +28,21 @@ public:
 	}
 
 public:
-	tSize& operator =(const tSize& other) { Set(other.width, other.height); return *this; }
-	bool operator <(const tSize &other)const { return (width < other.width); }
-	bool operator ==(const tSize &other)const { return this->Equals(other); }
-	bool operator !=(const tSize &other)const { return !this->Equals(other); }
+	tSize& operator =(const tSize& other) noexcept { Set(other.width, other.height); return *this; }
+	constexpr bool operator <(const tSize &other)const noexcept { return (width < other.width); }
+	constexpr bool operator ==(const tSize &other)const noexcept { return this->Equals(other); }
+	constexpr bool operator !=(const tSize &other)const noexcept { return !this->Equals(other); }
 
-	tSize operator +(const tSize &other)const { return tSize(width + other.width, height + other.height); }
-	tSize operator -(const tSize &other)const { return tSize(width - other.width, height - other.height); }
-	tSize operator *(float scale)const { return tSize(T(width * scale), T(height * scale)); }
-	tSize operator /(float scale)const { return tSize(T(width / scale), T(height / scale)); }
+	constexpr tSize operator +(const tSize &other)const noexcept { return tSize(width + other.width, height + other.height); }
+	constexpr tSize operator -(const tSize &other)const noexcept { return tSize(width - other.width, height - other.height); }
+	constexpr tSize operator *(float scale)const noexcept { return tSize(T(width * scale), T(height * scale)); }
+	constexpr tSize operator /(float scale)const noexcept { return tSize(T(width / scale), T(height / scale)); }
 
 public:
-	void Set(T width, T height) { this->width = width; this->height = height; }
-	bool Equals(const tSize& target) const { return Math::FloatEqual((float)width, (float)target.width) && Math::FloatEqual((float)height, (float)target.height); }
+	void Set(T width, T height) noexcept { this->width = width; this->height = height; }
+	constexpr bool Equals(const tSize& target) const noexcept { return Math::FloatEqual((float)width, (float)target.width) && Math::FloatEqual((float)height, (float)target.height); }
 
-	String ToString()const { char arr[128] = { 0 }; Sprintf(arr, "%f, %f", (float)width, (float)height); return String(arr); }
+	String ToString()const noexcept { char arr[128] = { 0 }; Snprintf(arr, sizeof(arr), "%f, %f", (float)width, (float)height); return String(arr); }
 
 public:
 	union
@@ -56,6 +56,9 @@ public:
 typedef tSize<float> Size;
 typedef tSize<int> iSize;
 typedef tSize<uint> uSize;
+static_assert(sizeof(Size) == 2 * sizeof(float), "invalid bytes");
+static_assert(sizeof(iSize) == 2 * sizeof(int), "invalid bytes");
+static_assert(sizeof(uSize) == 2 * sizeof(uint), "invalid bytes");
 
 template<typename T>
 const tSize<T> tSize<T>::zero((T)0, (T)0);

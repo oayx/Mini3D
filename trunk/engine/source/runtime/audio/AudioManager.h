@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************************************/
 // @author hannibal
 // @date   2020/08/04
@@ -12,7 +12,7 @@ DC_BEGIN_NAMESPACE
 class AudioClip;
 class AudioListener;
 /********************************************************************/
-class AudioManager Final : public object
+class AudioManager final : public object
 {
 	friend class AudioClip;
 	friend class AudioListener;
@@ -27,8 +27,8 @@ private:
 	static void Destroy();
 
 	static bool AddListener(AudioListener* listener);
-	static void RemoveListener() { m_listener = nullptr; }
-	static AudioListener* GetListener() { return m_listener; }
+	static void RemoveListener() { _listener = nullptr; }
+	static AudioListener* GetListener() { return _listener; }
 
 	static bool AddAudioClip(const String& name, AudioClip* clip);
 	static AudioClip* GetAudioClip(const String& name);
@@ -37,7 +37,7 @@ private:
 
 private:
 	//销毁交给gameobject实现，这里只是保留引用
-	static AudioListener* m_listener;
-	static AudioClips _audioClips;
+	inline static AudioListener* _listener = nullptr;
+	inline static AudioClips _audioClips;
 };
 DC_END_NAMESPACE

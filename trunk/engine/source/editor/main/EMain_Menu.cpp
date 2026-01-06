@@ -11,7 +11,9 @@
 #include "editor/main/EMain_Inspector.h"
 #include "editor/main/EMain_Project.h"
 #include "editor/main/EMain_SceneView.h"
+#if defined(DC_PLATFORM_WIN32) && defined(_WIN64)
 #include "editor/tools/shader/CompileShader.h"
+#endif
 #include "editor/window/EConsole.h"
 #include "editor/window/ELightSetting.h"
 #include "editor/EditorAppliction.h"
@@ -22,8 +24,7 @@ DC_BEGIN_NAMESPACE
 IMPL_DERIVED_REFECTION_TYPE(EMain_Menu, EWindowBase);
 void EMain_Menu::Render()
 {
-	DC_PROFILE_FUNCTION();
-	static bool show_app_style_editor = true;
+	DC_PROFILE_FUNCTION;
 	if (ImGui::BeginMainMenuBar())
 	{
 		if (ImGui::BeginMenu("File"))
@@ -34,11 +35,11 @@ void EMain_Menu::Render()
 			}
 			if (ImGui::MenuItem(NO_ICON "Open Scene"))
 			{
-				std::string select_path = Platform::OpenFileDialog("Select Scene", ".", "", "scene", true);
-				Debuger::Log("Open Scene:%s", select_path.c_str());
-				if (!select_path.empty())
+				std::string selectPath = Platform::OpenFileDialog("Select Scene", ".", "", "scene", true);
+				Debuger::Log("Open Scene:%s", selectPath.c_str());
+				if (!selectPath.empty())
 				{
-					String path = ProjectManager::ToProjectAssetsPath(select_path);
+					String path = ProjectManager::ToProjectAssetsPath(selectPath);
 					SceneManager::LoadScene(path, LoadSceneMode::Single);
 				}
 			}
@@ -48,20 +49,20 @@ void EMain_Menu::Render()
 			}
 			if (ImGui::MenuItem(NO_ICON "Save Scene As..")) 
 			{
-				std::string select_path = Platform::OpenFileDialog("Select Scene", ".", "", "scene", false);
-				if (!select_path.empty())
+				std::string selectPath = Platform::OpenFileDialog("Select Scene", ".", "", "scene", false);
+				if (!selectPath.empty())
 				{
-					String path = ProjectManager::ToProjectAssetsPath(select_path);
+					String path = ProjectManager::ToProjectAssetsPath(selectPath);
 					SceneManager::SaveAsScene(path);
 				}
 			}
 			ImGui::Separator();
 			if (ImGui::MenuItem(ICON_FA_PLUS_SQUARE "New Project")) 
 			{
-				std::string select_path = Platform::OpenFileDialog("New Project", ".", "New Project", "", false);
-				if (!select_path.empty())
+				std::string selectPath = Platform::OpenFileDialog("New Project", ".", "New Project", "", false);
+				if (!selectPath.empty())
 				{
-					EditorAppliction::CreateProject(select_path);
+					EditorAppliction::CreateProject(selectPath);
 				}
 			}
 			ImGui::MenuItem(NO_ICON "Open Project", nullptr, &EOpenProject::IsShow);
@@ -138,11 +139,13 @@ void EMain_Menu::Render()
 		}
 		if (ImGui::BeginMenu("Tools"))
 		{
+#if defined(DC_PLATFORM_WIN32) && defined(_WIN64)
 			if (ImGui::MenuItem("Compile Shader"))
 			{
 				CompileShader compileShader;
 				compileShader.StartCompile();
 			}
+#endif
 			ImGui::EndMenu();
 		}
 		if (ImGui::BeginMenu("Window"))

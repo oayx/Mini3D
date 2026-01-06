@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Description：
@@ -10,12 +10,11 @@
 
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-class DX9GPUAdapterInfo Final : public GPUAdapterInfo
+class DX9GPUAdapterInfo final : public GPUAdapterInfo
 {
 	friend class DX9GPUAdapter;
 	BEGIN_DERIVED_REFECTION_TYPE(DX9GPUAdapterInfo, GPUAdapterInfo);
-	END_DERIVED_REFECTION_TYPE;
-
+	END_REFECTION_TYPE;
 	DEFAULT_CREATE(DX9GPUAdapterInfo);
 	FRIEND_CONSTRUCT_DESTRUCT(DX9GPUAdapterInfo);
 
@@ -49,7 +48,7 @@ class DX9GPUAdapter : public GPUAdapter
 	DEFAULT_CREATE(DX9GPUAdapter);
 	FRIEND_CONSTRUCT_DESTRUCT(DX9GPUAdapter);
 	BEGIN_DERIVED_REFECTION_TYPE(DX9GPUAdapter, GPUAdapter)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 public:
 	virtual GPUAdapterInfo* SelectAdapters(void* instance)override;

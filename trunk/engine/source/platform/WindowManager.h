@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Description：窗口管理
@@ -10,7 +10,7 @@
 
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-class WindowManager Final : public object
+class WindowManager final : public object
 {
 	friend class Application;
 	typedef Vector<RenderWindow*> RenderWindows;
@@ -26,6 +26,7 @@ public:
 	static RenderWindow* Create(WindowDesc& info);
 	static void AddWindow(TargetDisplay display, RenderWindow* window);
 	static void CloseWindow(void* hWnd);
+	static void CloseWindow(RenderWindow* window);
 
 	static RenderWindow* GetWindow(TargetDisplay display) { return _renderWindows[int(display)]; }
 	static RenderWindow* GetWindow(void* hWnd);
@@ -35,7 +36,7 @@ public:
 	static void Resize(WindowResizeDesc& desc);
 
 private:
-	static RenderWindows _renderWindows;
-	static MapRenderWindows _mapRenderWindows;
+	inline static RenderWindows _renderWindows;
+	inline static MapRenderWindows _mapRenderWindows;
 };
 DC_END_NAMESPACE

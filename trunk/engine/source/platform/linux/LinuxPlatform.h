@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Description：
@@ -10,13 +10,13 @@
 
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-class LinuxPlatform Final : public PlatformBase
+class LinuxPlatform final : public PlatformBase
 {
 	DEFAULT_CREATE(LinuxPlatform);
 	FRIEND_CONSTRUCT_DESTRUCT(LinuxPlatform);
 	DISALLOW_COPY_ASSIGN(LinuxPlatform);
 	BEGIN_DERIVED_REFECTION_TYPE(LinuxPlatform, PlatformBase)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 public:
 };

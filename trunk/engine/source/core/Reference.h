@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************************************/
 // @author hannibal
 // @date   2020/02/13
@@ -10,7 +10,7 @@
 
 DC_BEGIN_NAMESPACE
 /****************************************************************************************************/
-class ENGINE_DLL Reference : public object
+class ENGINE_DLL Reference
 {
 public:
 	Reference()
@@ -21,18 +21,18 @@ public:
 	}
 
 public:
-	void Retain() 
+	void Retain() noexcept
 	{
 		++_refCount;
 	}
-	virtual void Release() 
+	virtual void Release()
 	{
 		if (_refCount > 0)
 		{
 			--_refCount;
 		}
 	}
-	uint GetRefCount()const { return _refCount; }
+	uint GetRefCount()const noexcept { return _refCount; }
 
 protected:
 	std::atomic_int _refCount = 0;

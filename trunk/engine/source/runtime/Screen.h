@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Date：2020/8/19
@@ -34,7 +34,7 @@ struct Resolution
 	int refreshRate;
 };
 
-class ENGINE_DLL Screen Final : public object
+class ENGINE_DLL Screen final : public object
 {
 	friend class Application;
 	friend class WindowManager;
@@ -44,17 +44,17 @@ class ENGINE_DLL Screen Final : public object
 	
 public:
 	static void SetResolution(int w, int h, bool fullscreen);
-	static float GetWidth() { return m_width; }
-	static float GetHeight() { return m_height; }
-	static bool IsFullscreen() { return m_fullscreen; }
+	static float GetWidth() { return _width; }
+	static float GetHeight() { return _height; }
+	static bool IsFullscreen() { return _fullscreen; }
 
 	static bool ShowCursor(bool show);
 
 	static bool SetOrientation(ScreenOrientation orientation);
 
 private:
-	static float m_width;
-	static float m_height;
-	static bool m_fullscreen;
+	inline static float _width = 0.0f;
+	inline static float _height = 0.0f;
+	inline static bool _fullscreen = false;
 };
 DC_END_NAMESPACE

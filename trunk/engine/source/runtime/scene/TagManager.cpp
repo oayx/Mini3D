@@ -1,10 +1,9 @@
-#include "TagManager.h"
+﻿#include "TagManager.h"
 #include "runtime/resources/Resources.h"
 
 DC_BEGIN_NAMESPACE
 static const String TagFilePath = "settings/TagManager.asset";
 /********************************************************************/
-Vector<String> TagManager::_tags;
 bool TagManager::AddTag(const String& name)
 {
 	if (_tags.Contains(name))
@@ -33,14 +32,14 @@ bool TagManager::ModifyTag(int index, const String& name)
 }
 void TagManager::Load()
 {
-	String full_path = Resource::GetFullDataPath(TagFilePath);
-	if (!File::Exist(full_path))
+	String fullPath = Resource::GetFullDataPath(TagFilePath);
+	if (!File::Exist(fullPath))
 	{
 		return Save();
 	}
 
 	_tags.Clear();
-	SerializeRead transfer(full_path);
+	SerializeRead transfer(fullPath);
 	{
 		if (transfer.Push("Tags"))
 		{
@@ -51,8 +50,8 @@ void TagManager::Load()
 }
 void TagManager::Save()
 {
-	String full_path = Resource::GetFullDataPath(TagFilePath);
-	SerializeWrite transfer(full_path);
+	String fullPath = Resource::GetFullDataPath(TagFilePath);
+	SerializeWrite transfer(fullPath);
 	if (transfer.Push("Tags"))
 	{
 		TRANSFER_VECTOR(_tags, "Tag");

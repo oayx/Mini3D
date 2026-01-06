@@ -1,4 +1,4 @@
-#include "DX9RenderContent.h"
+﻿#include "DX9RenderContent.h"
 #include "DX9Caps.h"
 #include "DX9Device.h"
 #include "DX9Program.h"
@@ -64,14 +64,14 @@ void DX9RenderContent::BeginFrame(RenderFrameDesc& desc)
 	if (GetDX9Device()->IsDeviceInLostState())
 		return;
 
-	IDirect3DSurface9* rt_view = (IDirect3DSurface9*)desc.target_buffer;
-	IDirect3DSurface9* ds_view = (IDirect3DSurface9*)desc.depth_stencil_buffer;
+	IDirect3DSurface9* rt_view = (IDirect3DSurface9*)desc.targetBuffer;
+	IDirect3DSurface9* ds_view = (IDirect3DSurface9*)desc.depthStencilBuffer;
 	DX9HR(GetDX9Device()->GetDevice()->SetRenderTarget(0, rt_view));
 	DX9HR(GetDX9Device()->GetDevice()->SetDepthStencilSurface(ds_view));
 
-	this->SetViewport(desc.view_port);
-	this->SetViewportScissor(iRect((int)desc.view_port.x, (int)desc.view_port.y, (int)desc.view_port.w, (int)desc.view_port.h));
-	this->ClearBackbuffer(desc.target_buffer, desc.depth_stencil_buffer, desc.clear_flag, desc.clear_color);
+	this->SetViewport(desc.viewPort);
+	this->SetViewportScissor(iRect((int)desc.viewPort.x, (int)desc.viewPort.y, (int)desc.viewPort.w, (int)desc.viewPort.h));
+	this->ClearBackbuffer(desc.targetBuffer, desc.depthStencilBuffer, desc.clearFlag, desc.clearColor);
 }
 void DX9RenderContent::EndFrame()
 {
@@ -141,12 +141,12 @@ void DX9RenderContent::RenderOnePrimitive(Camera* camera, Pass* pass, Primitive*
 	SceneManager::AddRenderBatch(1);
 	SceneManager::AddSetPassCall(1);
 }
-void DX9RenderContent::SetViewport(const ViewPortDesc& view_port)
+void DX9RenderContent::SetViewport(const ViewPortDesc& viewPort)
 {
 	D3DVIEWPORT9 port;
-	port.X = view_port.x; port.Y = view_port.y;
-	port.Width = view_port.w; port.Height = view_port.h;
-	port.MinZ = view_port.z_near; port.MaxZ = view_port.z_far;
+	port.X = viewPort.x; port.Y = viewPort.y;
+	port.Width = viewPort.w; port.Height = viewPort.h;
+	port.MinZ = viewPort.z_near; port.MaxZ = viewPort.z_far;
 	DX9HR(GetDX9Device()->GetDevice()->SetViewport(&port));
 }
 void DX9RenderContent::SetViewportScissor(const iRect& clip)
@@ -158,12 +158,12 @@ void DX9RenderContent::SetViewportScissor(const iRect& clip)
 	rect.bottom = (LONG)(clip.y + clip.height);
 	DX9HR(GetDX9Device()->GetDevice()->SetScissorRect(&rect));
 }
-void DX9RenderContent::ClearBackbuffer(void* target_buffer, void* depth_stencil_buffer, ClearFlag flag, const Color& color)
+void DX9RenderContent::ClearBackbuffer(void* targetBuffer, void* depthStencilBuffer, ClearFlag flag, const Color& color)
 {
 	DWORD clear_flags = 0;
 	if ((flag & ClearFlag::Color))clear_flags |= D3DCLEAR_TARGET;
-	if ((flag & ClearFlag::Depth) && depth_stencil_buffer)clear_flags |= D3DCLEAR_ZBUFFER;
-	if ((flag & ClearFlag::Stencil) && depth_stencil_buffer)clear_flags |= D3DCLEAR_STENCIL;
+	if ((flag & ClearFlag::Depth) && depthStencilBuffer)clear_flags |= D3DCLEAR_ZBUFFER;
+	if ((flag & ClearFlag::Stencil) && depthStencilBuffer)clear_flags |= D3DCLEAR_STENCIL;
 	if (!clear_flags)return;
 
 	//depth:新的 zdepth 值，由这个方法储存在深度缓冲区中。这个参数在 0.0 到 1.0 的范围內 (针对以 z 为基础或以 w 为基础的深度缓冲区)。0.0 的值表示到监视器的最近距離，1.0 的值则表示最远距离
@@ -333,14 +333,14 @@ void DX9RenderContent::SetBlendState(Pass* pass)
 		GetDX9Device()->SetD3DRenderState(D3DRS_ALPHAREF, (uint)(pass->AlphaTestRef * 255));
 	}
 }
-void DX9RenderContent::SetSubPrimitiveState(const SubPrimitive* sub_prim, Pass* pass)
+void DX9RenderContent::SetSubPrimitiveState(const SubPrimitive* subPrim, Pass* pass)
 {
-	if (!sub_prim->Tex)return;
+	if (!subPrim->Tex)return;
 	CGProgram* shader = pass->GetProgram();
-	shader->SetPassVariable(sub_prim->TexIndex, sub_prim->TexName, sub_prim->Tex);
+	shader->SetPassVariable(subPrim->TexIndex, subPrim->TexName, subPrim->Tex);
 
 	bool old_alpha_state = pass->BlendEnable;
-	pass->BlendEnable = sub_prim->AlphaEnable;
+	pass->BlendEnable = subPrim->AlphaEnable;
 	SetBlendState(pass);
 	pass->BlendEnable = old_alpha_state;
 }

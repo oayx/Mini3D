@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************************************/
 // @author hannibal
 // @date   2020/12/04
@@ -17,7 +17,7 @@ extern "C"
 
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-class ENGINE_DLL LuaManager Final : public object
+class ENGINE_DLL LuaManager final : public object
 {
 	friend class Application;
 	DISALLOW_CONSTRUCTOR_COPY_ASSIGN(LuaManager);
@@ -33,9 +33,9 @@ public:
 
 	static bool DoFile(const String &file);
 	static bool DoString(const String &str);
-	static bool DoFun(const String& fun, const char* param_format, ...);
+	static bool DoFun(const String& fun, const char* paramFormat, ...);
 
 private:
-	static lua_State* _luaState;
+	inline static lua_State* _luaState = nullptr;
 };
 DC_END_NAMESPACE

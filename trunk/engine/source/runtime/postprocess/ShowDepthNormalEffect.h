@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2020/6/18
@@ -10,13 +10,13 @@
 
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-class ENGINE_DLL ShowDepthNormalEffect Final : public PostEffect
+class ENGINE_DLL ShowDepthNormalEffect final : public PostEffect
 {
 	friend class PostProcess;
 	FRIEND_CONSTRUCT_DESTRUCT(ShowDepthNormalEffect);
 	BEGIN_DERIVED_REFECTION_TYPE(ShowDepthNormalEffect, PostEffect)
 		CTORS(DEFAULT_CTOR(ShowDepthNormalEffect))
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 	ShowDepthNormalEffect();
 	~ShowDepthNormalEffect();

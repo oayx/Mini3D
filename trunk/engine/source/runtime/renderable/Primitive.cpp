@@ -1,4 +1,4 @@
-#include "Primitive.h"
+﻿#include "Primitive.h"
 #include "Renderer.h" 
 #include "runtime/component/GameObject.h"
 #include "runtime/component/Component.inl"
@@ -15,13 +15,13 @@ Primitive* Primitive::Create(Renderer* renderer, PrimitiveType type, VertexLayou
 	switch (layout)
 	{
 	case VertexLayout::Variable:
-		primitive = DBG_NEW VariablePrimitive(renderer, type);
+		primitive = Memory::New<VariablePrimitive>(renderer, type);
 		break;
 	case VertexLayout::VertexColor:
-		primitive = DBG_NEW FixedPrimitive<VertexColorLayout>(renderer, type, layout);
+		primitive = Memory::New<FixedPrimitive<VertexColorLayout>>(renderer, type, layout);
 		break;
 	case VertexLayout::VertexColorTexcoord:
-		primitive = DBG_NEW FixedPrimitive<VertexColorUVLayout>(renderer, type, layout);
+		primitive = Memory::New<FixedPrimitive<VertexColorUVLayout>>(renderer, type, layout);
 		break;
 	default:
 		AssertEx(false, "");
@@ -41,7 +41,7 @@ Primitive::~Primitive()
 }
 bool Primitive::UploadData(const PrimitiveUploadDesc& desc)
 {
-	DC_PROFILE_FUNCTION();
+	DC_PROFILE_FUNCTION;
 	if (!_indexes.IsEmpty())
 	{
 		if (_indexData == nullptr)_indexData = Application::GetGraphics()->CreateIndexBuffer();
@@ -71,7 +71,7 @@ bool Primitive::UploadData(const PrimitiveUploadDesc& desc)
 }
 void Primitive::ClearData()
 {
-	DC_PROFILE_FUNCTION();
+	DC_PROFILE_FUNCTION;
 	_indexes.Clear();
 	_subPrimitives.Clear();
 	if (_vertexData)
@@ -101,10 +101,10 @@ void Primitive::SetIndices(uint index_nums, uint *index)
 	_indexes.Resize(index_nums);
 	Memory::Copy(&_indexes[0], index, index_nums * sizeof(uint));
 }
-SubPrimitive& Primitive::AddSubPrimitive(uint elem_count, uint vtx_offset, uint idx_offset, uint start_vertex, uint start_index)
+SubPrimitive& Primitive::AddSubPrimitive(uint elem_count, uint vtx_offset, uint idxOffset, uint start_vertex, uint start_index)
 {
-	SubPrimitive sub_prim = { (int)elem_count, (int)vtx_offset, (int)idx_offset, (int)start_vertex, (int)start_index };
-	_subPrimitives.Add(sub_prim);
+	SubPrimitive subPrim = { (int)elem_count, (int)vtx_offset, (int)idxOffset, (int)start_vertex, (int)start_index };
+	_subPrimitives.Add(subPrim);
 	return _subPrimitives.Last();
 }
 void Primitive::SetMaterial(Material* material)
@@ -125,7 +125,7 @@ Matrix4 Primitive::GetWorldMatrix()const
 }
 void Primitive::BuildIndexBuffer(const PrimitiveUploadDesc& desc)
 {
-	DC_PROFILE_FUNCTION();
+	DC_PROFILE_FUNCTION;
 	if (_indexes.IsEmpty())return;
 
 	IndexType index_type = IndexType::B32;
@@ -172,7 +172,7 @@ uint Primitive::GetTringles()const
 	case PrimitiveType::TriangleStrip:
 		primCount = (uint)(!_indexes.IsEmpty() ? _indexData->GetIndexCount() : _vertexData->GetVertexCount()) - 2;
 		break;
-	case PrimitiveType::TriangleFun:
+	case PrimitiveType::TriangleFan:
 		primCount = (uint)(!_indexes.IsEmpty() ? _indexData->GetIndexCount() : _vertexData->GetVertexCount()) - 2;
 		break;
 	}
@@ -189,7 +189,7 @@ VariablePrimitive::~VariablePrimitive()
 }
 bool VariablePrimitive::UploadData(const PrimitiveUploadDesc& desc)
 {
-	DC_PROFILE_FUNCTION();
+	DC_PROFILE_FUNCTION;
 	if (IsEmpty())
 	{
 		return false;
@@ -345,7 +345,7 @@ void VariablePrimitive::SetColor(const Color& color)
 }
 void VariablePrimitive::AddVertexDecl(VertexSemantic input_semantic)
 {
-	DC_PROFILE_FUNCTION();
+	DC_PROFILE_FUNCTION;
 	_vertexData->ClearElement();
 	{
 		int offset = 0;
@@ -405,7 +405,7 @@ void VariablePrimitive::AddVertexDecl(VertexSemantic input_semantic)
 		if (_renderer)
 		{
 			if ((!_renderer->GetInstanceTransform().IsEmpty()) || (input_semantic != VertexSemantic::None && (input_semantic & VertexSemantic::InstanceOffset)))
-			{
+			{//Matrix4
 				_vertexData->AddElement(1, VertexSize::Float4, VertexSemantic::InstanceOffset, instance_offset, 0);
 				instance_offset += GetSizeByVertex(VertexSize::Float4);
 				_vertexData->AddElement(1, VertexSize::Float4, VertexSemantic::InstanceOffset, instance_offset, 1);
@@ -420,16 +420,16 @@ void VariablePrimitive::AddVertexDecl(VertexSemantic input_semantic)
 }
 void VariablePrimitive::BuildVertexBuffer(VertexSemantic input_semantic, const PrimitiveUploadDesc& desc)
 {
-	DC_PROFILE_FUNCTION();
+	DC_PROFILE_FUNCTION;
 	//包围盒
 	Vector3 min = Vector3::zero, max = Vector3::zero;
 
 	//顶点信息
-	bool has_position = false, has_color = false, has_normal = false, has_tangent = false, has_tex1 = false, has_tex2 = false, has_indices = false, has_weights = false, has_size = false;
+	bool has_position = false, hasColor = false, has_normal = false, has_tangent = false, has_tex1 = false, has_tex2 = false, has_indices = false, has_weights = false, has_size = false;
 	if ((!_vertexs.IsEmpty()) || (input_semantic != VertexSemantic::None && (input_semantic & VertexSemantic::Position)))
 		has_position = true;
 	if ((!_colors.IsEmpty()) || (input_semantic != VertexSemantic::None && (input_semantic & VertexSemantic::Diffuse)))
-		has_color = true;
+		hasColor = true;
 	if ((!_normals.IsEmpty()) || (input_semantic != VertexSemantic::None && (input_semantic & VertexSemantic::Normal)))
 		has_normal = true;
 	if ((!_tangents.IsEmpty()) || (input_semantic != VertexSemantic::None && (input_semantic & VertexSemantic::Tangent)))
@@ -461,7 +461,7 @@ void VariablePrimitive::BuildVertexBuffer(VertexSemantic input_semantic, const P
 				buf += 3;
 			}
 
-			if (has_color)
+			if (hasColor)
 			{
 				uint color = 0xffffffff;
 				if (!_colors.IsEmpty())color = _colors[i].ToVertexColor();
@@ -482,7 +482,7 @@ void VariablePrimitive::BuildVertexBuffer(VertexSemantic input_semantic, const P
 					*buf++ = tangents.x;
 					*buf++ = tangents.y;
 					*buf++ = tangents.z;
-#if defined(DC_GRAPHICS_API_DX9) || defined(DC_GRAPHICS_API_DX11)
+#if defined(DC_GRAPHICS_API_DX9) || defined(DC_GRAPHICS_API_DX11) || defined(DC_GRAPHICS_API_DX12)
 					*buf++ = -1;
 #else
 					*buf++ = 1;
@@ -557,11 +557,11 @@ void VariablePrimitive::BuildVertexBuffer(VertexSemantic input_semantic, const P
 	//instance
 	if (_renderer)
 	{
-		bool has_instance_offset = false;
+		bool hasInstanceOffset = false;
 		const Vector<Matrix4>& instances = _renderer->GetInstanceTransform();
 		if ((!instances.IsEmpty()) || (input_semantic != VertexSemantic::None && (input_semantic & VertexSemantic::InstanceOffset)))
-			has_instance_offset = true;
-		if (has_instance_offset)
+			hasInstanceOffset = true;
+		if (hasInstanceOffset)
 		{
 			VertexBufferDesc vbd(1, (uint)instances.Size(), desc.usage);
 			float* buf = (float*)_vertexData->Lock(vbd);
@@ -575,7 +575,7 @@ void VariablePrimitive::BuildVertexBuffer(VertexSemantic input_semantic, const P
 #else
 					Memory::Copy(buf, instances[i].p, size);
 #endif
-					buf += 16;
+					buf += 16;//==64bytes
 				}
 			}
 			_vertexData->Unlock(vbd);

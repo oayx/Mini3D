@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2009/11/13
@@ -14,7 +14,7 @@
 DC_BEGIN_NAMESPACE
 /********************************************************************/
 #pragma pack(push,4)
-class ENGINE_DLL Vector2 Final : public object
+class ENGINE_DLL Vector2 final : public object
 {
 	BEGIN_REFECTION_TYPE(Vector2)
 	END_FINAL_REFECTION_TYPE;
@@ -34,9 +34,10 @@ public:
 	static const Vector2 Infinity;
 
 public:
-	explicit Vector2() { x = 0.0f; y = 0.0f; }
-	Vector2(float x, float y) { this->x = x; this->y = y; }
-	Vector2(const Vector2& vec) { x = vec.x; y = vec.y; }
+	constexpr explicit Vector2() :x(0.0f), y(0.0f){ }
+	constexpr Vector2(float x, float y) :x(x), y(y) { }
+	constexpr Vector2(const Vector2& vec) :x(vec.x), y(vec.y) { }
+	constexpr Vector2(Vector2&& other)noexcept = default;
 	inline Vector2(const String& str)
 	{
 		Vector<float> vec = str.Split<float>( ',');
@@ -45,66 +46,67 @@ public:
 
 public:
 	//赋值，改变原始值
-	Vector2 &operator =(const Vector2 &vec) { x = vec.x; y = vec.y; return *this; }
+	Vector2& operator =(const Vector2 &vec) noexcept { x = vec.x; y = vec.y; return *this; }
+	Vector2& operator =(Vector2&& other) noexcept { x = std::move(other.x); y = std::move(other.y); return *this; }
 
 	//求负值，不改变原值
-	Vector2 operator -()const { return Vector2(-x, -y); }
+	constexpr Vector2 operator -()const noexcept { return Vector2(-x, -y); }
 
-	bool operator ==(const Vector2 &vec)const { return this->Equals(vec); }
-	bool operator !=(const Vector2 &vec)const { return !this->Equals(vec); }
+	constexpr bool operator ==(const Vector2 &vec)const noexcept { return this->Equals(vec); }
+	constexpr bool operator !=(const Vector2 &vec)const noexcept { return !this->Equals(vec); }
 
 	//重载算术运算符
-	Vector2 operator +(const Vector2 &vec)const { return Vector2(x + vec.x, y + vec.y); }
-	Vector2 operator -(const Vector2 &vec)const { return Vector2(x - vec.x, y - vec.y); }
-	Vector2 operator *(float scale)const { return Vector2(x * scale, y * scale); }
+	constexpr Vector2 operator +(const Vector2 &vec)const noexcept { return Vector2(x + vec.x, y + vec.y); }
+	constexpr Vector2 operator -(const Vector2 &vec)const noexcept { return Vector2(x - vec.x, y - vec.y); }
+	constexpr Vector2 operator *(float scale)const noexcept { return Vector2(x * scale, y * scale); }
 	//参数为0返回最大值
-	Vector2 operator /(float scale)const { return Vector2(x / scale, y / scale); }
+	constexpr Vector2 operator /(float scale)const noexcept { return Vector2(x / scale, y / scale); }
 
-	friend Vector2 operator *(float scale, const Vector2& vec) { return Vector2(vec.x * scale, vec.y * scale); }
-	friend Vector2 operator /(const float scale, const Vector2& vec){return Vector2(scale / vec.x, scale / vec.y);}
+	constexpr friend Vector2 operator *(float scale, const Vector2& vec) noexcept { return Vector2(vec.x * scale, vec.y * scale); }
+	constexpr friend Vector2 operator /(const float scale, const Vector2& vec) noexcept {return Vector2(scale / vec.x, scale / vec.y);}
 
 public:
 	//求长度
-	float Lenght()const { return Math::Sqrt(x * x + y * y); }
+	float Lenght()const noexcept { return Math::Sqrt(x * x + y * y); }
 	//面积
-	float SquareSize()const { return x * x + y * y; }
+	constexpr float SquareSize()const noexcept { return x * x + y * y; }
 
 	//点积
-	float Dot(const Vector2 &vec)const { return x * vec.x + y * vec.y; }
+	constexpr float Dot(const Vector2 &vec)const noexcept { return x * vec.x + y * vec.y; }
 
 	//距离
-	float Distance(const Vector2& vec)const { return Math::Sqrt(SqrDistance(vec)); }
-	float SqrDistance(const Vector2& vec)const { return (x - vec.x) *(x - vec.x) + (y - vec.y) *(y - vec.y); }
+	float Distance(const Vector2& vec)const noexcept { return Math::Sqrt(SqrDistance(vec)); }
+	constexpr float SqrDistance(const Vector2& vec)const noexcept { return (x - vec.x) *(x - vec.x) + (y - vec.y) *(y - vec.y); }
 
 	//单位化
-	Vector2 Normalize();
-	Vector2 Normalize()const;
+	Vector2 Normalize() noexcept;
+	Vector2 Normalize()const noexcept;
 
 	//向量相加
-	void Add(const Vector2 &vec2) { x += vec2.x; y += vec2.y; }
+	void Add(const Vector2 &vec2) noexcept { x += vec2.x; y += vec2.y; }
 	//向量相减
-	void Subtract(const Vector2 &vec2) { x -= vec2.x; y -= vec2.y; }
+	void Subtract(const Vector2 &vec2) noexcept { x -= vec2.x; y -= vec2.y; }
 
 	//缩放，x, y方向同时
-	void Scale(float scale) { x *= scale; y *= scale; }
-	void Scale(float x_scale, float y_scale) { x *= x_scale; y *= y_scale; }
-	void Set(float x, float y) { this->x = x; this->y = y; }
+	void Scale(float scale) noexcept { x *= scale; y *= scale; }
+	void Scale(float x_scale, float y_scale) noexcept { x *= x_scale; y *= y_scale; }
+	void Set(float x, float y) noexcept { this->x = x; this->y = y; }
 
-	bool Equals(const Vector2& target) const { return Math::FloatEqual(x, target.x) && Math::FloatEqual(y, target.y); }
+	constexpr bool Equals(const Vector2& target) const noexcept { return Math::FloatEqual(x, target.x) && Math::FloatEqual(y, target.y); }
 
 	// Pointer accessor for direct copying
-	float* ptr() { return p; }
+	float* ptr() noexcept { return p; }
 	// Pointer accessor for direct copying
-	const float* ptr() const { return p; }
-	String ToString()const { char arr[128] = { 0 }; Sprintf(arr, "%f, %f", x, y); return String(arr); }
+	const float* ptr() const noexcept { return p; }
+	String ToString()const noexcept { char arr[128] = { 0 }; Snprintf(arr, sizeof(arr), "%f, %f", x, y); return String(arr); }
 
 	//线性插值
-	static Vector2 Lerp(const Vector2& from, const Vector2& to, float t, bool clamp_01 = true);
+	static Vector2 Lerp(const Vector2& from, const Vector2& to, float t, bool clamp_01 = true) noexcept;
 public:
 	//求两向量的夹角
 	// @par：
 	// @return：
-	float Angle(const Vector2 &vec) { return Math::ACos((x * vec.x + y * vec.y) / (Lenght() * vec.Lenght())); }
+	float Angle(const Vector2 &vec) noexcept { return Math::ACos((x * vec.x + y * vec.y) / (Lenght() * vec.Lenght())); }
 
 	//求2D空间两个向量的旋转角(0~360)；坐标系为x轴向右，y轴向下；角度顺时针方向移动为正(与正常情况相反)
 	// @arithmetic:  
@@ -117,17 +119,17 @@ public:
 	// @par3：第二个向量的x坐标
 	// @par4：第二个向量的y坐标
 	// @return：角度值
-	float RotationAngle(const Vector2 &vec)const;
+	float RotationAngle(const Vector2 &vec)const noexcept;
 
 	//绕原点逆时针旋转
 	// @par：
 	// @return：
-	Vector2 CounterClockwiseRotation(float radian);
+	Vector2 CounterClockwiseRotation(float radian) noexcept;
 
 	//绕原点顺时针旋转
 	// @par：
 	// @return：
-	Vector2 ClockwiseRotation(float radian);
+	Vector2 ClockwiseRotation(float radian) noexcept;
 };//Vector2
 #pragma pack(pop)
 static_assert(sizeof(Vector2) == 2 * sizeof(float), "invalid bytes");

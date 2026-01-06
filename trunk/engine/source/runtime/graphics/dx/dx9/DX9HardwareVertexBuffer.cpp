@@ -1,4 +1,4 @@
-#include "DX9HardwareVertexBuffer.h"
+﻿#include "DX9HardwareVertexBuffer.h"
 #include "DX9Device.h"
 #include "DX9Program.h"
 
@@ -47,8 +47,8 @@ void* DX9HardwareVertexBuffer::Lock(const VertexBufferDesc& desc)
 	//由于需要处理设备丢失，这里不用Lock，而是分配一块内存；设备恢复时直接使用这块内存
 	if (rebuild)
 	{
-		DeleteArray(_bufferData[desc.stream]);
-		_bufferData[desc.stream] = NewArray<float>(this->GetBufferCapacity(desc.stream));
+		Memory::DeleteArray(_bufferData[desc.stream]);
+		_bufferData[desc.stream] = Memory::NewArray<float>(this->GetBufferCapacity(desc.stream));
 	}
 	return _bufferData[desc.stream];
 }
@@ -70,6 +70,7 @@ void  DX9HardwareVertexBuffer::Unlock(const VertexBufferDesc& desc)
 }
 void DX9HardwareVertexBuffer::Render(CGProgram* shader)
 {
+	DC_PROFILE_FUNCTION;
 	for (uint i = 0; i < MAX_STREAM_COUNT; ++i)
 	{
 		DX9HR(GetDX9Device()->GetDevice()->SetStreamSourceFreq(i, 1));
@@ -128,6 +129,7 @@ void DX9HardwareVertexBuffer::HandleResetDevice()
 }
 void DX9HardwareVertexBuffer::BuildInputLayout(CGProgram* shader)
 {
+	DC_PROFILE_FUNCTION;
 	SAFE_RELEASE(_vertexDeclaration);
 
 	Vector<D3DVERTEXELEMENT9> element_desc;

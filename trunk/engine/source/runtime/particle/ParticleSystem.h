@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2021/1/5
@@ -49,7 +49,7 @@ enum class PStopAction
 DECLARE_ENUM_OPERATORS(PStopAction);
 
 /********************************************************************/
-class ENGINE_DLL ParticleSystem Final : public Component
+class ENGINE_DLL ParticleSystem final : public Component
 {
 	friend class GameObject;
 	friend class ParticleRender;
@@ -61,7 +61,7 @@ class ENGINE_DLL ParticleSystem Final : public Component
 	BEGIN_DERIVED_REFECTION_TYPE(ParticleSystem, Component)
 		CTORS(DEFAULT_CTOR(ParticleSystem))
 		ADD_EDITOR_COMPONENT("Effects/ParticleSystem")
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 public:
 	//主信息

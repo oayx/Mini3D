@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2021/8/7
@@ -29,7 +29,7 @@ public:
 	//文件图标
 	static bool ShowFileIcon(const char* label, bool isSelected, Texture* icon, const Vector2& icon_size);
 	//添加组件
-	static void ShowAddComponent(std::function<void(String)> action, const EComponents& parent_component);
+	static void ShowAddComponent(std::function<void(String)> action, const EComponents& parentComponent);
 	//创建对象
 	static void ShowCreateObject();
 	//创建资源

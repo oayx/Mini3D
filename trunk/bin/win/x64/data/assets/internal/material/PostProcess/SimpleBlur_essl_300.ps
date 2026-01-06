@@ -1,0 +1,23 @@
+#version 300 es
+precision mediump float;
+precision highp int;
+
+struct type_CustomBuffer
+{
+    highp vec4 _MainTex_TexelSize;
+    highp float _BlurRadius;
+};
+
+uniform type_CustomBuffer CustomBuffer;
+
+uniform highp sampler2D _MainTex;
+
+in highp vec2 varying_TEXCOORD0;
+layout(location = 0) out highp vec4 out_var_SV_Target;
+
+void main()
+{
+    highp vec2 _41 = CustomBuffer._MainTex_TexelSize.xy * CustomBuffer._BlurRadius;
+    out_var_SV_Target = vec4((((((texture(_MainTex, varying_TEXCOORD0) + texture(_MainTex, varying_TEXCOORD0 + _41)) + texture(_MainTex, varying_TEXCOORD0 + (_41 * vec2(-1.0, 1.0)))) + texture(_MainTex, varying_TEXCOORD0 + (_41 * vec2(-1.0)))) + texture(_MainTex, varying_TEXCOORD0 + (_41 * vec2(1.0, -1.0)))) * 0.20000000298023223876953125).xyz, 1.0);
+}
+

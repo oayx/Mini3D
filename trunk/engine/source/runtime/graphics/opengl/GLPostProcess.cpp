@@ -1,4 +1,4 @@
-#include "GLPostProcess.h"
+﻿#include "GLPostProcess.h"
 #include "GLProgram.h"
 #include "GLDevice.h"
 #include "runtime/graphics/Material.h"
@@ -80,9 +80,9 @@ GLFinalProcess::~GLFinalProcess()
 void GLFinalProcess::Render(Camera* camera, RenderTexture* dest)
 {
 	RenderFrameDesc desc;
-	desc.view_port = camera->GetViewPort();
-	desc.clear_flag = camera->GetClearFlag();
-	desc.clear_color = camera->GetClearColor();
+	desc.viewPort = camera->GetViewPort();
+	desc.clearFlag = camera->GetClearFlag();
+	desc.clearColor = camera->GetClearColor();
 	if (camera->GetRenderTexture())
 	{//拷贝到纹理
 		camera->GetRenderTexture()->PreRender();

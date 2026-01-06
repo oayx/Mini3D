@@ -1,10 +1,9 @@
-#include "MeshManager.h"
+﻿#include "MeshManager.h"
 #include "Mesh.h"
 
 DC_BEGIN_NAMESPACE
 /********************************************************************/
 IMPL_REFECTION_TYPE(MeshManager);
-MeshManager::Meshes MeshManager::_meshes;
 void MeshManager::Destroy()
 {
 	DestroyMesh();

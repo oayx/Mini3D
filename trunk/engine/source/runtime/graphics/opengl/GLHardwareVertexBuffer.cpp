@@ -12,10 +12,10 @@ GLHardwareVertexBuffer::~GLHardwareVertexBuffer()
 {
 	for (int i = 0; i < MAX_STREAM_COUNT; ++i)
 	{
-		if (m_nBufferId[i] != 0)
+		if (_nBufferId[i] != 0)
 		{
-			GL_ERROR(glDeleteBuffers(1, &m_nBufferId[i]));
-			m_nBufferId[i] = 0;
+			GL_ERROR(glDeleteBuffers(1, &_nBufferId[i]));
+			_nBufferId[i] = 0;
 		}
 	}
 	if (_vao != 0)
@@ -32,9 +32,9 @@ void* GLHardwareVertexBuffer::Lock(const VertexBufferDesc& desc)
 	if (desc.num_vertex == 0)
 		return nullptr;
 
-	if (m_nBufferId[desc.stream] == 0)
+	if (_nBufferId[desc.stream] == 0)
 	{
-		GL_ERROR(glGenBuffers(1, &m_nBufferId[desc.stream]));
+		GL_ERROR(glGenBuffers(1, &_nBufferId[desc.stream]));
 	}
 
 	if (rebuild && _vao != 0)
@@ -53,15 +53,15 @@ void* GLHardwareVertexBuffer::Lock(const VertexBufferDesc& desc)
 		case GPUResourceUsage::Dynamic:gl_usage = GL_DYNAMIC_DRAW; break;
 		case GPUResourceUsage::Static:gl_usage = GL_STATIC_DRAW; break;
 		}
-		GL_ERROR(glBindBuffer(GL_ARRAY_BUFFER, m_nBufferId[desc.stream]));
+		GL_ERROR(glBindBuffer(GL_ARRAY_BUFFER, _nBufferId[desc.stream]));
 		GL_ERROR(glBufferData(GL_ARRAY_BUFFER, this->GetBufferCapacity(desc.stream), nullptr, gl_usage));//分配内存,再次调用可以修改内存大小，旧内存销毁；与glBufferStorage区别是不可修改大小
 		GL_ERROR(glBindBuffer(GL_ARRAY_BUFFER, 0));
 	}
 
 	if (!_bufferData[desc.stream] || rebuild)
 	{
-		DeleteArray(_bufferData[desc.stream]);
-		_bufferData[desc.stream] = NewArray<float>(this->GetBufferCapacity(desc.stream));
+		Memory::DeleteArray(_bufferData[desc.stream]);
+		_bufferData[desc.stream] = Memory::NewArray<float>(this->GetBufferCapacity(desc.stream));
 		::memset(_bufferData[desc.stream], 0, this->GetBufferCapacity(desc.stream));
 	}
 	return _bufferData[desc.stream];
@@ -72,13 +72,14 @@ void  GLHardwareVertexBuffer::Unlock(const VertexBufferDesc& desc)
 	if (desc.num_vertex == 0)
 		return;
 	
-	GL_ERROR(glBindBuffer(GL_ARRAY_BUFFER, m_nBufferId[desc.stream]));
+	GL_ERROR(glBindBuffer(GL_ARRAY_BUFFER, _nBufferId[desc.stream]));
 	GL_ERROR(glBufferSubData(GL_ARRAY_BUFFER, 0, this->GetBufferSize(desc.stream), _bufferData[desc.stream]));//用来更新一个已有缓冲区对象中的一部分数据
 	GL_ERROR(glBindBuffer(GL_ARRAY_BUFFER, 0));
 }
 void GLHardwareVertexBuffer::Render(CGProgram* shader)
 {
-	GL_ERROR(glBindBuffer(GL_ARRAY_BUFFER, m_nBufferId[0]));
+	DC_PROFILE_FUNCTION;
+	GL_ERROR(glBindBuffer(GL_ARRAY_BUFFER, _nBufferId[0]));
 	this->BuildInputLayout(shader);
 	GL_ERROR(glBindBuffer(GL_ARRAY_BUFFER, 0));
 }
@@ -125,7 +126,7 @@ void GLHardwareVertexBuffer::BuildInputLayout(CGProgram* shader)
 
 		int index = 0;
 		{
-			GL_ERROR(glBindBuffer(GL_ARRAY_BUFFER, m_nBufferId[0]));
+			GL_ERROR(glBindBuffer(GL_ARRAY_BUFFER, _nBufferId[0]));
 			GLuint total_size = this->GetVertexSize(0);
 			for (byte i = 0; i < this->GetElementCount(0); ++i)
 			{
@@ -176,7 +177,7 @@ void GLHardwareVertexBuffer::BuildInputLayout(CGProgram* shader)
 		}
 		if (_vertexCount[INSTANCE_STREAM_INDEX] > 0)
 		{
-			GL_ERROR(glBindBuffer(GL_ARRAY_BUFFER, m_nBufferId[INSTANCE_STREAM_INDEX]));
+			GL_ERROR(glBindBuffer(GL_ARRAY_BUFFER, _nBufferId[INSTANCE_STREAM_INDEX]));
 			GLuint total_size = this->GetVertexSize(INSTANCE_STREAM_INDEX);
 			for (byte i = 0; i < this->GetElementCount(INSTANCE_STREAM_INDEX); ++i)
 			{

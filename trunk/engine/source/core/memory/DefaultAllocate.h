@@ -5,7 +5,7 @@
 DC_BEGIN_NAMESPACE
 /********************************************************************/
 //处理大块内存的申请与释放，直接与操作系统进行交易
-class LargeMalloc Final
+class LargeMalloc final
 {
 public:
 	static void *Allocate(uint32_t n)
@@ -19,14 +19,14 @@ public:
 }; 
 /********************************************************************/
 // 链表式内存管理
-class DefaultMalloc Final : public Malloc
+class DefaultMalloc final : public Malloc
 {
 	friend class Memory;
 
 	enum { _DEFAULT_ALLOC_CHUNK = 20 };             // 自由链表不够时，默认分配的节点数量
 	enum { _ALIGN = 8 };                            // free_list分配节点的最小单位
 	enum { _MAX_BYTES = 128 };                      // free_list分配节点的最大值
-	enum { _N_FREE_LIST = _MAX_BYTES / _ALIGN };    // 自由链表的个数
+	enum { _N_FREE_LIST = int((int)_MAX_BYTES / (int)_ALIGN) };	// 自由链表的个数
 	enum { _OFFSET_DATA = sizeof(uint32_t) };		// 有效数据偏移(size)
 
 	typedef union Obj
@@ -65,12 +65,12 @@ private:
 	std::mutex _mutex;
 
 	// 自由链表
-	Obj* _free_list[_N_FREE_LIST] = {0};
+	Obj* _freeList[_N_FREE_LIST] = {0};
 
 	// 内存池
-	char* _start_free = 0;
-	char* _end_free = 0;
-	uint32_t _heap_size = 0;
+	char* _startFree = 0;
+	char* _endFree = 0;
+	uint32_t _heapSize = 0;
 };
 inline void* DefaultMalloc::Alloc(uint32_t bytes)
 {
@@ -90,7 +90,7 @@ inline void* DefaultMalloc::Alloc(uint32_t bytes)
 
 		// 如果申请的内存小于 _MAX_ALIGN，则从自由链表中取
 		uint32_t index = FREELIST_INDEX(size);
-		result = _free_list[index];
+		result = _freeList[index];
 		if (0 == result)
 		{
 			result = (Obj*)Refill(ROUND_UP(size));
@@ -99,7 +99,7 @@ inline void* DefaultMalloc::Alloc(uint32_t bytes)
 		}
 		else
 		{
-			_free_list[index] = result->free_list_link;
+			_freeList[index] = result->free_list_link;
 			result->size = bytes;
 			return (char*)result + _OFFSET_DATA;
 		}
@@ -107,7 +107,7 @@ inline void* DefaultMalloc::Alloc(uint32_t bytes)
 }
 inline void* DefaultMalloc::AlignedAlloc(uint32_t bytes, uint32_t alignment)
 {
-	return nullptr;
+	return Alloc(bytes);
 }
 inline void* DefaultMalloc::Realloc(void* addr, uint32_t bytes)
 {
@@ -145,8 +145,8 @@ inline void DefaultMalloc::Free(void* addr)
 	{
 		std::lock_guard<std::mutex> lock(_mutex);
 		uint32_t index = FREELIST_INDEX(size);
-		obj->free_list_link = _free_list[index];
-		_free_list[index] = obj->free_list_link;
+		obj->free_list_link = _freeList[index];
+		_freeList[index] = obj->free_list_link;
 	}
 }
 inline void DefaultMalloc::Free(void* addr, uint32_t bytes)
@@ -184,7 +184,7 @@ inline void* DefaultMalloc::Refill(uint32_t bytes)
 		return chunk;
 
 	uint32_t index = FREELIST_INDEX(bytes);
-	Obj **myFreeList = _free_list + index;
+	Obj **myFreeList = _freeList + index;
 
 	Obj *result = (Obj *)chunk;
 	Obj *cur_obj = nullptr;
@@ -205,13 +205,13 @@ inline char* DefaultMalloc::ChunkAlloc(uint32_t size, uint32_t &nobjs)
 {
 	char *result = nullptr;
 	uint32_t total_bytes = size * nobjs;//总共需要分配的字节数，最终不一定够
-	uint32_t bytes_left = _end_free - _start_free;// char *类型的指针直接相减，得到剩余内存的字节数
+	uint32_t bytes_left = _endFree - _startFree;// char *类型的指针直接相减，得到剩余内存的字节数
 
 	// 1 内存池中的剩余内存足够分配nobjs个对象的空间
 	if (bytes_left >= total_bytes)
 	{
-		result = _start_free;
-		_start_free += total_bytes;
+		result = _startFree;
+		_startFree += total_bytes;
 		return result;
 	}
 	// 2 内存池中剩余内存不够分配nobjs个对象的空间，但是至少能分配一个大小为size的空间
@@ -219,8 +219,8 @@ inline char* DefaultMalloc::ChunkAlloc(uint32_t size, uint32_t &nobjs)
 	{
 		nobjs = bytes_left / size;				// 修改能分配的对象空间个数
 		total_bytes = size * nobjs;				// 重新修改总的字节数
-		result = _start_free;                  // 返回值
-		_start_free += total_bytes;			// 修改内存池起始地址
+		result = _startFree;                  // 返回值
+		_startFree += total_bytes;			// 修改内存池起始地址
 		return result;
 	}
 	// 3 内存池中的剩余内存连一个对象的空间都分不出来了
@@ -231,16 +231,16 @@ inline char* DefaultMalloc::ChunkAlloc(uint32_t size, uint32_t &nobjs)
 		{
 			uint32_t index = FREELIST_INDEX(bytes_left);
 
-			// 调整_free_list，将内存池中剩余的内存挂到自由链表中
-			((Obj *)_start_free)->free_list_link = _free_list[index];//先保存
-			_free_list[index] = (Obj *)_start_free;//再指向新的
+			// 调整_freeList，将内存池中剩余的内存挂到自由链表中
+			((Obj *)_startFree)->free_list_link = _freeList[index];//先保存
+			_freeList[index] = (Obj *)_startFree;//再指向新的
 		}
 
 		// 内存池内存不足的解决方法 ......
 		// 解决方法 1 ： 找堆(操作系统)要
-		uint32_t bytes_to_get = 2 * total_bytes + ROUND_UP(_heap_size >> 4);    // 反馈调节用
-		_start_free = (char *)::malloc(bytes_to_get);
-		if (0 == _start_free)
+		uint32_t bytes_to_get = 2 * total_bytes + ROUND_UP(_heapSize >> 4);    // 反馈调节用
+		_startFree = (char *)::malloc(bytes_to_get);
+		if (0 == _startFree)
 		{// 堆空间内存不足， malloc失败
 
 			// 解决方法 2 ：要在自由链表中检索较大的区块，
@@ -248,12 +248,12 @@ inline char* DefaultMalloc::ChunkAlloc(uint32_t size, uint32_t &nobjs)
 			for (uint32_t i = size; i < _MAX_BYTES; i += _ALIGN)
 			{
 				index = FREELIST_INDEX(i);
-				Obj *tmp = _free_list[index];
+				Obj *tmp = _freeList[index];
 				if (tmp)    // index下的自由链表不空
 				{
-					_free_list[index] = tmp->free_list_link;		// 把第一个不空的自由链表的第一个节点用tmp取下来，并把其他节点连接起来
-					_start_free = (char*)tmp;
-					_end_free = _start_free + i;					// 因为_start_free是char*类型的指针
+					_freeList[index] = tmp->free_list_link;		// 把第一个不空的自由链表的第一个节点用tmp取下来，并把其他节点连接起来
+					_startFree = (char*)tmp;
+					_endFree = _startFree + i;					// 因为_startFree是char*类型的指针
 					return ChunkAlloc(size, nobjs);					// 这个时候nobjs虽然没有改变，递归进去的时候，(如果需要)会改变的
 				}
 			}
@@ -261,13 +261,13 @@ inline char* DefaultMalloc::ChunkAlloc(uint32_t size, uint32_t &nobjs)
 			// 在自由链表中没有找到足够大的块(都用完了)，就会走到这里
 			// 解决方法 3 ：看看一级空间配置器能不能出点力(以及空间配置器如果指定了内存不足时的处理函数，就有可能空出内存)
 
-			// 接下来的一级空间配置器如果抛异常，就需要之前重置_end_free，如果不重置，下次进入ChunkAlloc时，_start_free == 0, _end_free没改，内存池会很大，其实并不是
-			_end_free = 0;
-			_start_free = (char*)LargeMalloc::Allocate(bytes_to_get);
+			// 接下来的一级空间配置器如果抛异常，就需要之前重置_endFree，如果不重置，下次进入ChunkAlloc时，_startFree == 0, _endFree没改，内存池会很大，其实并不是
+			_endFree = 0;
+			_startFree = (char*)LargeMalloc::Allocate(bytes_to_get);
 		}
 
-		_heap_size += bytes_to_get;
-		_end_free = _start_free + bytes_to_get;
+		_heapSize += bytes_to_get;
+		_endFree = _startFree + bytes_to_get;
 
 		return ChunkAlloc(size, nobjs);
 	}

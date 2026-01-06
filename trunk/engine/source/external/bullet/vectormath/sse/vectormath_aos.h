@@ -41,7 +41,9 @@
 #define Matrix3Ref Matrix3&
 
 #if (defined (_WIN32) && (_MSC_VER) && _MSC_VER >= 1400)
-	#define USE_SSE3_LDDQU
+    #ifdef __SSE3__ //clang报错
+        #define USE_SSE3_LDDQU
+    #endif //__SSE3__
 
 	#define VM_ATTRIBUTE_ALIGNED_CLASS16(a) __declspec(align(16)) a
 	#define VM_ATTRIBUTE_ALIGN16 __declspec(align(16))

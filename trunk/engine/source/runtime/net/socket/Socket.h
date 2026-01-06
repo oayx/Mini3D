@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Date：2020/8/19
@@ -22,7 +22,7 @@ class ENGINE_DLL Socket : public Object
 	friend class TCPChannel;
 	DISALLOW_COPY_ASSIGN(Socket);
 	BEGIN_DERIVED_REFECTION_TYPE(Socket, Object)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 protected:
 	Socket();
@@ -31,7 +31,7 @@ protected:
 	//绑定到指定地址
 	//操作成功返回0，否则返回系统错误号
 	virtual int Bind(const sockaddr_in* addr);
-	virtual int Bind(const char* host_name, int port);
+	virtual int Bind(const char* hostName, int port);
 
 	//开始监听
 	//操作成功返回0，否则返回系统错误号
@@ -43,7 +43,7 @@ protected:
 	//或SocketEvent::ERROR事件以确认连接成功或失败。
 	virtual int Connect(const addrinfo *addr);
 	virtual int Connect(const sockaddr_in *addr);
-	virtual int Connect(const char* host_name, int port);
+	virtual int Connect(const String& hostName, int port);
 
 	//接收新的连接
 	//参数wait_msec表示最大等待毫秒数；
@@ -65,8 +65,8 @@ protected:
 
 	//发送广播数据(适用于SOCK_DGRAM
 	//通常建议一个广播数据报的大小不要大到以致产生碎片，也就是说数据报的数据部分（包括头）不超过512字节。
-	virtual int RecvFrom(const char* host_name, int port, char* buf, int len, const int flags = 0);
-	virtual int SendTo(const char* host_name, int port, const char* buf, int len, const int flags = 0);
+	virtual int RecvFrom(const String& hostName, int port, char* buf, int len, const int flags = 0);
+	virtual int SendTo(const String& hostName, int port, const char* buf, int len, const int flags = 0);
 
 	//关闭连接
 	virtual void Close();
@@ -80,8 +80,8 @@ protected:
 
 public:
 	//原始套接字句柄
-	int64 GetSocket() const { return m_nSocket; }
-	void SetSocket(int64 socket) { m_nSocket = socket; }
+	int64 GetSocket() const { return _nSocket; }
+	void SetSocket(int64 socket) { _nSocket = socket; }
 
 	//非阻塞模式属性
 	//操作成功返回0，否则返回系统错误号
@@ -131,11 +131,11 @@ public:
 
 	//解析域名地址
 	//解析域名成功则函数返回0并向addr存储解析后的地址，否则函数返回SOCKET错误码。
-	static int ResolveHost(const char* name, in_addr *addr);
-	static int ResolveHostV6(const char* name, addrinfo** result);
+	static int ResolveHost(const String& hostName, in_addr *addr);
+	static int ResolveHostV6(const String& hostName, addrinfo** result);
 
 protected:
-	int64	m_nSocket = -1;			//套接字句柄
+	int64	_nSocket = -1;			//套接字句柄
 	bool	_isClose = true;
 	bool	_isNonBlocking = false;	//是否非阻塞模式
 };

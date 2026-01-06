@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2021/8/9
@@ -20,7 +20,7 @@ public:
 	static void AddLogMessage(LogMsgType type, const char* msg) { _allLogs.Add(std::pair(type, std::string(msg))); }
 
 private:
-	static bool IsShow;
-	static Vector<std::pair<LogMsgType, std::string>> _allLogs;
+	inline static bool IsShow = true;
+	inline static Vector<std::pair<LogMsgType, std::string>> _allLogs;
 };
 DC_END_NAMESPACE

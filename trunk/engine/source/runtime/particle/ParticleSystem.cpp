@@ -1,4 +1,4 @@
-#include "ParticleSystem.h"
+﻿#include "ParticleSystem.h"
 #include "ParticleEmission.h"
 #include "ParticleShape.h"
 #include "ParticleRender.h"
@@ -17,8 +17,8 @@ DC_BEGIN_NAMESPACE
 IMPL_DERIVED_REFECTION_TYPE(ParticleSystem, Component);
 ParticleSystem::ParticleSystem()
 {
-	_particleShape = DBG_NEW ParticleShape();
-	_particleEmission = DBG_NEW ParticleEmission();
+	_particleShape = Memory::New<ParticleShape>();
+	_particleEmission = Memory::New<ParticleEmission>();
 	_particleShape->SetOwner(this);
 	_particleEmission->SetOwner(this);
 }
@@ -28,11 +28,11 @@ ParticleSystem::~ParticleSystem()
 	SAFE_DELETE(_particleShape);
 	SAFE_DELETE(_particleEmission);
 }
-Object* ParticleSystem::Clone(Object* new_obj)
+Object* ParticleSystem::Clone(Object* newObj)
 {
-	base::Clone(new_obj);
-	ParticleSystem* obj = dynamic_cast<ParticleSystem*>(new_obj);
-	if (!obj)return new_obj;
+	base::Clone(newObj);
+	ParticleSystem* obj = dynamic_cast<ParticleSystem*>(newObj);
+	if (!obj)return newObj;
 
 	obj->Main = this->Main;
 	obj->Emission = this->Emission;
@@ -95,15 +95,15 @@ void ParticleSystem::OnTransformChanged()
 	if (this->Main.Space == SimulationSpace::Local)
 	{
 		//求位置偏差
-		Vector3 current_pos = this->GetTransform()->GetPosition();
-		Vector3 offset_pos = current_pos - _oldPosition;
-		if (offset_pos.SquareSize() > 0)
+		Vector3 currentPos = this->GetTransform()->GetPosition();
+		Vector3 offsetPos = currentPos - _oldPosition;
+		if (offsetPos.SquareSize() > 0)
 		{
 			for (auto p : _particles)
 			{
-				p->Position += offset_pos;
+				p->Position += offsetPos;
 			}
-			_oldPosition = current_pos;
+			_oldPosition = currentPos;
 		}
 	}
 }
@@ -308,22 +308,22 @@ void ParticleSystem::OnDrawEditor()
 		}
 
 		{
-			const char* sz_flags[] = { "Local", "World" };
+			const char* szFlags[] = { "Local", "World" };
 			ImGuiEx::Label("Simulation Space");
-			static int current_flags = (int)Main.Space;
-			if (ImGui::Combo("##Space", &current_flags, sz_flags, ARRAY_SIZE(sz_flags)))
+			static int currentFlags = (int)Main.Space;
+			if (ImGui::Combo("##Space", &currentFlags, szFlags, ARRAY_SIZE(szFlags)))
 			{
-				Main.Space = SimulationSpace(current_flags);
+				Main.Space = SimulationSpace(currentFlags);
 			}
 		}
 
 		{
-			const char* sz_flags[] = { "Hierarchy", "Local", "Shape" };
+			const char* szFlags[] = { "Hierarchy", "Local", "Shape" };
 			ImGuiEx::Label("Scaling Mode");
-			static int current_flags = (int)Main.ScalingMode;
-			if (ImGui::Combo("##Scaling Mode", &current_flags, sz_flags, ARRAY_SIZE(sz_flags)))
+			static int currentFlags = (int)Main.ScalingMode;
+			if (ImGui::Combo("##Scaling Mode", &currentFlags, szFlags, ARRAY_SIZE(szFlags)))
 			{
-				Main.ScalingMode = PScalingMode(current_flags);
+				Main.ScalingMode = PScalingMode(currentFlags);
 			}
 		}
 		ImGui::TreePop();
@@ -348,12 +348,12 @@ void ParticleSystem::OnDrawEditor()
 		{
 		}
 		{
-			const char* sz_flags[] = { "Sphere", "SphereShell", "HemiSphere", "HemiSphereShell", "Cone", "Box", "BoxEdge", "Circle", "CircleEdge" };
+			const char* szFlags[] = { "Sphere", "SphereShell", "HemiSphere", "HemiSphereShell", "Cone", "Box", "BoxEdge", "Circle", "CircleEdge" };
 			ImGuiEx::Label("Type");
-			static int current_flags = (int)Shape.Type;
-			if (ImGui::Combo("##ShapeType", &current_flags, sz_flags, ARRAY_SIZE(sz_flags)))
+			static int currentFlags = (int)Shape.Type;
+			if (ImGui::Combo("##ShapeType", &currentFlags, szFlags, ARRAY_SIZE(szFlags)))
 			{
-				Shape.Type = PShapeType(current_flags);
+				Shape.Type = PShapeType(currentFlags);
 			}
 		}
 		if (Shape.Type == PShapeType::Sphere || Shape.Type == PShapeType::SphereShell || Shape.Type == PShapeType::HemiSphere
@@ -469,12 +469,12 @@ void ParticleSystem::OnDrawEditor()
 			ImGuiEx::Label("Tiles");
 
 			const float width = ImGui::GetContentRegionAvail().x;
-			const float char_width = ImGui::GetFontSize() + 3.0f;
+			const float charWidth = ImGui::GetFontSize() + 3.0f;
 			uint min_v = 1.00f;
 
 			ImGui::TextUnformatted("X");
 			ImGui::SameLine();
-			ImGui::SetNextItemWidth(width * 0.5f - char_width);
+			ImGui::SetNextItemWidth(width * 0.5f - charWidth);
 			if (ImGui::DragScalar("##X", ImGuiDataType_U32, &TextureSheetAnimation.Cols, 0.1f, &min_v))
 			{
 			}
@@ -482,8 +482,7 @@ void ParticleSystem::OnDrawEditor()
 			ImGui::SameLine();
 			ImGui::TextUnformatted("Y");
 			ImGui::SameLine();
-			ImVec2 curr_pos2 = ImGui::GetCursorScreenPos();
-			ImGui::SetNextItemWidth(width * 0.5f - char_width);
+			ImGui::SetNextItemWidth(width * 0.5f - charWidth);
 			if (ImGui::DragScalar("##Y", ImGuiDataType_U32, &TextureSheetAnimation.Rows, 0.1f, &min_v))
 			{
 			}

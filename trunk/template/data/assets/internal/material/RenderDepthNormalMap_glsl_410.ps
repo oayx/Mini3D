@@ -1,0 +1,11 @@
+#version 410
+
+layout(location = 0) in float var_TEXCOORD0;
+layout(location = 1) in vec3 var_TEXCOORD1;
+layout(location = 0) out vec4 out_var_SV_Target;
+
+void main()
+{
+    out_var_SV_Target = vec4(var_TEXCOORD1, var_TEXCOORD0);
+}
+

@@ -1,4 +1,4 @@
-#include "AnimationClip.h"
+﻿#include "AnimationClip.h"
 #include "AnimationNode.h"
 #include "Mesh.h"
 
@@ -18,10 +18,10 @@ AnimationClip::~AnimationClip()
 	}
 	_animationNodes.Clear();
 }
-void AnimationClip::Update(float time, BoneKeyFrames& bone_keyframes)
+void AnimationClip::Update(float time, BoneKeyFrames& boneKeyframes)
 {
 	CHECK_RETURN_PTR_VOID(_rootNode);
-	_rootNode->Interpolated(time, bone_keyframes);
+	_rootNode->Interpolated(time, boneKeyframes);
 }
 AnimationNode* AnimationClip::CreateNode(Mesh* mesh, const String& name)
 {
@@ -38,27 +38,27 @@ AnimationNode* AnimationClip::CreateNode(Mesh* mesh, const String& name)
 
 	return node;
 }
-void AnimationClip::SetFrames(uint total_frames, uint fps)
+void AnimationClip::SetFrames(uint totalFrames, uint fps)
 {
-	_totalFrames = total_frames;
+	_totalFrames = totalFrames;
 	if (fps > 0)_fps = fps;
 	_duration = (float)_totalFrames / (float)_fps;
 }
 bool AnimationClip::ClipAnimation(Mesh* mesh, const ClipAnimations& clips)
 {
-	for (ClipAnimationDesc clip_info : clips)
+	for (ClipAnimationDesc clipInfo : clips)
 	{
-		CHECK_RETURN_PTR_FALSE(!clip_info.Name.IsEmpty());
-		CHECK_RETURN_PTR_FALSE(clip_info.StartFrame <= clip_info.EndFrame);
-		CHECK_RETURN_PTR_FALSE(clip_info.EndFrame <= this->GetFrames());
+		CHECK_RETURN_PTR_FALSE(!clipInfo.Name.IsEmpty());
+		CHECK_RETURN_PTR_FALSE(clipInfo.StartFrame <= clipInfo.EndFrame);
+		CHECK_RETURN_PTR_FALSE(clipInfo.EndFrame <= this->GetFrames());
 
 		//复制Animation
-		AnimationClip* clip = mesh->CreateClip(clip_info.Name);
-		clip->SetFrames(clip_info.EndFrame - clip_info.StartFrame, this->GetFPS());
-		clip->SetLoop(clip_info.Loop);
+		AnimationClip* clip = mesh->CreateClip(clipInfo.Name);
+		clip->SetFrames(clipInfo.EndFrame - clipInfo.StartFrame, this->GetFPS());
+		clip->SetLoop(clipInfo.Loop);
 
 		//根节点
-		_rootNode->ClipAnimation(mesh, clip, nullptr, clip_info);
+		_rootNode->ClipAnimation(mesh, clip, nullptr, clipInfo);
 	}
 	return true;
 }

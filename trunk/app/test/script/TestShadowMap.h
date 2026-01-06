@@ -65,7 +65,7 @@ private:
 		Camera* camera = SceneManager::GetMainCamera();
 		camera->GetTransform()->SetPosition(Vector3(0.0f, 10.0f, -10.0f));
 		camera->GetTransform()->Pitch(45);
-		camera->SetZFar(100);
+		camera->SetZFar(1000);
 #endif
 
 #if 1//平行光
@@ -75,11 +75,12 @@ private:
 			obj->GetTransform()->SetPosition(Vector3(0.0f, 10.0f, -10.0f));
 			obj->GetTransform()->LookTo(Vector3(1.0f, -1.0, 1.0f), Vector3::up);
 			Light* light = obj->AddComponent<Light>();
+			light->SetCullMask(LayerMask::Everything ^ LayerMask::GetMask(LayerMask::UI));
 			light->mType = LightType::Direction;
 			light->Diffuse = Color(0.8f, 0.8f, 0.8f);
 			//light->SetShadowBias(-0.01f);
 			//DX12如果是2048会报错
-			light->EnableShadowMap(ShadowType::Soft, 1024, 1024, ColorFormat::DEPTH24_STENCIL8);
+			light->EnableShadowMap(ShadowType::Soft, 2048, 2048, ColorFormat::DEPTH24_STENCIL8);
 		}
 #endif
 	}

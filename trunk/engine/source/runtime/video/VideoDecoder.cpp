@@ -1,4 +1,4 @@
-
+﻿
 #include "VideoDecoder.h"
 #include "core/DllHelper.h"
 
@@ -64,7 +64,7 @@ static t_sws_freeContext p_sws_freeContext;
 
 static bool g_lib_loaded = false;
 
-#if DC_PLATFORM_MAC || DC_PLATFORM_WIN32
+#if DC_PLATFORM_WIN32
 static LIB_HANDLE g_libswresample;
 static LIB_HANDLE g_libavutil;
 static LIB_HANDLE g_libavcodec;
@@ -166,24 +166,24 @@ class VideoDecoderPrivate : public object
 	DEFAULT_CREATE(VideoDecoderPrivate);
 	FRIEND_CONSTRUCT_DESTRUCT(VideoDecoderPrivate);
 public:
-	AVFormatContext* m_format_context = nullptr;
-	AVCodecContext* m_codec_context = nullptr;
-	AVFrame* m_frame = nullptr;
-	AVFrame* m_rgb_frame = nullptr;
-	struct SwsContext *m_img_convert_ctx = nullptr;
+	AVFormatContext* _formatContext = nullptr;
+	AVCodecContext* _codecContext = nullptr;
+	AVFrame* _frame = nullptr;
+	AVFrame* _rgbFrame = nullptr;
+	struct SwsContext *_imgConvertCtx = nullptr;
 
-	bool m_loop = false;
-	bool m_closed = true;
-	int m_video_stream = -1;
-	int m_target_width = -1, m_target_height = -1;
-	byte* m_yuv_buffer = nullptr;
+	bool _loop = false;
+	bool _closed = true;
+	int _videoStream = -1;
+	int _targetWidth = -1, _targetHeight = -1;
+	byte* _yuv_buffer = nullptr;
 
-	List<VideoFrame*> m_decoded_frame_cache;
-	List<VideoFrame*> m_free_frame_cache;
+	List<VideoFrame*> _decodedFrameCache;
+	List<VideoFrame*> _freeFrameCache;
 
-	std::thread m_decode_thread;
+	std::thread _decodeThread;
 	std::mutex _mutex;
-	std::condition_variable m_condition;
+	std::condition_variable _condition;
 
 	VideoDecoderPrivate()
 	{
@@ -197,6 +197,7 @@ public:
 
 	bool OpenFile(const String& path, bool loop, int w, int h)
 	{
+		DC_PROFILE_FUNCTION;
 		bool result = false;
 		do 
 		{
@@ -206,35 +207,35 @@ public:
 				break;
 			}
 
-			m_format_context = nullptr;
-			if (p_avformat_open_input(&m_format_context, path.c_str(), nullptr, nullptr) != 0)
+			_formatContext = nullptr;
+			if (p_avformat_open_input(&_formatContext, path.c_str(), nullptr, nullptr) != 0)
 			{
 				Debuger::Error("avformat_open_input");
 				break;
 			}
 
-			if (p_avformat_find_stream_info(m_format_context, nullptr) < 0)
+			if (p_avformat_find_stream_info(_formatContext, nullptr) < 0)
 			{
 				Debuger::Error("avformat_find_stream_info");
 				break;
 			}
 
-			m_video_stream = -1;
-			for (uint32_t i = 0; i < m_format_context->nb_streams; ++i)
+			_videoStream = -1;
+			for (uint32_t i = 0; i < _formatContext->nb_streams; ++i)
 			{
-				if (m_format_context->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_VIDEO)
+				if (_formatContext->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_VIDEO)
 				{
-					m_video_stream = i;
+					_videoStream = i;
 					break;
 				}
 			}
-			if (m_video_stream < 0)
+			if (_videoStream < 0)
 			{
 				Debuger::Error("AVMEDIA_TYPE_VIDEO");
 				break;
 			}
 
-			const AVCodecParameters* codec_param = m_format_context->streams[m_video_stream]->codecpar;
+			const AVCodecParameters* codec_param = _formatContext->streams[_videoStream]->codecpar;
 			const AVCodec* codec = p_avcodec_find_decoder(codec_param->codec_id);
 			if (codec == nullptr)
 			{
@@ -242,26 +243,26 @@ public:
 				break;
 			}
 
-			m_codec_context = p_avcodec_alloc_context3(codec);
-			if (p_avcodec_parameters_to_context(m_codec_context, codec_param) != 0)
+			_codecContext = p_avcodec_alloc_context3(codec);
+			if (p_avcodec_parameters_to_context(_codecContext, codec_param) != 0)
 			{
 				Debuger::Error("avcodec_parameters_to_context");
 				break;
 			}
 
-			if (p_avcodec_open2(m_codec_context, codec, nullptr) < 0)
+			if (p_avcodec_open2(_codecContext, codec, nullptr) < 0)
 			{
 				Debuger::Error("avcodec_open2");
 				break;
 			}
-			assert(m_codec_context->pix_fmt == AV_PIX_FMT_YUV420P);
+			assert(_codecContext->pix_fmt == AV_PIX_FMT_YUV420P);
 
-			m_target_width = w <= 0 ? m_codec_context->width : w;
-			m_target_height = h <= 0 ? m_codec_context->height : h;
+			_targetWidth = w <= 0 ? _codecContext->width : w;
+			_targetHeight = h <= 0 ? _codecContext->height : h;
 
-			m_yuv_buffer = NewArray<byte>(m_target_width * m_target_height * 3);
-			m_frame = p_av_frame_alloc();
-			m_rgb_frame = p_av_frame_alloc();
+			_yuv_buffer = Memory::NewArray<byte>(_targetWidth * _targetHeight * 3);
+			_frame = p_av_frame_alloc();
+			_rgbFrame = p_av_frame_alloc();
 
 #if defined(DC_GRAPHICS_API_DX9)
 			AVPixelFormat format = AV_PIX_FMT_BGR24;
@@ -269,16 +270,16 @@ public:
 			AVPixelFormat format = AV_PIX_FMT_RGB24;
 #endif
 
-			if (p_avpicture_fill((AVPicture *)m_rgb_frame, m_yuv_buffer, format, m_target_width, m_target_height) < 0)
+			if (p_avpicture_fill((AVPicture *)_rgbFrame, _yuv_buffer, format, _targetWidth, _targetHeight) < 0)
 			{
 				Debuger::Error("avpicture_fill");
 				break;
 			}
-			m_img_convert_ctx = p_sws_getContext(m_codec_context->width, m_codec_context->height, m_codec_context->pix_fmt, m_target_width, m_target_height, format, SWS_BICUBIC, NULL, NULL, NULL);
+			_imgConvertCtx = p_sws_getContext(_codecContext->width, _codecContext->height, _codecContext->pix_fmt, _targetWidth, _targetHeight, format, SWS_BICUBIC, NULL, NULL, NULL);
 
-			m_loop = loop;
-			m_closed = false;
-			m_decode_thread = std::thread(&DecodeThread, this);
+			_loop = loop;
+			_closed = false;
+			_decodeThread = std::thread(&DecodeThread, this);
 			result = true;
 		} while (false);
 
@@ -296,50 +297,50 @@ public:
 			return;
 		}
 
-		if (!m_closed)
+		if (!_closed)
 		{
 			_mutex.lock();
-			m_closed = true;
+			_closed = true;
 			_mutex.unlock();
-			m_condition.notify_one();
-			m_decode_thread.join();
+			_condition.notify_one();
+			_decodeThread.join();
 		}
 
-		DeleteArray(m_yuv_buffer);
+		Memory::DeleteArray(_yuv_buffer);
 
-		for (auto obj : m_decoded_frame_cache)
+		for (auto obj : _decodedFrameCache)
 		{
 			SAFE_DELETE(obj);
 		}
-		m_decoded_frame_cache.Clear();
-		for (auto obj : m_free_frame_cache)
+		_decodedFrameCache.Clear();
+		for (auto obj : _freeFrameCache)
 		{
 			SAFE_DELETE(obj);
 		}
-		m_free_frame_cache.Clear();
+		_freeFrameCache.Clear();
 
-		if (m_frame != nullptr)
+		if (_frame != nullptr)
 		{
-			p_av_frame_free(&m_frame);
-			m_frame = nullptr;
+			p_av_frame_free(&_frame);
+			_frame = nullptr;
 		}
 
-		if (m_codec_context != nullptr)
+		if (_codecContext != nullptr)
 		{
-			p_avcodec_close(m_codec_context);
-			m_codec_context = nullptr;
+			p_avcodec_close(_codecContext);
+			_codecContext = nullptr;
 		}
 
-		if (m_format_context != nullptr)
+		if (_formatContext != nullptr)
 		{
-			p_avformat_close_input(&m_format_context);
-			m_format_context = nullptr;
+			p_avformat_close_input(&_formatContext);
+			_formatContext = nullptr;
 		}
 
-		if (m_img_convert_ctx != nullptr)
+		if (_imgConvertCtx != nullptr)
 		{
-			p_sws_freeContext(m_img_convert_ctx);
-			m_img_convert_ctx = nullptr;
+			p_sws_freeContext(_imgConvertCtx);
+			_imgConvertCtx = nullptr;
 		}
 	}
 
@@ -353,7 +354,7 @@ public:
 		const int MAX_CACHE_FRAMES = 10;
 		for (int i = 0; i < MAX_CACHE_FRAMES; ++i)
 		{
-			p->m_free_frame_cache.AddLast(VideoFrame::Create(ColorFormat::R8G8B8, iSize(p->m_target_width, p->m_target_height)));
+			p->_freeFrameCache.AddLast(VideoFrame::Create(ColorFormat::R8G8B8, iSize(p->_targetWidth, p->_targetHeight)));
 		}
 
 		while (true)
@@ -361,55 +362,56 @@ public:
 			VideoFrame* frame = nullptr;
 			{
 				std::unique_lock<std::mutex> lock(p->_mutex);
-				p->m_condition.wait(lock, [p] {
-					return p->m_free_frame_cache.Size() > 0 || p->m_closed;
+				p->_condition.wait(lock, [p] {
+					return p->_freeFrameCache.Size() > 0 || p->_closed;
 					});
 
-				if (p->m_closed)
+				if (p->_closed)
 				{
 					break;
 				}
 
-				frame = p->m_free_frame_cache.First();
-				p->m_free_frame_cache.RemoveFirst();
+				frame = p->_freeFrameCache.First();
+				p->_freeFrameCache.RemoveFirst();
 			}
 
-			frame->is_last_frame = false;
+			frame->isLastFrame = false;
 			if (!p->DecodeFrame(frame))
 			{
-				frame->is_last_frame = true;
+				frame->isLastFrame = true;
 			}
 
 			{
 				std::lock_guard<std::mutex> lock(p->_mutex);
-				p->m_decoded_frame_cache.AddLast(frame);
-				p->m_condition.notify_one();
+				p->_decodedFrameCache.AddLast(frame);
+				p->_condition.notify_one();
 			}
 		}
 	}
 
 	int SeekTime(double time)
 	{
-		double time_base = r2d(m_format_context->streams[m_video_stream]->time_base);
+		double time_base = r2d(_formatContext->streams[_videoStream]->time_base);
 		int64_t timestamp = (int64_t)(time / time_base);
-		return p_av_seek_frame(m_format_context, m_video_stream, timestamp, AVSEEK_FLAG_BACKWARD);
+		return p_av_seek_frame(_formatContext, _videoStream, timestamp, AVSEEK_FLAG_BACKWARD);
 	}
 
 	bool DecodeFrame(VideoFrame* frame)
 	{
-		if (!g_lib_loaded || m_codec_context == nullptr)
+		DC_PROFILE_FUNCTION;
+		if (!g_lib_loaded || _codecContext == nullptr)
 		{
 			return false;
 		}
 
 	read:
 		AVPacket packet = { };
-		int ret = p_av_read_frame(m_format_context, &packet);
+		int ret = p_av_read_frame(_formatContext, &packet);
 		if (ret < 0)
 		{
 			if (ret == AVERROR_EOF)
 			{
-				if (m_loop)
+				if (_loop)
 				{
 					ret = this->SeekTime(0);
 					if (ret < 0)
@@ -428,18 +430,18 @@ public:
 			}
 		}
 
-		if (packet.stream_index != m_video_stream)
+		if (packet.stream_index != _videoStream)
 		{
 			p_av_packet_unref(&packet);
 			goto read;
 		}
 
-		if (packet.stream_index == m_video_stream)
+		if (packet.stream_index == _videoStream)
 		{
 		send:
-			p_avcodec_send_packet(m_codec_context, &packet);
+			p_avcodec_send_packet(_codecContext, &packet);
 
-			ret = p_avcodec_receive_frame(m_codec_context, m_frame);
+			ret = p_avcodec_receive_frame(_codecContext, _frame);
 			if (ret < 0)
 			{
 				if (ret == AVERROR(EAGAIN))
@@ -453,14 +455,14 @@ public:
 			}
 
 			//转换
-			int result = p_sws_scale(m_img_convert_ctx, (const uint8_t* const*)m_frame->data, m_frame->linesize, 0, m_codec_context->height, m_rgb_frame->data, m_rgb_frame->linesize);
+			int result = p_sws_scale(_imgConvertCtx, (const uint8_t* const*)_frame->data, _frame->linesize, 0, _codecContext->height, _rgbFrame->data, _rgbFrame->linesize);
 			if (result < 0)
 			{
 				Debuger::Error("sws_scale error");
 				return false;
 			}
-			frame->image->Fill(m_rgb_frame->data[0], frame->image->GetSize());
-			frame->present_time = (float)(packet.pts * r2d(m_format_context->streams[m_video_stream]->time_base));
+			frame->image->Fill(_rgbFrame->data[0], frame->image->GetSize());
+			frame->present_time = (float)(packet.pts * r2d(_formatContext->streams[_videoStream]->time_base));
 		}
 
 		p_av_packet_unref(&packet);
@@ -470,20 +472,20 @@ public:
 	VideoFrame* GetFrame()
 	{
 		VideoFrame* frame = nullptr;
-		if (m_closed)
+		if (_closed)
 		{
 			return frame;
 		}
 
 		std::unique_lock<std::mutex> lock(_mutex);
-		m_condition.wait(lock, [this] {
-			return m_decoded_frame_cache.Size() > 0 || m_closed;
+		_condition.wait(lock, [this] {
+			return _decodedFrameCache.Size() > 0 || _closed;
 			});
 
-		if (m_decoded_frame_cache.Size() > 0)
+		if (_decodedFrameCache.Size() > 0)
 		{
-			frame = m_decoded_frame_cache.First();
-			m_decoded_frame_cache.RemoveFirst();
+			frame = _decodedFrameCache.First();
+			_decodedFrameCache.RemoveFirst();
 
 		}
 
@@ -492,14 +494,14 @@ public:
 
 	void ReleaseFrame(VideoFrame* frame)
 	{
-		if (m_closed)
+		if (_closed)
 		{
 			return;
 		}
 
 		std::unique_lock<std::mutex> lock(_mutex);
-		m_free_frame_cache.AddLast(frame);
-		m_condition.notify_one();
+		_freeFrameCache.AddLast(frame);
+		_condition.notify_one();
 	}
 };
 
@@ -507,7 +509,7 @@ public:
 IMPL_REFECTION_TYPE(VideoDecoder);	
 void VideoDecoder::Initialize()
 {
-#if DC_PLATFORM_MAC || DC_PLATFORM_WIN32
+#if DC_PLATFORM_WIN32
 	LoadFFmpeg();
 	if (g_lib_loaded)
 	{
@@ -517,13 +519,13 @@ void VideoDecoder::Initialize()
 }
 void VideoDecoder::Destroy()
 {
-#if DC_PLATFORM_MAC || DC_PLATFORM_WIN32
+#if DC_PLATFORM_WIN32
 	FreeFFmpeg();
 #endif
 }
 VideoDecoder::VideoDecoder()
 {
-#if DC_PLATFORM_MAC || DC_PLATFORM_WIN32
+#if DC_PLATFORM_WIN32
 	_private = VideoDecoderPrivate::Create();
 #endif
 }
@@ -565,7 +567,7 @@ bool VideoDecoder::IsLoop()const
 {
 	if (_private)
 	{
-		return _private->m_loop;
+		return _private->_loop;
 	}
 	return false;
 }
@@ -573,7 +575,7 @@ int VideoDecoder::GetFrameWidth()const
 {
 	if (_private)
 	{
-		return _private->m_target_width;
+		return _private->_targetWidth;
 	}
 	return 0;
 }
@@ -581,7 +583,7 @@ int VideoDecoder::GetFrameHeight()const
 {
 	if (_private)
 	{
-		return _private->m_target_height;
+		return _private->_targetHeight;
 	}
 	return 0;
 }

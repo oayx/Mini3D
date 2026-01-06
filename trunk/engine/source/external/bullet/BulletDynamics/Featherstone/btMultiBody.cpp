@@ -671,7 +671,7 @@ void btMultiBody::stepVelocities(btScalar dt,
 	output[3] = vdot_out[0];
 	output[4] = vdot_out[1];
 	output[5] = vdot_out[2];
-    // Final step: add the accelerations (times dt) to the velocities.
+    // final step: add the accelerations (times dt) to the velocities.
     applyDeltaVee(output, dt);
 
 	

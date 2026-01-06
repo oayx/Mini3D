@@ -19,7 +19,7 @@ HardwareVertexBuffer::~HardwareVertexBuffer()
 	ClearElement();
 	for (byte i = 0; i < MAX_STREAM_COUNT; ++i)
 	{
-		DeleteArray(_bufferData[i]);
+		Memory::DeleteArray(_bufferData[i]);
 	}
 }
 void* HardwareVertexBuffer::Lock(const VertexBufferDesc& desc)

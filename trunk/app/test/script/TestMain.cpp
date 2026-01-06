@@ -1,13 +1,15 @@
-#include "TestMain.h"
+﻿#include "TestMain.h"
 #include "TestPanel.h"
 
 DC_BEGIN_NAMESPACE
 /********************************************************************/
 bool TestMain::Start()
 {
-#if defined(DC_PLATFORM_WIN32) || defined(DC_PLATFORM_LINUX)
+#if defined(DC_PLATFORM_WIN32) || defined(DC_PLATFORM_LINUX) || defined(DC_PLATFORM_MAC)
 	Application::SetAssetsPath("../../assets");
 	ProjectManager::OpenProject("../..");
+#elif defined(DC_PLATFORM_WASM)
+	Application::SetAssetsPath("./assets");
 #else
 	ProjectManager::OpenProject(Path::GetDirectoryName(Application::GetAssetsPath()));
 #endif
@@ -17,9 +19,9 @@ bool TestMain::Start()
 	GameObject::Instantiation("AudioListener")->AddComponent<AudioListener>();
 
 	//相机
-	GameObject* camera_obj = GameObject::Instantiation("MainCamera");
-	camera_obj->GetTransform()->SetLocalPosition(Vector3(0, 0, -10));
-	Camera* camera = camera_obj->AddComponent<Camera>();
+	GameObject* cameraObj = GameObject::Instantiation("MainCamera");
+	cameraObj->GetTransform()->SetLocalPosition(Vector3(0, 0, -10));
+	Camera* camera = cameraObj->AddComponent<Camera>();
 	camera->SetAspect(Screen::GetWidth() / Screen::GetHeight());
 	camera->SetClearColor(Color(0.5f, 0.5f, 0.5f, 1));
 	//camera->SetClearFlag(ClearFlag::Skybox);
@@ -86,37 +88,37 @@ void TestMain::Update()
 			Application::Quit();
 		}
 
-		float move_speed = 0.3f;
+		float moveSpeed = 0.3f;
 		if (Input::GetKey(KeyCode::W))
 		{
 			Camera* camera = SceneManager::GetMainCamera()->GetComponent<Camera>();
-			camera->MoveForwardBack(move_speed);
+			camera->MoveForwardBack(moveSpeed);
 		}
 		if (Input::GetKey(KeyCode::S))
 		{
 			Camera* camera = SceneManager::GetMainCamera()->GetComponent<Camera>();
-			camera->MoveForwardBack(-move_speed);
+			camera->MoveForwardBack(-moveSpeed);
 		}
 		if (Input::GetKey(KeyCode::A))
 		{
 			Camera* camera = SceneManager::GetMainCamera()->GetComponent<Camera>();
-			camera->MoveLeftRight(-move_speed);
+			camera->MoveLeftRight(-moveSpeed);
 		}
 		if (Input::GetKey(KeyCode::D))
 		{
 			Camera* camera = SceneManager::GetMainCamera()->GetComponent<Camera>();
-			camera->MoveLeftRight(move_speed);
+			camera->MoveLeftRight(moveSpeed);
 		}
 	}
 	if(Input::IsMouseMove() && (_testPanel == nullptr || _testPanel->GetCurrUnit() == nullptr || _testPanel->GetCurrUnit()->CameraCanMove()))
 	{
-		float offset_x = Input::mousePositionDelta.x;
-		float offset_y = -Input::mousePositionDelta.y;
-		if (Math::Abs(offset_x) > 0 || Math::Abs(offset_y) > 0)
+		float offsetX = Input::mousePositionDelta.x;
+		float offsetY = -Input::mousePositionDelta.y;
+		if (Math::Abs(offsetX) > 0 || Math::Abs(offsetY) > 0)
 		{
-			//Debuger::Log("%f - %f", offset_x, offset_y);
+			//Debuger::Log("%f - %f", offsetX, offsetY);
 			Camera* camera = SceneManager::GetMainCamera()->GetComponent<Camera>();
-			camera->Rotate(offset_x, offset_y);
+			camera->Rotate(offsetX, offsetY);
 		}
 	}
 	if (false && Input::GetMouseButtonDown(MouseBtnID::Left))
@@ -161,9 +163,9 @@ void TestMain::Update()
 			case TouchPhase::Stationary:
 				if (_pFocusNode != nullptr)
 				{
-					float offset_x = touch.deltaPosition.x*0.4f;
-					float offset_y = touch.deltaPosition.y*0.4f;
-					Quaternion q(Vector3(offset_y, offset_x, 0));
+					float offsetX = touch.deltaPosition.x*0.4f;
+					float offsetY = touch.deltaPosition.y*0.4f;
+					Quaternion q(Vector3(offsetY, offsetX, 0));
 					_pFocusNode->Rotate(q);
 				}
 				break;

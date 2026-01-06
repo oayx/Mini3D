@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Date：2021/1/18
@@ -12,17 +12,17 @@
 
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-class ENGINE_DLL UDPSend Final : public Socket
+class ENGINE_DLL UDPSend final : public Socket
 {
 	DEFAULT_CREATE(UDPSend);
 	FRIEND_CONSTRUCT_DESTRUCT(UDPSend);
 	DISALLOW_COPY_ASSIGN(UDPSend);
 	BEGIN_DERIVED_REFECTION_TYPE(UDPSend, Socket)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 public:
-	UDPSend(const String& host_name, int port);
-	~UDPSend();
+	UDPSend(const String& hostName, int port);
+	~UDPSend() = default;
 
 	int SendSync(char* buf, int len, int flags = 0);
 	int SendAsync(char* buf, int len, int flags = 0);

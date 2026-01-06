@@ -1,4 +1,4 @@
-#include "Scene.h"
+﻿#include "Scene.h"
 #include "runtime/component/GameObject.h"
 #include "runtime/graphics/Material.h"
 #include "runtime/project/ProjectManager.h"
@@ -88,9 +88,9 @@ bool Scene::SaveToFile(const String& file)
 {
 	if (file.IsEmpty())return false;
 
-	String asset_path = Resource::GetFullDataPath(file);
-	//if (!File::Delete(asset_path))return false;
-	//if (!File::Create(asset_path))return false;
+	String assetPath = Resource::GetFullDataPath(file);
+	//if (!File::Delete(assetPath))return false;
+	//if (!File::Create(assetPath))return false;
 
 	_file = file;
 	this->Deserialize();
@@ -100,8 +100,8 @@ bool Scene::SaveToFile(const String& file)
 }
 void Scene::Serialize()
 {
-	String full_path = Resource::GetFullDataPath(_file);
-	SerializeRead transfer(full_path);
+	String fullPath = Resource::GetFullDataPath(_file);
+	SerializeRead transfer(fullPath);
 	_MY_TRY
 	{
 		this->Transfer(transfer);
@@ -109,8 +109,8 @@ void Scene::Serialize()
 }
 void Scene::Deserialize()
 {
-	String full_path = Resource::GetFullDataPath(_file);
-	SerializeWrite transfer(full_path);
+	String fullPath = Resource::GetFullDataPath(_file);
+	SerializeWrite transfer(fullPath);
 	_MY_TRY
 	{
 		this->Transfer(transfer);
@@ -126,16 +126,16 @@ void Scene::Transfer(TransferFunction& transfer, void* ptr)
 		}
 
 		{//天空盒
-			String SkyboxMaterial = "";
+			String skyboxMaterial = "";
 			if (!transfer.IsRead())
 			{
 				AssetMeta* meta = AssetsManager::GetMetaByFile(_skyboxMaterial);
-				if (meta)SkyboxMaterial = meta->GetGUID();
+				if (meta)skyboxMaterial = meta->GetGUID();
 			}
-			TRANSFER_SIMPLE(SkyboxMaterial);
+			TRANSFER_SIMPLE(skyboxMaterial);
 			if (transfer.IsRead())
 			{
-				AssetMeta* meta = AssetsManager::GetMeta(SkyboxMaterial);
+				AssetMeta* meta = AssetsManager::GetMeta(skyboxMaterial);
 				if (meta)_skyboxMaterial = meta->GetFullPath();
 			}
 		}
@@ -154,10 +154,10 @@ void Scene::Transfer(TransferFunction& transfer, void* ptr)
 void Scene::CreateDefault()
 {
 	{
-		GameObject* camera_obj = GameObject::Instantiation("Main Camera");
-		camera_obj->GetTransform()->SetLocalPosition(Vector3(0, 10, -10));
-		camera_obj->GetTransform()->LookAt(Vector3(0, 0, 0), Vector3::up);
-		Camera* camera = camera_obj->AddComponent<Camera>();
+		GameObject* cameraObj = GameObject::Instantiation("Main Camera");
+		cameraObj->GetTransform()->SetLocalPosition(Vector3(0, 10, -10));
+		cameraObj->GetTransform()->LookAt(Vector3(0, 0, 0), Vector3::up);
+		Camera* camera = cameraObj->AddComponent<Camera>();
 		camera->SetAspect(Screen::GetWidth() / Screen::GetHeight());
 		camera->SetClearColor(Color(0.5f, 0.5f, 0.5f, 0));
 

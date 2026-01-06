@@ -17,5 +17,4 @@ extern "C"
 	DLL_EXPORT int dll_astc_main(int argc, char ** argv);
 	DLL_EXPORT int dll_dxt_main(int argc, char** argv);
 	DLL_EXPORT int dll_etc_main(int argc, char** argv);
-	DLL_EXPORT void dll_tinystl_test();
 }

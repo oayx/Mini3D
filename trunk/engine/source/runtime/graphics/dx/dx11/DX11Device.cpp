@@ -1,4 +1,4 @@
-#include "DX11Device.h"
+﻿#include "DX11Device.h"
 #include "DX11Caps.h"
 #include "DX11HardwareVertexBuffer.h"
 #include "DX11HardwareIndexBuffer.h"
@@ -19,7 +19,7 @@ DX11Device* GetDX11Device()
 }
 DX11Device::DX11Device()
 {
-	_gPUAdapter = DXGPUAdapter::Create();
+	_gpuAdapter = DXGPUAdapter::Create();
 	_graphicsCaps = DX11Caps::Create();
 }
 DX11Device::~DX11Device()
@@ -31,11 +31,11 @@ DX11Device::~DX11Device()
 }
 bool DX11Device::CreateDevice(RenderWindow* window)
 {
-	HR(CreateDXGIFactory(IID_PPV_ARGS(&_dXGIFactory)));
+	DX_ERROR(CreateDXGIFactory(IID_PPV_ARGS(&_dXGIFactory)));
 
 	//尝试获得显卡
 	IDXGIAdapter* selected_adapter = nullptr;
-	GPUAdapterInfo* adapter = _gPUAdapter->SelectAdapters(_dXGIFactory);
+	GPUAdapterInfo* adapter = _gpuAdapter->SelectAdapters(_dXGIFactory);
 	if (adapter != nullptr)
 	{
 		if (_dXGIFactory->EnumAdapters(adapter->GetIndex(), &selected_adapter) == DXGI_ERROR_NOT_FOUND || selected_adapter == nullptr)
@@ -117,6 +117,13 @@ void DX11Device::CreateRenderContent()
 	RenderContent* content = DX11RenderContent::Create();
 	content->Initialize();
 	_renderContent = content;
+}
+void DX11Device::DestroyDevice(RenderWindow* window)
+{
+	SAFE_RELEASE(_dXGIFactory);
+	SAFE_RELEASE(_immediateContext);
+	//TODO:这里会卡死
+	SAFE_RELEASE(_d3Device);
 }
 void DX11Device::Resize(const WindowResizeDesc& desc)
 {

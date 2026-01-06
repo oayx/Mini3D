@@ -1,19 +1,15 @@
-#include "Input.h"
+﻿#include "Input.h"
 #include "MouseInput.h"
 #include "TouchInput.h"
 #include "KeyboardInput.h"
  
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-Vector3 Input::mousePosition = Vector3::zero;
-Vector3 Input::mousePositionDelta = Vector3::zero;
-Vector3 Input::m_oldMousePosition = Vector3::zero;
-bool Input::m_simulateMouseWithTouches = true;
 IMPL_DERIVED_REFECTION_TYPE(Input, Object);
 void Input::UpdateMousePosition(float x, float y)
 {
-	m_oldMousePosition.x = mousePosition.x;
-	m_oldMousePosition.y = mousePosition.y;
+	_oldMousePosition.x = mousePosition.x;
+	_oldMousePosition.y = mousePosition.y;
 	mousePosition.x = (float)x;
 	mousePosition.y = (float)y;
 }

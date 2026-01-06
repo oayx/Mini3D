@@ -1,0 +1,19 @@
+<Shader>
+    <Pass>
+        <CG File="GUI.hlsl">
+            <Reflect>
+                <Semantics Value="19"/>
+                <CBuffers>
+                    <CBuffer Name="CustomBuffer" Slot="0" Size="64" Stage="0">
+                        <Variables>
+                            <Variable Name="ProjectionMatrix" Offset="0" Size="64" Stage="0"/>
+                        </Variables>
+                    </CBuffer>
+                </CBuffers>
+                <Textures>
+                    <Texture Name="_MainTex" Type="1" Slot="0" Stage="4"/>
+                </Textures>
+            </Reflect>
+        </CG>
+    </Pass>
+</Shader>

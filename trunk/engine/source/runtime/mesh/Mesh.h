@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Date：2020/12/13
@@ -20,7 +20,7 @@ class AnimationNode;
 class AnimationClip;
 /********************************************************************/
 //mesh资源
-class ENGINE_DLL Mesh Final : public Resource
+class ENGINE_DLL Mesh final : public Resource
 {
 	friend class MeshRender;
 	friend class SkinMeshRender;
@@ -33,7 +33,7 @@ class ENGINE_DLL Mesh Final : public Resource
 	typedef Map<String, AnimationClip*> AnimationClips;
 	FRIEND_CONSTRUCT_DESTRUCT(Mesh);
 	BEGIN_DERIVED_REFECTION_TYPE(Mesh, Resource)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 	Mesh();
 	~Mesh();
 
@@ -48,10 +48,10 @@ public:
 	Vector<Triangle>& GetTriangles();
 
 private:
-	void 			LoadNode(const aiScene* scene, const aiNode* node, bool import_animation);
-	void 			LoadMesh(const aiScene* scene, const aiNode* node, const aiMesh* mesh, int mesh_index, bool import_animation);
+	void 			LoadNode(const aiScene* scene, const aiNode* node, bool importAnimation);
+	void 			LoadMesh(const aiScene* scene, const aiNode* node, const aiMesh* mesh, int meshIndex, bool importAnimation);
 	void 			LoadAnimationClip(const aiScene* scene, aiAnimation* anim, const String& name);
-	void			LoadAnimationNode(const aiScene* scene, const aiNode* node, const aiAnimation* anim, AnimationClip* clip, AnimationNode* parent_node, uint max_frames);
+	void			LoadAnimationNode(const aiScene* scene, const aiNode* node, const aiAnimation* anim, AnimationClip* clip, AnimationNode* parentNode, uint maxFrames);
 	
 	void			LoadMetaClip(const String& file);
 
@@ -67,9 +67,9 @@ private:
 
 private:
 	Entities		_entities;			//模型数据
-	Vector<Triangle>_triangles;		//三角形
+	Vector<Triangle>_triangles;			//三角形
 
-	Bones			_bones;			//骨骼数据
+	Bones			_bones;				//骨骼数据
 	BoneMap			_bonesByName;
 
 	AnimationClips	_animationClips;	//动画数据

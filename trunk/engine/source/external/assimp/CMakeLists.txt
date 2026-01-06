@@ -1,4 +1,6 @@
-﻿include_directories(
+﻿message("当前CMakeLists目录: ${CMAKE_CURRENT_SOURCE_DIR}")
+
+include_directories(
 	${PROJECT_SOURCE_DIR}/source/external/assimp
 )
 file(GLOB_RECURSE ENGINE_EXTERNAL_ASSIMP_SRC "source/external/assimp/*.cpp")

@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2020/9/8
@@ -20,7 +20,7 @@ enum class StretchMode
 };
 DECLARE_ENUM_OPERATORS(StretchMode);
 
-class ENGINE_DLL RectTransform Final : public Transform
+class ENGINE_DLL RectTransform final : public Transform
 {
 	friend class GameObject;
 	FRIEND_CONSTRUCT_DESTRUCT(RectTransform);
@@ -30,7 +30,7 @@ class ENGINE_DLL RectTransform Final : public Transform
 	BEGIN_DERIVED_REFECTION_TYPE(RectTransform, Transform)
 		CTORS(DEFAULT_CTOR(RectTransform))
 		INSERT_TYPE_FLAGS(TypeFlag::ShowInEditor)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 protected:
 	RectTransform();

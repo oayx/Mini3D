@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2009/12/11
@@ -295,7 +295,7 @@ struct Touch
 	String ToString()
 	{
 		char buf[1024] = {0};
-		Sprintf(buf, "finger:%d, pos:%s,delta_pos:%s,time:%f,phase:%d", fingerId, position.ToString().c_str(), deltaPosition.ToString().c_str(), time, (int)phase);
+		Snprintf(buf, sizeof(buf), "finger:%d, pos:%s,delta_pos:%s,time:%f,phase:%d", fingerId, position.ToString().c_str(), deltaPosition.ToString().c_str(), time, (int)phase);
 		return String(buf);
 	}
 };

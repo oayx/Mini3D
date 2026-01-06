@@ -1,0 +1,11 @@
+<Root>
+    <MeshMeta>
+        <GUID>8a1ab0c77210935dd3f9708ba2534eb1</GUID>
+        <HideInspector>false</HideInspector>
+        <GenNormal>true</GenNormal>
+        <GenTangent>true</GenTangent>
+        <OptimizeMesh>true</OptimizeMesh>
+        <ImportAnimation>false</ImportAnimation>
+        <Clips/>
+    </MeshMeta>
+</Root>

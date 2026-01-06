@@ -1,9 +1,8 @@
- #include "ImageManager.h"
+﻿ #include "ImageManager.h"
 #include "Image.h"
 
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-ImageManager::Images ImageManager::_images;
 IMPL_REFECTION_TYPE(ImageManager);
 void ImageManager::Destroy()
 {

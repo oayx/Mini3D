@@ -1,4 +1,4 @@
-#include "EMain_Tools.h"
+﻿#include "EMain_Tools.h"
 #include "runtime/resources/Resources.h"
 #include "runtime/ui/GUI.h"
 #include "runtime/Application.h"
@@ -15,7 +15,6 @@
 DC_BEGIN_NAMESPACE
 /********************************************************************/
 IMPL_DERIVED_REFECTION_TYPE(EMain_Tools, EWindowBase);	
-bool EMain_Tools::_gizmoOperation[(int)GizmoOperation::Max] = { false, false, true, false, false, false };
 GizmoOperation EMain_Tools::GetOperation()
 {
 	for (int i = 0; i < (int)GizmoOperation::Max; ++i)
@@ -26,36 +25,36 @@ GizmoOperation EMain_Tools::GetOperation()
 }
 void EMain_Tools::Render()
 {
-	DC_PROFILE_FUNCTION();
+	DC_PROFILE_FUNCTION;
 	ShowLeftToolbar();
 	ShowPlayButton();
 	ShowRightToolbar();
 }
 void EMain_Tools::ShowLeftToolbar()
 {
-	const ImVec4 col_active = ImGui::GetStyle().Colors[ImGuiCol_ButtonActive];
-	const ImVec4 bg_color = ImGui::GetStyle().Colors[ImGuiCol_Text];
+	const ImVec4 colActive = ImGui::GetStyle().Colors[ImGuiCol_ButtonActive];
+	const ImVec4 bgColor = ImGui::GetStyle().Colors[ImGuiCol_Text];
 
 	ImGui::Spacing();
-	if (ImGuiEx::ToolbarButton(EditorMain::GetBigIconFont(), ICON_FA_HAND_ROCK, _gizmoOperation[(int)GizmoOperation::Drag] ? col_active : bg_color, "Drag"))
+	if (ImGuiEx::ToolbarButton(EditorMain::GetBigIconFont(), ICON_FA_HAND_ROCK, _gizmoOperation[(int)GizmoOperation::Drag] ? colActive : bgColor, "Drag"))
 	{
 		ResetOperation();
 		_gizmoOperation[(int)GizmoOperation::Drag] = !_gizmoOperation[(int)GizmoOperation::Drag];
 	}
 	ImGui::Spacing();
-	if (ImGuiEx::ToolbarButton(EditorMain::GetBigIconFont(), ICON_FA_ARROWS_ALT, _gizmoOperation[(int)GizmoOperation::Translate] ? col_active : bg_color, "Translate"))
+	if (ImGuiEx::ToolbarButton(EditorMain::GetBigIconFont(), ICON_FA_ARROWS_ALT, _gizmoOperation[(int)GizmoOperation::Translate] ? colActive : bgColor, "Translate"))
 	{
 		ResetOperation();
 		_gizmoOperation[(int)GizmoOperation::Translate] = !_gizmoOperation[(int)GizmoOperation::Translate];
 	}
 	ImGui::Spacing();
-	if (ImGuiEx::ToolbarButton(EditorMain::GetBigIconFont(), ICON_FA_UNDO, _gizmoOperation[(int)GizmoOperation::Rotate] ? col_active : bg_color, "Rotate"))
+	if (ImGuiEx::ToolbarButton(EditorMain::GetBigIconFont(), ICON_FA_UNDO, _gizmoOperation[(int)GizmoOperation::Rotate] ? colActive : bgColor, "Rotate"))
 	{
 		ResetOperation();
 		_gizmoOperation[(int)GizmoOperation::Rotate] = !_gizmoOperation[(int)GizmoOperation::Rotate];
 	}
 	ImGui::Spacing();
-	if (ImGuiEx::ToolbarButton(EditorMain::GetBigIconFont(), ICON_FA_EXPAND_ARROWS_ALT, _gizmoOperation[(int)GizmoOperation::Scale] ? col_active : bg_color, "Scale"))
+	if (ImGuiEx::ToolbarButton(EditorMain::GetBigIconFont(), ICON_FA_EXPAND_ARROWS_ALT, _gizmoOperation[(int)GizmoOperation::Scale] ? colActive : bgColor, "Scale"))
 	{
 		ResetOperation();
 		_gizmoOperation[(int)GizmoOperation::Scale] = !_gizmoOperation[(int)GizmoOperation::Scale];
@@ -63,7 +62,7 @@ void EMain_Tools::ShowLeftToolbar()
 	if (EditorConfig::Is3D)
 	{
 		ImGui::Spacing();
-		if (ImGuiEx::ToolbarButton(EditorMain::GetBigIconFont(), ICON_FA_SNOWFLAKE, _gizmoOperation[(int)GizmoOperation::Universal] ? col_active : bg_color, "Universal"))
+		if (ImGuiEx::ToolbarButton(EditorMain::GetBigIconFont(), ICON_FA_SNOWFLAKE, _gizmoOperation[(int)GizmoOperation::Universal] ? colActive : bgColor, "Universal"))
 		{
 			ResetOperation();
 			_gizmoOperation[(int)GizmoOperation::Universal] = !_gizmoOperation[(int)GizmoOperation::Universal];
@@ -83,7 +82,6 @@ void EMain_Tools::ShowLeftToolbar()
 void EMain_Tools::ShowRightToolbar()
 {
 	{//切换显示模式
-		float v = 0;
 		const float width = ImGui::GetContentRegionAvail().x;
 		float x = ImGui::GetCursorScreenPos().x + width - 100.0f;
 		ImGui::SetCursorScreenPos(ImVec2(x, ImGui::GetCursorScreenPos().y));
@@ -98,41 +96,41 @@ void EMain_Tools::ShowPlayButton()
 	float w = ImGui::GetWindowContentRegionWidth() * 0.5f - 30.0f - ImGui::GetCursorPosX();
 	ImGui::Dummy(ImVec2(w, ImGui::GetTextLineHeight()));
 	{
-		const ImVec4 col_active = ImGui::GetStyle().Colors[ImGuiCol_ButtonActive];
-		const ImVec4 bg_color = ImGui::GetStyle().Colors[ImGuiCol_Text];
+		const ImVec4 colActive = ImGui::GetStyle().Colors[ImGuiCol_ButtonActive];
+		const ImVec4 bgColor = ImGui::GetStyle().Colors[ImGuiCol_Text];
 
 		ImGui::SameLine();
-		if (ImGuiEx::ToolbarButton(EditorMain::GetBigIconFont(), ICON_FA_PLAY, Application::IsPlay() ? col_active : bg_color, "Play"))
+		if (ImGuiEx::ToolbarButton(EditorMain::GetBigIconFont(), ICON_FA_PLAY, Application::IsPlay() ? colActive : bgColor, "Play"))
 		{
 			bool is_playing = Application::IsPlay();
 			if (!is_playing)
 			{//unplay->play
 				SceneManager::SaveScene();
-				Scene* curr_scene = SceneManager::GetCurrScene();
-				if (curr_scene)
+				Scene* currScene = SceneManager::GetCurrScene();
+				if (currScene)
 				{//重新加载场景
-					SceneManager::LoadScene(curr_scene->GetFile(), LoadSceneMode::Single);
+					SceneManager::LoadScene(currScene->GetFile(), LoadSceneMode::Single);
 				}
 			}
 			Application::SetPlay(!is_playing);
 			if (!Application::IsPlay())
 			{//play->unplay
-				Scene* curr_scene = SceneManager::GetCurrScene();
-				if (curr_scene)
+				Scene* currScene = SceneManager::GetCurrScene();
+				if (currScene)
 				{//恢复场景
-					SceneManager::LoadScene(curr_scene->GetFile(), LoadSceneMode::Single);
+					SceneManager::LoadScene(currScene->GetFile(), LoadSceneMode::Single);
 				}
 			}
 		}
 
 		ImGui::SameLine(0, 10);
-		if (ImGuiEx::ToolbarButton(EditorMain::GetBigIconFont(), ICON_FA_PAUSE, Application::IsPause() ? col_active : bg_color, "Pause"))
+		if (ImGuiEx::ToolbarButton(EditorMain::GetBigIconFont(), ICON_FA_PAUSE, Application::IsPause() ? colActive : bgColor, "Pause"))
 		{
 			Application::SetPause(!Application::IsPause());
 		}
 
 		ImGui::SameLine(0, 10);
-		if (ImGuiEx::ToolbarButton(EditorMain::GetBigIconFont(), ICON_FA_STEP_FORWARD, bg_color, "NextFrame"))
+		if (ImGuiEx::ToolbarButton(EditorMain::GetBigIconFont(), ICON_FA_STEP_FORWARD, bgColor, "NextFrame"))
 		{
 
 		}

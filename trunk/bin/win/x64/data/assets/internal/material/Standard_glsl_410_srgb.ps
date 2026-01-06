@@ -1,0 +1,185 @@
+#version 410
+
+struct Light
+{
+    vec3 Dir;
+    int Type;
+    vec3 Color;
+    vec3 Attenuation;
+    float Range;
+    vec3 Position;
+    float SpotAngle;
+};
+
+struct type_CameraBuffer
+{
+    mat4 MATRIX_V;
+    mat4 MATRIX_P;
+    mat4 MATRIX_VP;
+    mat4 MATRIX_I_VP;
+    vec3 _WorldSpaceCameraPos;
+    vec3 _WorldSpaceCameraDir;
+    vec4 _ProjectionParams;
+    vec4 _ScreenParams;
+    vec4 _ZBufferParams;
+};
+
+uniform type_CameraBuffer CameraBuffer;
+
+struct type_LightBuffer
+{
+    int _LightCount;
+    vec3 _LightDir0;
+    vec3 _LightColor0;
+    Light _Light[8];
+};
+
+uniform type_LightBuffer LightBuffer;
+
+struct type_CommbonRarelyBuffer
+{
+    vec3 _LIGHTMODEL_AMBIENT;
+    int _FogMode;
+    vec4 _FogColor;
+    float _FogStart;
+    float _FogEnd;
+    float _FogDensity;
+};
+
+uniform type_CommbonRarelyBuffer CommbonRarelyBuffer;
+
+struct type_CustomBuffer
+{
+    vec4 _MainTex_ST;
+    float _SpecularPower;
+    float _Reflections;
+};
+
+uniform type_CustomBuffer CustomBuffer;
+
+uniform sampler2D _MainTex;
+uniform sampler2D _NormalTexture;
+uniform samplerCube _SkyBox;
+
+layout(location = 0) in vec2 var_TEXCOORD0;
+layout(location = 1) in mat3 var_TEXCOORD1;
+layout(location = 4) in vec3 var_TEXCOORD4;
+layout(location = 5) in vec3 var_TEXCOORD5;
+layout(location = 6) in vec3 var_TEXCOORD6;
+layout(location = 7) in float var_TEXCOORD7;
+layout(location = 0) out vec4 out_var_SV_Target;
+
+void main()
+{
+    vec4 _89 = texture(_MainTex, var_TEXCOORD0);
+    vec4 _93 = texture(_NormalTexture, var_TEXCOORD0);
+    vec3 _98 = normalize(var_TEXCOORD1 * ((_93.xyz * 2.0) - vec3(1.0)));
+    vec3 _102;
+    _102 = vec3(0.0);
+    vec3 _103;
+    for (int _105 = 0; _105 < LightBuffer._LightCount; _102 = _103, _105++)
+    {
+        float _171;
+        vec3 _172;
+        if (LightBuffer._Light[_105].Type == 0)
+        {
+            _171 = 1.0;
+            _172 = -LightBuffer._LightDir0;
+        }
+        else
+        {
+            float _169;
+            vec3 _170;
+            if (LightBuffer._Light[_105].Type == 1)
+            {
+                vec3 _132 = LightBuffer._Light[_105].Position - var_TEXCOORD4;
+                float _133 = length(_132);
+                if (_133 > LightBuffer._Light[_105].Range)
+                {
+                    _103 = _102;
+                    continue;
+                }
+                _169 = 1.0 / dot(LightBuffer._Light[_105].Attenuation, vec3(1.0, _133, _133 * _133));
+                _170 = _132;
+            }
+            else
+            {
+                float _167;
+                vec3 _168;
+                if (LightBuffer._Light[_105].Type == 2)
+                {
+                    vec3 _144 = LightBuffer._Light[_105].Position - var_TEXCOORD4;
+                    if (dot(_144, _98) <= 0.0)
+                    {
+                        _103 = _102;
+                        continue;
+                    }
+                    float _149 = length(_144);
+                    if (_149 > LightBuffer._Light[_105].Range)
+                    {
+                        _103 = _102;
+                        continue;
+                    }
+                    float _158 = max(0.0, dot(-normalize(_144), LightBuffer._Light[_105].Dir));
+                    if (_158 <= cos(LightBuffer._Light[_105].SpotAngle * 0.01745329983532428741455078125))
+                    {
+                        _103 = _102;
+                        continue;
+                    }
+                    _167 = pow(_158, 2.0) / dot(LightBuffer._Light[_105].Attenuation, vec3(1.0, _149, _149 * _149));
+                    _168 = _144;
+                }
+                else
+                {
+                    _167 = 1.0;
+                    _168 = vec3(0.0);
+                }
+                _169 = _167;
+                _170 = _168;
+            }
+            _171 = _169;
+            _172 = _170;
+        }
+        _103 = _102 + ((LightBuffer._Light[_105].Color * vec3(max(0.0, dot(_98, normalize(_172))))) * _171);
+    }
+    vec3 _182 = (CommbonRarelyBuffer._LIGHTMODEL_AMBIENT + _102) * _89.xyz;
+    vec3 _201;
+    if (CustomBuffer._Reflections > 0.0)
+    {
+        _201 = mix(_182, texture(_SkyBox, normalize(reflect(normalize(var_TEXCOORD4 - CameraBuffer._WorldSpaceCameraPos), var_TEXCOORD6))).xyz, vec3(CustomBuffer._Reflections));
+    }
+    else
+    {
+        _201 = _182;
+    }
+    float _202 = _89.w;
+    float _242;
+    if (CommbonRarelyBuffer._FogMode == 1)
+    {
+        _242 = clamp((CommbonRarelyBuffer._FogEnd - var_TEXCOORD7) / (CommbonRarelyBuffer._FogEnd - CommbonRarelyBuffer._FogStart), 0.0, 1.0);
+    }
+    else
+    {
+        float _241;
+        if (CommbonRarelyBuffer._FogMode == 2)
+        {
+            _241 = exp(-(CommbonRarelyBuffer._FogDensity * var_TEXCOORD7));
+        }
+        else
+        {
+            float _240;
+            if (CommbonRarelyBuffer._FogMode == 3)
+            {
+                _240 = exp((((-CommbonRarelyBuffer._FogDensity) * CommbonRarelyBuffer._FogDensity) * var_TEXCOORD7) * var_TEXCOORD7);
+            }
+            else
+            {
+                _240 = 1.0;
+            }
+            _241 = _240;
+        }
+        _242 = _241;
+    }
+    out_var_SV_Target = vec4(max((pow(max(mix(CommbonRarelyBuffer._FogColor.xyz, vec4(_201, _202).xyz, vec3(_242)).xyz, vec3(0.0)), vec3(0.4166666567325592041015625)) * 1.05499994754791259765625) - vec3(0.054999999701976776123046875), vec3(0.0)), _202);
+}
+

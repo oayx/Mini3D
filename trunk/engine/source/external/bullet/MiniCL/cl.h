@@ -23,7 +23,7 @@
 
 #ifndef __OPENCL_CL_H
 #define __OPENCL_CL_H
-
+#include <cstdint>
 #ifdef __APPLE__
 #include <bullet/MiniCL/cl_platform.h>
 #else

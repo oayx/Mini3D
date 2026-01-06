@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Description：
@@ -28,7 +28,7 @@ class GraphicsDevice : public EventController
 	typedef Vector<SwapChain*> SwapChains;
 	DISALLOW_COPY_ASSIGN(GraphicsDevice);
 	BEGIN_DERIVED_REFECTION_TYPE(GraphicsDevice, EventController)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 protected:
 	GraphicsDevice();
@@ -36,15 +36,18 @@ protected:
 	virtual void Release()override;
 
 public:
-	virtual bool			CreateDevice(RenderWindow* win) = 0;
+	virtual bool			CreateDevice(RenderWindow* window) = 0;
 	virtual bool			CreateSwapChain(RenderWindow* window) = 0;
 	virtual void			CreateRenderContent() = 0;
+	virtual void			DestroyDevice(RenderWindow* window);
+	virtual void			DestroySwapChain(RenderWindow* window);
+	virtual void			DestroyRenderContent();
 	virtual void			Resize(const WindowResizeDesc& desc);
 	virtual void			PreRender(RenderWindow* window);
 	virtual void			PostRender(RenderWindow* window);
 	virtual void			Present(RenderWindow* window);
 
-	virtual CGProgram*			CreateShader() = 0;
+	virtual CGProgram*		CreateShader() = 0;
 	virtual Texture*		CreateTexture(const TextureDesc& desc) = 0;
 	virtual RenderTexture*	CreateRenderTexture(const TextureDesc& desc) = 0;
 	virtual FinalProcess*	CreateFinalProcess() = 0;
@@ -58,7 +61,7 @@ public:
 	const String&			GetShaderVersion()const { return _shaderVersion; }
 
 protected:
-	GPUAdapter*				_gPUAdapter = nullptr;
+	GPUAdapter*				_gpuAdapter = nullptr;
 	GraphicsCaps*			_graphicsCaps = nullptr;
 	RenderContent*			_renderContent = nullptr;
 	SwapChain*				_currSwapChain = nullptr;

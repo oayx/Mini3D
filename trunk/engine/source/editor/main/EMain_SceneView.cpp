@@ -1,4 +1,4 @@
-#include "EMain_SceneView.h"
+﻿#include "EMain_SceneView.h"
 #include "EMain_Hierarchy.h"
 #include "runtime/graphics/Material.h"
 #include "runtime/graphics/null/PostProcess.h"
@@ -24,17 +24,9 @@
 DC_BEGIN_NAMESPACE
 /********************************************************************/
 IMPL_DERIVED_REFECTION_TYPE(EMain_SceneView, EWindowBase);
-bool EMain_SceneView::IsShow = true;
-bool EMain_SceneView::_isFocus = false;
-bool EMain_SceneView::_isForcus = false;
-bool EMain_SceneView::_isMouseIn = false;
-Camera* EMain_SceneView::_camera = nullptr;
-LineRender* EMain_SceneView::_lineGrid = nullptr;
-Rect EMain_SceneView::_viewPort = Rect::zero;
-Rect EMain_SceneView::_oldViewPort = Rect::zero;
 void EMain_SceneView::Update()
 {
-	DC_PROFILE_FUNCTION();
+	DC_PROFILE_FUNCTION;
 	HandleInput();
 
 	if (_oldViewPort != _viewPort)
@@ -51,10 +43,9 @@ void EMain_SceneView::Update()
 }
 void EMain_SceneView::Render()
 {
-	DC_PROFILE_FUNCTION();
+	DC_PROFILE_FUNCTION;
 	if (!IsShow)return;
 
-	ImGuiIO& io = ImGui::GetIO();
 	ImGuizmo::BeginFrame();
 	//ImGuizmo::SetOrthographic(true);
 
@@ -94,9 +85,9 @@ void EMain_SceneView::ShowToolbar()
 	{
 		//stats
 		ImGui::Spacing();
-		static bool stats_select = false;
-		ImGui::Selectable("Stats", &stats_select, 0, ImVec2(30.0f, 0.0f));
-		if (stats_select)
+		static bool statsSelect = false;
+		ImGui::Selectable("Stats", &statsSelect, 0, ImVec2(30.0f, 0.0f));
+		if (statsSelect)
 		{
 			ImVec2 lineStart = ImGui::GetCursorScreenPos();
 			lineStart.x -= 40.0f;
@@ -123,21 +114,21 @@ void EMain_SceneView::ShowToolbar()
 
 		//layer
 		const char* layers[] = { "Shaded", "Wireframe", "Scene Depth", "Scene Normal" };
-		static int current_select = 0;
+		static int currentSelect = 0;
 		ImGui::SetNextItemWidth(120.0f);
-		if (ImGui::Combo("##Layer", &current_select, layers, ARRAY_SIZE(layers)))
+		if (ImGui::Combo("##Layer", &currentSelect, layers, ARRAY_SIZE(layers)))
 		{
-			if (current_select == 0 || current_select == 1)
+			if (currentSelect == 0 || currentSelect == 1)
 			{
 				Camera* camera = GetCamera();
-				if(current_select == 0)camera->SetFillMode(FillMode::Solid);
-				else if (current_select == 1)camera->SetFillMode(FillMode::Wire);
+				if(currentSelect == 0)camera->SetFillMode(FillMode::Solid);
+				else if (currentSelect == 1)camera->SetFillMode(FillMode::Wire);
 
 				_camera->ClearDepthTextureMode();
 				_camera->RemovePostEffect(typeof(ShowDepthMapEffect));
 				_camera->RemovePostEffect(typeof(ShowDepthNormalEffect));
 			}
-			else if(current_select == 2)
+			else if(currentSelect == 2)
 			{
 				_camera->ClearDepthTextureMode();
 				_camera->RemovePostEffect(typeof(ShowDepthMapEffect));
@@ -146,7 +137,7 @@ void EMain_SceneView::ShowToolbar()
 				_camera->AddDepthTextureMode(DepthTextureMode::Depth);
 				_camera->AddPostEffect(typeof(ShowDepthMapEffect));
 			}
-			else if (current_select == 3)
+			else if (currentSelect == 3)
 			{
 				_camera->ClearDepthTextureMode();
 				_camera->RemovePostEffect(typeof(ShowDepthMapEffect));
@@ -159,11 +150,10 @@ void EMain_SceneView::ShowToolbar()
 		ImGui::Spacing();
 
 		//gizmos
-		const char* gizmos[] = { "Show Grid" };
-		ImVec2 popup_start = ImGui::GetCursorScreenPos(); popup_start.y += ImGui::GetFrameHeight() + 2.0f;
+		ImVec2 popupStart = ImGui::GetCursorScreenPos(); popupStart.y += ImGui::GetFrameHeight() + 2.0f;
 		if (ImGui::Selectable("Gizmos", false, 0, ImVec2(ImGui::CalcTextSize("Gizmos").x, 0.0f)))
 			ImGui::OpenPopup("gizmos_popup");
-		ImGui::SetNextWindowPos(popup_start);
+		ImGui::SetNextWindowPos(popupStart);
 		ImGui::SetNextWindowSize(ImVec2(300.0f, 300.0f));
 		if (ImGui::BeginPopup("gizmos_popup"))
 		{
@@ -174,10 +164,10 @@ void EMain_SceneView::ShowToolbar()
 					_lineGrid->GetTransform()->SetLocalRotation(Quaternion(Vector3(EditorConfig::Is3D ? 0.0f : -90.0f, 0.0f, 0.0f)));
 				}
 			}
-			bool enable_physics_debug = Physics::IsEnableDebug();
-			if (ImGui::MenuItem("Physics Debug", "", &enable_physics_debug))
+			bool enablePhysicsDebug = Physics::IsEnableDebug();
+			if (ImGui::MenuItem("Physics Debug", "", &enablePhysicsDebug))
 			{
-				Physics::EnableDebug(enable_physics_debug);
+				Physics::EnableDebug(enablePhysicsDebug);
 			}
 			ImGui::EndPopup();
 		}
@@ -205,62 +195,61 @@ void EMain_SceneView::ShowSelectObject()
 	Camera* camera = GetCamera();
 	if (!camera)return;
 
-	const float* mat_view = camera->GetViewMatrix().p;
-	const float* mat_proj = camera->GetProjMatrix().p;
+	const float* matView = camera->GetViewMatrix().p;
+	const float* matProj = camera->GetProjMatrix().p;
 	if (EditorAppliction::GetInspectorId())
 	{
-		GameObject* select_object = SceneManager::GetGameObject(EditorAppliction::GetInspectorId());
-		if (select_object)
+		GameObject* selectObject = SceneManager::GetGameObject(EditorAppliction::GetInspectorId());
+		if (selectObject)
 		{
-			Transform* object_transform = select_object->GetTransform();
-			ImGuizmo::OPERATION im_operation = (ImGuizmo::OPERATION)0;
+			Transform* objectTransform = selectObject->GetTransform();
+			ImGuizmo::OPERATION imOperation = (ImGuizmo::OPERATION)0;
 			GizmoOperation operation = EMain_Tools::GetOperation();
 			switch (operation)
 			{
 			case GizmoOperation::Translate:
-				im_operation = EditorConfig::Is3D ? ImGuizmo::TRANSLATE : ImGuizmo::TRANSLATE_X | ImGuizmo::TRANSLATE_Y;
+				imOperation = EditorConfig::Is3D ? ImGuizmo::TRANSLATE : ImGuizmo::TRANSLATE_X | ImGuizmo::TRANSLATE_Y;
 				break;
 			case GizmoOperation::Rotate:
-				im_operation = EditorConfig::Is3D ? ImGuizmo::ROTATE : ImGuizmo::ROTATE_Z;
+				imOperation = EditorConfig::Is3D ? ImGuizmo::ROTATE : ImGuizmo::ROTATE_Z;
 				break;
 			case GizmoOperation::Scale:
-				im_operation = EditorConfig::Is3D ? ImGuizmo::SCALE : ImGuizmo::SCALE_X | ImGuizmo::SCALE_Y;
+				imOperation = EditorConfig::Is3D ? ImGuizmo::SCALE : ImGuizmo::SCALE_X | ImGuizmo::SCALE_Y;
 				break;
 			case GizmoOperation::Universal:
-				im_operation = ImGuizmo::UNIVERSAL;
+				imOperation = ImGuizmo::UNIVERSAL;
 				break;
 			}
 
-			if (im_operation != (ImGuizmo::OPERATION)0)
+			if (imOperation != (ImGuizmo::OPERATION)0)
 			{
 				Matrix4 matrix;
-				Memory::Copy(matrix.p, object_transform->GetLocalToWorldMatrix().p, sizeof(Matrix4));
+				Memory::Copy(matrix.p, objectTransform->GetLocalToWorldMatrix().p, sizeof(Matrix4));
 				ImGuizmo::MODE im_mode = EditorConfig::IsLocal ? ImGuizmo::MODE::LOCAL : ImGuizmo::MODE::WORLD;
-				if (ImGuizmo::Manipulate(mat_view, mat_proj, im_operation, im_mode, matrix.p, nullptr, nullptr, nullptr, nullptr))
+				if (ImGuizmo::Manipulate(matView, matProj, imOperation, im_mode, matrix.p, nullptr, nullptr, nullptr, nullptr))
 				{
 					//矩阵分解
 					Vector3 translation, scale;
 					Quaternion rotation;
 					matrix.Decompose(translation, rotation, scale);
-					if (object_transform->GetEditorCanTranslate())object_transform->SetPosition(translation);
-					if (object_transform->GetEditorCanRotate())object_transform->SetRotation(rotation);
-					if (object_transform->GetEditorCanScale())object_transform->SetScale(scale);
+					if (objectTransform->GetEditorCanTranslate())objectTransform->SetPosition(translation);
+					if (objectTransform->GetEditorCanRotate())objectTransform->SetRotation(rotation);
+					if (objectTransform->GetEditorCanScale())objectTransform->SetScale(scale);
 				}
 			}
 			if (EditorConfig::Is3D)
 			{
-				ImGuiIO& io = ImGui::GetIO();
-				Transform* camera_transform = camera->GetTransform();
-				float mat_view[16] = { 0.0f };
-				ImGuizmo::LookAt(camera_transform->GetPosition().p, object_transform->GetPosition().p, camera_transform->GetUp().p, mat_view);
-				float distance = camera_transform->GetPosition().Distance(object_transform->GetPosition());
+				Transform* cameraTransform = camera->GetTransform();
+				float matView[16] = { 0.0f };
+				ImGuizmo::LookAt(cameraTransform->GetPosition().p, objectTransform->GetPosition().p, cameraTransform->GetUp().p, matView);
+				float distance = cameraTransform->GetPosition().Distance(objectTransform->GetPosition());
 				float pos[3] = { 0.0f }, lookat[3] = { 0.0f }, up[3] = { 0.0f };
 				float pos_x = ImGui::GetWindowPos().x + ImGui::GetWindowWidth();
 				float pos_y = ImGui::GetWindowPos().y;
-				if (ImGuizmo::ViewManipulate(mat_view, distance, ImVec2(pos_x - 128.0f, pos_y + ImGui::GetFrameHeight() + 10.0f), ImVec2(128.0f, 128.0f), 0x10101010, pos, lookat, up))
+				if (ImGuizmo::ViewManipulate(matView, distance, ImVec2(pos_x - 128.0f, pos_y + ImGui::GetFrameHeight() + 10.0f), ImVec2(128.0f, 128.0f), 0x10101010, pos, lookat, up))
 				{
-					camera_transform->SetPosition(Vector3(pos[0], pos[1], pos[2]));
-					camera_transform->LookAt(Vector3(lookat[0], lookat[1], lookat[2]), Vector3(up[0], up[1], up[2]));
+					cameraTransform->SetPosition(Vector3(pos[0], pos[1], pos[2]));
+					cameraTransform->LookAt(Vector3(lookat[0], lookat[1], lookat[2]), Vector3(up[0], up[1], up[2]));
 				}
 			}
 		}
@@ -291,10 +280,10 @@ void EMain_SceneView::ShowLineGrid()
 
 		if (distance < 1)distance = 1;
 
-		static float old_distance = 0.0f;
-		if (old_distance != distance)
+		static float oldDistance = 0.0f;
+		if (oldDistance != distance)
 		{//需要重新构建网格
-			old_distance = distance;
+			oldDistance = distance;
 			{
 				_lineGrid->Begin();
 				for (int row = -GRID_SIZE; row < GRID_SIZE; ++row)
@@ -331,20 +320,20 @@ Camera* EMain_SceneView::GetCamera()
 {
 	if (!_camera)
 	{
-		GameObject* camera_obj = GameObject::Instantiation("Scene 3DCamera", SceneManager::GetEngineObject()->GetTransform());
-		camera_obj->InsertFlag(GameObjectFlag::EditorCamera);
-		camera_obj->InsertFlag(GameObjectFlag::VisibleEditorCamera);
-		camera_obj->GetTransform()->SetLocalPosition(Vector3(0, 10, -10));
-		camera_obj->GetTransform()->LookAt(Vector3(0, 0, 0), Vector3::up);
+		GameObject* cameraObj = GameObject::Instantiation("Scene 3DCamera", SceneManager::GetEngineObject()->GetTransform());
+		cameraObj->InsertFlag(GameObjectFlag::EditorCamera);
+		cameraObj->InsertFlag(GameObjectFlag::VisibleEditorCamera);
+		cameraObj->GetTransform()->SetLocalPosition(Vector3(0, 10, -10));
+		cameraObj->GetTransform()->LookAt(Vector3(0, 0, 0), Vector3::up);
 
 		//相机
-		_camera = camera_obj->AddComponent<Camera>();
+		_camera = cameraObj->AddComponent<Camera>();
 		_camera->SetAspect(1.0f);
 		_camera->SetSkyBox();
 		//_camera->SetClearColor(Color::Clear);
 
 		//后处理
-		camera_obj->AddComponent<PostProcess>();
+		cameraObj->AddComponent<PostProcess>();
 
 		Set3D(EditorConfig::Is3D);
 	}
@@ -361,10 +350,10 @@ void EMain_SceneView::Set3D(bool is_3d)
 		forward = transform->GetForward();
 		if (EditorAppliction::GetInspectorId())
 		{
-			GameObject* select_object = SceneManager::GetGameObject(EditorAppliction::GetInspectorId());
-			if (select_object)
+			GameObject* selectObject = SceneManager::GetGameObject(EditorAppliction::GetInspectorId());
+			if (selectObject)
 			{
-				const Vector3& target_pos = select_object->GetTransform()->GetPosition();
+				const Vector3& target_pos = selectObject->GetTransform()->GetPosition();
 				transform->SetPosition(target_pos - target_pos.Distance(position)*Vector3::forward);
 				transform->LookAt(target_pos, Vector3::up);
 			}
@@ -408,46 +397,46 @@ void EMain_SceneView::HandleInput()
 		if (!Input::GetKey(KeyCode::LeftControl) && !Input::GetKey(KeyCode::LeftShift) && !Input::GetKey(KeyCode::LeftAlt) &&
 			!Input::GetKey(KeyCode::RightControl) && !Input::GetKey(KeyCode::RightShift) && !Input::GetKey(KeyCode::RightAlt))
 		{//移动镜头
-			float move_speed = EditorConfig::OperatorSpeed * 0.6f;
+			float moveSpeed = EditorConfig::OperatorSpeed * 0.6f;
 			if (Input::GetKey(KeyCode::W))
 			{
-				camera->MoveForwardBack(move_speed);
+				camera->MoveForwardBack(moveSpeed);
 			}
 			if (Input::GetKey(KeyCode::S))
 			{
-				camera->MoveForwardBack(-move_speed);
+				camera->MoveForwardBack(-moveSpeed);
 			}
 			if (Input::GetKey(KeyCode::A))
 			{
-				camera->MoveLeftRight(-move_speed);
+				camera->MoveLeftRight(-moveSpeed);
 			}
 			if (Input::GetKey(KeyCode::D))
 			{
-				camera->MoveLeftRight(move_speed);
+				camera->MoveLeftRight(moveSpeed);
 			}
 		}
 
 		if (Input::IsMouseMove() && Input::GetMouseButton(MouseBtnID::Mid))
 		{//拖动镜头
-			float offset_x = Input::mousePositionDelta.x * 0.1f;
-			float offset_y = Input::mousePositionDelta.y * 0.1f;
-			if (Math::Abs(offset_x) > 0)
+			float offsetX = Input::mousePositionDelta.x * 0.1f;
+			float offsetY = Input::mousePositionDelta.y * 0.1f;
+			if (Math::Abs(offsetX) > 0)
 			{
-				camera->MoveLeftRight(-offset_x);
+				camera->MoveLeftRight(-offsetX);
 			}
-			if (Math::Abs(offset_y) > 0)
+			if (Math::Abs(offsetY) > 0)
 			{
-				camera->MoveUpDown(-offset_y);
+				camera->MoveUpDown(-offsetY);
 			}
 		}
 
 		if (EditorConfig::Is3D && Input::IsMouseMove() && Input::GetMouseButton(MouseBtnID::Right))
 		{//旋转镜头
-			float offset_x = Input::mousePositionDelta.x;
-			float offset_y = -Input::mousePositionDelta.y;
-			if (Math::Abs(offset_x) > 0 || Math::Abs(offset_y) > 0)
+			float offsetX = Input::mousePositionDelta.x;
+			float offsetY = -Input::mousePositionDelta.y;
+			if (Math::Abs(offsetX) > 0 || Math::Abs(offsetY) > 0)
 			{
-				camera->Rotate(offset_x * EditorConfig::OperatorSpeed, offset_y * EditorConfig::OperatorSpeed);
+				camera->Rotate(offsetX * EditorConfig::OperatorSpeed, offsetY * EditorConfig::OperatorSpeed);
 			}
 		}
 		
@@ -487,9 +476,9 @@ void EMain_SceneView::OnDoubleClick(Transform* node)
 
 	if (EditorConfig::Is3D)
 	{
-		const Vector3& half_size = node->GetBoundingBox().GetHalfSize();
+		const Vector3& halfSize = node->GetBoundingBox().GetHalfSize();
 		Vector3 dir = (camera->GetTransform()->GetPosition() - node->GetPosition()).Normalize();//指向相机
-		Vector3 camera_pos = node->GetPosition() + dir * half_size.Lenght() * 10.0f;
+		Vector3 camera_pos = node->GetPosition() + dir * halfSize.Lenght() * 10.0f;
 		camera->GetTransform()->SetPosition(camera_pos);
 		camera->GetTransform()->LookTo(-dir, Vector3::up);
 	}

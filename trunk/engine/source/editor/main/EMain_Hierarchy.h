@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2021/8/7
@@ -19,7 +19,7 @@ class EMain_Hierarchy : public EWindowBase
 
 	DISALLOW_CONSTRUCTOR_COPY_ASSIGN(EMain_Hierarchy);
 	BEGIN_DERIVED_REFECTION_TYPE(EMain_Hierarchy, EWindowBase)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 private:
 	static void Render();
@@ -35,7 +35,7 @@ private:
 	static void DeleteSelectObject();
 
 private:
-	static bool IsShow;
-	static bool	_isFocus;
+	inline static bool IsShow = true;
+	inline static bool _isFocus = false;
 };
 DC_END_NAMESPACE

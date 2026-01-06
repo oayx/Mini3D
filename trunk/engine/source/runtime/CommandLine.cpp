@@ -1,9 +1,8 @@
-#include "CommandLine.h"
+﻿#include "CommandLine.h"
  
 DC_BEGIN_NAMESPACE
 /********************************************************************/
 IMPL_REFECTION_TYPE(CommandLine);
-VecString CommandLine::_commands;
 void CommandLine::Pause(int argc, char** argv)
 {
 	_commands.Reserve(argc);

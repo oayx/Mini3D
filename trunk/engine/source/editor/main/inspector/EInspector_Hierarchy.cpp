@@ -1,4 +1,4 @@
-#include "EInspector_Hierarchy.h"
+﻿#include "EInspector_Hierarchy.h"
 #include "runtime/scene/LayerMask.h"
 #include "runtime/scene/TagManager.h"
 #include "runtime/Application.h"
@@ -10,7 +10,7 @@ DC_BEGIN_NAMESPACE
 /********************************************************************/
 void EInspector_Hierarchy::Render()
 {
-	DC_PROFILE_FUNCTION();
+	DC_PROFILE_FUNCTION;
 	uint64 select_obj_id = EditorAppliction::GetInspectorId();
 	if (select_obj_id == 0)return;
 
@@ -84,15 +84,15 @@ void EInspector_Hierarchy::ShowHeader(GameObject* select_obj)
 				}
 				else
 				{
-					const char* sz_name = LayerMask::LayerToName(i).c_str();
-					if (sz_name[0] == '\0')continue;
+					const char* szName = LayerMask::LayerToName(i).c_str();
+					if (szName[0] == '\0')continue;
 
-					bool is_select = select_obj->GetLayer() == i;
+					bool isSelect = select_obj->GetLayer() == i;
 
 					char sz_full_name[LayerMask::MAX_NAME_SIZE + 10] = { 0 };
-					Snprintf(sz_full_name, ARRAY_SIZE(sz_full_name), " %d : %s", i, sz_name);
+					Snprintf(sz_full_name, ARRAY_SIZE(sz_full_name), " %d : %s", i, szName);
 
-					if (ImGui::Checkbox(sz_full_name, &is_select))
+					if (ImGui::Checkbox(sz_full_name, &isSelect))
 					{
 						select_obj->SetLayer(i);
 					}
@@ -107,7 +107,7 @@ void EInspector_Hierarchy::ShowHeader(GameObject* select_obj)
 void EInspector_Hierarchy::ShowTransform(GameObject* select_obj)
 {
 	ImGui::Separator();
-	Transform* transform = select_obj->GetTransform();
+	//Transform* transform = select_obj->GetTransform();
 
 }
 void EInspector_Hierarchy::ShowComponent(GameObject* select_obj)
@@ -121,9 +121,9 @@ void EInspector_Hierarchy::ShowComponent(GameObject* select_obj)
 		if (!component->Is<Transform>())continue;
 
 		Transform* transform = component->As<Transform>();
-		const char* sz_name = transform->GetType()->GetName().c_str();
-		bool is_open = ImGui::CollapsingHeader(sz_name, ImGuiTreeNodeFlags_DefaultOpen);
-		if (ImGui::BeginPopupContextItem(sz_name))
+		const char* szName = transform->GetType()->GetName().c_str();
+		bool is_open = ImGui::CollapsingHeader(szName, ImGuiTreeNodeFlags_DefaultOpen);
+		if (ImGui::BeginPopupContextItem(szName))
 		{
 			if (ImGui::Selectable("Reset"))
 			{
@@ -159,10 +159,10 @@ void EInspector_Hierarchy::ShowComponent(GameObject* select_obj)
 
 		ImGui::PushID(i);
 		ImGui::Separator();
-		const char* sz_name = component->GetType()->GetName().c_str();
+		const char* szName = component->GetType()->GetName().c_str();
 		bool is_show = component->IsEnable();
-		bool is_open = ImGuiEx::CollapsingHeader(sz_name, &is_show, ImGuiTreeNodeFlags_DefaultOpen);
-		if (ImGui::BeginPopupContextItem(sz_name))
+		bool is_open = ImGuiEx::CollapsingHeader(szName, &is_show, ImGuiTreeNodeFlags_DefaultOpen);
+		if (ImGui::BeginPopupContextItem(szName))
 		{
 			if (ImGui::Selectable("Remove component"))
 			{
@@ -189,13 +189,13 @@ void EInspector_Hierarchy::ShowAddComponent(GameObject* select_obj)
 	ImVec2 btn_size(220.0f, 25.0f);
 	const float x = (ImGui::GetContentRegionAvail().x - btn_size.x) * 0.5f + 8.0f;
 	ImGui::SetCursorPosX(x);
-	ImVec2 popup_start = ImGui::GetCursorScreenPos(); popup_start.y += ImGui::GetFrameHeightWithSpacing();
+	ImVec2 popupStart = ImGui::GetCursorScreenPos(); popupStart.y += ImGui::GetFrameHeightWithSpacing();
 	if (ImGui::Button("Add Component", btn_size))
 	{
 		ImGui::OpenPopup("AddComponentPopup");
 	}
 
-	ImGui::SetNextWindowPos(popup_start);
+	ImGui::SetNextWindowPos(popupStart);
 	ImGui::SetNextWindowSize(ImVec2(btn_size.x, 300.0f));
 	if (ImGui::BeginPopup("AddComponentPopup", 0)) 
 	{
@@ -226,24 +226,24 @@ void EInspector_Hierarchy::ShowAddComponent(GameObject* select_obj)
 		ImGui::EndPopup();
 	}
 }
-void EInspector_Hierarchy::ShowSearchAddComponent(std::function<void(String)> action, const EComponents& parent_component, const char* filter)
+void EInspector_Hierarchy::ShowSearchAddComponent(std::function<void(String)> action, const EComponents& parentComponent, const char* filter)
 {
-	for (const auto& obj : parent_component.Components)
+	for (const auto& obj : parentComponent.Components)
 	{
-		const char* sz_name = obj.first.c_str();
-		if (String::Stristr(sz_name, filter) != nullptr)
+		const char* szName = obj.first.c_str();
+		if (String::Stristr(szName, filter) != nullptr)
 		{
 			const Type* type = Type::GetType(obj.second.c_str());
 			if (type && type->HasFlag(TypeFlag::ShowInEditor))
 			{
-				if (ImGui::Selectable(sz_name))
+				if (ImGui::Selectable(szName))
 				{
 					if (action)action(obj.first);
 				}
 			}
 		}
 	}
-	for (const auto& child : parent_component.Childrends)
+	for (const auto& child : parentComponent.Childrends)
 	{
 		ShowSearchAddComponent(action, child.second, filter);
 	}

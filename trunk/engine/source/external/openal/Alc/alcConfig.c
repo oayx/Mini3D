@@ -104,7 +104,7 @@ static void LoadConfigFromFile(FILE *f)
             nextBlock = NULL;
             for(i = 0;i < cfgCount;i++)
             {
-                if(strcasecmp(cfgBlocks[i].name, buffer+1) == 0)
+                if(strcmp(cfgBlocks[i].name, buffer+1) == 0)
                 {
                     nextBlock = cfgBlocks+i;
                     TRACE("found block '%s'\n", nextBlock->name);
@@ -168,7 +168,7 @@ static void LoadConfigFromFile(FILE *f)
         ent = curBlock->entries;
         while((unsigned int)(ent-curBlock->entries) < curBlock->entryCount)
         {
-            if(strcasecmp(ent->key, buffer) == 0)
+            if(strcmp(ent->key, buffer) == 0)
                 break;
             ent++;
         }
@@ -293,12 +293,12 @@ const char *GetConfigValue(const char *blockName, const char *keyName, const cha
 
     for(i = 0;i < cfgCount;i++)
     {
-        if(strcasecmp(cfgBlocks[i].name, blockName) != 0)
+        if(strcmp(cfgBlocks[i].name, blockName) != 0)
             continue;
 
         for(j = 0;j < cfgBlocks[i].entryCount;j++)
         {
-            if(strcasecmp(cfgBlocks[i].entries[j].key, keyName) == 0)
+            if(strcmp(cfgBlocks[i].entries[j].key, keyName) == 0)
             {
                 TRACE("Found %s:%s = \"%s\"\n", blockName, keyName,
                       cfgBlocks[i].entries[j].value);
@@ -364,6 +364,6 @@ int GetConfigValueBool(const char *blockName, const char *keyName, int def)
     const char *val = GetConfigValue(blockName, keyName, "");
 
     if(!val[0]) return !!def;
-    return (strcasecmp(val, "true") == 0 || strcasecmp(val, "yes") == 0 ||
-            strcasecmp(val, "on") == 0 || atoi(val) != 0);
+    return (strcmp(val, "true") == 0 || strcmp(val, "yes") == 0 ||
+            strcmp(val, "on") == 0 || atoi(val) != 0);
 }

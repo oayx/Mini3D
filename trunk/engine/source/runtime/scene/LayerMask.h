@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Date：2020/9/2
@@ -10,7 +10,7 @@
  
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-class ENGINE_DLL LayerMask Final : public Object
+class ENGINE_DLL LayerMask final : public Object
 {
 	typedef Vector<String> Layeres;
 	friend class Application;
@@ -31,16 +31,16 @@ public:
 	static void Save();
 
 public:
-	static const int MAX_NAME_SIZE = 20;
-	static String Default;
-	static String UI;
-	static String IgnoreRaycast;
+	inline static constexpr int MAX_NAME_SIZE = 20;
+	inline static String Default = "Default";
+	inline static String UI = "UI";
+	inline static String IgnoreRaycast = "IgnoreRaycast";
 
 public:
-	static uint Nothing;
-	static uint Everything;
+	inline static uint Nothing = 0;
+	inline static uint Everything = 4294967295;
 
 private:
-	static Layeres _layeres;
+	inline static Layeres _layeres;
 };//Light
 DC_END_NAMESPACE

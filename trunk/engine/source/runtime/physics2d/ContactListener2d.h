@@ -11,7 +11,7 @@
 DC_BEGIN_NAMESPACE
 class Collider2d;
 /********************************************************************/
-class ContactListener2d Final : public b2ContactListener
+class ContactListener2d final : public b2ContactListener
 {
 	friend class Physics2d;
 	DECLARE_ALLOCATOR;

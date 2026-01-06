@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2021/10/8
@@ -10,7 +10,7 @@
 
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-class ENGINE_DLL DepthOfFieldEffect Final : public PostEffect
+class ENGINE_DLL DepthOfFieldEffect final : public PostEffect
 {
 	friend class PostProcess;
 	DECLARE_OBJECT_CLONE;
@@ -19,7 +19,7 @@ class ENGINE_DLL DepthOfFieldEffect Final : public PostEffect
 	BEGIN_DERIVED_REFECTION_TYPE(DepthOfFieldEffect, PostEffect)
 		CTORS(DEFAULT_CTOR(DepthOfFieldEffect))
 		ADD_EDITOR_COMPONENT("Depth Of Field")
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 	DepthOfFieldEffect();
 	~DepthOfFieldEffect();

@@ -1,4 +1,4 @@
-﻿#message("当前源代码目录: ${CMAKE_CURRENT_SOURCE_DIR}")
+﻿message("当前CMakeLists目录: ${CMAKE_CURRENT_SOURCE_DIR}")
 # include makelist
 include(source/external/assimp/CMakeLists.txt)
 include(source/external/astc/CMakeLists.txt)
@@ -16,7 +16,6 @@ include(source/external/soil2/CMakeLists.txt)
 include(source/external/spine/CMakeLists.txt)
 include(source/external/stb/CMakeLists.txt)
 include(source/external/tinyexpr/CMakeLists.txt)
-include(source/external/tinystl/CMakeLists.txt)
 include(source/external/tinyxml2/CMakeLists.txt)
 include(source/external/utf8cpp/CMakeLists.txt)
 include(source/external/yamlcpp/CMakeLists.txt)
@@ -26,7 +25,7 @@ if(WINDOWS)
 	include(source/external/directxtex/CMakeLists.txt)
 	include(source/external/etcpack/CMakeLists.txt)
 	include(source/external/glad/CMakeLists.txt)
-	include(source/external/glfw/CMakeLists.txt)
+	include(source/external/glfw3/CMakeLists.txt)
 	include(source/external/iconv/CMakeLists.txt)
 	set(ENGINE_EXTERNAL_SRC
 		${ENGINE_EXTERNAL_ASSIMP_SRC}
@@ -51,14 +50,13 @@ if(WINDOWS)
 		${ENGINE_EXTERNAL_SOIL2_SRC}
 		${ENGINE_EXTERNAL_SPINE_SRC}
 		${ENGINE_EXTERNAL_TINYEXPR_SRC}
-		${ENGINE_EXTERNAL_TINYSTL_SRC}
 		${ENGINE_EXTERNAL_TINYXML2_SRC}
 		${ENGINE_EXTERNAL_YAMLCPP_SRC}
 		${ENGINE_EXTERNAL_ZLIB_SRC}
     )
 elseif(LINUX)
 	include(source/external/glad/CMakeLists.txt)
-	include(source/external/glfw/CMakeLists.txt)
+	include(source/external/glfw3/CMakeLists.txt)
 	set(ENGINE_EXTERNAL_SRC
 		${ENGINE_EXTERNAL_ASSIMP_SRC}
 		${ENGINE_EXTERNAL_ASTC_SRC}
@@ -77,7 +75,6 @@ elseif(LINUX)
 		${ENGINE_EXTERNAL_SOIL2_SRC}
 		${ENGINE_EXTERNAL_SPINE_SRC}
 		${ENGINE_EXTERNAL_TINYEXPR_SRC}
-		${ENGINE_EXTERNAL_TINYSTL_SRC}
 		${ENGINE_EXTERNAL_TINYXML2_SRC}
 		${ENGINE_EXTERNAL_YAMLCPP_SRC}
 		${ENGINE_EXTERNAL_ZLIB_SRC}
@@ -99,7 +96,6 @@ elseif(ANDROID)
 		${ENGINE_EXTERNAL_SOIL2_SRC}
 		${ENGINE_EXTERNAL_SPINE_SRC}
 		${ENGINE_EXTERNAL_TINYEXPR_SRC}
-		${ENGINE_EXTERNAL_TINYSTL_SRC}
 		${ENGINE_EXTERNAL_TINYXML2_SRC}
 		${ENGINE_EXTERNAL_YAMLCPP_SRC}
 		${ENGINE_EXTERNAL_ZLIB_SRC}
@@ -116,13 +112,60 @@ elseif(WASM)
 		${ENGINE_EXTERNAL_IMGUI_SRC}
 		${ENGINE_EXTERNAL_JSON_SRC}
 		${ENGINE_EXTERNAL_LUA_SRC}
-		${ENGINE_EXTERNAL_QRENCODE_SRC}
+		#${ENGINE_EXTERNAL_QRENCODE_SRC}
 		${ENGINE_EXTERNAL_SOIL2_SRC}
 		${ENGINE_EXTERNAL_SPINE_SRC}
 		${ENGINE_EXTERNAL_TINYEXPR_SRC}
-		${ENGINE_EXTERNAL_TINYSTL_SRC}
 		${ENGINE_EXTERNAL_TINYXML2_SRC}
 		${ENGINE_EXTERNAL_YAMLCPP_SRC}
 		${ENGINE_EXTERNAL_ZLIB_SRC}
     )
+elseif(MACOSX)
+	include(source/external/glad/CMakeLists.txt)
+	include(source/external/glfw3/CMakeLists.txt)
+	set(ENGINE_EXTERNAL_SRC
+		${ENGINE_EXTERNAL_ASSIMP_SRC}
+		${ENGINE_EXTERNAL_ASTC_SRC}
+		${ENGINE_EXTERNAL_BOX2D_SRC}
+		${ENGINE_EXTERNAL_BULLET_SRC}
+		${ENGINE_EXTERNAL_CRYPTO_SRC}
+		${ENGINE_EXTERNAL_FORMAT_SRC}
+		${ENGINE_EXTERNAL_FREETYPE_SRC}
+		${ENGINE_EXTERNAL_GLAD_SRC}
+		${ENGINE_EXTERNAL_GLFW_SRC}
+		${ENGINE_EXTERNAL_IMGUI_SRC}
+		${ENGINE_EXTERNAL_JSON_SRC}
+		${ENGINE_EXTERNAL_LUA_SRC}
+		#${ENGINE_EXTERNAL_OPENAL_SRC} mac平台自带了openal库
+		#${ENGINE_EXTERNAL_QRENCODE_SRC}
+		${ENGINE_EXTERNAL_SOIL2_SRC}
+		${ENGINE_EXTERNAL_SPINE_SRC}
+		${ENGINE_EXTERNAL_TINYEXPR_SRC}
+		${ENGINE_EXTERNAL_TINYXML2_SRC}
+		${ENGINE_EXTERNAL_YAMLCPP_SRC}
+		${ENGINE_EXTERNAL_ZLIB_SRC}
+    )
+elseif(iOS)
+	set(ENGINE_EXTERNAL_SRC
+		${ENGINE_EXTERNAL_ASSIMP_SRC}
+		${ENGINE_EXTERNAL_ASTC_SRC}
+		${ENGINE_EXTERNAL_BOX2D_SRC}
+		${ENGINE_EXTERNAL_BULLET_SRC}
+		${ENGINE_EXTERNAL_CRYPTO_SRC}
+		${ENGINE_EXTERNAL_FORMAT_SRC}
+		${ENGINE_EXTERNAL_FREETYPE_SRC}
+		${ENGINE_EXTERNAL_IMGUI_SRC}
+		${ENGINE_EXTERNAL_JSON_SRC}
+		${ENGINE_EXTERNAL_LUA_SRC}
+		#${ENGINE_EXTERNAL_OPENAL_SRC} mac平台自带了openal库
+		#${ENGINE_EXTERNAL_QRENCODE_SRC}
+		${ENGINE_EXTERNAL_SOIL2_SRC}
+		${ENGINE_EXTERNAL_SPINE_SRC}
+		${ENGINE_EXTERNAL_TINYEXPR_SRC}
+		${ENGINE_EXTERNAL_TINYXML2_SRC}
+		${ENGINE_EXTERNAL_YAMLCPP_SRC}
+		${ENGINE_EXTERNAL_ZLIB_SRC}
+    )
+else()
+	message( FATAL_ERROR "Unsupported platform, CMake will exit" )
 endif()

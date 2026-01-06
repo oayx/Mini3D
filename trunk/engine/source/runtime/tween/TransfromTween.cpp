@@ -1,4 +1,4 @@
-#include "TransfromTween.h"
+﻿#include "TransfromTween.h"
 #include "TweenManager.h"
 #include "runtime/component/Transform.h"
  
@@ -9,7 +9,7 @@ MoveTween* MoveTween::To(Transform* target, const Vector3& target_pos, float tim
 {
 	CHECK_RETURN_PTR_NULL(target);
 	Vector3 position = space == SimulationSpace::World ? target->GetPosition() : target->GetLocalPosition();
-	MoveTween *tween = DBG_NEW MoveTween();
+	MoveTween *tween = Memory::New<MoveTween>();
 	tween->AutoRelease();
 	tween->_startValue = position;
 	tween->_targetValue = target_pos;
@@ -22,7 +22,7 @@ MoveTween* MoveTween::Speed(Transform* target, const Vector3& speed, float time,
 {
 	CHECK_RETURN_PTR_NULL(target);
 	Vector3 position = space == SimulationSpace::World ? target->GetPosition() : target->GetLocalPosition();
-	MoveTween* tween = DBG_NEW MoveTween();
+	MoveTween* tween = Memory::New<MoveTween>();
 	tween->AutoRelease();
 	tween->_startValue = position;
 	tween->_targetValue = position + speed * time;
@@ -31,17 +31,17 @@ MoveTween* MoveTween::Speed(Transform* target, const Vector3& speed, float time,
 	tween->_target = target;
 	return tween;
 }
-void MoveTween::OnUpdate(float curr_time)
+void MoveTween::OnUpdate(float currTime)
 {
 	Vector3 pos;
-	if (curr_time >= _endTime)
+	if (currTime >= _endTime)
 	{
 		pos = _targetValue;
 	}
 	else
 	{
-		float elapased_time = curr_time - _startTime;
-		pos = Easy::Do(_easyType, _startValue, _targetValue, elapased_time / _transformTime);
+		float elapasedTime = currTime - _startTime;
+		pos = Easy::Do(_easyType, _startValue, _targetValue, elapasedTime / _transformTime);
 	}
 	Transform* transform = dynamic_cast<Transform*>(_target);
 	if (_space == SimulationSpace::World)
@@ -79,7 +79,7 @@ RotateTween* RotateTween::To(Transform* target, const Vector3& euler, float time
 {
 	CHECK_RETURN_PTR_NULL(target);
 	Vector3 rotate = space == SimulationSpace::World ? target->GetRotation().ToEuler() : target->GetLocalRotation().ToEuler();
-	RotateTween* tween = DBG_NEW RotateTween();
+	RotateTween* tween = Memory::New<RotateTween>();
 	tween->AutoRelease();
 	tween->_startValue = rotate;
 	tween->_targetValue = rotate + euler;
@@ -92,7 +92,7 @@ RotateTween* RotateTween::Speed(Transform* target, const Vector3& speed, float t
 {
 	CHECK_RETURN_PTR_NULL(target);
 	Vector3 rotate = space == SimulationSpace::World ? target->GetRotation().ToEuler() : target->GetLocalRotation().ToEuler();
-	RotateTween* tween = DBG_NEW RotateTween();
+	RotateTween* tween = Memory::New<RotateTween>();
 	tween->AutoRelease();
 	tween->_startValue = rotate;
 	tween->_targetValue = rotate + speed * time;
@@ -101,19 +101,19 @@ RotateTween* RotateTween::Speed(Transform* target, const Vector3& speed, float t
 	tween->_target = target;
 	return tween;
 }
-void RotateTween::OnUpdate(float curr_time)
+void RotateTween::OnUpdate(float currTime)
 {
 	Transform* transform = dynamic_cast<Transform*>(_target);
 
 	Vector3 euler;
-	if (curr_time >= _endTime)
+	if (currTime >= _endTime)
 	{
 		euler = _targetValue;
 	}
 	else
 	{
-		float elapased_time = curr_time - _startTime;
-		euler = Easy::Do(_easyType, _startValue, _targetValue, elapased_time / _transformTime);
+		float elapasedTime = currTime - _startTime;
+		euler = Easy::Do(_easyType, _startValue, _targetValue, elapasedTime / _transformTime);
 	}
 
 	Quaternion rotate = Quaternion(euler);
@@ -153,7 +153,7 @@ IMPL_DERIVED_REFECTION_TYPE(RotateAroundTween, Tween);
 RotateAroundTween* RotateAroundTween::Create(Transform* target, const Vector3& point, const Vector3& axis, float degree, SimulationSpace space)
 {
 	CHECK_RETURN_PTR_NULL(target);
-	RotateAroundTween* tween = DBG_NEW RotateAroundTween();
+	RotateAroundTween* tween = Memory::New<RotateAroundTween>();
 	tween->AutoRelease();
 	tween->_point = point;
 	tween->_axis = axis;
@@ -163,7 +163,7 @@ RotateAroundTween* RotateAroundTween::Create(Transform* target, const Vector3& p
 	tween->_transformTime = MAX_float;
 	return tween;
 }
-void RotateAroundTween::OnUpdate(float curr_time)
+void RotateAroundTween::OnUpdate(float currTime)
 {
 	Transform* transform = dynamic_cast<Transform*>(_target);
 
@@ -192,7 +192,7 @@ ScaleTween* ScaleTween::To(Transform* target, const Vector3& target_scale, float
 	CHECK_RETURN_PTR_NULL(target);
 	const Vector3& scale = target->GetLocalScale();
 
-	ScaleTween* tween = DBG_NEW ScaleTween();
+	ScaleTween* tween = Memory::New<ScaleTween>();
 	tween->AutoRelease();
 	tween->_startValue = scale;
 	tween->_targetValue = target_scale;
@@ -200,18 +200,18 @@ ScaleTween* ScaleTween::To(Transform* target, const Vector3& target_scale, float
 	tween->_target = target;
 	return tween;
 }
-void ScaleTween::OnUpdate(float curr_time)
+void ScaleTween::OnUpdate(float currTime)
 {
 	Transform* transform = dynamic_cast<Transform*>(_target);
 	Vector3 scale;
-	if (curr_time >= _endTime)
+	if (currTime >= _endTime)
 	{
 		scale = _targetValue;
 	}
 	else
 	{
-		float elapased_time = curr_time - _startTime;
-		scale = Easy::Do(_easyType, _startValue, _targetValue, elapased_time / _transformTime);
+		float elapasedTime = currTime - _startTime;
+		scale = Easy::Do(_easyType, _startValue, _targetValue, elapasedTime / _transformTime);
 	}
 	transform->SetLocalScale(scale);
 }
@@ -234,7 +234,7 @@ IMPL_DERIVED_REFECTION_TYPE(FlipTween, Tween);
 FlipTween* FlipTween::Create(Transform* target, bool flipX, bool flipY, bool flipZ)
 {
 	CHECK_RETURN_PTR_NULL(target);
-	FlipTween *tween = DBG_NEW FlipTween();
+	FlipTween *tween = Memory::New<FlipTween>();
 	tween->AutoRelease();
 	tween->_flipX = flipX;
 	tween->_flipY = flipY;
@@ -257,7 +257,7 @@ IMPL_DERIVED_REFECTION_TYPE(PlaceTween, Tween);
 PlaceTween* PlaceTween::Create(Transform* target, const Vector3& pos)
 {
 	CHECK_RETURN_PTR_NULL(target);
-	PlaceTween *tween = DBG_NEW PlaceTween();
+	PlaceTween *tween = Memory::New<PlaceTween>();
 	tween->AutoRelease();
 	tween->_position = pos;
 	tween->_target = target;

@@ -1,4 +1,4 @@
-#include "DX11HardwareIndexBuffer.h"
+﻿#include "DX11HardwareIndexBuffer.h"
 #include "DX11Device.h"
  
 DC_BEGIN_NAMESPACE
@@ -41,21 +41,21 @@ void* DX11HardwareIndexBuffer::Lock(const IndexBufferDesc& desc)
 			AssertEx(false, "error usage:%d", (int)_usage);
 			break;
 		}
-		HR(GetDX11Device()->GetDevice()->CreateBuffer(&sd, nullptr, &_indexBuffer));
+		DX_ERROR(GetDX11Device()->GetDevice()->CreateBuffer(&sd, nullptr, &_indexBuffer));
 	}
 
 	if (_usage == GPUResourceUsage::Dynamic)
 	{
 		D3D11_MAPPED_SUBRESOURCE res = { };
-		HR(GetDX11Device()->GetContent()->Map(_indexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &res));
+		DX_ERROR(GetDX11Device()->GetContent()->Map(_indexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &res));
 		return res.pData;
 	}
 	else
 	{
 		if (!_bufferData || rebuild)
 		{
-			DeleteArray(_bufferData);
-			_bufferData = NewArray<byte>(this->GetBufferCapacity());
+			Memory::DeleteArray(_bufferData);
+			_bufferData = Memory::NewArray<byte>(this->GetBufferCapacity());
 			::memset(_bufferData, 0, this->GetBufferCapacity());
 		}
 		return _bufferData;
@@ -79,7 +79,6 @@ void  DX11HardwareIndexBuffer::Unlock()
 }
 void DX11HardwareIndexBuffer::Render()
 {
-	UINT offset = 0;
-	GetDX11Device()->GetContent()->IASetIndexBuffer(_indexBuffer, DX11GetIndexType(_indexType), 0);
+	GetDX11Device()->GetContent()->IASetIndexBuffer(_indexBuffer, DX10GetIndexType(_indexType), 0);
 }
 DC_END_NAMESPACE

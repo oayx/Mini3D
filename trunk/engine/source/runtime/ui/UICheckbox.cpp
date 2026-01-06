@@ -1,4 +1,4 @@
-#include "UICheckbox.h"
+﻿#include "UICheckbox.h"
 #include "UIAtlas.h"
 #include "runtime/resources/AssetsManager.h"
 #include "editor/common/EAssetSelect.h"
@@ -10,11 +10,11 @@
 DC_BEGIN_NAMESPACE
 /********************************************************************/
 IMPL_DERIVED_REFECTION_TYPE(UICheckbox, UIButton);
-Object* UICheckbox::Clone(Object* new_obj)
+Object* UICheckbox::Clone(Object* newObj)
 {
-	base::Clone(new_obj);
-	UICheckbox* obj = dynamic_cast<UICheckbox*>(new_obj);
-	if (!obj)return new_obj;
+	base::Clone(newObj);
+	UICheckbox* obj = dynamic_cast<UICheckbox*>(newObj);
+	if (!obj)return newObj;
 
 	obj->SetNormalAtlas(_normalAtlasFile, _normalAtlasName);
 	obj->SetSelectAtlas(_selectAtlasFile, _selectAtlasName);
@@ -53,8 +53,8 @@ void UICheckbox::OnDrawEditor()
 {
 	UIView::OnDrawEditor();
 
-	ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_DefaultOpen;
-	if (ImGui::TreeNodeEx("Image", base_flags))
+	ImGuiTreeNodeFlags baseFlags = ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_DefaultOpen;
+	if (ImGui::TreeNodeEx("Image", baseFlags))
 	{
 		UIView::OnDrawEditor_Color();
 		UIImage::OnDrawEditor_ImageType();
@@ -63,13 +63,13 @@ void UICheckbox::OnDrawEditor()
 		ImGui::TreePop();
 	}
 	ImGui::NewLine();
-	if (ImGui::TreeNodeEx("Button", base_flags))
+	if (ImGui::TreeNodeEx("Button", baseFlags))
 	{
 		UIButton::OnDrawEditor_Button();
 		ImGui::TreePop();
 	}
 	ImGui::NewLine();
-	if (ImGui::TreeNodeEx("Checkbox", base_flags))
+	if (ImGui::TreeNodeEx("Checkbox", baseFlags))
 	{
 		{
 			ImGuiEx::Label("Checked");
@@ -82,8 +82,8 @@ void UICheckbox::OnDrawEditor()
 			ImGui::PushID(1);
 			{
 				ImGuiEx::Label("Normal Altas");
-				const char* sz_name = _normalAtlasFile.c_str();
-				ImGui::Button(sz_name, ImVec2(ImGui::GetContentRegionAvail().x - ImGui::CalcTextSize(ICON_FA_LINK).x - 5, 0));
+				const char* szName = _normalAtlasFile.c_str();
+				ImGui::Button(szName, ImVec2(ImGui::GetContentRegionAvail().x - ImGui::CalcTextSize(ICON_FA_LINK).x - 5, 0));
 				if (ImGui::IsItemClicked(0) && !_normalAtlasFile.IsEmpty())
 				{
 					EMain_Project::SetSelectFile(_normalAtlasFile);
@@ -92,10 +92,10 @@ void UICheckbox::OnDrawEditor()
 				{
 					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ProjectAsset"))
 					{
-						const String& file_path = EditorCursor::GetDragFile();
-						if (UIAtlasManager::IsAtlasFile(file_path))
+						const String& filePath = EditorCursor::GetDragFile();
+						if (UIAtlasManager::IsAtlasFile(filePath))
 						{
-							_normalAtlasFile = file_path;
+							_normalAtlasFile = filePath;
 							if(!_isChecked)base::SetAtlas(_normalAtlasFile, _normalAtlasName);
 						}
 						EditorCursor::EndDrag();
@@ -115,26 +115,26 @@ void UICheckbox::OnDrawEditor()
 				}
 			}
 			{
-				int select_index = -1;
-				VecString altas_names;
-				UIAtlas* ui_atlas = UIAtlasManager::GetAtlas(_normalAtlasFile);
-				if (ui_atlas)
+				int selectIndex = -1;
+				VecString altasNames;
+				UIAtlas* uiAtlas = UIAtlasManager::GetAtlas(_normalAtlasFile);
+				if (uiAtlas)
 				{
-					const Map<String, UIAtlasInfo>& atlas_infos = ui_atlas->GetAtlasInfoes();
+					const Map<String, UIAtlasInfo>& atlas_infos = uiAtlas->GetAtlasInfoes();
 					for (const auto& obj : atlas_infos)
 					{
-						altas_names.Add(obj.first);
+						altasNames.Add(obj.first);
 						if (obj.first == _normalAtlasName)
 						{
-							select_index = altas_names.Size() - 1;
+							selectIndex = altasNames.Size() - 1;
 						}
 					}
 				}
 
 				ImGuiEx::Label("Normal Image");
-				if (ECommonComponent::ShowDropDown("Normal Image", altas_names, select_index))
+				if (ECommonComponent::ShowDropDown("Normal Image", altasNames, selectIndex))
 				{
-					_normalAtlasName = altas_names[select_index];
+					_normalAtlasName = altasNames[selectIndex];
 					if (!_isChecked)base::SetAtlas(_normalAtlasFile, _normalAtlasName);
 				}
 			}
@@ -144,8 +144,8 @@ void UICheckbox::OnDrawEditor()
 			ImGui::PushID(2);
 			{
 				ImGuiEx::Label("Select Altas");
-				const char* sz_name = _selectAtlasFile.c_str();
-				ImGui::Button(sz_name, ImVec2(ImGui::GetContentRegionAvail().x - ImGui::CalcTextSize(ICON_FA_LINK).x - 5, 0));
+				const char* szName = _selectAtlasFile.c_str();
+				ImGui::Button(szName, ImVec2(ImGui::GetContentRegionAvail().x - ImGui::CalcTextSize(ICON_FA_LINK).x - 5, 0));
 				if (ImGui::IsItemClicked(0) && !_selectAtlasFile.IsEmpty())
 				{
 					EMain_Project::SetSelectFile(_selectAtlasFile);
@@ -154,10 +154,10 @@ void UICheckbox::OnDrawEditor()
 				{
 					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ProjectAsset"))
 					{
-						const String& file_path = EditorCursor::GetDragFile();
-						if (UIAtlasManager::IsAtlasFile(file_path))
+						const String& filePath = EditorCursor::GetDragFile();
+						if (UIAtlasManager::IsAtlasFile(filePath))
 						{
-							_selectAtlasFile = file_path;
+							_selectAtlasFile = filePath;
 							if (_isChecked)base::SetAtlas(_selectAtlasFile, _selectAtlasName);
 						}
 						EditorCursor::EndDrag();
@@ -177,26 +177,26 @@ void UICheckbox::OnDrawEditor()
 				}
 			}
 			{
-				int select_index = -1;
-				VecString altas_names;
-				UIAtlas* ui_atlas = UIAtlasManager::GetAtlas(_selectAtlasFile);
-				if (ui_atlas)
+				int selectIndex = -1;
+				VecString altasNames;
+				UIAtlas* uiAtlas = UIAtlasManager::GetAtlas(_selectAtlasFile);
+				if (uiAtlas)
 				{
-					const Map<String, UIAtlasInfo>& atlas_infos = ui_atlas->GetAtlasInfoes();
+					const Map<String, UIAtlasInfo>& atlas_infos = uiAtlas->GetAtlasInfoes();
 					for (const auto& obj : atlas_infos)
 					{
-						altas_names.Add(obj.first);
+						altasNames.Add(obj.first);
 						if (obj.first == _selectAtlasName)
 						{
-							select_index = altas_names.Size() - 1;
+							selectIndex = altasNames.Size() - 1;
 						}
 					}
 				}
 
 				ImGuiEx::Label("Select Image");
-				if (ECommonComponent::ShowDropDown("Select Image", altas_names, select_index))
+				if (ECommonComponent::ShowDropDown("Select Image", altasNames, selectIndex))
 				{
-					_selectAtlasName = altas_names[select_index];
+					_selectAtlasName = altasNames[selectIndex];
 					if (_isChecked)base::SetAtlas(_selectAtlasFile, _selectAtlasName);
 				}
 			}

@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2020/9/16
@@ -15,7 +15,7 @@ class FighterActor : public Component
 	friend class GameObject;
 	FRIEND_CONSTRUCT_DESTRUCT(FighterActor);
 	BEGIN_DERIVED_REFECTION_TYPE(FighterActor, Component)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 	
 public:
 	virtual void SetCamp(FighterCampType camp) { _camp = camp; }

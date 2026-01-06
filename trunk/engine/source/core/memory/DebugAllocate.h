@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Description：调试模式下的内存分配
@@ -14,7 +14,7 @@
 
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-class DebugMalloc Final : public Malloc
+class DebugMalloc final : public Malloc
 {
 	friend class Memory;
 

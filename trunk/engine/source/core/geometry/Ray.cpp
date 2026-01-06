@@ -6,7 +6,7 @@
 DC_BEGIN_NAMESPACE
 /********************************************************************/
 IMPL_REFECTION_TYPE(Ray);
-std::pair<bool, float> Ray::Intersects(const Aabb& box)const
+std::pair<bool, float> Ray::Intersects(const Aabb& box)const noexcept
 {
 	if (box.IsNull()) return std::pair<bool, float>(false, 0.0f);
 	if (box.IsInfinite()) return std::pair<bool, float>(true, 0.0f);
@@ -133,7 +133,7 @@ std::pair<bool, float> Ray::Intersects(const Aabb& box)const
 	return std::pair<bool, float>(hit, lowt);
 }
 
-std::pair<bool, float> Ray::Intersects(const Triangle& triangle, bool positiveSide, bool negativeSide)const
+std::pair<bool, float> Ray::Intersects(const Triangle& triangle, bool positiveSide, bool negativeSide)const noexcept
 {
 	Vector3 a = triangle.first;
 	Vector3 b = triangle.secord;
@@ -228,7 +228,7 @@ std::pair<bool, float> Ray::Intersects(const Triangle& triangle, bool positiveSi
 	return std::pair<bool, float>(true, t);
 }
 
-std::pair<bool, float> Ray::Intersects(const Plane& plane)const
+std::pair<bool, float> Ray::Intersects(const Plane& plane)const noexcept
 {
 
 	float denom = plane.normal.Dot(this->GetDir());

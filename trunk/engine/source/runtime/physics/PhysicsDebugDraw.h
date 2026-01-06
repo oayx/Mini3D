@@ -10,7 +10,7 @@
 
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-class PhysicsDebugDraw Final : public btIDebugDraw
+class PhysicsDebugDraw final : public btIDebugDraw
 {
 	DECLARE_ALLOCATOR;
 	DEFAULT_CREATE(PhysicsDebugDraw);

@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2020/9/17
@@ -11,7 +11,7 @@ class b2Body;
 
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-class ENGINE_DLL RigidBody2d Final : public Component
+class ENGINE_DLL RigidBody2d final : public Component
 {
 	friend class GameObject;
 	DECLARE_OBJECT_CLONE;
@@ -20,7 +20,7 @@ class ENGINE_DLL RigidBody2d Final : public Component
 	BEGIN_DERIVED_REFECTION_TYPE(RigidBody2d, Component)
 		CTORS(DEFAULT_CTOR(RigidBody2d))
 		//ADD_EDITOR_COMPONENT("Physics2D/RigidBody")
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 public:
 	b2Body*	GetBody();

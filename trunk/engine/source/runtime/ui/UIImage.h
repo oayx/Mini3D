@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Date：2020/8/29
@@ -54,11 +54,11 @@ class ENGINE_DLL UIImage : public UIView
 	BEGIN_DERIVED_REFECTION_TYPE(UIImage, UIView)
 		CTORS(DEFAULT_CTOR(UIImage))
 		ADD_EDITOR_COMPONENT("UI/Image")
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 public:
 	virtual void	OnDrawEditor()override;
-	virtual bool	FillMesh(VariablePrimitive* primitive, Material* material, int& vxt_offset, int& idx_offset)override;
+	virtual bool	FillMesh(VariablePrimitive* primitive, Material* material, int& vxtOffset, int& idxOffset)override;
 	virtual void	SetNativeSize();
 
 	void			SetAtlas(const String& file);
@@ -79,10 +79,10 @@ protected:
 	void			OnDrawEditor_ImageType();
 
 private:
-	bool			FillSimpleMesh(VariablePrimitive* primitive, int& vxt_offset, int& idx_offset);
-	bool			FillSlicedMesh(VariablePrimitive* primitive, int& vxt_offset, int& idx_offset);
-	bool			FillHorizontalMesh(VariablePrimitive* primitive, int& vxt_offset, int& idx_offset);
-	bool			FillVerticalMesh(VariablePrimitive* primitive, int& vxt_offset, int& idx_offset);
+	bool			FillSimpleMesh(VariablePrimitive* primitive, int& vxtOffset, int& idxOffset);
+	bool			FillSlicedMesh(VariablePrimitive* primitive, int& vxtOffset, int& idxOffset);
+	bool			FillHorizontalMesh(VariablePrimitive* primitive, int& vxtOffset, int& idxOffset);
+	bool			FillVerticalMesh(VariablePrimitive* primitive, int& vxtOffset, int& idxOffset);
 
 protected:
 	String				_atlasFile = "";

@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2020/8/18
@@ -11,7 +11,7 @@
 DC_BEGIN_NAMESPACE
 /********************************************************************/
 // egl
-class ENGINE_DLL EGL_Context Final : public object
+class ENGINE_DLL EGL_Context final : public object
 {
 public:
 	static bool Initialize(EGLNativeWindowType hWnd, int gl_version, int antiAlias);
@@ -23,9 +23,9 @@ private:
 	static void DestroyContext();
 
 private:
-	static EGLDisplay m_display;
-	static EGLContext m_context;
-	static EGLSurface m_surface;
+	inline static EGLDisplay _display = EGL_NO_DISPLAY;
+	inline static EGLContext _context = EGL_NO_CONTEXT;
+	inline static EGLSurface _surface = EGL_NO_SURFACE;
 };
 DC_END_NAMESPACE
 #endif

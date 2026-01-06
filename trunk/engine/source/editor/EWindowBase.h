@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2021/8/7
@@ -15,6 +15,6 @@ class EWindowBase : public Object
 {
 	DISALLOW_CONSTRUCTOR_COPY_ASSIGN(EWindowBase);
 	BEGIN_DERIVED_REFECTION_TYPE(EWindowBase, Object)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 };
 DC_END_NAMESPACE

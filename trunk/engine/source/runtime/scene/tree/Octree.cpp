@@ -1,4 +1,4 @@
-#include "Octree.h"
+﻿#include "Octree.h"
 #include "runtime/scene/Camera.h"
 #include "runtime/scene/SceneManager.h"
 #include "runtime/scene/LayerMask.h"
@@ -23,7 +23,7 @@ Octree::Octree(Octree *octree)
 	}
 }
 Octree::Octree(const Aabb& aabb)
-	: _parentTree(nullptr), _box(aabb)
+	: _box(aabb), _parentTree(nullptr)
 {
 	for (int i = 0; i < 2; i++)
 	{
@@ -150,15 +150,15 @@ void Octree::RemoveAllObjects()
 	}
 
 	_nodes.Clear();
-	m_iNumNode = 0;
+	_numNode = 0;
 }
-void Octree::FindVisibleObjects(Camera *camera, bool found_visible)
+void Octree::FindVisibleObjects(Camera *camera, bool foundVisible)
 {
 	if (camera == nullptr || this->NumOfNode() == 0)
 		return;
 
 	FrustumVisible v = FrustumVisible::None;
-	if (found_visible)
+	if (foundVisible)
 	{
 		v = FrustumVisible::Full;
 	}
@@ -203,8 +203,8 @@ void Octree::FindVisibleObjects(Camera *camera, bool found_visible)
 
 				if ((uint)vis > 0)
 				{
-					uint obj_mask = LayerMask::GetMask(node->GetLayer());
-					if ((obj_mask & camera->GetCullMask()))
+					uint objMask = LayerMask::GetMask(node->GetLayer());
+					if ((objMask & camera->GetCullMask()))
 					{
 						camera->AddRenderable(renderable);
 					}
@@ -261,17 +261,17 @@ void Octree::FindObjects(List<GameObject*>& list, const Ray& ray)
 	if (this->NumOfNode() == 0)
 		return;
 
-	bool is_intersect = false;
+	bool isIntersect = false;
 	if (_parentTree == nullptr)
 	{//根
-		is_intersect = true;
+		isIntersect = true;
 	}
 	else
 	{
-		is_intersect = ray.Intersects(_box).first;
+		isIntersect = ray.Intersects(_box).first;
 	}
 
-	if (is_intersect)
+	if (isIntersect)
 	{
 		for (const auto& node : _nodes)
 		{
@@ -342,25 +342,25 @@ bool Octree::Container(const Aabb &box) const
 void Octree::GetChildIndex(const Aabb &box, int *x, int *y, int *z) const
 {
 	Vector3 center = _box.GetMaximum().MidPoint(_box.GetMinimum());
-	Vector3 center_box = box.GetMaximum().MidPoint(box.GetMinimum());
-	if (center_box.x > center.x)
+	Vector3 centerBox = box.GetMaximum().MidPoint(box.GetMinimum());
+	if (centerBox.x > center.x)
 		*x = 1;
 	else
 		*x = 0;
 
-	if (center_box.y > center.y)
+	if (centerBox.y > center.y)
 		*y = 1;
 	else
 		*y = 0;
 
-	if (center_box.z > center.z)
+	if (centerBox.z > center.z)
 		*z = 1;
 	else
 		*z = 0;
 }
 void Octree::Ref()
 {
-	m_iNumNode++;
+	_numNode++;
 	if (_parentTree != nullptr)
 	{
 		_parentTree->Ref();
@@ -368,7 +368,7 @@ void Octree::Ref()
 }
 void Octree::Unref()
 {
-	m_iNumNode--;
+	_numNode--;
 	if (_parentTree != nullptr)
 	{
 		_parentTree->Unref();

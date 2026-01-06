@@ -1,4 +1,4 @@
-/*****************************************************************************************************/
+﻿/*****************************************************************************************************/
 // @author hannibal
 // @date   2020/04/21
 // @brief  工具类
@@ -10,7 +10,7 @@
 
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-class ENGINE_DLL Utility Final : public object
+class ENGINE_DLL Utility final : public object
 {
 	DISALLOW_CONSTRUCTOR_COPY_ASSIGN(Utility);
 
@@ -18,24 +18,24 @@ public:
 	/// <summary>
 	/// 复制数据(必须是相同格式)
 	/// </summary>
-	/// <param name="src_data">数据源</param>
-	/// <param name="src_offset">数据源开始拷贝位置</param>
-	/// <param name="src_pitch">数据源一行字节数</param>
-	/// <param name="dst_data">目标数据</param>
-	/// <param name="dst_offset">目标开始拷贝位置</param>
-	/// <param name="dst_pitch">目标一行字节数</param>
+	/// <param name="srcData">数据源</param>
+	/// <param name="srcOffset">数据源开始拷贝位置</param>
+	/// <param name="srcPitch">数据源一行字节数</param>
+	/// <param name="dstData">目标数据</param>
+	/// <param name="dstOffset">目标开始拷贝位置</param>
+	/// <param name="dstPitch">目标一行字节数</param>
 	/// <param name="size">拷贝区域大小</param>
-	/// <param name="per_bytes">单个像素字节数</param>
-	static void StretchMemoryCopy(const byte* src_data, const iPoint& src_offset, int src_pitch, byte* dst_data, const iPoint& dst_offset, int dst_pitch, const iSize& size, int per_bytes);
+	/// <param name="perBytes">单个像素字节数</param>
+	static void StretchMemoryCopy(const byte* srcData, const iPoint& srcOffset, int srcPitch, byte* dstData, const iPoint& dstOffset, int dstPitch, const iSize& size, int perBytes);
 
-	static unsigned int RandomChar()
+	static unsigned int RandomChar() noexcept
 	{
 		std::random_device rd;
 		std::mt19937 gen(rd());
 		std::uniform_int_distribution<> dis(0, 255);
 		return dis(gen);
 	}
-	static std::string GUID(int len = 16)
+	static std::string GUID(int len = 16) noexcept
 	{
 		std::stringstream ss;
 		for (auto i = 0; i < len; i++)

@@ -18,11 +18,11 @@ EdgeDetectionEffect::~EdgeDetectionEffect()
 {
 	SAFE_RELEASE(_material);
 }
-Object* EdgeDetectionEffect::Clone(Object* new_obj)
+Object* EdgeDetectionEffect::Clone(Object* newObj)
 {
-	base::Clone(new_obj);
-	EdgeDetectionEffect* obj = dynamic_cast<EdgeDetectionEffect*>(new_obj);
-	if (!obj)return new_obj;
+	base::Clone(newObj);
+	EdgeDetectionEffect* obj = dynamic_cast<EdgeDetectionEffect*>(newObj);
+	if (!obj)return newObj;
 
 	obj->_edgeColor = _edgeColor;
 
@@ -35,11 +35,11 @@ void EdgeDetectionEffect::OnRenderImage(RenderTexture* source, RenderTexture* de
 		TextureDesc desc;
 		desc.width = source->GetWidth(); desc.height = source->GetHeight(); desc.format = source->GetFormat();
 		desc.flags = TextureFlag::COLOR;
-		RenderTexture* tmp_texture = RenderTexture::Alloc(desc);
+		RenderTexture* tmpTexture = RenderTexture::Alloc(desc);
 		_material->SetColor("_EdgeColor", _edgeColor);
-		Blit(source, tmp_texture, _material);
-		Blit(tmp_texture, dest);
-		RenderTexture::Free(tmp_texture);
+		Blit(source, tmpTexture, _material);
+		Blit(tmpTexture, dest);
+		RenderTexture::Free(tmpTexture);
 	}
 	else
 	{

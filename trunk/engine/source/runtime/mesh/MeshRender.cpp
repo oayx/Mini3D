@@ -1,4 +1,4 @@
-#include "MeshRender.h"
+﻿#include "MeshRender.h"
 #include "Mesh.h"
 #include "runtime/graphics/Material.h"
 #include "runtime/graphics/null/CGProgram.h"
@@ -17,11 +17,11 @@ MeshRender::~MeshRender()
 {
 	SAFE_RELEASE(_mesh);
 }
-Object* MeshRender::Clone(Object* new_obj)
+Object* MeshRender::Clone(Object* newObj)
 {
-	base::Clone(new_obj);
-	MeshRender* obj = dynamic_cast<MeshRender*>(new_obj);
-	if (!obj)return new_obj;
+	base::Clone(newObj);
+	MeshRender* obj = dynamic_cast<MeshRender*>(newObj);
+	if (!obj)return newObj;
 
 	obj->SetMesh(_mesh);
 
@@ -36,10 +36,10 @@ void MeshRender::SetMesh(Mesh* mesh)
 	this->ClearData();
 	if (_mesh != nullptr)
 	{
-		for (int mesh_index = 0; mesh_index < _mesh->_entities.Size(); ++mesh_index)
+		for (int meshIndex = 0; meshIndex < _mesh->_entities.Size(); ++meshIndex)
 		{
-			MeshEntity* entity = _mesh->_entities[mesh_index];
-			VariablePrimitive* prim = dynamic_cast<VariablePrimitive*>(GetPrimitive(mesh_index));
+			MeshEntity* entity = _mesh->_entities[meshIndex];
+			VariablePrimitive* prim = dynamic_cast<VariablePrimitive*>(GetPrimitive(meshIndex));
 			if (entity->Vertexs.Size() > 0)		prim->AddVertexRange(entity->Vertexs);
 			if (entity->Colors.Size() > 0)		prim->AddColorRange(entity->Colors);
 			if (entity->Normals.Size() > 0)		prim->AddNormasRange(entity->Normals);
@@ -58,13 +58,12 @@ bool MeshRender::CanRemove()
 }
 void MeshRender::OnDrawEditor()
 {
-	ImGuiTreeNodeFlags tree_flags = ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_DefaultOpen;
-	if(ImGui::TreeNodeEx("Mesh", tree_flags))
+	ImGuiTreeNodeFlags treeFlags = ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_DefaultOpen;
+	if(ImGui::TreeNodeEx("Mesh", treeFlags))
 	{
 		ImGuiEx::Label("File");
-		int select = -1;
-		const char* sz_name = _mesh ? _mesh->GetResName().c_str() : "##Empty mesh";
-		ImGui::Button(sz_name, ImVec2(ImGui::GetContentRegionAvail().x - ImGui::CalcTextSize(ICON_FA_LINK).x - 5, 0));
+		const char* szName = _mesh ? _mesh->GetResName().c_str() : "##Empty mesh";
+		ImGui::Button(szName, ImVec2(ImGui::GetContentRegionAvail().x - ImGui::CalcTextSize(ICON_FA_LINK).x - 5, 0));
 		if (ImGui::IsItemClicked(0) && _mesh)
 		{
 			EMain_Project::SetSelectFile(_mesh->GetResFile());
@@ -73,10 +72,10 @@ void MeshRender::OnDrawEditor()
 		{
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ProjectAsset"))
 			{
-				const String& file_path = EditorCursor::GetDragFile();
-				if (Resource::GetResourceType(file_path) == ResourceType::Mesh)
+				const String& filePath = EditorCursor::GetDragFile();
+				if (Resource::GetResourceType(filePath) == ResourceType::Mesh)
 				{
-					this->SetMesh(Mesh::Create(file_path));
+					this->SetMesh(Mesh::Create(filePath));
 				}
 				EditorCursor::EndDrag();
 			}

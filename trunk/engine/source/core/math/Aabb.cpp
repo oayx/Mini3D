@@ -1,4 +1,4 @@
-#include "Aabb.h"
+﻿#include "Aabb.h"
 #include "Matrix4.h"
 #include "core/geometry/Sphere.h"
  
@@ -20,7 +20,7 @@ Aabb::Aabb(const Aabb &aabb)
 		SetExtents(aabb._minimum, aabb._maximum);
 	}
 }
-bool Aabb::operator== (const Aabb& rhs) const
+bool Aabb::operator== (const Aabb& rhs) const noexcept
 {
 	if (this->_extent != rhs._extent)
 	{
@@ -34,11 +34,11 @@ bool Aabb::operator== (const Aabb& rhs) const
 
 	return ((_minimum == rhs._minimum) && (_maximum == rhs._maximum));
 }
-bool Aabb::operator!= (const Aabb& rhs) const
+bool Aabb::operator!= (const Aabb& rhs) const noexcept
 {
 	return !(*this == rhs);
 }
-Aabb Aabb::operator *(const Matrix4& mat)const 
+Aabb Aabb::operator *(const Matrix4& mat)const noexcept
 { 
 	if (_extent != EXTENT_FINITE)
 		return *this;
@@ -55,7 +55,7 @@ Aabb Aabb::operator *(const Matrix4& mat)const
 	}
 	return Aabb(_min, _max);
 }
-Aabb Aabb::operator *(const Vector3& vec)const 
+Aabb Aabb::operator *(const Vector3& vec)const noexcept
 {
 	if (_extent != EXTENT_FINITE)
 		return *this;
@@ -64,7 +64,7 @@ Aabb Aabb::operator *(const Vector3& vec)const
 	Vector3 _max = _maximum + vec;
 	return Aabb(_min, _max);
 }
-void Aabb::SetAbsExtents(const Vector3& min, const Vector3& max)
+void Aabb::SetAbsExtents(const Vector3& min, const Vector3& max) noexcept
 {
 	if (min.SquareSize() <= max.SquareSize())
 	{
@@ -79,7 +79,7 @@ void Aabb::SetAbsExtents(const Vector3& min, const Vector3& max)
 		_maximum = min;
 	}
 }
-Vector3 Aabb::GetCorner(CornerEnum cornerToGet) const
+Vector3 Aabb::GetCorner(CornerEnum cornerToGet) const noexcept
 {
 	switch (cornerToGet)
 	{
@@ -103,7 +103,7 @@ Vector3 Aabb::GetCorner(CornerEnum cornerToGet) const
 		return Vector3::zero;
 	}
 }
-void Aabb::GetCorners(Vector3* corners)const
+void Aabb::GetCorners(Vector3* corners)const noexcept
 {
 	corners[0] = _minimum;
 	corners[1].x = _minimum.x; corners[1].y = _maximum.y; corners[1].z = _minimum.z;
@@ -115,7 +115,7 @@ void Aabb::GetCorners(Vector3* corners)const
 	corners[6].x = _minimum.x; corners[6].y = _minimum.y; corners[6].z = _maximum.z;
 	corners[7].x = _maximum.x; corners[7].y = _minimum.y; corners[7].z = _maximum.z;
 }
-void Aabb::Scale(const Vector3& s)
+void Aabb::Scale(const Vector3& s) noexcept
 {
 	if (_extent != EXTENT_FINITE)
 	{
@@ -126,40 +126,7 @@ void Aabb::Scale(const Vector3& s)
 	Vector3 max = _maximum * s;
 	SetExtents(min, max);
 }
-Vector3 Aabb::GetSize() const
-{
-	switch (_extent)
-	{
-	case EXTENT_NULL:
-		return Vector3::zero;
-
-	case EXTENT_FINITE:
-		return _maximum - _minimum;
-
-	case EXTENT_INFINITE:
-		return Vector3::infinity;
-
-	default:
-		return Vector3::zero;
-	}
-}
-Vector3 Aabb::GetHalfSize()const
-{
-	switch (_extent)
-	{
-	case EXTENT_NULL:
-		return Vector3::zero;
-
-	case EXTENT_FINITE:
-		return (_maximum - _minimum) * 0.5f;
-
-	case EXTENT_INFINITE:
-		return Vector3::infinity;
-	}
-
-	return Vector3::zero;
-}
-void Aabb::Merge(const Vector3 &vec)
+void Aabb::Merge(const Vector3 &vec) noexcept
 {
 	switch (_extent)
 	{
@@ -176,7 +143,7 @@ void Aabb::Merge(const Vector3 &vec)
 		return;
 	}
 }
-void Aabb::Merge(const Aabb &aabb)
+void Aabb::Merge(const Aabb &aabb) noexcept
 {
 	if ((aabb._extent == EXTENT_NULL) || (_extent == EXTENT_INFINITE))
 	{
@@ -203,7 +170,7 @@ void Aabb::Merge(const Aabb &aabb)
 		SetExtents(min, max);
 	}
 }
-bool Aabb::Contains(const Vector3& v) const
+bool Aabb::Contains(const Vector3& v) const noexcept
 {
 	if (IsNull())
 		return false;
@@ -214,7 +181,7 @@ bool Aabb::Contains(const Vector3& v) const
 		_minimum.y <= v.y && v.y <= _maximum.y &&
 		_minimum.z <= v.z && v.z <= _maximum.z;
 }
-bool Aabb::Contains(const Aabb& aabb) const
+bool Aabb::Contains(const Aabb& aabb) const noexcept
 {
 	//根据实际情况调整
 	if (aabb.IsNull() || this->IsInfinite())
@@ -230,7 +197,7 @@ bool Aabb::Contains(const Aabb& aabb) const
 		aabb._maximum.y <= this->_maximum.y &&
 		aabb._maximum.z <= this->_maximum.z;
 }
-IntersectResult Aabb::Intersects(const Aabb &aabb)const
+IntersectResult Aabb::Intersects(const Aabb &aabb)const noexcept
 {
 	if (this->IsNull() || aabb.IsNull())
 	{
@@ -274,7 +241,7 @@ IntersectResult Aabb::Intersects(const Aabb &aabb)const
 		return IntersectResult::Intersect;
 	}
 }
-IntersectResult Aabb::Intersects(const Sphere &sphere)const
+IntersectResult Aabb::Intersects(const Sphere &sphere)const noexcept
 {
 	Vector3 p = sphere.center;
 	if (p.x < _minimum.x)

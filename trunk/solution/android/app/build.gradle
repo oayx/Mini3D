@@ -1,17 +1,15 @@
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
+apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 29
+    namespace 'com.oayx.engine'
+    compileSdk 34
 
     defaultConfig {
         minSdkVersion 28 //iconv must need 28 or upper
-        targetSdkVersion 29
+        targetSdkVersion 31
         versionCode 1
         versionName "1.0"
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake {
                 cppFlags ""
@@ -22,12 +20,6 @@ android {
         ndk {
             abiFilters "arm64-v8a","armeabi-v7a"
         }
-    }
-    android.applicationVariants.all {
-        variant ->
-            variant.outputs.all {
-                outputFileName = "engine.apk"
-            }
     }
     buildTypes {
         release {
@@ -45,6 +37,10 @@ android {
     //    workingDir '../../../..'
     //    commandLine "python", "projects/android/copy_assets.py"
     //}
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
 }
 
 dependencies {

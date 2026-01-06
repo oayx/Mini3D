@@ -1,15 +1,15 @@
-#include "UIButton.h"
+﻿#include "UIButton.h"
 #include "editor/common/ECommonComponent.h"
 #include "editor/EditorAppliction.h"
  
 DC_BEGIN_NAMESPACE
 /********************************************************************/
 IMPL_DERIVED_REFECTION_TYPE(UIButton, UIImage);
-Object* UIButton::Clone(Object* new_obj)
+Object* UIButton::Clone(Object* newObj)
 {
-	base::Clone(new_obj);
-	UIButton* obj = dynamic_cast<UIButton*>(new_obj);
-	if (!obj)return new_obj;
+	base::Clone(newObj);
+	UIButton* obj = dynamic_cast<UIButton*>(newObj);
+	if (!obj)return newObj;
 
 	obj->SetNormalColor(_normalColor);
 	obj->SetPressColor(_pressColor);
@@ -59,8 +59,8 @@ void UIButton::OnDrawEditor()
 {
 	UIView::OnDrawEditor();
 
-	ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_DefaultOpen;
-	if (ImGui::TreeNodeEx("Image", base_flags))
+	ImGuiTreeNodeFlags baseFlags = ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_DefaultOpen;
+	if (ImGui::TreeNodeEx("Image", baseFlags))
 	{
 		UIImage::OnDrawEditor_Image();
 		UIView::OnDrawEditor_Color();
@@ -70,7 +70,7 @@ void UIButton::OnDrawEditor()
 		ImGui::TreePop();
 	}
 	ImGui::NewLine();
-	if (ImGui::TreeNodeEx("Button", base_flags))
+	if (ImGui::TreeNodeEx("Button", baseFlags))
 	{
 		UIButton::OnDrawEditor_Button();
 		ImGui::TreePop();

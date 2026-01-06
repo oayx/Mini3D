@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2020/9/12
@@ -15,7 +15,7 @@ class FighterEnemyAirplane : public FighterAirplane
 	friend class GameObject;
 	FRIEND_CONSTRUCT_DESTRUCT(FighterEnemyAirplane);
 	BEGIN_DERIVED_REFECTION_TYPE(FighterEnemyAirplane, FighterAirplane)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 protected:
 	virtual void Awake()override;

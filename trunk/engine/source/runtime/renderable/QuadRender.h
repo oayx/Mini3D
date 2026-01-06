@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2009/12/13
@@ -19,14 +19,14 @@ DC_BEGIN_NAMESPACE
 // 3--------2
 // 1 顶点 0 1 2 3
 // 2 索引 0 1 2,2 3 0
-class ENGINE_DLL QuadRender Final : public Renderer
+class ENGINE_DLL QuadRender final : public Renderer
 {
 	friend class GameObject;
 	FRIEND_CONSTRUCT_DESTRUCT(QuadRender);
 	DISALLOW_CONSTRUCTOR_COPY_ASSIGN(QuadRender);
 	BEGIN_DERIVED_REFECTION_TYPE(QuadRender, Renderer)
 		CTORS(DEFAULT_CTOR(QuadRender))
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 private:
 	virtual void Awake()override;

@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Date：2009/12/8
@@ -26,7 +26,7 @@ class ENGINE_DLL Renderer : public Component
 	DISALLOW_COPY_ASSIGN(Renderer);
 	FRIEND_CONSTRUCT_DESTRUCT(Renderer);
 	BEGIN_DERIVED_REFECTION_TYPE(Renderer, Component)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 protected:
 	Renderer();
@@ -67,7 +67,7 @@ public://排序
 	void			AddInstanceTransform(const Matrix4& mat) { _instanceTransform.Add(mat); }
 	void			AddInstanceTransformRange(const Vector<Matrix4>& mats);
 	void			AddInstanceTransformRange(const Matrix4* mats, int size);
-	void			SetInstanceTransform(const Vector<Matrix4>&& mats) { _instanceTransform = std::move(mats); }
+	void			SetInstanceTransform(const Vector<Matrix4>& mats) { _instanceTransform = mats; }
 	void			ClearInstanceTransform() { _instanceTransform.Clear(); }
 	const			Vector<Matrix4>& GetInstanceTransform()const { return _instanceTransform; }
 
@@ -97,7 +97,7 @@ protected:
 	void 			SetIndices(const Vector<uint>&& indices, int prim = 0);
 	void 			SetIndices(uint index_nums, uint *index, int prim = 0);
 
-	int				AddSubPrimitive(uint elem_count, uint vtx_offset, uint idx_offset, uint start_vertex, uint start_index, int prim = 0);
+	int				AddSubPrimitive(uint elem_count, uint vtx_offset, uint idxOffset, uint start_vertex, uint start_index, int prim = 0);
 
 protected:
 	VertexLayout	_vertexLayout = VertexLayout::Variable;
@@ -114,10 +114,10 @@ protected:
 // 虚拟可显示对象，不会实际渲染，特殊情况下使用
 class ENGINE_DLL VirtualRenderer : public Renderer
 {
-	friend class GameObject;
+	FRIEND_CONSTRUCT_DESTRUCT(VirtualRenderer);
 	DISALLOW_COPY_ASSIGN(VirtualRenderer);
 	BEGIN_DERIVED_REFECTION_TYPE(VirtualRenderer, Renderer)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 protected:
 	VirtualRenderer() = default;

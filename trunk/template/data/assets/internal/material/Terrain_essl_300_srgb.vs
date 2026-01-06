@@ -58,7 +58,6 @@ struct type_CustomBuffer
     vec4 _ShadowMap_TexelSize;
     float _Strength;
     float _Bias;
-    int _ShadowType;
 };
 
 uniform type_CustomBuffer CustomBuffer;

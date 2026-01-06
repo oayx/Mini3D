@@ -1,4 +1,4 @@
-#include "DX9PostProcess.h"
+﻿#include "DX9PostProcess.h"
 #include "DX9Device.h"
 #include "DX9Program.h"
 #include "DX9SwapChain.h"
@@ -90,9 +90,9 @@ void DX9FinalProcess::Render(Camera* camera, RenderTexture* dest)
 	};
 
 	RenderFrameDesc desc;
-	desc.view_port = camera->GetViewPort();
-	desc.clear_flag = camera->GetClearFlag();
-	desc.clear_color = camera->GetClearColor();
+	desc.viewPort = camera->GetViewPort();
+	desc.clearFlag = camera->GetClearFlag();
+	desc.clearColor = camera->GetClearColor();
 	if (camera->GetRenderTexture())
 	{//拷贝到纹理
 		camera->GetRenderTexture()->PreRender();

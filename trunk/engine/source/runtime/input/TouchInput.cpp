@@ -1,12 +1,10 @@
-#include "TouchInput.h"
+﻿#include "TouchInput.h"
 #include "Input.h"
 #include "MouseInput.h"
  
 DC_BEGIN_NAMESPACE
 /********************************************************************/
 IMPL_DERIVED_REFECTION_TYPE(TouchInput, Object);
-TouchInput::Touches TouchInput::_touches;
-bool TouchInput::_multiTouchEnabled = true;
 bool TouchInput::GetTouch(int index, Touch& touch)
 {
 	if (index >= _touches.Size())return false;
@@ -34,7 +32,7 @@ void TouchInput::AddTouch(Touch touch)
 	else
 	{
 		_touches.AddLast(touch);
-		if (Input::m_simulateMouseWithTouches)
+		if (Input::_simulateMouseWithTouches)
 		{
 			MouseInput::HandleLBtnDown(touch.position.x, touch.position.y);
 			MouseInput::HandleInputPosition(touch.position.x, touch.position.y);
@@ -49,14 +47,14 @@ void TouchInput::UpdateTouch(Touch touch)
 	{
 		if (t.fingerId == touch.fingerId)
 		{
-			Touch old_touch = t;
+			Touch oldTouch = t;
 			t = touch;
 			switch (touch.phase)
 			{
 			case TouchPhase::Stationary:
 				{
-					t.deltaPosition = touch.position - old_touch.position;
-					if (is_first && Input::m_simulateMouseWithTouches && old_touch.position != touch.position)
+					t.deltaPosition = touch.position - oldTouch.position;
+					if (is_first && Input::_simulateMouseWithTouches && oldTouch.position != touch.position)
 					{
 						MouseInput::HandleInputPosition(touch.position.x, touch.position.y);
 					}
@@ -65,7 +63,7 @@ void TouchInput::UpdateTouch(Touch touch)
 			case TouchPhase::Canceled:
 			case TouchPhase::Ended:
 				{
-					if (is_first && Input::m_simulateMouseWithTouches)
+					if (is_first && Input::_simulateMouseWithTouches)
 					{
 						MouseInput::HandleLBtnUp(touch.position.x, touch.position.y);
 						MouseInput::HandleInputPosition(touch.position.x, touch.position.y);

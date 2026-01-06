@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2009/11/13
@@ -37,7 +37,7 @@ enum class FrustumVisible
 DECLARE_ENUM_OPERATORS(FrustumVisible);
 
 //视锥体
-class ENGINE_DLL Frustum Final : public object
+class ENGINE_DLL Frustum final : public object
 {
 	DEFAULT_CREATE(Frustum);
 	FRIEND_CONSTRUCT_DESTRUCT(Frustum);
@@ -45,12 +45,13 @@ class ENGINE_DLL Frustum Final : public object
 	END_FINAL_REFECTION_TYPE;
 	
 public:
-	Plane GetPlane(int index)const;
+	Plane GetPlane(int index)const noexcept;
 
-	FrustumVisible GetVisibility(const Aabb &bound)const;
-	FrustumVisible GetVisibility(const Sphere &sphere)const;
+	FrustumVisible GetVisibility(const Aabb &bound)const noexcept;
+	FrustumVisible GetVisibility(const Sphere &sphere)const noexcept;
 
-	void Calculate(const Matrix4& mat_view, const Matrix4& mat_proj);
+	void Calculate(const Matrix4& matView, const Matrix4& matProj) noexcept;
+
 private:
 	Plane _planes[6];
 };

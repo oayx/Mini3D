@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************************************/
 // @author hannibal
 // @date   2020/05/28
@@ -23,7 +23,7 @@ DC_BEGIN_NAMESPACE
 					}
 	#define GET_DY_FUNC(handle, func) ::GetProcAddress(handle, func)
 	#define FREE_DY_LIB(handle) { if (handle) ::FreeLibrary(handle); handle = nullptr; }
-#elif defined(DC_PLATFORM_LINUX) || defined(DC_PLATFORM_ANDROID) || defined(DC_PLATFORM_MAC) || defined(DC_PLATFORM_IOS)
+#else
 	typedef void* LIB_HANDLE;
 	#define LOAD_DY_LIB(handle, name) \
 				{ \

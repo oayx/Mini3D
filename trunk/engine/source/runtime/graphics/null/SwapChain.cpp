@@ -1,4 +1,4 @@
-#include "SwapChain.h"
+﻿#include "SwapChain.h"
 #include "runtime/Application.h"
  
 DC_BEGIN_NAMESPACE
@@ -17,10 +17,12 @@ void SwapChain::Resize(const WindowResizeDesc& desc)
 }
 void SwapChain::BeginFrame(RenderFrameDesc& desc)
 {
+	DC_PROFILE_FUNCTION;
 	Application::GetGraphics()->GetRenderContent()->BeginFrame(desc);
 }
 void SwapChain::EndFrame()
 {
+	DC_PROFILE_FUNCTION;
 	Application::GetGraphics()->GetRenderContent()->EndFrame();
 }
 DC_END_NAMESPACE

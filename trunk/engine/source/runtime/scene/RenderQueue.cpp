@@ -1,4 +1,4 @@
-#include "RenderQueue.h"
+﻿#include "RenderQueue.h"
 #include "Camera.h"
 #include "Light.h"
 #include "runtime/graphics/Material.h"
@@ -30,39 +30,38 @@ void RenderQueue::AddRenderable(Camera* camera, Renderer *renderable)
 {
 	if (renderable == nullptr)return;
 
-	RenderQueueGroup *render_group = nullptr;
-	int64 sort_layer = renderable->GetSortLayer();
+	RenderQueueGroup *renderGroup = nullptr;
+	int64 sortLayer = renderable->GetSortLayer();
 	int64 order = renderable->GetOrderInLayer();
-	int64 max_value = UINT_MAX;
-	int64 group_id = (max_value*(sort_layer < 0 ? -1 : (sort_layer > 0 ? 1 : 0)) + sort_layer) + (order);
+	int64 maxValue = UINT_MAX;
+	int64 groupId = (maxValue*(sortLayer < 0 ? -1 : (sortLayer > 0 ? 1 : 0)) + sortLayer) + (order);
 
 	//区分透明和非透明组
 	GroupCollection& group = renderable->GetRenderQueue() < int(eRenderQueue::AlphaTest) ? _renderableGroups : _transparentRenderableGroups;
-
 	GroupCollection::iterator it = group.begin();
 	while (it != group.end())
 	{
 		auto obj = (*it);
-		if (obj.first == group_id)
+		if (obj.first == groupId)
 		{//已经有了
-			render_group = obj.second;
+			renderGroup = obj.second;
 			break;
 		}
-		else if(group_id < obj.first)
+		else if(groupId < obj.first)
 		{//插入到指定位置
-			render_group = RenderQueueGroup::Create(group_id);
-			group.Insert(it, std::make_pair(group_id, render_group));
+			renderGroup = RenderQueueGroup::Create(groupId);
+			group.Insert(it, std::make_pair(groupId, renderGroup));
 			break;
 		}
 		++it;
 	}
-	if (render_group == nullptr)
+	if (renderGroup == nullptr)
 	{//原有队列为空或是最后一个
-		render_group = RenderQueueGroup::Create(group_id);
-		group.Add(std::make_pair(group_id, render_group));
+		renderGroup = RenderQueueGroup::Create(groupId);
+		group.Add(std::make_pair(groupId, renderGroup));
 	}
 
-	render_group->AddRenderable(camera, renderable);
+	renderGroup->AddRenderable(camera, renderable);
 }
 void RenderQueue::Clear()
 {
@@ -107,8 +106,8 @@ void RenderQueue::RenderShadowTexture(Camera* camera, Light* light)
 }
 /********************************************************************/
 IMPL_DERIVED_REFECTION_TYPE(RenderQueueGroup, Object);
-RenderQueueGroup::RenderQueueGroup(int64 group_id)
-: _groupId(group_id)
+RenderQueueGroup::RenderQueueGroup(int64 groupId)
+: _groupId(groupId)
 {
 }
 void RenderQueueGroup::AddRenderable(Camera* camera, Renderer *renderable)
@@ -118,7 +117,7 @@ void RenderQueueGroup::AddRenderable(Camera* camera, Renderer *renderable)
 		Debuger::Warning("RenderQueueGroup::AddRenderable - The same object has been added");
 		return;
 	}
-	bool is_insert = false;
+	bool isInsert = false;
 	int render_queue = renderable->GetRenderQueue();
 	float distance_new = renderable->GetTransform()->GetPosition().Distance(camera->GetTransform()->GetPosition());
 	for (auto it = _renderables.begin(); it != _renderables.end(); ++it)
@@ -126,7 +125,7 @@ void RenderQueueGroup::AddRenderable(Camera* camera, Renderer *renderable)
 		if (render_queue < (*it)->GetRenderQueue())
 		{
 			_renderables.Insert(it, renderable);
-			is_insert = true;
+			isInsert = true;
 			break;
 		}
 		else if (render_queue == (*it)->GetRenderQueue())
@@ -137,7 +136,7 @@ void RenderQueueGroup::AddRenderable(Camera* camera, Renderer *renderable)
 				if (IsTransparentQueue(render_queue))
 				{//透明物体先远后近渲染
 					_renderables.Insert(it, renderable);
-					is_insert = true;
+					isInsert = true;
 					break;
 				}
 			}
@@ -146,19 +145,20 @@ void RenderQueueGroup::AddRenderable(Camera* camera, Renderer *renderable)
 				if (!IsTransparentQueue(render_queue))
 				{//非透明物体先近后远渲染
 					_renderables.Insert(it, renderable);
-					is_insert = true;
+					isInsert = true;
 					break;
 				}
 			}
 		}
 	}
-	if (!is_insert)
+	if (!isInsert)
 	{
 		_renderables.Add(renderable);
 	}
 }
 void RenderQueueGroup::Render(Camera* camera)
 {
+	DC_PROFILE_FUNCTION;
 	for (const auto& readerable : _renderables)
 	{
 		if (!readerable->IsEnable())
@@ -176,6 +176,7 @@ void RenderQueueGroup::Render(Camera* camera)
 }
 void RenderQueueGroup::RenderDepthTexture(Camera* camera, RenderDepthMap* depth_map)
 {
+	DC_PROFILE_FUNCTION;
 	for (const auto& obj : _renderables)
 	{
 		depth_map->RenderOneObject(camera, obj);
@@ -183,6 +184,7 @@ void RenderQueueGroup::RenderDepthTexture(Camera* camera, RenderDepthMap* depth_
 }
 void RenderQueueGroup::RenderShadowTexture(Camera* camera, Light* light)
 {
+	DC_PROFILE_FUNCTION;
 	if (light->GetShadowMap() != nullptr)
 	{
 		for (const auto& obj : _renderables)

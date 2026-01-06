@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2020/6/16
@@ -11,13 +11,14 @@
 
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-class GLFinalProcess Final : public FinalProcess
+class GLFinalProcess final : public FinalProcess
 {
 	friend class GLDevice;
 	DEFAULT_CREATE(GLFinalProcess);
 	FRIEND_CONSTRUCT_DESTRUCT(GLFinalProcess);
+	DISALLOW_COPY_ASSIGN(GLFinalProcess);
 	BEGIN_DERIVED_REFECTION_TYPE(GLFinalProcess, FinalProcess)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 protected:
 	GLFinalProcess();

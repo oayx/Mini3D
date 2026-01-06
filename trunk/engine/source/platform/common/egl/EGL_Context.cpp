@@ -1,17 +1,16 @@
-#include "EGL_Context.h"
+﻿#include "EGL_Context.h"
 #include "runtime/Application.h"
 #if defined(DC_GRAPHICS_API_OPENGLES3)
  
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-EGLDisplay EGL_Context::m_display = EGL_NO_DISPLAY;
-EGLContext EGL_Context::m_context = EGL_NO_CONTEXT;
-EGLSurface EGL_Context::m_surface = EGL_NO_SURFACE;
 bool EGL_Context::Initialize(EGLNativeWindowType hWnd, int gl_version, int antiAlias)
 {
+	Debuger::Log("EGL_Context::Initialize");
+
 	//1:得到默认的显示设备（就是窗口）
-	m_display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
-	if (m_display == EGL_NO_DISPLAY)
+	_display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+	if (_display == EGL_NO_DISPLAY)
 	{
 		Debuger::Log("eglGetDisplay error:%d", eglGetError());
 		return false;
@@ -20,7 +19,7 @@ bool EGL_Context::Initialize(EGLNativeWindowType hWnd, int gl_version, int antiA
 	//2:初始化默认显示设备
 	EGLint major;//返回主版本号  
 	EGLint minor;//返回次版本号  
-	if (!eglInitialize(m_display, &major, &minor))
+	if (!eglInitialize(_display, &major, &minor))
 	{
 		Debuger::Log("eglInitialize error:%d", eglGetError());
 		return false;
@@ -31,35 +30,35 @@ bool EGL_Context::Initialize(EGLNativeWindowType hWnd, int gl_version, int antiA
 }
 void EGL_Context::Destroy()
 {
-	Debuger::Log("EGL_Context::Shutdown");
+	Debuger::Log("EGL_Context::Destroy");
 
-	if (m_display != EGL_NO_DISPLAY)
+	if (_display != EGL_NO_DISPLAY)
 	{//当前的Display 不等于null  
 		//清除绑定的 Surface Context
-		eglMakeCurrent(m_display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
-		if (m_context != EGL_NO_CONTEXT)
+		eglMakeCurrent(_display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+		if (_context != EGL_NO_CONTEXT)
 		{//不等于空Context,销毁上下文  
-			eglDestroyContext(m_display, m_context);
+			eglDestroyContext(_display, _context);
 		}
 
-		if (m_surface != EGL_NO_SURFACE)
+		if (_surface != EGL_NO_SURFACE)
 		{//不等于空Surface,销毁Surface  
-			eglDestroySurface(m_display, m_surface);
+			eglDestroySurface(_display, _surface);
 		}
 		//终止Dispay  
-		eglTerminate(m_display);
+		eglTerminate(_display);
 	}
 	eglReleaseThread();
 	//把 Display Context Surface 设置成初始化  
-	m_display = EGL_NO_DISPLAY;
-	m_context = EGL_NO_CONTEXT;
-	m_surface = EGL_NO_SURFACE;
+	_display = EGL_NO_DISPLAY;
+	_context = EGL_NO_CONTEXT;
+	_surface = EGL_NO_SURFACE;
 }
 void EGL_Context::Draw()
 {
-	if (m_display != EGL_NO_DISPLAY && m_surface != EGL_NO_SURFACE)
+	if (_display != EGL_NO_DISPLAY && _surface != EGL_NO_SURFACE)
 	{
-		if (!eglSwapBuffers(m_display, m_surface))
+		if (!eglSwapBuffers(_display, _surface))
 		{
 			Debuger::Log("eglSwapBuffers error:%d", eglGetError());
 		}
@@ -92,11 +91,11 @@ bool EGL_Context::CreateContext(EGLNativeWindowType hWnd, int gl_version, int an
 		};
 		//让EGL为你选择一个配置  
 		EGLint numConfigs(0);
-		if (eglChooseConfig(m_display, attribs, &config, 1, &numConfigs))
+		if (eglChooseConfig(_display, attribs, &config, 1, &numConfigs))
 		{
 			//创建 Surface(实际上就是一个FrameBuffer)
-			m_surface = eglCreateWindowSurface(m_display, config, hWnd, NULL);
-			if (m_surface != EGL_NO_CONTEXT)
+			_surface = eglCreateWindowSurface(_display, config, hWnd, NULL);
+			if (_surface != EGL_NO_CONTEXT)
 			{
 				break;
 			}
@@ -115,9 +114,9 @@ bool EGL_Context::CreateContext(EGLNativeWindowType hWnd, int gl_version, int an
 
 		antiAlias--;
 	}
-	if (m_surface == EGL_NO_CONTEXT)
+	if (_surface == EGL_NO_CONTEXT)
 	{
-		Debuger::Error("eglCreateWindowSurface");
+		Debuger::Error("EGL_Context eglCreateWindowSurface:EGL_NO_CONTEXT");
 		return false;
 	}
 
@@ -130,8 +129,8 @@ bool EGL_Context::CreateContext(EGLNativeWindowType hWnd, int gl_version, int an
 	for (int i = 0; i < ARRAY_SIZE(gles_version); i += 2)
 	{
 		EGLint attr[] = { EGL_CONTEXT_CLIENT_VERSION, gles_version[i], EGL_CONTEXT_MINOR_VERSION, gles_version[i + 1],  EGL_NONE };
-		m_context = eglCreateContext(m_display, config, EGL_NO_CONTEXT, attr);
-		if (m_context == EGL_NO_SURFACE)
+		_context = eglCreateContext(_display, config, EGL_NO_CONTEXT, attr);
+		if (_context == EGL_NO_SURFACE)
 		{
 			Debuger::Warning("eglCreateContext glesversion:%d.%d.error:%d", gles_version[i], gles_version[i + 1],eglGetError());
 		}
@@ -141,34 +140,36 @@ bool EGL_Context::CreateContext(EGLNativeWindowType hWnd, int gl_version, int an
 			break;
 		}
 	}
-	if (m_context == EGL_NO_SURFACE)
+	if (_context == EGL_NO_SURFACE)
 	{
 		Debuger::Error("eglCreateContext error");
 	}
 
 	//3. 绑定eglContext和surface到display
-	if (!eglMakeCurrent(m_display, m_surface, m_surface, m_context))
+	if (!eglMakeCurrent(_display, _surface, _surface, _context))
 	{
 		Debuger::Log("eglMakeCurrent error:%d", eglGetError());
 		return false;
 	}
+	Debuger::Log("EGL_Context::CreateContext succeed");
 	return true;
 }
 void EGL_Context::DestroyContext()
 {
 	//清除绑定的 Surface Context   
-	eglMakeCurrent(m_display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
-	if (m_context != EGL_NO_CONTEXT)
+	eglMakeCurrent(_display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+	if (_context != EGL_NO_CONTEXT)
 	{//不等于空Context,销毁上下文  
-		eglDestroyContext(m_display, m_context);
+		eglDestroyContext(_display, _context);
 	}
 
-	if (m_surface != EGL_NO_SURFACE)
+	if (_surface != EGL_NO_SURFACE)
 	{//不等于空Surface,销毁Surface  
-		eglDestroySurface(m_display, m_surface);
+		eglDestroySurface(_display, _surface);
 	}
-	m_context = EGL_NO_CONTEXT;
-	m_surface = EGL_NO_SURFACE;
+	_context = EGL_NO_CONTEXT;
+	_surface = EGL_NO_SURFACE;
+	Debuger::Log("EGL_Context::DestroyContext succeed");
 }
 DC_END_NAMESPACE
 #endif

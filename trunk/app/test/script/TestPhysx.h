@@ -1,4 +1,4 @@
- 
+﻿ 
 #pragma once
 
 #include "TestBase.h"
@@ -33,15 +33,15 @@ protected:
 		{
 			Camera* camera = SceneManager::GetMainCamera();
 			Vector3 v_vec = camera->ScreenToWorldPoint(Vector3(Input::mousePosition.x, Input::mousePosition.y, 10));
-			RaycastHit hit_info;
-			if (Physics::Raycast(Vector3::zero, v_vec, v_vec.Lenght(), LayerMask::GetMask(LayerMask::Default), hit_info))
+			RaycastHit hitInfo;
+			if (Physics::Raycast(Vector3::zero, v_vec, v_vec.Lenght(), LayerMask::GetMask(LayerMask::Default), hitInfo))
 			{
-				hit_info.gameobject->GetComponent<RigidBody>()->SetActive(false);
-				Debuger::Log("raycast:%s", hit_info.gameobject->GetInstanceName().c_str());
+				hitInfo.gameobject->GetComponent<RigidBody>()->SetActive(false);
+				Debuger::Log("raycast:%s", hitInfo.gameobject->GetInstanceName().c_str());
 
 
-				RigidBody* rigid_body = hit_info.gameobject->GetComponent<RigidBody>();
-				rigid_body->AppleTorque(Vector3(2000, 0, 0));
+				RigidBody* rigidBody = hitInfo.gameobject->GetComponent<RigidBody>();
+				rigidBody->AppleTorque(Vector3(2000, 0, 0));
 			}
 		}
 	}
@@ -111,7 +111,7 @@ public:
 			obj->GetTransform()->SetLocalPosition(Vector3(2, 0, 0));
 
 			BoxCollider* collider = obj->AddComponent<BoxCollider>();
-			RigidBody* rigid_body = obj->AddComponent<RigidBody>();
+			RigidBody* rigidBody = obj->AddComponent<RigidBody>();
 
 			CubeRender * mesh_render = obj->AddComponent<CubeRender>();
 			mesh_render->SetMaterial("internal/material/UnlitTexture.material");
@@ -123,7 +123,7 @@ public:
 			obj->GetTransform()->SetLocalPosition(Vector3(-2, 0, 0));
 
 			BoxCollider* collider = obj->AddComponent<BoxCollider>();
-			RigidBody* rigid_body = obj->AddComponent<RigidBody>();
+			RigidBody* rigidBody = obj->AddComponent<RigidBody>();
 
 			CubeRender * mesh_render = obj->AddComponent<CubeRender>();
 			mesh_render->SetMaterial("internal/material/UnlitTexture.material");

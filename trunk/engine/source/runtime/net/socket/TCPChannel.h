@@ -1,4 +1,4 @@
-
+﻿
 /*****************************************************************************
 * Author： hannibal
 * Date：2020/8/19
@@ -10,14 +10,14 @@
 
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-class ENGINE_DLL TCPChannel Final : public Object
+class ENGINE_DLL TCPChannel final : public Object
 {
 	friend class TCPAccepter;
 	DEFAULT_CREATE(TCPChannel);
 	FRIEND_CONSTRUCT_DESTRUCT(TCPChannel);
 	DISALLOW_COPY_ASSIGN(TCPChannel);
 	BEGIN_DERIVED_REFECTION_TYPE(TCPChannel, Object)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 	TCPChannel(Socket* creater, int64 socket);
 	~TCPChannel();

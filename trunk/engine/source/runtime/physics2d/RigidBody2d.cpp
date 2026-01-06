@@ -1,4 +1,4 @@
-#include "RigidBody2d.h"
+﻿#include "RigidBody2d.h"
 #include "Collider2d.h"
 #include "Physics2d.h"
 #include "Box2D/Box2D.h"
@@ -65,11 +65,11 @@ void RigidBody2d::ApplyAngularImpulse(float impulse)
 		GetBody()->ApplyAngularImpulse(impulse, true);
 	}
 }
-Object* RigidBody2d::Clone(Object* new_obj)
+Object* RigidBody2d::Clone(Object* newObj)
 {
-	base::Clone(new_obj);
-	RigidBody2d* obj = dynamic_cast<RigidBody2d*>(new_obj);
-	if (!obj)return new_obj;
+	base::Clone(newObj);
+	RigidBody2d* obj = dynamic_cast<RigidBody2d*>(newObj);
+	if (!obj)return newObj;
 
 	obj->SetDensity(_density);
 	obj->UseGravity(_gravityEnable);

@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2021/8/9
@@ -22,7 +22,8 @@ public:
 	static void SetLayout(LayoutType type);
 
 	static void Render();
+
 private:
-	static bool IsShow;
+	inline static bool IsShow = false;
 };
 DC_END_NAMESPACE

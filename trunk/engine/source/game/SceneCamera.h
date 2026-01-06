@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2021/10/6
@@ -10,7 +10,7 @@
 
 DC_BEGIN_NAMESPACE
 /********************************************************************/
-class ENGINE_DLL SceneFreeCamera Final : public Component
+class ENGINE_DLL SceneFreeCamera final : public Component
 {
 	friend class GameObject;
 	FRIEND_CONSTRUCT_DESTRUCT(SceneFreeCamera);
@@ -18,7 +18,7 @@ class ENGINE_DLL SceneFreeCamera Final : public Component
 	BEGIN_DERIVED_REFECTION_TYPE(SceneFreeCamera, Component)
 		CTORS(DEFAULT_CTOR(SceneFreeCamera))
 		ADD_EDITOR_COMPONENT("Component/SceneFreeCamera")
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 	SceneFreeCamera() = default;
 

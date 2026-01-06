@@ -1,4 +1,4 @@
- 
+﻿ 
 /*****************************************************************************
 * Author： hannibal
 * Date：2010/4/15
@@ -40,7 +40,7 @@ class ENGINE_DLL RenderTexture : public Texture
 	typedef Map<uint64, List<RenderTexture*>> RenderTextures;
 	DISALLOW_CONSTRUCTOR_COPY_ASSIGN(RenderTexture);
 	BEGIN_DERIVED_REFECTION_TYPE(RenderTexture, Texture)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 
 protected:
 	RenderTexture(const TextureDesc& desc)

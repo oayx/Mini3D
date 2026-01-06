@@ -1,4 +1,4 @@
-
+﻿
 #include "VideoPlayer.h"
 #include "VideoDecoder.h"
 #include "runtime/graphics/null/Texture.h"
@@ -17,13 +17,14 @@ VideoPlayer::~VideoPlayer()
 }
 void VideoPlayer::Update()
 {
+	DC_PROFILE_FUNCTION;
 	base::Update();
 	if (_isPlaying)
 	{
 		if (_intervalTime.Update(Time::GetDeltaTime()))
 		{
 			VideoFrame* frame = _videoDecoder->GetFrame();
-			bool is_last_frame = false;
+			bool isLastFrame = false;
 			if (frame != nullptr)
 			{
 				ColorConverter::FromRGB8toRGBA8(frame->image->Data(), frame->image->GetWidth()*frame->image->GetHeight(), _imageData);
@@ -31,10 +32,10 @@ void VideoPlayer::Update()
 				byte* data = _frameTexture->Lock(lock_desc);
 				::memcpy(data, _imageData, frame->image->GetWidth() * frame->image->GetHeight() * 4);
 				_frameTexture->Unlock(lock_desc);
-				is_last_frame = frame->is_last_frame;
+				isLastFrame = frame->isLastFrame;
 			}
 			_videoDecoder->ReleaseFrame(frame);
-			if (is_last_frame && !_videoDecoder->IsLoop())
+			if (isLastFrame && !_videoDecoder->IsLoop())
 			{
 				this->Stop();
 				if (_onComplete != nullptr)_onComplete();
@@ -44,6 +45,7 @@ void VideoPlayer::Update()
 }
 bool VideoPlayer::Play(const String& file, bool loop)
 {
+	DC_PROFILE_FUNCTION;
 	if (_isPlaying)
 		return false;
 
@@ -56,7 +58,7 @@ bool VideoPlayer::Play(const String& file, bool loop)
 	TextureDesc desc;
 	desc.width = _videoDecoder->GetFrameWidth(); desc.height = _videoDecoder->GetFrameHeight(); desc.format = ColorFormat::R8G8B8A8; 
 	desc.usage = GPUResourceUsage::Dynamic; desc.flags = TextureFlag::sRGB;
-	_imageData = NewArray<byte>(_videoDecoder->GetFrameWidth() * _videoDecoder->GetFrameHeight() * 4);
+	_imageData = Memory::NewArray<byte>(_videoDecoder->GetFrameWidth() * _videoDecoder->GetFrameHeight() * 4);
 	_frameTexture = Texture::CreateFromMemroy(_imageData, desc);
 	_frameTexture->Retain();
 
@@ -99,7 +101,7 @@ void VideoPlayer::Stop()
 	SAFE_RELEASE(_frameTexture);
 	if (_imageData)
 	{
-		DeleteArray(_imageData);
+		Memory::DeleteArray(_imageData);
 		_imageData = nullptr;
 	}
 }

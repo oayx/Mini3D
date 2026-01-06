@@ -1,4 +1,4 @@
-#include "GLTexture.h"
+﻿#include "GLTexture.h"
 #include "GLCaps.h"
 #include "GLDevice.h"
 #include "core/image/Image.h"
@@ -16,7 +16,7 @@ GLTexture::GLTexture(const TextureDesc& desc)
 	GL_ERROR(glBindTexture(texture_type, _colorTexture));
 
 #if defined(GL_GENERATE_MIPMAP)
-	GL_ERROR(glTexParameteri(texture_type, GL_GENERATE_MIPMAP, _enableMips ? GL_TRUE : GL_FALSE));
+	if(_enableMips)GL_ERROR(glTexParameteri(texture_type, GL_GENERATE_MIPMAP, GL_TRUE));
 #endif
 
 	GL_ERROR(glBindTexture(texture_type, 0));
@@ -83,7 +83,7 @@ byte* GLTexture::Lock(TextureLockDesc& lock_desc)
 	if (_imageData == nullptr)
 	{
 		uint size = this->GetBytes();
-		_imageData = NewArray<byte>(size);
+		_imageData = Memory::NewArray<byte>(size);
 		Memory::Clear(_imageData, size);
 	}
 	return _imageData;
@@ -111,7 +111,7 @@ bool GLTexture::GetData(MemoryDataStream& stream)
 	GL_ERROR(glBindTexture(GL_TEXTURE_2D, _colorTexture));
 	GL_ERROR(glGetIntegerv(GL_IMPLEMENTATION_COLOR_READ_TYPE, &read_type));
 	GL_ERROR(glGetIntegerv(GL_IMPLEMENTATION_COLOR_READ_FORMAT, &read_format));
-	GL_ERROR(glReadPixels(0, 0, this->GetWidth(), this->GetHeight(), read_format, read_type, stream.data()));//TODO:有溢出可能(如果存在边界填充)
+	GL_ERROR(glReadPixels(0, 0, this->GetWidth(), this->GetHeight(), read_format, read_type, stream.Buffer()));//TODO:有溢出可能(如果存在边界填充)
 	GL_ERROR(glBindTexture(GL_TEXTURE_2D, 0));
 
 	return true;
@@ -130,7 +130,7 @@ bool GLTexture::Copy(Texture* dst)
 			MemoryDataStream stream;
 			if (this->GetData(stream))
 			{
-				Memory::Copy(bits, stream.data(), stream.Size());
+				Memory::Copy(bits, stream.Buffer(), stream.Size());
 			}
 		}
 		dst->Unlock(lock_desc);
@@ -144,7 +144,7 @@ void GLTexture::SaveToFile(const String& name, ImageType type)
 	MemoryDataStream stream;
 	if (this->GetData(stream) && image->GetSize() == stream.Size())
 	{
-		image->Fill(stream.data(), stream.Size());
+		image->Fill(stream.Buffer(), stream.Size());
 		image->SaveToFile(name);
 	}
 }

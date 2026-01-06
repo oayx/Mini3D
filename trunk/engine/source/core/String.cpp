@@ -1,6 +1,7 @@
-#include "String.h"
+﻿#include "String.h"
 #include <stdarg.h>
 #include <regex>
+#include <locale>
 #include "Encoding.h"
 #include "core/math/Math.h"
 #include "external/crypto/md5/md5.h"
@@ -12,56 +13,56 @@ DC_BEGIN_NAMESPACE
 /********************************************************************/
 IMPL_REFECTION_TYPE(String)
 String String::Empty = "";
-static Vector<char> Unicode32ToUtf8(char32_t c32)
+static Vector<char> Unicode32ToUtf8(char32_t c32) noexcept
 {
 	Vector<char> buffer;
-	int byte_count = 0;
+	int byteCount = 0;
 
 	if (c32 <= 0x7f)
 	{
-		byte_count = 1;
+		byteCount = 1;
 	}
 	else if (c32 <= 0x7ff)
 	{
-		byte_count = 2;
+		byteCount = 2;
 	}
 	else if (c32 <= 0xffff)
 	{
-		byte_count = 3;
+		byteCount = 3;
 	}
 	else if (c32 <= 0x1fffff)
 	{
-		byte_count = 4;
+		byteCount = 4;
 	}
 	else if (c32 <= 0x3ffffff)
 	{
-		byte_count = 5;
+		byteCount = 5;
 	}
 	else if (c32 <= 0x7fffffff)
 	{
-		byte_count = 6;
+		byteCount = 6;
 	}
 
 	Vector<char> bytes;
-	bytes.Reserve(byte_count);
-	for (int i = 0; i < byte_count - 1; ++i)
+	bytes.Reserve(byteCount);
+	for (int i = 0; i < byteCount - 1; ++i)
 	{
 		bytes.Add((c32 & 0x3f) | 0x80);
 		c32 >>= 6;
 	}
 
-	if (byte_count > 1)
+	if (byteCount > 1)
 	{
-		bytes.Add((char)(c32 | (0xffffff80 >> (byte_count - 1))));
+		bytes.Add((char)(c32 | (0xffffff80 >> (byteCount - 1))));
 	}
 	else
 	{
 		bytes.Add((char)(c32));
 	}
 
-	for (int i = 0; i < byte_count; ++i)
+	for (int i = 0; i < byteCount; ++i)
 	{
-		buffer.Add(bytes[byte_count - 1 - i]);
+		buffer.Add(bytes[byteCount - 1 - i]);
 	}
 
 	return buffer;
@@ -77,7 +78,7 @@ String::String(const char32_t* unicode32)
 			str.Add(b);
 	}
 	str.Add(0);
-	m_string = &str[0];
+	_string = &str[0];
 }
 String::String(const char32_t* unicode32, int size)
 {
@@ -91,57 +92,91 @@ String::String(const char32_t* unicode32, int size)
 			str.Add(bytes[j]);
 	}
 	str.Add(0);
-	m_string = &str[0];
+	_string = &str[0];
 }
-int String::IndexOf(const String& str, int start) const
+int String::IndexOf(const String& str, int start, bool ignoreCase) const noexcept
 {
-	size_t pos = m_string.find(str.m_string, start);
-	if (pos != std::string::npos)
+	if (ignoreCase)
 	{
-		return (int)pos;
+		std::string str1 = ToLower();
+		std::string str2 = str.ToLower();
+		size_t pos = str1.find(str2, start);
+		if (pos != std::string::npos)
+			return (int)pos;
+		else
+			return -1;
 	}
 	else
 	{
-		return -1;
+		size_t pos = _string.find(str._string, start);
+		if (pos != std::string::npos)
+			return (int)pos;
+		else
+			return -1;
 	}
 }
-int String::LastIndexOf(const String& str, int start) const
+int String::LastIndexOf(const String& str, int start, bool ignoreCase) const noexcept
 {
-	size_t pos = m_string.rfind(str.m_string, start);
-	if (pos != std::string::npos)
+	if (ignoreCase)
 	{
-		return (int)pos;
+		std::string str1 = ToLower();
+		std::string str2 = str.ToLower();
+		size_t pos = str1.rfind(str2, start);
+		if (pos != std::string::npos)
+			return (int)pos;
+		else
+			return -1;
 	}
 	else
 	{
-		return -1;
+		size_t pos = _string.rfind(str._string, start);
+		if (pos != std::string::npos)
+			return (int)pos;
+		else
+			return -1;
 	}
 }
-int String::IndexOf(char ch, int start) const
+int String::IndexOf(char ch, int start, bool ignoreCase) const noexcept
 {
-	size_t pos = m_string.find(ch, start);
-	if (pos != std::string::npos)
+	if (ignoreCase)
 	{
-		return (int)pos;
+		std::string str = ToLower();
+		size_t pos = str.find(std::tolower(ch, std::locale()), start);
+		if (pos != std::string::npos)
+			return (int)pos;
+		else
+			return -1;
 	}
 	else
 	{
-		return -1;
+		size_t pos = _string.find(ch, start);
+		if (pos != std::string::npos)
+			return (int)pos;
+		else
+			return -1;
 	}
 }
-int String::LastIndexOf(char ch, int start) const
+int String::LastIndexOf(char ch, int start, bool ignoreCase) const noexcept
 {
-	size_t pos = m_string.rfind(ch, start);
-	if (pos != std::string::npos)
+	if (ignoreCase)
 	{
-		return (int)pos;
+		std::string str = ToLower();
+		size_t pos = str.rfind(std::tolower(ch, std::locale()), start);
+		if (pos != std::string::npos)
+			return (int)pos;
+		else
+			return -1;
 	}
 	else
 	{
-		return -1;
+		size_t pos = _string.rfind(ch, start);
+		if (pos != std::string::npos)
+			return (int)pos;
+		else
+			return -1;
 	}
 }
-bool String::StartsWith(const String& str) const
+bool String::StartsWith(const String& str, bool ignoreCase) const noexcept
 {
 	if (str.Size() == 0)
 	{
@@ -153,11 +188,14 @@ bool String::StartsWith(const String& str) const
 	}
 	else
 	{
-		return memcmp(&(*this)[0], &str[0], str.Size()) == 0;
+		if(ignoreCase)
+			return Strnicmp(&(*this)[0], &str[0], str.Size()) == 0;
+		else
+			return Strncmp(&(*this)[0], &str[0], str.Size()) == 0;
 	}
 }
 
-bool String::EndsWith(const String& str) const
+bool String::EndsWith(const String& str, bool ignoreCase) const noexcept
 {
 	if (str.Size() == 0)
 	{
@@ -169,104 +207,86 @@ bool String::EndsWith(const String& str) const
 	}
 	else
 	{
-		return memcmp(&(*this)[this->Size() - str.Size()], &str[0], str.Size()) == 0;
+		if (ignoreCase)
+			return Strnicmp(&(*this)[this->Size() - str.Size()], &str[0], str.Size()) == 0;
+		else
+			return Strncmp(&(*this)[this->Size() - str.Size()], &str[0], str.Size()) == 0;
 	}
 }
 
-String String::Substring(int start, int count) const
+String String::Substring(int start, int count) const noexcept
 {
-	start = Math::Clamp(start, 0, (int)m_string.size());
+	start = Math::Clamp(start, 0, (int)_string.size());
 	String result;
-	result.m_string = m_string.substr(start, count);
+	result._string = _string.substr(start, count);
 	return result;
 }
-String String::Remove(int start)
+String String::Remove(int start) noexcept
 {
-	return m_string.erase(start);
+	return _string.erase(start);
 }
-String String::Remove(int start, int count)
+String String::Remove(int start, int count) noexcept
 {
-	return m_string.erase(start, count);
+	return _string.erase(start, count);
 }
-String String::Insert(int pos, const String& str)
+String String::Insert(int pos, const String& str) noexcept
 {
-	return m_string.insert(pos, str.c_str());
+	return _string.insert(pos, str.c_str());
 }
-String String::Insert(int pos, const String& str, int count)
+String String::Insert(int pos, const String& str, int count) noexcept
 {
-	return m_string.insert(pos, str.c_str(), count);
+	return _string.insert(pos, str.c_str(), count);
 }
-String String::ToLower() const
+String String::ToLower() const noexcept
 {
-	Vector<char> str(m_string.size() + 1);
-	for (int i = 0; i < (int)m_string.size(); ++i)
-	{
-		char c = m_string[i];
-		if (c >= 'A' && c <= 'Z')
-		{
-			c -= 'A' - 'a';
-		}
-		str[i] = c;
-	}
-	str[str.Size() - 1] = '\0';
-
-	return String(&str[0]);
+	std::string str = _string;
+	std::transform(str.begin(), str.end(), str.begin(),
+		[](char c) { return std::tolower(c, std::locale()); });
+	return str;
 }
 
-String String::ToUpper() const
+String String::ToUpper() const noexcept
 {
-	Vector<char> str(m_string.size() + 1);
-	for (int i = 0; i < (int)m_string.size(); ++i)
-	{
-		char c = m_string[i];
-		if (c >= 'a' && c <= 'z')
-		{
-			c += 'A' - 'a';
-		}
-		str[i] = c;
-	}
-	str[str.Size() - 1] = '\0';
-
-	return String(&str[0]);
+	std::string str = _string;
+	std::transform(str.begin(), str.end(), str.begin(),
+		[](char c) { return std::toupper(c, std::locale()); });
+	return str;
 }
-String String::Trim(const String& src)
+String String::Trim(const String& src) noexcept
 {
 	if (src.IsEmpty())
-	{
 		return src;
-	}
+	
 	char ch = ' ';
 	int startIndex = src.FirstNotOf(ch);
 	int endIndex = src.LastNotOf(ch);
 	return src.Substring(startIndex, endIndex + 1);
 }
-String String::TrimLeft(const String& src)
+String String::TrimLeft(const String& src) noexcept
 {
 	if (src.IsEmpty())
-	{
 		return src;
-	}
+
 	char ch = ' ';
 	int startIndex = src.FirstNotOf(ch);
 	return src.Substring(startIndex, src.Size());
 }
-String String::TrimRight(const String& src)
+String String::TrimRight(const String& src) noexcept
 {
 	if (src.IsEmpty())
-	{
 		return src;
-	}
+	
 	char ch = ' ';
 	int endIndex = src.LastNotOf(ch);
 	return src.Substring(0, endIndex + 1);
 }
-String String::Replace(const char old, const char to) const
+String String::Replace(const char old, const char to) const noexcept
 {
 	String result(*this);
-	std::replace(result.m_string.begin(), result.m_string.end(), old, to);
+	std::replace(result._string.begin(), result._string.end(), old, to);
 	return result;
 }
-String String::Replace(const String& old, const String& to) const
+String String::Replace(const String& old, const String& to) const noexcept
 {
 	String result(*this);
 
@@ -276,8 +296,8 @@ String String::Replace(const String& old, const String& to) const
 		int index = result.IndexOf(old, start);
 		if (index >= 0)
 		{
-			result.m_string.replace(index, old.m_string.size(), to.m_string);
-			start = index + (int)to.m_string.size();
+			result._string.replace(index, old._string.size(), to._string);
+			start = index + (int)to._string.size();
 		}
 		else
 		{
@@ -287,35 +307,35 @@ String String::Replace(const String& old, const String& to) const
 	
 	return result;
 }
-bool String::Equals(const String& str, bool ignoreCase)const
+bool String::Equals(const String& str, bool ignoreCase)const noexcept
 {
 	if (ignoreCase)
-		return Stricmp(m_string.c_str(), str.c_str()) == 0 ? true : false;
+		return Stricmp(_string.c_str(), str.c_str()) == 0 ? true : false;
 	else
 		return *this == str;
 }
-bool String::IsANSI() const
+bool String::IsANSI() const noexcept
 {
 	AssertEx(false, "");
 	return false;
 }
-Vector<String> String::Split(const String& split) const
+Vector<String> String::Split(const String& split) const noexcept
 {
 	Vector<String> tokens;
-	if (m_string.empty())return tokens;
+	if (_string.empty())return tokens;
 
-	std::string::size_type lastPos = m_string.find_first_not_of(split.m_string, 0);
-	std::string::size_type pos = m_string.find_first_of(split.m_string, lastPos);
+	std::string::size_type lastPos = _string.find_first_not_of(split._string, 0);
+	std::string::size_type pos = _string.find_first_of(split._string, lastPos);
 	while (std::string::npos != pos || std::string::npos != lastPos) 
 	{
-		tokens.Add(m_string.substr(lastPos, pos - lastPos));
-		lastPos = m_string.find_first_not_of(split.m_string, pos);
-		pos = m_string.find_first_of(split.m_string, lastPos);
+		tokens.Add(_string.substr(lastPos, pos - lastPos));
+		lastPos = _string.find_first_not_of(split._string, pos);
+		pos = _string.find_first_of(split._string, lastPos);
 	}
 	return tokens;
 }
 //部分匹配表
-static void cal_kmp_next(const String& str, Vector<int>& next)
+static void cal_kmp_next(const String& str, Vector<int>& next) noexcept
 {
 	const int len = str.Size();
 	next[0] = -1;
@@ -335,21 +355,21 @@ static void cal_kmp_next(const String& str, Vector<int>& next)
 		}
 	}
 }
-Vector<int> String::KMP(const String& child)
+Vector<int> String::KMP(const String& child) noexcept
 {
 	Vector<int> vec;
 	Vector<int> next;
-	next.Resize(m_string.size(), 0);
+	next.Resize(_string.size(), 0);
 	cal_kmp_next(child, next);
 	int i = 0;//i是str1的下标
 	int j = 0;//j是str2的下标
-	int str1_size = m_string.size();
-	int str2_size = child.Size();
-	while (i < str1_size && j < str2_size)
+	int str1Size = _string.size();
+	int str2Size = child.Size();
+	while (i < str1Size && j < str2Size)
 	{
 		//如果j = -1，或者当前字符匹配成功（即S[i] == P[j]），
 		//都令i++，j++. 注意：这里判断顺序不能调换！
-		if (j == -1 || m_string[i] == child[j])
+		if (j == -1 || _string[i] == child[j])
 		{
 			++i;
 			++j;
@@ -358,7 +378,7 @@ Vector<int> String::KMP(const String& child)
 		{
 			j = next[j];//当前字符匹配失败，直接从str[j]开始比较，i的位置不变
 		}
-		if (j == str2_size)//匹配成功
+		if (j == str2Size)//匹配成功
 		{
 			vec.Add(i - j);//记录下完全匹配最开始的位置
 			j = -1;//重置
@@ -367,14 +387,14 @@ Vector<int> String::KMP(const String& child)
 	return vec;
 }
 static const char BASE64_TABLE[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-String String::Base64(const char* bytes, int size)
+String String::Base64(const char* bytes, int size) noexcept
 {
-	int size_pad = size;
-	if (size_pad % 3 != 0)
+	int sizePad = size;
+	if (sizePad % 3 != 0)
 	{
-		size_pad += 3 - (size_pad % 3);
+		sizePad += 3 - (sizePad % 3);
 	}
-	int round = size_pad / 3;
+	int round = sizePad / 3;
 
 	std::string str(round * 4, '\0');
 
@@ -397,7 +417,7 @@ String String::Base64(const char* bytes, int size)
 		str[i * 4 + 3] = BASE64_TABLE[c & 0x3f];
 	}
 
-	for (int i = size_pad - size, j = 0; i > 0; --i, ++j)
+	for (int i = sizePad - size, j = 0; i > 0; --i, ++j)
 	{
 		str[(round - 1) * 4 + 3 - j] = '=';
 	}
@@ -405,7 +425,7 @@ String String::Base64(const char* bytes, int size)
 	return String(str.c_str());
 }
 
-String String::UrlDecode(const String& str)
+String String::UrlDecode(const String& str) noexcept
 {
 	std::string dest = str.c_str();
 
@@ -446,11 +466,11 @@ String String::UrlDecode(const String& str)
 
 	return String(dest.c_str(), j);
 }
-String String::Md5(const String& src)
+String String::Md5(const String& src) noexcept
 {
 	return String::Md5(src.data(), src.Size());
 }
-String String::Md5(const char* src, int size)
+String String::Md5(const char* src, int size) noexcept
 {
 	MD5_CTX ctx;
 
@@ -470,37 +490,37 @@ String String::Md5(const char* src, int size)
 	}
 	return String(md5_string);
 }
-String String::TeaEncrypt(const String& src)
+String String::TeaEncrypt(const String& src) noexcept
 {
 	return String::TeaEncrypt((unsigned char*)src.data(), src.Size());
 }
-String String::TeaDecrypt(const String& src)
+String String::TeaDecrypt(const String& src) noexcept
 {
 	return String::TeaDecrypt((unsigned char*)src.data(), src.Size());
 }
-String String::TeaEncrypt(unsigned char* src, int size)
+String String::TeaEncrypt(unsigned char* src, int size) noexcept
 {
-	xxtea_long out_length = 0;
-	unsigned char* ret = xxtea_encrypt(src, size, nullptr, 0, &out_length);
+	xxtea_long outLength = 0;
+	unsigned char* ret = xxtea_encrypt(src, size, nullptr, 0, &outLength);
 	if (ret == nullptr)return "";
-	String str((const char*)ret, out_length);
+	String str((const char*)ret, outLength);
 	delete[](ret);
 	return str;
 }
-String String::TeaDecrypt(unsigned char* src, int size)
+String String::TeaDecrypt(unsigned char* src, int size) noexcept
 {
-	xxtea_long out_length = 0;
-	unsigned char* ret = xxtea_decrypt(src, size, nullptr, 0, &out_length);
+	xxtea_long outLength = 0;
+	unsigned char* ret = xxtea_decrypt(src, size, nullptr, 0, &outLength);
 	if (ret == nullptr)return "";
-	String str((const char*)ret, out_length);
+	String str((const char*)ret, outLength);
 	delete[](ret);
 	return str;
 }
-uint String::Hash(const String& src)
+uint String::Hash(const String& src) noexcept
 {
 	return String::Hash(src.data(), src.Size());
 }
-uint String::Hash(const char* src, int size)
+uint String::Hash(const char* src, int size) noexcept
 {
 	void* state  = XXH32_init(0);
 	XXH_errorcode err = XXH32_update(state, src, size);
@@ -508,9 +528,9 @@ uint String::Hash(const char* src, int size)
 	uint ret = XXH32_digest(state);
 	return ret;
 }
-static int Utf8ToUnicode32(const char* utf8, char32_t& c32)
+static int Utf8ToUnicode32(const char* utf8, char32_t& c32) noexcept
 {
-	int byte_count = 0;
+	int byteCount = 0;
 
 	for (int i = 0; i < 8; ++i)
 	{
@@ -520,28 +540,28 @@ static int Utf8ToUnicode32(const char* utf8, char32_t& c32)
 		{
 			if (i == 0)
 			{
-				byte_count = 1;
+				byteCount = 1;
 			}
 			else
 			{
-				byte_count = i;
+				byteCount = i;
 			}
 			break;
 		}
 	}
 
-	if (byte_count >= 1 && byte_count <= 6)
+	if (byteCount >= 1 && byteCount <= 6)
 	{
 		char32_t code = 0;
 
-		for (int i = 0; i < byte_count; ++i)
+		for (int i = 0; i < byteCount; ++i)
 		{
 			unsigned int c = utf8[i];
 			unsigned char part;
 
 			if (i == 0)
 			{
-				part = (c << (byte_count + 24)) >> (byte_count + 24);
+				part = (c << (byteCount + 24)) >> (byteCount + 24);
 			}
 			else
 			{
@@ -553,26 +573,25 @@ static int Utf8ToUnicode32(const char* utf8, char32_t& c32)
 
 		c32 = code;
 
-		return byte_count;
+		return byteCount;
 	}
 	else
 	{
 		return 0;
 	}
 }
-Vector<char32_t> String::ToUnicode32() const
+Vector<char32_t> String::ToUnicode32() const noexcept
 {
 	Vector<char32_t> unicode;
-	int size = (int)m_string.size();
+	int size = (int)_string.size();
 	for (int i = 0; i < size; ++i)
 	{
 		char32_t unicode32 = 0;
-		int byte_count = Utf8ToUnicode32(&m_string[i], unicode32);
-		if (byte_count > 0)
+		int byteCount = Utf8ToUnicode32(&_string[i], unicode32);
+		if (byteCount > 0)
 		{
 			unicode.Add(unicode32);
-
-			i += byte_count - 1;
+			i += byteCount - 1;
 		}
 		else
 		{
@@ -582,31 +601,31 @@ Vector<char32_t> String::ToUnicode32() const
 
 	return unicode;
 }
-String String::FromWString(const wchar_t* pw, int len)
+String String::FromWString(const wchar_t* pw, int len) noexcept
 {
 	return Encoding::WCharToUtf8(pw, len);
 }
-String String::FromWString(const std::wstring& w_str)
+String String::FromWString(const std::wstring& w_str) noexcept
 {
 	return Encoding::WCharToUtf8(w_str);
 }
-std::wstring String::ToWString()const
+std::wstring String::ToWString()const noexcept
 {
-	return Encoding::Utf8ToWChar(m_string);
+	return Encoding::Utf8ToWChar(_string);
 }
-float String::Expression(const String& expr)
+float String::Expression(const String& expr) noexcept
 {
 	if (expr.IsEmpty())return 0;
 	float v = (float)te_interp(expr.c_str(), 0);
 	return v;
 }
-bool String::Match(const String& match, const String& str)
+bool String::Match(const String& match, const String& str) noexcept
 {
 	std::regex reg(match.c_str());
 	bool result = std::regex_match(str.c_str(), reg);
 	return result;
 }
-const char* String::Stristr(const char* haystack, const char* needle)
+const char* String::Stristr(const char* haystack, const char* needle) noexcept
 {
 	const char* c = haystack;
 	while (*c)

@@ -1,4 +1,4 @@
-#include "EIMGUISetter.h"
+﻿#include "EIMGUISetter.h"
 #include "core/stream/DataStream.h"
 #include "runtime/resources/Resources.h"
 #include "runtime/ui/GUI.h"
@@ -9,7 +9,6 @@
 DC_BEGIN_NAMESPACE
 static const String SetterFilePath = "data/settings/EditorStyle.asset";
 /********************************************************************/
-bool EIMGUISetter::IsShow = false;
 void EIMGUISetter::InitStyle()
 {
 	ImGui::StyleColorsDark();
@@ -19,7 +18,7 @@ void EIMGUISetter::InitStyle()
 		if (stream.Size() == sizeof(ImGuiStyle))
 		{
 			ImGuiStyle& style = ImGui::GetStyle();
-			Memory::Copy(&style, stream.data(), stream.Size());
+			Memory::Copy(&style, stream.Buffer(), stream.Size());
 		}
 		else
 		{
@@ -155,7 +154,7 @@ void EIMGUISetter::SetLayout(LayoutType type)
 }
 void EIMGUISetter::Render()
 {
-	DC_PROFILE_FUNCTION();
+	DC_PROFILE_FUNCTION;
 	if (!IsShow)return;
 	ImGui::SetNextWindowSizeConstraints(ImVec2(400.0f, 600.0f), ImVec2(FLT_MAX, FLT_MAX));
 	if (ImGui::Begin(ICON_FA_COG " Style Editor", &IsShow))

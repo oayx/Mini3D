@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
  
 #include "TestBase.h"
 #include "TestTemplate.h"
@@ -9,7 +9,7 @@ DC_BEGIN_NAMESPACE
 class TestReflectClass : public Object
 {
 	BEGIN_DERIVED_REFECTION_TYPE(TestReflectClass, Object)
-	END_DERIVED_REFECTION_TYPE;
+	END_REFECTION_TYPE;
 public:
 protected:
 private:
@@ -57,6 +57,41 @@ struct SetComp
 	{
 		return a > b;
 	}
+};
+
+class TestMetaObj : public Object
+{
+	BEGIN_DERIVED_REFECTION_TYPE(TestMetaObj, Object)
+	END_REFECTION_TYPE;
+
+public:
+	UFUNCTION(void, Print, ())
+	void Print()
+	{
+		Debuger::Log("Print id:%d, name:%s", _id, _name.c_str());
+	}
+	UFUNCTION(void, PrintInt, (int), EditAnywhere, RuntimeOnly=true)
+	void PrintInt(int a)
+	{
+		Debuger::Log("PrintInt:%d", a);
+	}
+
+public:
+	UFUNCTION(void, SetId, (int))
+	void SetId(int id) { _id = id; }
+	UFUNCTION(void, SetName, (std::string))
+	void SetName(std::string name) { _name = name; }
+
+	UFUNCTION(int, GetId, ())
+	int GetId() { return _id; }
+	UFUNCTION(std::string, GetName, ())
+	std::string GetName() { return _name; }
+
+private:
+	UPROPERTY(int, _id, EditAnywhere, EditOnly, RuntimeAnywhere = false, RuntimeOnly)
+	int _id;
+	UPROPERTY(std::string, _name)
+	std::string _name;
 };
 
 class TestCore : public TestBase
@@ -149,9 +184,13 @@ public:
 		fun = CALLBACK_0(TestCore::TestTemplates, this);
 		_menus.Add(std::make_pair("Template", fun));
 
-		//22.tinystl
-		fun = CALLBACK_0(TestCore::TestTinySTL, this);
-		_menus.Add(std::make_pair("TinySTL", fun));
+		//22.数据结构
+		fun = CALLBACK_0(TestCore::TestStruct, this);
+		_menus.Add(std::make_pair("Struct", fun));
+
+		//23.元编程
+		fun = CALLBACK_0(TestCore::TestMeta, this);
+		_menus.Add(std::make_pair("Meta", fun));
 	}
 	virtual void OnEnter(int child_unit_index)override
 	{
@@ -220,60 +259,85 @@ private:
 #pragma endregion
 
 #pragma region 线程
+	int thread_count = 0;
+	std::mutex lock_obj;
 	void TestThread()
 	{
 		Debuger::Log("----------------------TestThread----------------------");
 
-		Debuger::Log("main thread id:%s", Thread::CurrentThreadId().c_str());
+		Debuger::Log("main thread id:%llu", Thread::CurrentThreadId());
 		this->OnThreadSleep();
 
 		//测试lock
 		Debuger::Log("test two thread add, result should be 2000000");
 		Task task1;
 		task1.job = CALLBACK_0(TestCore::OnThreadLock1, this);
-		task1.complete = [this](void*) 
+		task1.complete = [this]() 
 		{
 			Debuger::Log("task1 complete");
 		};
-		Thread::Start(task1);
+		auto thread1 = Thread::Start(task1);
+		if (thread1 == nullptr)
+			return;
+
 		Task task2;
 		task2.job = CALLBACK_0(TestCore::OnThreadLock2, this);
-		task2.complete = [this](void*)
+		task2.complete = [this]()
 		{
 			Debuger::Log("task2 complete");
 		};
-		Thread::Start(task2);
+		auto thread2 = Thread::Start(task2);
+		if (thread2 == nullptr)
+			return;
+
+		thread1->Wait();
+		thread2->Wait();
+		MyAssert(thread_count == 2000000);
+
+		//task
+		Debuger::Log("test lambda task");
+		Thread::Sleep(1000);
+		Thread::Start([]()
+		{
+				Debuger::Log("task start id:%llu", Thread::CurrentThreadId());
+		});
+
+		//批量
+		Debuger::Log("test threads");
+		Thread::Sleep(1000);
+		thread_count = 0;
+		for (int i = 0; i < 100; ++i)
+		{
+			Thread::Start(task1);
+			Thread::Start(task2);
+		}
 	}
 	int OnThreadSleep()
 	{
-		Debuger::Log("sleep thread:%s 3s, curr time:%f", Thread::CurrentThreadId().c_str(), Time::GetRealTimeSinceStartup());
+		Debuger::Log("sleep thread:%llu 3s, curr time:%f", Thread::CurrentThreadId(), Time::GetRealTimeSinceStartup());
 		Thread::Sleep(3000);
 		Debuger::Log("sleep thread end, curr time:%f", Time::GetRealTimeSinceStartup());
 		return 0;
 	}
-	std::mutex lock_obj;
-	int thread_count = 0;
-	void* OnThreadLock1()
+	void OnThreadLock1()
 	{
-		Debuger::Log("thread1 start id:%s", Thread::CurrentThreadId().c_str());
+		Debuger::Log("thread1 start id:%llu", Thread::CurrentThreadId());
 		for (int i = 0; i < 1000000; ++i)
 		{
-			thread_lock(lock_obj);
+			LOCK(lock_obj);
 			thread_count++;
 		}
 		Debuger::Log("thread1 end:%d", thread_count);
-		return nullptr;
 	}
-	void* OnThreadLock2()
+	void OnThreadLock2()
 	{
-		Debuger::Log("thread2 start id:%s", Thread::CurrentThreadId().c_str());
+		Debuger::Log("thread2 start id:%llu", Thread::CurrentThreadId());
 		for (int i = 0; i < 1000000; ++i)
 		{
-			thread_lock(lock_obj);
+			LOCK(lock_obj);
 			thread_count++;
 		}
 		Debuger::Log("thread2 end:%d", thread_count);
-		return nullptr;
 	}
 #pragma endregion
 
@@ -307,7 +371,7 @@ private:
 		char out[256];
 		char out1[256];
 		{//字符串
-			char *in = "我";
+			const char *in = "我";
 			//unicode码转为gbk码
 			int rc = Encoding::Utf8ToGBK(in, strlen(in), out, 256);
 			Debuger::Log("ret:%d, unicode-->gbk out=%s", rc, out);
@@ -356,6 +420,8 @@ private:
 	{
 		Debuger::Log("----------------------TestTime----------------------");
 
+		auto data = Time::GetDate();
+
 		uint timer_id = Timer::AddLoop(0.001f, CALLBACK_0(TestCore::OnTimeLoop, this));
 		_timers.Add(timer_id);
 	}
@@ -393,7 +459,7 @@ private:
 #pragma region 智能指针
 	AutoPointer<TestAutoPointerClass> TestAutoPointerFun()
 	{
-		auto p = AutoPointer<TestAutoPointerClass>(DBG_NEW TestAutoPointerClass());
+		auto p = AutoPointer<TestAutoPointerClass>(Memory::New<TestAutoPointerClass>());
 		return p;
 	}
 	void TestAutoPointer()
@@ -412,7 +478,7 @@ private:
 		//var v = 12;
 		//int value = v.Get<int>();
 
-		//Object* a = DBG_NEW Object();
+		//Object* a = Memory::New<Object>();
 		//var obj = a;
 		//Object* o = obj.GetPoint<Object>();
 
@@ -444,7 +510,16 @@ private:
 	void TestAllocPool()
 	{
 		Debuger::Log("----------------------TestAllocPool----------------------");
-
+		{
+			{
+				auto ptr = Memory::NewArray<TestAutoPointerClass>(10);
+				Memory::DeleteArray(ptr, 10);
+			}
+			{//泛型
+				//auto ptr1 = Memory::New<ConstructorImpl<byte>>();
+				//auto ptr2 = 
+			}
+		}
 	}
 #pragma endregion
 
@@ -822,19 +897,19 @@ private:
 
 		int result = 0;
 		tinyxml2::XMLElement* root = doc.RootElement();
-		tinyxml2::XMLElement* pass_node = root->FirstChildElement("Pass");
-		while (pass_node != nullptr)
+		tinyxml2::XMLElement* passNode = root->FirstChildElement("Pass");
+		while (passNode != nullptr)
 		{
-			tinyxml2::XMLElement* shader_node = pass_node->FirstChildElement("Shader");
-			if (shader_node != nullptr)
+			tinyxml2::XMLElement* shaderNode = passNode->FirstChildElement("Shader");
+			if (shaderNode != nullptr)
 			{
-				tinyxml2::XMLElement* vs_node = shader_node->FirstChildElement("VS");
+				tinyxml2::XMLElement* vs_node = shaderNode->FirstChildElement("VS");
 				if (vs_node != nullptr)
 				{
 					const char* file = vs_node->Attribute("File");
 					Debuger::Log("vs:%s", file);
 				}
-				tinyxml2::XMLElement* ps_node = shader_node->FirstChildElement("PS");
+				tinyxml2::XMLElement* ps_node = shaderNode->FirstChildElement("PS");
 				if (ps_node != nullptr)
 				{
 					const char* file = ps_node->Attribute("File");
@@ -842,7 +917,7 @@ private:
 				}
 			}
 
-			pass_node = pass_node->NextSiblingElement("Pass");
+			passNode = passNode->NextSiblingElement("Pass");
 		}
 
 
@@ -850,12 +925,14 @@ private:
 #pragma endregion
 
 #pragma region Delegate
+	int delegateCount = 0;
 	int OnFunctionAdd(int aa, int bb)
 	{
 		return aa + bb;
 	}
 	void OnDelegateBind(int aa, int bb)
 	{
+		delegateCount++;
 		Debuger::Log("%d", aa + bb);
 	}
 	void TestDelegate()
@@ -869,9 +946,40 @@ private:
 		Delegate<int, int> delegate;
 		delegate.Bind<TestCore, &TestCore::OnDelegateBind>(this);
 		delegate(1,2);
+		MyAssert(delegateCount == 1);
 		delegate.Unbind<TestCore, &TestCore::OnDelegateBind>(this);
 		delegate(1, 2);
+		MyAssert(delegateCount == 1);
 
+		delegate.Bind<TestCore, &TestCore::OnDelegateBind>(this);
+		delegate(1, 2);
+		MyAssert(delegateCount == 2);
+		delegate.Unbind<TestCore, &TestCore::OnDelegateBind>(this);
+		delegate(1, 2);
+		MyAssert(delegateCount == 2);
+
+		delegateCount = 0;
+		for (int i = 0; i < 100; ++i)
+		{
+			delegate.Bind<TestCore, &TestCore::OnDelegateBind>(this);
+			delegate.Unbind<TestCore, &TestCore::OnDelegateBind>(this);
+		}
+		delegate(1, 2);
+		MyAssert(delegateCount == 0);
+
+		delegateCount = 0;
+		for (int i = 0; i < 100; ++i)
+		{
+			delegate.Bind<TestCore, &TestCore::OnDelegateBind>(this);
+		}
+		delegate(1, 2);
+		MyAssert(delegateCount == 100);
+		for (int i = 0; i < 100; ++i)
+		{
+			delegate.Unbind<TestCore, &TestCore::OnDelegateBind>(this);
+		}
+		delegate(1, 2);
+		MyAssert(delegateCount == 100);
 	}
 #pragma endregion
 
@@ -884,13 +992,87 @@ private:
 	}
 #pragma endregion
 
-#pragma region TinySTL
-	void TestTinySTL()
+#pragma region Struct
+	void TestStruct()
 	{
-		Debuger::Log("----------------------TestTinySTL----------------------");
-		dll_tinystl_test();
+		{
+			Debuger::Log("----------------------Array----------------------");
+			Array<int> arr;
+			for(int i = 0; i < 100; ++i)
+				arr.Add(i);
+			for (int i = 0; i < 100; ++i)
+				MyAssert(arr[i] == i);
+
+			Array<int> arr1 = arr;
+			for (int i = 0; i < 100; ++i)
+				MyAssert(arr1[i] == i);
+
+			MyAssert(arr1 == arr);
+		}
 	}
 #pragma endregion
 
+#pragma region Meta
+	//---------- 测试代码 ----------
+	void PrintMetaInfo(const MetaPropertyInfo& prop) {
+		std::cout << "  " << prop.name << " [" << prop.type << "]\n";
+
+		std::cout << "  Metadata:\n";
+		for (const auto& meta : prop.meta.data)
+		{
+			std::cout << "    - key:" << meta.first.c_str() << ", value:" << meta.second.c_str() << std::endl;
+		}
+	}
+
+	void PrintFunctionInfo(const MetaFunctionInfo& func) {
+		std::cout << "  " << func.name << "() -> " << func.returnType << "\n";
+		std::cout << "  Parameters: ";
+		for (const auto& param : func.paramTypes) {
+			std::cout << "    - " << param << " ";
+		}
+		std::cout << "\n";
+
+		std::cout << "  Metadata:\n";
+		for (const auto& meta : func.meta.data)
+		{
+			std::cout << "    - key:" << meta.first.c_str() << ", value:" << meta.second.c_str() << std::endl;
+		}
+	}
+	void TestMeta()
+	{
+		Debuger::Log("----------------------Meta----------------------");
+		
+		TestMetaObj meta;
+		meta.SetId(1);
+		meta.SetName("Hero");
+
+		std::cout << "\nProperties:\n";
+		for (const auto& prop : meta.GetClass()->properties) {
+			PrintMetaInfo(prop);
+			std::cout << "----------\n";
+		}
+
+		std::cout << "\nFunctions:\n";
+		for (const auto& func : meta.GetClass()->functions) {
+			PrintFunctionInfo(*func);
+			std::cout << "----------\n";
+		}
+
+		// 直接调用函数
+		std::cout << "\nDirect function calls:\n";
+		//meta.Print();
+		//meta.PrintInt(20);
+
+		// 反射调用函数
+		std::cout << "\nReflection function calls:\n";
+		meta.Invoke("Print");
+		meta.Invoke("PrintInt", 20);
+
+		meta.Invoke("SetId", 2);
+		meta.Invoke("SetName", std::string("2"));
+		MyAssert(meta.Invoke<int>("GetId") == 2);
+		MyAssert(meta.Invoke<std::string>("GetName") == "2");
+	}
+#pragma endregion
 };
 DC_END_NAMESPACE
